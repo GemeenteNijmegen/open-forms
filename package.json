@@ -4,6 +4,10 @@
     "build": "npx projen build",
     "bump": "npx projen bump",
     "bundle": "npx projen bundle",
+    "bundle:nl-wallet/prefill/prefill.lambda": "npx projen bundle:nl-wallet/prefill/prefill.lambda",
+    "bundle:nl-wallet/prefill/prefill.lambda:watch": "npx projen bundle:nl-wallet/prefill/prefill.lambda:watch",
+    "bundle:nl-wallet/token/token.lambda": "npx projen bundle:nl-wallet/token/token.lambda",
+    "bundle:nl-wallet/token/token.lambda:watch": "npx projen bundle:nl-wallet/token/token.lambda:watch",
     "clobber": "npx projen clobber",
     "compile": "npx projen compile",
     "default": "npx projen default",
@@ -47,10 +51,14 @@
     "typescript": "^5.6.3"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.679.0",
+    "@gemeentenijmegen/apigateway-http": "^0.0.16",
     "@gemeentenijmegen/aws-constructs": "^0.0.22",
+    "@types/aws-lambda": "^8.10.145",
     "aws-cdk-lib": "^2.1.0",
     "constructs": "^10.0.5",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "jose": "^5.9.6"
   },
   "license": "EUPL-1.2",
   "publishConfig": {

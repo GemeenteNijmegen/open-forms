@@ -32,6 +32,20 @@ export interface Configuration {
    * the workload AWS account in our default region.
    */
   deploymentEnvironment: Required<Environment>;
+
+  /**
+   * Configuration for deploying nl wallet infra
+   * @default - no nl wallet infra is deployed
+   */
+  nlWalletConfiguration?: NlWalletConfiguration;
+}
+
+interface NlWalletConfiguration {
+  /**
+   * Use a customer managed KMS key or AWS Managed.
+   * @default true
+   */
+  useCMK: boolean;
 }
 
 
@@ -40,12 +54,17 @@ const EnvironmentConfigurations: {[key:string]: Configuration} = {
     branch: 'acceptance',
     buildEnvironment: Statics.gnBuildEnvironment,
     deploymentEnvironment: Statics.gnOpenFormsAccp,
-
+    nlWalletConfiguration: {
+      useCMK: false,
+    },
   },
   main: {
     branch: 'main',
     buildEnvironment: Statics.gnBuildEnvironment,
     deploymentEnvironment: Statics.gnOpenFormsProd,
+    nlWalletConfiguration: {
+      useCMK: true,
+    },
   },
 };
 

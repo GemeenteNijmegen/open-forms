@@ -16,6 +16,8 @@
     ".projen/tasks.json",
     "cdk.json",
     "LICENSE",
+    "src/nl-wallet/prefill/prefill-function.ts",
+    "src/nl-wallet/token/token-function.ts",
     "tsconfig.dev.json",
     "tsconfig.json"
   ],

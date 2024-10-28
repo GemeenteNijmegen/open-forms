@@ -148,6 +148,8 @@
         "devDependencies": [
           "**/test/**",
           "**/build-tools/**",
+          "src/nl-wallet/prefill/prefill.lambda.ts",
+          "src/nl-wallet/token/token.lambda.ts",
           ".projenrc.ts",
           "projenrc/**/*.ts"
         ],
