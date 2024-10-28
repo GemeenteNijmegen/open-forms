@@ -18,7 +18,7 @@ export class Statics {
   };
 
   static readonly gnOpenFormsProd = {
-    account: '', // TODO fill once account is created
+    account: '761018864362',
     region: 'eu-central-1',
   };
 
