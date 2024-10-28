@@ -46,6 +46,14 @@ interface NlWalletConfiguration {
    * @default true
    */
   useCMK: boolean;
+  /**
+   * @default false
+   */
+  debug?: boolean;
+  /**
+   * Endpoint to actually call for obtaining the token
+   */
+  tokenEndpoint: string;
 }
 
 
@@ -56,6 +64,8 @@ const EnvironmentConfigurations: {[key:string]: Configuration} = {
     deploymentEnvironment: Statics.gnOpenFormsAccp,
     nlWalletConfiguration: {
       useCMK: false,
+      debug: true,
+      tokenEndpoint: 'https://authenticatie-accp.nijmegen.nl/broker/sp/oidc/token',
     },
   },
   main: {
@@ -64,6 +74,8 @@ const EnvironmentConfigurations: {[key:string]: Configuration} = {
     deploymentEnvironment: Statics.gnOpenFormsProd,
     nlWalletConfiguration: {
       useCMK: true,
+      debug: false,
+      tokenEndpoint: 'https://authenticatie.nijmegen.nl/broker/sp/oidc/token',
     },
   },
 };

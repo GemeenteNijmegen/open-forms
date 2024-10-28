@@ -10,6 +10,8 @@ import { TokenFunction } from './token/token-function';
 interface TokenCacheServcieProps {
   api: RestApi;
   key?: Key;
+  debug?: boolean;
+  tokenEndpoint: string;
 }
 
 export class TokenCacheService extends Construct {
@@ -37,6 +39,8 @@ export class TokenCacheService extends Construct {
       description: 'Passthrough to token endpoint and cache results',
       environment: {
         TABLE_NAME: table.tableName,
+        DEBUG: props.debug ? 'true' : 'false',
+        TOKEN_ENDPOINT: props.tokenEndpoint,
       },
     });
 
@@ -45,6 +49,7 @@ export class TokenCacheService extends Construct {
       environment: {
         TABLE_NAME: table.tableName,
         API_KEY_ARN: apiKey.secretArn,
+        DEBUG: props.debug ? 'true' : 'false',
       },
     });
 

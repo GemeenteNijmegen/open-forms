@@ -5,14 +5,14 @@ import * as jose from 'jose';
 
 const db = new DynamoDBClient();
 
-export async function handler(event: APIGatewayProxyEventV2, _context: any): Promise<ApiGatewayV2Response> {
+export async function handler(event: APIGatewayProxyEventV2): Promise<ApiGatewayV2Response> {
 
   const ttl = new Date();
   ttl.setMinutes(ttl.getMinutes() + 60);
 
   // Pass the request to Signicat
   const params = new URLSearchParams(event.body);
-  const resp = await fetch('https://authenticatie-accp.nijmegen.nl/broker/sp/oidc/token', {
+  const resp = await fetch(process.env.TOKEN_ENDPOINT!, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -22,7 +22,9 @@ export async function handler(event: APIGatewayProxyEventV2, _context: any): Pro
 
   // Parse claims form JWT
   const data = await resp.json() as any;
-  console.log(data);
+  if (process.env.DEBUG == 'true') {
+    console.log('Token data', data);
+  }
   const claims = jose.decodeJwt(data.id_token);
 
   // Store claims in dynamodb table

@@ -28,6 +28,8 @@ export class NlWalletStack extends Stack {
     new TokenCacheService(this, 'caching-service', {
       api: this.api,
       key: this.key,
+      debug: props.configuration.nlWalletConfiguration?.debug,
+      tokenEndpoint: props.configuration.nlWalletConfiguration?.tokenEndpoint!,
     });
   }
 
