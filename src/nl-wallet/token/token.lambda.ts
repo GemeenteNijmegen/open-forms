@@ -23,7 +23,7 @@ export async function handler(event: APIGatewayProxyEventV2, _context: any): Pro
   // Parse claims form JWT
   const data = await resp.json() as any;
   console.log(data);
-  const claims = jose.decodeJwt(data.access_token);
+  const claims = jose.decodeJwt(data.id_token);
 
   // Store claims in dynamodb table
   if (!claims.sub) {

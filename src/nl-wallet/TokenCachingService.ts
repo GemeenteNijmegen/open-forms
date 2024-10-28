@@ -2,6 +2,7 @@ import { RemovalPolicy } from 'aws-cdk-lib';
 import { LambdaIntegration, RestApi } from 'aws-cdk-lib/aws-apigateway';
 import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { Key } from 'aws-cdk-lib/aws-kms';
+import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
 import { Construct } from 'constructs';
 import { PrefillFunction } from './prefill/prefill-function';
 import { TokenFunction } from './token/token-function';
@@ -25,6 +26,13 @@ export class TokenCacheService extends Construct {
     const token = tokenCache.addResource('token');
     const prefill = tokenCache.addResource('prefill');
 
+    const apiKey = new Secret(this, 'api-key', {
+      description: 'API key for prefill service',
+      generateSecretString: {
+        excludePunctuation: true,
+      },
+    });
+
     const tokenFunction = new TokenFunction(this, 'token', {
       description: 'Passthrough to token endpoint and cache results',
       environment: {
@@ -36,9 +44,11 @@ export class TokenCacheService extends Construct {
       description: 'Request specific claims from the and cache results',
       environment: {
         TABLE_NAME: table.tableName,
+        API_KEY_ARN: apiKey.secretArn,
       },
     });
 
+    apiKey.grantRead(prefillFunction);
     table.grantReadData(prefillFunction);
     table.grantWriteData(tokenFunction);
     if (props.key) {

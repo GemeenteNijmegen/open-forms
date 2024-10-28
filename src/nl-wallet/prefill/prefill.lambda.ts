@@ -1,10 +1,13 @@
 import { DynamoDBClient, GetItemCommand } from '@aws-sdk/client-dynamodb';
 import { ApiGatewayV2Response } from '@gemeentenijmegen/apigateway-http';
 import { APIGatewayProxyEventV2 } from 'aws-lambda';
+import { authenticate } from './authenticate';
 
 const db = new DynamoDBClient();
 
 export async function handler(event: APIGatewayProxyEventV2, _context: any): Promise<ApiGatewayV2Response> {
+
+  await authenticate(event);
 
   // Parse event
   const sub = event.queryStringParameters?.sub;

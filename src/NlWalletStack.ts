@@ -52,12 +52,6 @@ export class NlWalletStack extends Stack {
       recordName: domain,
     });
 
-    const usagePlan = api.addUsagePlan('open-forms');
-    const key = api.addApiKey('open-forms-key', {
-      description: 'Used by open-forms',
-    });
-    usagePlan.addApiKey(key);
-
     return api;
   }
 

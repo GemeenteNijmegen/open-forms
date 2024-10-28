@@ -9,6 +9,7 @@ const project = new GemeenteNijmegenCdkApp({
     'dotenv',
     '@gemeentenijmegen/aws-constructs',
     '@gemeentenijmegen/apigateway-http',
+    '@gemeentenijmegen/utils',
     'jose',
     '@types/aws-lambda',
     '@aws-sdk/client-dynamodb',
