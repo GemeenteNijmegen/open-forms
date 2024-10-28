@@ -2,6 +2,7 @@ import { PermissionsBoundaryAspect } from '@gemeentenijmegen/aws-constructs';
 import { Stack, StackProps, Tags, pipelines, CfnParameter, Aspects } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { Configurable } from './Configuration';
+import { OpenFormsStage } from './OpenFormsStage';
 import { ParameterStage } from './ParameterStage';
 import { Statics } from './Statics';
 
@@ -39,6 +40,13 @@ export class PipelineStack extends Stack {
       configuration: props.configuration,
     });
     pipeline.addStage(parameters);
+
+    // API Stage
+    const openForms = new OpenFormsStage(this, 'open-forms', {
+      env: props.configuration.deploymentEnvironment,
+      configuration: props.configuration,
+    });
+    pipeline.addStage(openForms);
 
 
   }

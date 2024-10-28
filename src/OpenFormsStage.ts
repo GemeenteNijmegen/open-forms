@@ -6,7 +6,7 @@ import { NlWalletStack } from './NlWalletStack';
 
 interface OpenFormsStageProps extends StageProps, Configurable {}
 
-export class OpenFormsStageStage extends Stage {
+export class OpenFormsStage extends Stage {
 
   constructor(scope: Construct, id: string, props: OpenFormsStageProps) {
     super(scope, id, props);
