@@ -22,6 +22,7 @@ Omdat het BSN dat open-forms kent (dit is het attribuut `{{auth_bsn}}`) alleen u
 - In het formulier kan je dan de velden prefillen door een logica regel toe te voegen
 ![Prefill form rule](./img/prefill-form-rule.png)
 ![Prefill form detail](./img/prefill-form-details.png)
+![Prefill form variables](./img/prefill-form-variables.png)
 
 ### Deel 2: De OIDC configuratie
 - De OIDC configuratie ziet er dan zo uit
