@@ -5,9 +5,23 @@ const project = new GemeenteNijmegenCdkApp({
   devDeps: ['@gemeentenijmegen/projen-project-type'],
   name: 'open-forms',
   projenrcTs: true,
+  deps: [
+    'dotenv',
+    '@gemeentenijmegen/aws-constructs',
+  ],
 
-  // deps: [],                /* Runtime dependencies of this module. */
-  // description: undefined,  /* The description is just a string that helps people understand the purpose of the package. */
-  // packageName: undefined,  /* The "name" in package.json. */
 });
+
+
+/**
+ * Supress the 'dependency should be included in the project dependencies' error.
+ */
+project.eslint?.addOverride({
+  rules: {
+    'import/no-extraneous-dependencies': ['off'],
+  },
+  files: ['*.ts'],
+});
+
+
 project.synth();

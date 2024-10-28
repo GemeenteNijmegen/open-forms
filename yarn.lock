@@ -460,6 +460,11 @@
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.57.1.tgz#de633db3ec2ef6a3c89e2f19038063e8a122e2c2"
   integrity sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==
 
+"@gemeentenijmegen/aws-constructs@^0.0.22":
+  version "0.0.22"
+  resolved "https://registry.yarnpkg.com/@gemeentenijmegen/aws-constructs/-/aws-constructs-0.0.22.tgz#5a73f759db5bdce3a5cef85a2d6c527832deecd3"
+  integrity sha512-UjiIWq46aY0IdnX8JGi+KAtzawLAh1LD070WHHA4bVg1En8jOQlKMClXNnqNEIN0vpA5WjOCPmZqf5xfxp23qw==
+
 "@gemeentenijmegen/projen-project-type@^1.8.1":
   version "1.8.1"
   resolved "https://registry.yarnpkg.com/@gemeentenijmegen/projen-project-type/-/projen-project-type-1.8.1.tgz#4d21358f33e341b082ec88ec9fddcb6457100608"
@@ -1943,6 +1948,11 @@ dot-prop@^5.1.0:
   integrity sha512-QM8q3zDe58hqUqjraQOmzZ1LIH9SWQJTlEKCH4kJ2oQvLZk7RbQXvtDM2XEq3fwkV9CCvvH4LA0AV+ogFsBM2Q==
   dependencies:
     is-obj "^2.0.0"
+
+dotenv@^16.4.5:
+  version "16.4.5"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.4.5.tgz#cdd3b3b604cb327e286b4762e13502f717cb099f"
+  integrity sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==
 
 dotgitignore@^2.1.0:
   version "2.1.0"
