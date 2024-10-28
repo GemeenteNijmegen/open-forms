@@ -32,6 +32,28 @@ export interface Configuration {
    * the workload AWS account in our default region.
    */
   deploymentEnvironment: Required<Environment>;
+
+  /**
+   * Configuration for deploying nl wallet infra
+   * @default - no nl wallet infra is deployed
+   */
+  nlWalletConfiguration?: NlWalletConfiguration;
+}
+
+interface NlWalletConfiguration {
+  /**
+   * Use a customer managed KMS key or AWS Managed.
+   * @default true
+   */
+  useCMK: boolean;
+  /**
+   * @default false
+   */
+  debug?: boolean;
+  /**
+   * Endpoint to actually call for obtaining the token
+   */
+  tokenEndpoint: string;
 }
 
 
@@ -40,12 +62,21 @@ const EnvironmentConfigurations: {[key:string]: Configuration} = {
     branch: 'acceptance',
     buildEnvironment: Statics.gnBuildEnvironment,
     deploymentEnvironment: Statics.gnOpenFormsAccp,
-
+    nlWalletConfiguration: {
+      useCMK: false,
+      debug: true,
+      tokenEndpoint: 'https://authenticatie-accp.nijmegen.nl/broker/sp/oidc/token',
+    },
   },
   main: {
     branch: 'main',
     buildEnvironment: Statics.gnBuildEnvironment,
     deploymentEnvironment: Statics.gnOpenFormsProd,
+    nlWalletConfiguration: {
+      useCMK: true,
+      debug: false,
+      tokenEndpoint: 'https://authenticatie.nijmegen.nl/broker/sp/oidc/token',
+    },
   },
 };
 

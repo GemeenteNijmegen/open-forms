@@ -44,7 +44,51 @@
     },
     "bundle": {
       "name": "bundle",
-      "description": "Prepare assets"
+      "description": "Prepare assets",
+      "steps": [
+        {
+          "spawn": "bundle:nl-wallet/prefill/prefill.lambda"
+        },
+        {
+          "spawn": "bundle:nl-wallet/token/token.lambda"
+        }
+      ]
+    },
+    "bundle:nl-wallet/prefill/prefill.lambda": {
+      "name": "bundle:nl-wallet/prefill/prefill.lambda",
+      "description": "Create a JavaScript bundle from src/nl-wallet/prefill/prefill.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/nl-wallet/prefill/prefill.lambda.ts --target=\"node20\" --platform=\"node\" --outfile=\"assets/nl-wallet/prefill/prefill.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
+        }
+      ]
+    },
+    "bundle:nl-wallet/prefill/prefill.lambda:watch": {
+      "name": "bundle:nl-wallet/prefill/prefill.lambda:watch",
+      "description": "Continuously update the JavaScript bundle from src/nl-wallet/prefill/prefill.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/nl-wallet/prefill/prefill.lambda.ts --target=\"node20\" --platform=\"node\" --outfile=\"assets/nl-wallet/prefill/prefill.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
+        }
+      ]
+    },
+    "bundle:nl-wallet/token/token.lambda": {
+      "name": "bundle:nl-wallet/token/token.lambda",
+      "description": "Create a JavaScript bundle from src/nl-wallet/token/token.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/nl-wallet/token/token.lambda.ts --target=\"node20\" --platform=\"node\" --outfile=\"assets/nl-wallet/token/token.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
+        }
+      ]
+    },
+    "bundle:nl-wallet/token/token.lambda:watch": {
+      "name": "bundle:nl-wallet/token/token.lambda:watch",
+      "description": "Continuously update the JavaScript bundle from src/nl-wallet/token/token.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/nl-wallet/token/token.lambda.ts --target=\"node20\" --platform=\"node\" --outfile=\"assets/nl-wallet/token/token.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
+        }
+      ]
     },
     "clobber": {
       "name": "clobber",
@@ -287,13 +331,13 @@
       },
       "steps": [
         {
-          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@gemeentenijmegen/projen-project-type,@types/jest,@types/node,esbuild,eslint-import-resolver-typescript,eslint-plugin-import,jest,projen,ts-jest,ts-node,typescript,@gemeentenijmegen/aws-constructs,dotenv"
+          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@gemeentenijmegen/projen-project-type,@types/jest,@types/node,esbuild,eslint-import-resolver-typescript,eslint-plugin-import,jest,projen,ts-jest,ts-node,typescript,@aws-sdk/client-dynamodb,@gemeentenijmegen/apigateway-http,@gemeentenijmegen/aws-constructs,@gemeentenijmegen/utils,@types/aws-lambda,dotenv,jose"
         },
         {
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @gemeentenijmegen/projen-project-type @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-cdk commit-and-tag-version esbuild eslint-import-resolver-typescript eslint-plugin-import eslint jest jest-junit projen ts-jest ts-node typescript @gemeentenijmegen/aws-constructs aws-cdk-lib constructs dotenv"
+          "exec": "yarn upgrade @gemeentenijmegen/projen-project-type @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-cdk commit-and-tag-version esbuild eslint-import-resolver-typescript eslint-plugin-import eslint jest jest-junit projen ts-jest ts-node typescript @aws-sdk/client-dynamodb @gemeentenijmegen/apigateway-http @gemeentenijmegen/aws-constructs @gemeentenijmegen/utils @types/aws-lambda aws-cdk-lib constructs dotenv jose"
         },
         {
           "exec": "npx projen"

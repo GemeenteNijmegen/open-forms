@@ -3,6 +3,11 @@ export class Statics {
   static readonly projectRepo = 'GemeenteNijmegen/open-forms';
   static readonly organization = 'GemeenteNijmegen';
 
+  // Hostedzone managed in dns-managment project:
+  static readonly accountRootHostedZonePath: string = '/gemeente-nijmegen/account/hostedzone/';
+  static readonly accountRootHostedZoneId: string = '/gemeente-nijmegen/account/hostedzone/id';
+  static readonly accountRootHostedZoneName: string = '/gemeente-nijmegen/account/hostedzone/name';
+
   // MARK: SSM Parameters
   static readonly ssmDummyParameter = `/${Statics.projectName}/dummy/parameter`;
 
