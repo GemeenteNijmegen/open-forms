@@ -2,7 +2,8 @@ import { Stack, StackProps } from 'aws-cdk-lib';
 import { RestApi, SecurityPolicy } from 'aws-cdk-lib/aws-apigateway';
 import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager';
 import { Key } from 'aws-cdk-lib/aws-kms';
-import { HostedZone, IHostedZone } from 'aws-cdk-lib/aws-route53';
+import { ARecord, HostedZone, IHostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
+import { ApiGatewayDomain } from 'aws-cdk-lib/aws-route53-targets';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 import { Configurable } from './Configuration';
@@ -43,6 +44,12 @@ export class NlWalletStack extends Stack {
         domainName: domain,
         securityPolicy: SecurityPolicy.TLS_1_2,
       },
+    });
+
+    new ARecord(this, 'a-record', {
+      target: RecordTarget.fromAlias(new ApiGatewayDomain(api.domainName!)),
+      zone: this.hostedzone,
+      recordName: domain,
     });
 
     return api;
