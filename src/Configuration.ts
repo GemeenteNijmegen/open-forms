@@ -65,7 +65,7 @@ const EnvironmentConfigurations: {[key:string]: Configuration} = {
     nlWalletConfiguration: {
       useCMK: false,
       debug: true,
-      tokenEndpoint: 'https://authenticatie-accp.nijmegen.nl/broker/sp/oidc/token',
+      tokenEndpoint: 'https://gemeente-nijmegen.sandbox.signicat.com/auth/open/connect/token',
     },
   },
   main: {
@@ -75,7 +75,7 @@ const EnvironmentConfigurations: {[key:string]: Configuration} = {
     nlWalletConfiguration: {
       useCMK: true,
       debug: false,
-      tokenEndpoint: 'https://authenticatie.nijmegen.nl/broker/sp/oidc/token',
+      tokenEndpoint: 'https://gemeente-nijmegen.app.signicat.com/auth/open/connect/token',
     },
   },
 };
