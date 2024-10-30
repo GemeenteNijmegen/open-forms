@@ -20,17 +20,20 @@ export class NlWalletStack extends Stack {
 
   constructor(scope: Construct, id: string, props: NlWalletStackProps) {
     super(scope, id, props);
-    if (props.configuration.nlWalletConfiguration?.useCMK) {
-      this.key = this.setupKmsKey();
-    }
+    this.key = this.setupKmsKey();
     this.hostedzone = this.importHostedzone();
     this.api = this.setupRestApi();
-    new TokenCacheService(this, 'caching-service', {
-      api: this.api,
-      key: this.key,
-      debug: props.configuration.nlWalletConfiguration?.debug,
-      tokenEndpoint: props.configuration.nlWalletConfiguration?.tokenEndpoint!,
-    });
+
+    const tokenCache = this.api.root.addResource('token-cache');
+    for (const config of props.configuration.nlWalletConfiguration ?? []) {
+      const resource = tokenCache.addResource(config.pathName);
+      new TokenCacheService(this, config.cdkId, {
+        resource: resource,
+        key: this.key,
+        debug: config.debug,
+        tokenEndpoint: config.tokenEndpoint,
+      });
+    }
   }
 
   private setupRestApi() {

@@ -37,19 +37,20 @@ export interface Configuration {
    * Configuration for deploying nl wallet infra
    * @default - no nl wallet infra is deployed
    */
-  nlWalletConfiguration?: NlWalletConfiguration;
+  nlWalletConfiguration?: NlWalletConfiguration[];
 }
 
 interface NlWalletConfiguration {
-  /**
-   * Use a customer managed KMS key or AWS Managed.
-   * @default true
-   */
-  useCMK: boolean;
+  cdkId: string;
   /**
    * @default false
    */
   debug?: boolean;
+  /**
+   * Path to mount this service on in the API gateway
+   * Used as /token-cache/{name}/{token or prefill}
+   */
+  pathName: string;
   /**
    * Endpoint to actually call for obtaining the token
    */
@@ -62,21 +63,39 @@ const EnvironmentConfigurations: {[key:string]: Configuration} = {
     branch: 'acceptance',
     buildEnvironment: Statics.gnBuildEnvironment,
     deploymentEnvironment: Statics.gnOpenFormsAccp,
-    nlWalletConfiguration: {
-      useCMK: false,
-      debug: true,
-      tokenEndpoint: 'https://gemeente-nijmegen.sandbox.signicat.com/auth/open/connect/token',
-    },
+    nlWalletConfiguration: [
+      {
+        cdkId: 'caching-service',
+        pathName: 'nlwallet',
+        debug: true,
+        tokenEndpoint: 'https://gemeente-nijmegen.sandbox.signicat.com/auth/open/connect/token',
+      },
+      {
+        cdkId: 'caching-service-verid',
+        pathName: 'nlwallet-verid',
+        debug: true,
+        tokenEndpoint: 'https://oauth.ssi.ver.id/token/grant',
+      },
+    ],
   },
   main: {
     branch: 'main',
     buildEnvironment: Statics.gnBuildEnvironment,
     deploymentEnvironment: Statics.gnOpenFormsProd,
-    nlWalletConfiguration: {
-      useCMK: true,
-      debug: false,
-      tokenEndpoint: 'https://gemeente-nijmegen.app.signicat.com/auth/open/connect/token',
-    },
+    nlWalletConfiguration: [
+      {
+        cdkId: 'caching-service',
+        pathName: 'nlwallet',
+        debug: false,
+        tokenEndpoint: 'https://gemeente-nijmegen.app.signicat.com/auth/open/connect/token',
+      },
+      {
+        cdkId: 'caching-service-verid',
+        pathName: 'nlwallet-verid',
+        debug: false,
+        tokenEndpoint: 'https://oauth.ssi.ver.id/token/grant',
+      },
+    ],
   },
 };
 
