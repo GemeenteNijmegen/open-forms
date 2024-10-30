@@ -13,12 +13,12 @@ Omdat het BSN dat open-forms kent (dit is het attribuut `{{auth_bsn}}`) alleen u
 
 **Tl;dr** Open forms haalt het jwt token op via de chacing service en gebruikt de service om prefill van velden uit het token te doen. De key die hiervoor wordt gebruikt is de subject claim in het BSN.
 
-| OIDC Koppeling Open Forms | Gebruikt voor                | Configuratie                                           |
-| ------------------------- | ---------------------------- | ------------------------------------------------------ |
-| DigiD                     | BSN (Signicat)               | [Configuratie](./img/oidc-configs/digid.png)           |
-| DigiD Machtigen           | Privaatrechtelijk (VerID)    | [Configuratie](./img/oidc-configs/digid-machtigen.png) |
-| Eherkenning               | Privaatrechtelijk (Signicat) | TODO                                                   |
-| EHerkenning machtigen     | Niet gebruikt                |                                                        |
+| OIDC Koppeling Open Forms | Gebruikt voor                | Configuratie                                           | Formulier |
+| ------------------------- | ---------------------------- | ------------------------------------------------------ | --------- |
+| DigiD                     | BSN (Signicat)               | [Configuratie](./img/oidc-configs/digid.png)           |           |
+| DigiD Machtigen           | Privaatrechtelijk (VerID)    | [Configuratie](./img/oidc-configs/digid-machtigen.png) |           |
+| Eherkenning               | Privaatrechtelijk (Signicat) | TODO                                                   |           |
+| EHerkenning machtigen     | Niet gebruikt                |                                                        |           |
 
 VerID connectie met BSN is niet mogelijk omdat de `nin` claim (waar het BSN in moet zitten volgens OIDC) bestaat uit een object. Dit object kunnen we in OpenForms niet benaderen. Bijvoorbeeld: 
 ```json

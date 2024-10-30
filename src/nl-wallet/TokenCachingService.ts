@@ -1,4 +1,4 @@
-import { RemovalPolicy } from 'aws-cdk-lib';
+import { Duration, RemovalPolicy } from 'aws-cdk-lib';
 import { LambdaIntegration, Resource } from 'aws-cdk-lib/aws-apigateway';
 import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { Key } from 'aws-cdk-lib/aws-kms';
@@ -36,6 +36,7 @@ export class TokenCacheService extends Construct {
 
     const tokenFunction = new TokenFunction(this, 'token', {
       description: 'Passthrough to token endpoint and cache results',
+      timeout: Duration.seconds(5),
       environment: {
         TABLE_NAME: table.tableName,
         DEBUG: props.debug ? 'true' : 'false',
@@ -45,6 +46,7 @@ export class TokenCacheService extends Construct {
 
     const prefillFunction = new PrefillFunction(this, 'prefill', {
       description: 'Request specific claims from the and cache results',
+      timeout: Duration.seconds(5),
       environment: {
         TABLE_NAME: table.tableName,
         API_KEY_ARN: apiKey.secretArn,
