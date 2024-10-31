@@ -13,9 +13,32 @@ Omdat het BSN dat open-forms kent (dit is het attribuut `{{auth_bsn}}`) alleen u
 
 **Tl;dr** Open forms haalt het jwt token op via de chacing service en gebruikt de service om prefill van velden uit het token te doen. De key die hiervoor wordt gebruikt is de subject claim in het BSN.
 
+| OIDC Koppeling        | Gebruikt voor   | Configuratie                                           | Formulier                                                        |
+| --------------------- | --------------- | ------------------------------------------------------ | ---------------------------------------------------------------- |
+| DigiD                 | BSN (Signicat)  | [Configuratie](./img/oidc-configs/digid.png)           | [hier](https://alb.sandbox-01.csp-nijmegen.nl/boomspiegel)       |
+| DigiD Machtigen       | Privaat (VerID) | [Configuratie](./img/oidc-configs/digid-machtigen.png) | [hier](https://alb.sandbox-01.csp-nijmegen.nl/boomspiegel-verid) |
+| Eherkenning           | Niet gebruikt   | n/a                                                    |                                                                  |
+| EHerkenning machtigen | Niet gebruikt   | n/a                                                    |                                                                  |
+
+VerID connectie met BSN is niet mogelijk omdat de `nin` claim (waar het BSN in moet zitten volgens OIDC) bestaat uit een object. Dit object kunnen we in OpenForms niet benaderen. Bijvoorbeeld: 
+```json
+{
+  "nin": {
+    "identifier": "999999333",
+    "type": "NL_BSN",
+  }
+}
+```
+
 
 ## Confiugratie aan open formulieren kant
-### Deel 1: De service configureren
+### Deel 1: De OIDC configuratie
+- De OIDC configuratie vind je in de tabel bovenaan deze pagina
+
+### Deel 2: De gegevens gebruiken in een formulier
+**Publiekrechtelijk**: We hebben een BSN, deze zit in de `{{auth_bsn}}` variabele. De BRP haal centraal prefill plugin kan gebruikt worden om BRP prefill te doen.
+
+**Privaatrechtelijk**: 
 - Maak een nieuwe service aan en voeg het domein en de API key toe, zie screenshot hieronder
 ![Prefill service config](./img/prefill-servcice-config.png)
 
@@ -24,9 +47,6 @@ Omdat het BSN dat open-forms kent (dit is het attribuut `{{auth_bsn}}`) alleen u
 ![Prefill form detail](./img/prefill-form-details.png)
 ![Prefill form variables](./img/prefill-form-variables.png)
 
-### Deel 2: De OIDC configuratie
-- De OIDC configuratie ziet er dan zo uit
-![OIDC configuratie](./img/oidc-config.png)
 
 ## Implementatie token caching service
 ![Token cache service](./img/cache-service-impl.drawio.png)
