@@ -1,6 +1,36 @@
 # NL Wallet beproeving
 Om de NL Wallet (omsloten via Signicat en VerID) te beproeven maken we gebruik van open forms (SaaS) met wat extra lambdas/maatwerk (deze directory van de repo).
 
+## Wat hebben we nodig voor de beproeving
+Voor de beproeving testen we twee dingen met VerID en Signicat.
+1. Inloggen op Mijn-nijmegen
+2. Een privaatrechtelijk formulier met OpenForms
+
+### Inloggen op Mijn Nijmegen
+Feature flags:
+- In login & auth lambda
+- Flag is set in configuration of project
+- Env variable is set in USE_NL_WALLET_VERID and USE_NL_WALLET_SIGNICAT
+
+Login opties tonen:
+- Dev: https://mijn.dev.nijmegen.nl/login?nlwallet=true
+- Accp: https://mijn.accp.nijmegen.nl/login?nlwallet=true
+- Prod: https://mijn.nijmegen.nl/login?nlwallet=true
+
+### Formulier in OpenForms
+Feature flag:
+- Configuratie is als het goed is afgerond (zowel aan Signicat als aan VerID kant als aan OpenFormulieren kant)
+- Formulier op active zetten (in openforms console) zorgt er voor dat het productie formulier bereikt kan worden.
+
+Formulier urls:
+- Acceptance:
+  - VerID: https://nijmegen.test.open-formulieren.nl/boomspiegel-verid
+  - Signicat: https://nijmegen.test.open-formulieren.nl/boomspiegel
+- Production:
+  - VerID: https://nijmegen.open-formulieren.nl/boomspiegel-verid
+  - Signicat: https://nijmegen.open-formulieren.nl/boomspiegel
+
+
 ## OpenIDConnect koppelingen
 Omdat open-formulieren niet direct OIDC koppelingen ondersteund wordt voor de beproeving de installatie misbruikt. 
 De inrichting is als voligt:
@@ -20,7 +50,9 @@ Omdat het BSN dat open-forms kent (dit is het attribuut `{{auth_bsn}}`) alleen u
 | Eherkenning           | Niet gebruikt   | n/a                                                    |                                                                  |
 | EHerkenning machtigen | Niet gebruikt   | n/a                                                    |                                                                  |
 
-VerID connectie met BSN is niet mogelijk omdat de `nin` claim (waar het BSN in moet zitten volgens OIDC) bestaat uit een object. Dit object kunnen we in OpenForms niet benaderen. Bijvoorbeeld: 
+
+**Dit is niet meer relevant voor de beproeving:**
+~~VerID connectie met BSN is niet mogelijk omdat de `nin` claim (waar het BSN in moet zitten volgens OIDC) bestaat uit een object. Dit object kunnen we in OpenForms niet benaderen. Bijvoorbeeld~~
 ```json
 {
   "nin": {
