@@ -34,7 +34,7 @@
   "devDependencies": {
     "@gemeentenijmegen/projen-project-type": "^1.8.1",
     "@types/jest": "^29.5.14",
-    "@types/node": "^22.8.7",
+    "@types/node": "^22.9.0",
     "@typescript-eslint/eslint-plugin": "^7",
     "@typescript-eslint/parser": "^7",
     "aws-cdk": "^2.1.0",
