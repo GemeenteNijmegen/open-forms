@@ -51,7 +51,7 @@
     "typescript": "^5.6.3"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.682.0",
+    "@aws-sdk/client-dynamodb": "^3.686.0",
     "@gemeentenijmegen/apigateway-http": "^0.0.16",
     "@gemeentenijmegen/aws-constructs": "^0.0.22",
     "@gemeentenijmegen/utils": "^0.0.18",
