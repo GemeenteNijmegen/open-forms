@@ -52,9 +52,9 @@
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.687.0",
-    "@gemeentenijmegen/apigateway-http": "^0.0.16",
-    "@gemeentenijmegen/aws-constructs": "^0.0.22",
-    "@gemeentenijmegen/utils": "^0.0.18",
+    "@gemeentenijmegen/apigateway-http": "^0.0.17",
+    "@gemeentenijmegen/aws-constructs": "^0.0.23",
+    "@gemeentenijmegen/utils": "^0.0.19",
     "@types/aws-lambda": "^8.10.145",
     "aws-cdk-lib": "^2.1.0",
     "constructs": "^10.0.5",
