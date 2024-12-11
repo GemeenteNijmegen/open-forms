@@ -52,10 +52,10 @@
     "typescript": "^5.7.2"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.705.0",
-    "@gemeentenijmegen/apigateway-http": "^0.0.18",
-    "@gemeentenijmegen/aws-constructs": "^0.0.24",
-    "@gemeentenijmegen/utils": "^0.0.20",
+    "@aws-sdk/client-dynamodb": "^3.709.0",
+    "@gemeentenijmegen/apigateway-http": "^0.0.19",
+    "@gemeentenijmegen/aws-constructs": "^0.0.25",
+    "@gemeentenijmegen/utils": "^0.0.21",
     "@types/aws-lambda": "^8.10.146",
     "aws-cdk-lib": "^2.1.0",
     "constructs": "^10.0.5",
