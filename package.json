@@ -55,7 +55,7 @@
     "@aws-sdk/client-dynamodb": "^3.709.0",
     "@gemeentenijmegen/apigateway-http": "^0.0.19",
     "@gemeentenijmegen/aws-constructs": "^0.0.25",
-    "@gemeentenijmegen/utils": "^0.0.21",
+    "@gemeentenijmegen/utils": "^0.0.22",
     "@types/aws-lambda": "^8.10.146",
     "aws-cdk-lib": "^2.1.0",
     "constructs": "^10.0.5",
