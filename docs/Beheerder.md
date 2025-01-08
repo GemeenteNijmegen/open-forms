@@ -5,6 +5,7 @@ Hieronder een lijstje met skills en/of taken die wij bij een OpenFormulieren beh
 - Een beheerder moet verstand hebben van identity wallets zoals Yivi omdat dit een login methode is die we ondersteunen. Hierbij hoort ook het nadenken over betouwbaarheid van data uit wallets (bijv. mogelijke verouderde gegevens).
 - Begrip van privacy, dataminimalisatie en beviliging.
 - Beheren van rollen en rechten binnen de OpenFormulieren applicatie (toegangsbeheer).
+- Bewijs verzamelen en opleveren voor de DigiD Audit.
 
 ## Doorontwikkeling
 - We verwachten dat een beheerder op de hoogte blijft van de laatste releases, deze kan testen en de organisatie kan ondersteunen deze ontwikkelingen in gebruik te nemen.
