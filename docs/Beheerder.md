@@ -24,3 +24,4 @@ Hieronder een lijstje met skills en/of taken die wij bij een OpenFormulieren beh
 - Begrijpen hoe formulieren worden ingediend en hoe de data in een formulier in achterliggende systemen terecht komt
 - Begrijpen hoe de logica in de OpenFormulieren applicatie gebruikt kan worden
 - Ondersteuning bieden in de organisatie bij technische vragen problemen met formulieren.
+- Toegangelijkheid van de applicatie kunnen waarborgen
