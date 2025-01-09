@@ -2,13 +2,13 @@
 Hieronder een lijstje met skills en/of taken die wij bij een OpenFormulieren beheerder zouden verwachten.
 
 ## Privacy, beveiliging
-- Een beheerder moet verstand hebben van identity wallets zoals Yivi omdat dit een login methode is die we ondersteunen. Hierbij hoort ook het nadenken over betouwbaarheid van data uit wallets (bijv. mogelijke verouderde gegevens).
-- Begrip van privacy, dataminimalisatie en beviliging.
+- Een beheerder moet verstand hebben van identity wallets zoals Yivi omdat dit een login methode is die we ondersteunen. Hierbij hoort ook het nadenken over betrouwbaarheid van data uit wallets (bijv. mogelijke verouderde gegevens).
+- Begrip van privacy, dataminimalisatie en beveiliging.
 - Beheren van rollen en rechten binnen de OpenFormulieren applicatie (toegangsbeheer).
 - Bewijs verzamelen en opleveren voor de DigiD Audit.
 
 ## Doorontwikkeling
-- We verwachten dat een beheerder op de hoogte blijft van de laatste releases, deze kan testen en de organisatie kan ondersteunen deze ontwikkelingen in gebruik te nemen.
+- We verwachten dat een beheerder op de hoogte blijft van de laatste releases, deze kan testen, de impact voor techniek en organisatie kan bepalen en de organisatie kan ondersteunen deze ontwikkelingen in gebruik te nemen.
 - Een beheerder moet aanhaken in de community die aan het onstaan is waarin de roadmap wordt vastgesteld. Hier moeten onze belangen ook worden vertegenwoordigd.
 - Een beheerder moet functioneel en technisch mee kunnen praten over de nieuwe ontwikkelingen voor zowel het steunen van de doorontwikkeling als ontwikkelingen terug vertalen naar de impact op onze organisatie en processen.
 - Schakelen met levarancier over configuratie en techniek.
@@ -18,6 +18,7 @@ Hieronder een lijstje met skills en/of taken die wij bij een OpenFormulieren beh
 - Verstand van API beveiliging (bijv. Mtls, ZGW Authenticatie, API keys).
 - Een beheerder moet om kunnen gaan met een groot aantal integraties, zoals koppelingen met HaalCentraal BRP, KVK, BAG. Er zullen ook koppelingen zijn voor het afleveren van formulieren, prefillen van formulieren of dynamische formulieren.
 - Logging van de applicaties begrijpen en fouten kunnen monitoren en debuggen
+- er zal niet overal al duidelijke documentatie beschikbaar zijn; de beheerder moet hiermee om kunnen gaan.
 
 ## Formulieren
 - Begrijpen hoe formulieren worden gebouwd en de logic die hierbij gebruikt kan worden.
