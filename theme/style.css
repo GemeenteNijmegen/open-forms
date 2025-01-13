@@ -24,10 +24,15 @@
 
 
 /* This cannot be manged by tokens.. */
-.openforms-subtitle{
+.openforms-subtitle {
   font-family: "Oranda,sans-serif";
   font-feature-settings: "liga";
   text-rendering: optimizeLegibility;
   color: #a80a2d;
   font-size: 32px;
+}
+
+/* Our buttons are uppercase so transform all button text */
+.utrecht-button {
+  text-transform: uppercase;
 }
