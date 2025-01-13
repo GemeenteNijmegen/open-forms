@@ -1,0 +1,23 @@
+
+
+@font-face {
+  font-display: swap;
+  font-family: 'Oranda';
+  font-style: normal;
+  /* font-weight: $font-weight-bold; */
+  src:
+  local(Oranda BT Bold),
+  url('https://componenten.nijmegen.nl/v6.4.0/oranda_bold_bt.04c85cb2.woff2') format('woff2'),
+  url('https://componenten.nijmegen.nl/v6.4.0/oranda_bold_bt.8e266873.woff') format('woff');
+}
+
+@font-face {
+  font-display: swap;
+  font-family: 'Oranda';
+  font-style: normal;
+  /* font-weight: $font-weight-normal; */
+  src:
+  local(Oranda BT Roman),
+  url('https://componenten.nijmegen.nl/v6.4.0/oranda_bt.bde3d05f.woff2') format('woff2'),
+  url('https://componenten.nijmegen.nl/v6.4.0/oranda_bt.05235f9a.woff') format('woff');
+}
