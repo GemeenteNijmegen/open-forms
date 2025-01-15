@@ -1,5 +1,6 @@
 # Profiel OpenFormulieren beheer
 Hieronder een lijstje met skills en/of taken die wij bij een OpenFormulieren beheerder zouden verwachten.
+Gezien de skills/vewachten schatten wij in dat dit iemand is met HBO/WO nieveau.
 
 ## Privacy, beveiliging
 - Een beheerder moet verstand hebben van identity wallets zoals Yivi omdat dit een login methode is die we ondersteunen. Hierbij hoort ook het nadenken over betrouwbaarheid van data uit wallets (bijv. mogelijke verouderde gegevens).
