@@ -20,8 +20,11 @@ Nu onder andere in gebruik voor:
 In de open formulieren interface kan een organization configuration gevonden worden onder general configuration.
 Hier kan een favicon, default theme, OIN etc. geconfigureerd worden.
 
+Logo:
 ![Logo](https://componenten.nijmegen.nl/v6.4.0/img/beeldmerklabel.svg)
 
+Facicon:
+![Favicon](https://www.nijmegen.nl/typo3conf/ext/nijmegen_sitepackage/Resources/Public/Images/Icons/favicon.ico)
 
 ## CSP
 Omdat we resources van https://componenten.nijmegen.nl laaden moet deze toegevoegd worden aan de CSP.
