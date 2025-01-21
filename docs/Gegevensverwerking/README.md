@@ -85,6 +85,11 @@ Wat wij als organisatie doen:
   - Kans: groot - Het gebeurt regelmatig dat systemen van de organisatie te traag antwoorden of niet bereikbaar zijn (bijv. in een service weekend).
   - Impact: klein - OpenFormulieren houd de gegevens vast en zal later proberen deze gegevens opnieuw af te leveren. <!-- TODO hier monitoring op inrichten? https://formulier.accp.nijmegen.nl/api/v2/docs/#tag/submissions/operation/submissions__suspend_create -->
 
+- Bijlagen bevatten virussen
+  - Kans: groot
+  - Impact: groot
+  - Maatregelen: Bijlagen worden gescand op virussen en zo nodig verwijderd door OpenFormuliern.
+
 <!--
 ###	Maatregelen
 Het gaat hier om maatregelen om de gevolgen te voorkomen of de effecten van die risico’s te mitigeren, die nog niet genomen zijn. Beschrijf ook de impact van deze maatregelen, op het doel van de gegevensverwerking en de kosten van deze maatregelen.
