@@ -92,6 +92,10 @@
       "type": "runtime"
     },
     {
+      "name": "@gemeentenijmegen/design-tokens",
+      "type": "runtime"
+    },
+    {
       "name": "@gemeentenijmegen/utils",
       "type": "runtime"
     },

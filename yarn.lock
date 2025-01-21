@@ -1289,6 +1289,11 @@
   resolved "https://registry.yarnpkg.com/@gemeentenijmegen/aws-constructs/-/aws-constructs-0.0.29.tgz#85a0bffc299f0d2958da6dcbb33eb4a631ea19c0"
   integrity sha512-fPM7gTsd91Pmt8zTq0yCJ80h5CLxfXGmvFl3NrNS2AytolHXCqlakMW810eIsGjlklcjsQKVkyMN0y9OP5iyxw==
 
+"@gemeentenijmegen/design-tokens@^0.0.2-alpha.0":
+  version "0.0.2-alpha.1"
+  resolved "https://registry.yarnpkg.com/@gemeentenijmegen/design-tokens/-/design-tokens-0.0.2-alpha.1.tgz#a7033084f7fd7dbd0c141ef2b506403f0ee4e5b7"
+  integrity sha512-GcM/zUqzGXLJUD/LJJl8i9e6wCHWfBFQCzSSAZmCR6a8GsOOkWDb9SanKkqbyCM+GCtpOGNRunKKhuoSTjVnCg==
+
 "@gemeentenijmegen/projen-project-type@^1.8.5":
   version "1.8.5"
   resolved "https://registry.yarnpkg.com/@gemeentenijmegen/projen-project-type/-/projen-project-type-1.8.5.tgz#5e7a9829745a0a74728c9574bf1cd14b4c105519"
