@@ -71,7 +71,7 @@ Wat wij als organisatie doen:
 
 - Tijdelijk niet beschikbaar zijn van de applicatie (< 4 uur)
   - Kans: klein - Er zijn afspraken met de leverancier in de vorm van een SLA
-  - Impact: klein - Inwoners kunnen geen digitale aanvragen indienen bij de gemeente
+  - Impact: groot - Inwoners kunnen geen digitale aanvragen indienen bij de gemeente
 
 - Langer niet beschijkbaar zijn van de applicatie (> 4 uur)
   - Kans: klein - Er zijn afspraken met de leverancier in de vorm van een SLA
