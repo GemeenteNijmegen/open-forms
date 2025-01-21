@@ -19,6 +19,7 @@ Een aantal gegevens van de huidige formulieren applicatie (de voorganger van Ope
 | ------------------------------------ | ------ |
 | Gemiddeld aantal aanvragen per week* | 750    |
 | Formulieren in productie             | 118    |
+
 \* berekend over de afgelopen 3 maanden (jan 2025)
 
 
