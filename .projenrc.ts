@@ -8,6 +8,7 @@ const project = new GemeenteNijmegenCdkApp({
   deps: [
     'dotenv',
     '@gemeentenijmegen/aws-constructs',
+    '@gemeentenijmegen/design-tokens',
     '@gemeentenijmegen/apigateway-http',
     '@gemeentenijmegen/utils',
     'jose',
