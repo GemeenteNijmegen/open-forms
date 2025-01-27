@@ -35,7 +35,7 @@
     "@gemeentenijmegen/projen-project-type": "^1.8.5",
     "@stylistic/eslint-plugin": "^2",
     "@types/jest": "^29.5.14",
-    "@types/node": "^22.10.7",
+    "@types/node": "^22.10.10",
     "@typescript-eslint/eslint-plugin": "^8",
     "@typescript-eslint/parser": "^8",
     "aws-cdk": "^2",
@@ -52,10 +52,10 @@
     "typescript": "^5.7.3"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.731.1",
+    "@aws-sdk/client-dynamodb": "^3.734.0",
     "@gemeentenijmegen/apigateway-http": "^0.0.20",
     "@gemeentenijmegen/aws-constructs": "^0.0.29",
-    "@gemeentenijmegen/design-tokens": "^0.0.2-alpha.0",
+    "@gemeentenijmegen/design-tokens": "^0.0.2-alpha.1",
     "@gemeentenijmegen/utils": "^0.0.23",
     "@types/aws-lambda": "^8.10.147",
     "aws-cdk-lib": "^2.1.0",
