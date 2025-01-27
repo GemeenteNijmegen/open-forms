@@ -25,8 +25,8 @@
 
 /* This cannot be manged by tokens.. */
 .openforms-subtitle {
-  font-family: "Oranda,sans-serif";
-  font-feature-settings: "liga";
+  font-family: Oranda,sans-serif !important;
+  font-feature-settings: liga;
   text-rendering: optimizeLegibility;
   color: #a80a2d;
   font-size: 32px;
@@ -35,4 +35,30 @@
 /* Our buttons are uppercase so transform all button text */
 .utrecht-button {
   text-transform: uppercase;
+}
+
+.utrecht-page-header {
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,.16),0 2px 10px 0 rgba(0,0,0,.12);
+}
+
+/* Make sure that in the big view:
+ *   - the process indicator is rounded
+ *   - the content does not overlap the shadow 
+ */
+@media (min-width: 767px) {
+  .utrecht-page-header {
+    margin-bottom: 10px;
+  }
+  .openforms-progress-indicator {
+    border-radius: 0.5rem;
+  }
+}
+
+/* Hovering links that are not part of the formio interface results in a blue highlight. This prevents that */
+.openforms-formio-content a:hover {
+  color: #157c68;
+}
+
+.utrecht-button--secondary-action {
+  border: 2px solid !important; /* I cannot do this with the design tokens... */
 }
