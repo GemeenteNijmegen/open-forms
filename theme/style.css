@@ -62,3 +62,42 @@
 .utrecht-button--secondary-action {
   border: 2px solid !important; /* I cannot do this with the design tokens... */
 }
+
+
+/*
+ * Yivi login hack for BSN (DigiD OIDC)
+ */
+ .openforms-login-button > .utrecht-button-link[href*="digid_oidc"]::after {
+  content: 'Inloggen met Yivi als persoon';
+  text-indent: 0;
+  display: block;
+  line-height: initial;
+}
+.openforms-login-button > .utrecht-button-link[href*="digid_oidc"] {
+  text-indent: -9999px !important;
+  line-height: 0 !important;
+}
+.openforms-login-button > .utrecht-button-link[href*="digid_oidc"] + .openforms-login-button-logo > img {
+  content:url("https://mijn.nijmegen.nl/static/images/yivi.svg");
+  height: 46px;
+  width: 46px;
+}
+
+/*
+ * Yivi login hack for KVK (eHerkenning OIDC)
+ */
+.openforms-login-button > .utrecht-button-link[href*="eherkenning_oidc"]::after {
+  content: 'Inloggen met Yivi als ondernemer';
+  text-indent: 0;
+  display: block;
+  line-height: initial;
+}
+.openforms-login-button > .utrecht-button-link[href*="eherkenning_oidc"] {
+  text-indent: -9999px !important;
+  line-height: 0 !important;
+}
+.openforms-login-button > .utrecht-button-link[href*="eherkenning_oidc"] + .openforms-login-button-logo > img {
+  content:url("https://mijn.nijmegen.nl/static/images/yivi.svg");
+  height: 46px;
+  width: 46px;
+}
