@@ -51,6 +51,9 @@
         },
         {
           "spawn": "bundle:nl-wallet/token/token.lambda"
+        },
+        {
+          "spawn": "bundle:prefill-demo/handler.lambda"
         }
       ]
     },
@@ -87,6 +90,24 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/nl-wallet/token/token.lambda.ts --target=\"node20\" --platform=\"node\" --outfile=\"assets/nl-wallet/token/token.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
+        }
+      ]
+    },
+    "bundle:prefill-demo/handler.lambda": {
+      "name": "bundle:prefill-demo/handler.lambda",
+      "description": "Create a JavaScript bundle from src/prefill-demo/handler.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/prefill-demo/handler.lambda.ts --target=\"node20\" --platform=\"node\" --outfile=\"assets/prefill-demo/handler.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
+        }
+      ]
+    },
+    "bundle:prefill-demo/handler.lambda:watch": {
+      "name": "bundle:prefill-demo/handler.lambda:watch",
+      "description": "Continuously update the JavaScript bundle from src/prefill-demo/handler.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/prefill-demo/handler.lambda.ts --target=\"node20\" --platform=\"node\" --outfile=\"assets/prefill-demo/handler.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
         }
       ]
     },
