@@ -9,6 +9,7 @@ import { Construct } from 'constructs';
 import { Configurable } from './Configuration';
 import { PrefillDemo } from './prefill-demo/PrefillDemoConstruct';
 import { Statics } from './Statics';
+import { Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 
 interface MainStackProps extends StackProps, Configurable {}
 
@@ -62,9 +63,24 @@ export class MainStack extends Stack {
   }
 
   private setupKmsKey() {
-    return new Key(this, 'key', {
+    const key =  new Key(this, 'key', {
       description: 'For encrypting data related to open-forms',
     });
+
+    key.addToResourcePolicy(new PolicyStatement({
+      actions: [
+        "kms:Encrypt*",
+        "kms:Decrypt*",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*",
+        "kms:Describe*"
+      ],
+      effect: Effect.ALLOW,
+      resources: ["*"],
+      principals: [new ServicePrincipal(`logs.${Stack.of(this).region}.amazonaws.com`)]
+    }))
+
+    return key;
   }
 
 
