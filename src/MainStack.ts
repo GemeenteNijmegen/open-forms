@@ -7,33 +7,31 @@ import { ApiGatewayDomain } from 'aws-cdk-lib/aws-route53-targets';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 import { Configurable } from './Configuration';
-import { TokenCacheService } from './nl-wallet/TokenCachingService';
+import { PrefillDemo } from './prefill-demo/PrefillDemoConstruct';
 import { Statics } from './Statics';
 
-interface NlWalletStackProps extends StackProps, Configurable {}
+interface MainStackProps extends StackProps, Configurable {}
 
-export class NlWalletStack extends Stack {
+export class MainStack extends Stack {
 
   private readonly hostedzone: IHostedZone;
   private readonly api: RestApi;
   private readonly key: Key | undefined;
 
-  constructor(scope: Construct, id: string, props: NlWalletStackProps) {
+  constructor(scope: Construct, id: string, props: MainStackProps) {
     super(scope, id, props);
+
     this.key = this.setupKmsKey();
     this.hostedzone = this.importHostedzone();
     this.api = this.setupRestApi();
 
-    const tokenCache = this.api.root.addResource('token-cache');
-    for (const config of props.configuration.nlWalletConfiguration ?? []) {
-      const resource = tokenCache.addResource(config.pathName);
-      new TokenCacheService(this, config.cdkId, {
-        resource: resource,
-        key: this.key,
-        debug: config.debug,
-        tokenEndpoint: config.tokenEndpoint,
-      });
-    }
+    const prefillDemo = this.api.root.addResource('prefill-demo');
+
+    new PrefillDemo(this, 'prefill-demo', {
+      key: this.key,
+      resource: prefillDemo,
+    });
+
   }
 
   private setupRestApi() {
@@ -62,7 +60,7 @@ export class NlWalletStack extends Stack {
 
   private setupKmsKey() {
     return new Key(this, 'key', {
-      description: 'For encrypting data stored in NL Wallet token caching service',
+      description: 'For encrypting data related to open-forms',
     });
   }
 

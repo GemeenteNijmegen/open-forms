@@ -18,6 +18,7 @@
     "LICENSE",
     "src/nl-wallet/prefill/prefill-function.ts",
     "src/nl-wallet/token/token-function.ts",
+    "src/prefill-demo/handler-function.ts",
     "tsconfig.dev.json",
     "tsconfig.json"
   ],
