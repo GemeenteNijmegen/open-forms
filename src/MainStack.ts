@@ -1,6 +1,7 @@
 import { Stack, StackProps } from 'aws-cdk-lib';
 import { RestApi, SecurityPolicy } from 'aws-cdk-lib/aws-apigateway';
 import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager';
+import { Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { ARecord, HostedZone, IHostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { ApiGatewayDomain } from 'aws-cdk-lib/aws-route53-targets';
@@ -9,7 +10,6 @@ import { Construct } from 'constructs';
 import { Configurable } from './Configuration';
 import { PrefillDemo } from './prefill-demo/PrefillDemoConstruct';
 import { Statics } from './Statics';
-import { Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 
 interface MainStackProps extends StackProps, Configurable {}
 
@@ -63,22 +63,22 @@ export class MainStack extends Stack {
   }
 
   private setupKmsKey() {
-    const key =  new Key(this, 'key', {
+    const key = new Key(this, 'key', {
       description: 'For encrypting data related to open-forms',
     });
 
     key.addToResourcePolicy(new PolicyStatement({
       actions: [
-        "kms:Encrypt*",
-        "kms:Decrypt*",
-        "kms:ReEncrypt*",
-        "kms:GenerateDataKey*",
-        "kms:Describe*"
+        'kms:Encrypt*',
+        'kms:Decrypt*',
+        'kms:ReEncrypt*',
+        'kms:GenerateDataKey*',
+        'kms:Describe*',
       ],
       effect: Effect.ALLOW,
-      resources: ["*"],
-      principals: [new ServicePrincipal(`logs.${Stack.of(this).region}.amazonaws.com`)]
-    }))
+      resources: ['*'],
+      principals: [new ServicePrincipal(`logs.${Stack.of(this).region}.amazonaws.com`)],
+    }));
 
     return key;
   }
