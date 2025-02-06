@@ -35,7 +35,6 @@ export interface Configuration {
 }
 
 
-
 const EnvironmentConfigurations: {[key:string]: Configuration} = {
   acceptance: {
     branch: 'acceptance',

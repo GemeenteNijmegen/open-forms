@@ -1,10 +1,10 @@
 import { Duration } from 'aws-cdk-lib';
 import { LambdaIntegration, Resource } from 'aws-cdk-lib/aws-apigateway';
 import { Key } from 'aws-cdk-lib/aws-kms';
+import { LogGroup } from 'aws-cdk-lib/aws-logs';
 import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
 import { Construct } from 'constructs';
 import { HandlerFunction } from './handler-function';
-import { LogGroup } from 'aws-cdk-lib/aws-logs';
 
 interface prefillDemoProps {
   resource: Resource;

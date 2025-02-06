@@ -7,8 +7,8 @@ import { ApiGatewayDomain } from 'aws-cdk-lib/aws-route53-targets';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 import { Configurable } from './Configuration';
-import { Statics } from './Statics';
 import { PrefillDemo } from './prefill-demo/PrefillDemoConstruct';
+import { Statics } from './Statics';
 
 interface MainStackProps extends StackProps, Configurable {}
 
@@ -21,12 +21,15 @@ export class MainStack extends Stack {
   constructor(scope: Construct, id: string, props: MainStackProps) {
     super(scope, id, props);
 
+    // Main encryption key for this project
     this.key = this.setupKmsKey();
+
+    // Hosted zone and api-gateway
     this.hostedzone = this.importHostedzone();
     this.api = this.setupRestApi();
 
+    // Setup a dummy prefill lambda for testing purposes
     const prefillDemo = this.api.root.addResource('prefill-demo');
-
     new PrefillDemo(this, 'prefill-demo', {
       key: this.key,
       resource: prefillDemo,
