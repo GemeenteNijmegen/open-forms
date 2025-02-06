@@ -1,6 +1,7 @@
 import { Stack, StackProps } from 'aws-cdk-lib';
 import { RestApi, SecurityPolicy } from 'aws-cdk-lib/aws-apigateway';
 import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager';
+import { Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { ARecord, HostedZone, IHostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { ApiGatewayDomain } from 'aws-cdk-lib/aws-route53-targets';
@@ -21,12 +22,15 @@ export class MainStack extends Stack {
   constructor(scope: Construct, id: string, props: MainStackProps) {
     super(scope, id, props);
 
+    // Main encryption key for this project
     this.key = this.setupKmsKey();
+
+    // Hosted zone and api-gateway
     this.hostedzone = this.importHostedzone();
     this.api = this.setupRestApi();
 
+    // Setup a dummy prefill lambda for testing purposes
     const prefillDemo = this.api.root.addResource('prefill-demo');
-
     new PrefillDemo(this, 'prefill-demo', {
       key: this.key,
       resource: prefillDemo,
@@ -59,9 +63,24 @@ export class MainStack extends Stack {
   }
 
   private setupKmsKey() {
-    return new Key(this, 'key', {
+    const key = new Key(this, 'key', {
       description: 'For encrypting data related to open-forms',
     });
+
+    key.addToResourcePolicy(new PolicyStatement({
+      actions: [
+        'kms:Encrypt*',
+        'kms:Decrypt*',
+        'kms:ReEncrypt*',
+        'kms:GenerateDataKey*',
+        'kms:Describe*',
+      ],
+      effect: Effect.ALLOW,
+      resources: ['*'],
+      principals: [new ServicePrincipal(`logs.${Stack.of(this).region}.amazonaws.com`)],
+    }));
+
+    return key;
   }
 
 
