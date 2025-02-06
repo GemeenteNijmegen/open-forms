@@ -7,8 +7,8 @@ import { ApiGatewayDomain } from 'aws-cdk-lib/aws-route53-targets';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 import { Configurable } from './Configuration';
-import { Statics } from './Statics';
 import { PrefillDemo } from './prefill-demo/PrefillDemoConstruct';
+import { Statics } from './Statics';
 
 interface MainStackProps extends StackProps, Configurable {}
 
