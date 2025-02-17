@@ -42,9 +42,22 @@ Zodra de afdeling akoord is kan het formulier live worden gezet. Dit betekent:
 
 
 ## Logica inrichten
-Dit stuk beschrijft welke input we hiervoor hebben en wat er aan acties uitgevoerd moet worden.
+Om wat meer inzicht te bieden in wat het inhoud om het formulier openieuw van logica te voorzien hier wat uitleg over wat de input is en hoe configuratie in zijn werk gaat.
 
-![Formulier logica omzetten](./img/logic.drawio.png)
+Inputs:
+- Templates van formulieren (ontwerpen zijn bijgehouden als het goed is bij elke wijziging)
+- Export van logica regels uit de oude formulieren (bij product van conversie tool)
+
+Vervolgens zijn er een aantal dingen om rekening me te houden bij het configureren:
+- Dynamische formulieren (logica regels)
+- Opzetten registratie
+
+Op elk item wordt hieronder los ingegaan.
+Daarnaast is er documentatie te vinden over hoe de formulier configuratie werkt: https://open-forms.readthedocs.io/en/stable/manual/forms/index.html
+
+### Templates van formulieren
+We hebben van alle formulieren templates waarin beschreven staat welke logica er in elk formulier zit. Deze kunnen als input gebruikt worden in het ombouwen van de formulieren. Zie het screenshot hieronder.
+![Form template](./img/template.png)
 
 ### Input van oude formulieren
 Een bijproduct van de conversie tool is een overzicht van de logica. Hieronder is een voorbeeld opgenomen hoe dat er uit ziet:
@@ -58,10 +71,8 @@ naamAmbulantBegeleider as custom conditional: "show = false;\n\nvar a = data.aan
 sportUwKindBijEenSporvereniging has conditional: {"show":true,"conjunction":"all","conditions":[{"component":"ikMeldAan","operator":"isEqual","value":"b"}]}
 ```
 
-### Templates van formulieren
-We hebben van alle formulieren templates waarin beschreven staat welke logica er in elk formulier zit. Deze kunnen als input gebruikt worden in het ombouwen van de formulieren. Zie het screenshot hieronder.
-![Form template](./img/template.png)
-
+### Dynamische formulieren (logica regels)
+Er is hier uitleg te vinden over dynamische formulieren (e.g. configureren van de logica regels): https://open-forms.readthedocs.io/en/stable/manual/forms/logic.html
 
 ### Opzetten registratie
 Het opzetten van de registratie kan ook een onderdeel van stap 2 in het process zijn. Hierin moet geconfigureerd worden hoe een formulier door wordt gestuurd na het invullen. Als we hiervoor een heldere configuratie bieden moet iedereen dit kunnen configurereren.
