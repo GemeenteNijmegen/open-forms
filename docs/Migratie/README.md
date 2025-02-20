@@ -1,5 +1,9 @@
 # Migratie
 
+Dit document bevat informatie over het migratie process en de stappen hierin.
+
+Meer informatie is te vinden:
+- [Documentatie mbt tot de registratie mogelijkheden](./Registratie.md)
 
 ## Migratie tool
 De migratie tool kan je [hier vinden](https://github.com/GemeenteNijmegen/formio-converter).
