@@ -1,4 +1,4 @@
-import { APIGatewayProxyEvent } from "aws-lambda";
+import { APIGatewayProxyEvent } from 'aws-lambda';
 
 interface Application {
   url: string;
@@ -19,12 +19,10 @@ export async function handler(event: APIGatewayProxyEvent) {
     {
       url: 'https://app6-accp.nijmegen.nl/form/submission/postsale/<PARAMVAR>',
       includeParams: false,
-    }
+    },
   ];
 
-  const promises = applications.map(application => {
-    callApplication(event, application);
-  });
+  const promises = applications.map(application => callApplication(event, application));
   await Promise.all(promises);
 
 }
@@ -40,12 +38,12 @@ async function callApplication(event: APIGatewayProxyEvent, application: Applica
   }
 
   if (event.headers) {
-    headers = event.headers as Record<string, string>
+    headers = event.headers as Record<string, string>;
   }
 
   let url = application.url;
   if (application.includeParams) {
-    url += `?${params.toString()}`
+    url += `?${params.toString()}`;
   }
   if (application.url.includes('<PARAMVAR>')) {
     url.replace('<PARAMVAR>', paramVar ?? 'notfound');
