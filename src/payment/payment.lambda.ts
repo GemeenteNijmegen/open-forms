@@ -51,6 +51,7 @@ async function callApplication(event: APIGatewayProxyEvent, application: Applica
     url.replace('<PARAMVAR>', paramVar ?? 'notfound');
   }
 
+  console.log('Forwarding to url:', url);
   return fetch(url, {
     method: 'POST',
     body: getBody(event),
