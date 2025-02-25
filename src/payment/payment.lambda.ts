@@ -1,11 +1,11 @@
-import { APIGatewayProxyEvent } from 'aws-lambda';
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 
 interface Application {
   url: string;
   includeParams: boolean;
 }
 
-export async function handler(event: APIGatewayProxyEvent) {
+export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   console.log(JSON.stringify(event, null, 4));
 
   // const targetUrlsString = process.env.TARGET_PAYMENT_URLS!;
@@ -22,14 +22,23 @@ export async function handler(event: APIGatewayProxyEvent) {
     },
   ];
 
-  const promises = applications.map(application => callApplication(event, application));
-  await Promise.all(promises);
+  try {
+    const promises = applications.map(application => callApplication(event, application));
+    await Promise.all(promises);
+  } catch (error) {
+    console.log(error);
+  }
+
+  return {
+    statusCode: 200,
+    body: '',
+  }
 
 }
 
 async function callApplication(event: APIGatewayProxyEvent, application: Application) {
 
-  const paramVar = event.queryStringParameters?.paramvar;
+  const paramVar = event.pathParameters?.paramvar;
   let params = new URLSearchParams();
   let headers = {};
 
@@ -45,9 +54,8 @@ async function callApplication(event: APIGatewayProxyEvent, application: Applica
   if (application.includeParams) {
     url += `?${params.toString()}`;
   }
-  if (application.url.includes('<PARAMVAR>')) {
-    url.replace('<PARAMVAR>', paramVar ?? 'notfound');
-  }
+  url = url.replace('<PARAMVAR>', paramVar ?? 'notfound');
+
 
   console.log('Forwarding to url:', url);
   return fetch(url, {
