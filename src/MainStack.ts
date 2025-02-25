@@ -1,5 +1,5 @@
 import { Stack, StackProps } from 'aws-cdk-lib';
-import { RestApi, SecurityPolicy } from 'aws-cdk-lib/aws-apigateway';
+import { LambdaIntegration, RestApi, SecurityPolicy } from 'aws-cdk-lib/aws-apigateway';
 import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager';
 import { Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { Key } from 'aws-cdk-lib/aws-kms';
@@ -8,10 +8,11 @@ import { ApiGatewayDomain } from 'aws-cdk-lib/aws-route53-targets';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 import { Configurable } from './Configuration';
+import { PaymentFunction } from './payment/payment-function';
 import { PrefillDemo } from './prefill-demo/PrefillDemoConstruct';
 import { Statics } from './Statics';
 
-interface MainStackProps extends StackProps, Configurable {}
+interface MainStackProps extends StackProps, Configurable { }
 
 export class MainStack extends Stack {
 
@@ -36,6 +37,13 @@ export class MainStack extends Stack {
       resource: prefillDemo,
     });
 
+    this.paymentForwarder();
+  }
+
+  private paymentForwarder() {
+    const paymentForwarderResource = this.api.root.addResource('payment-forwarder').addResource('{paramvar}');
+    const paymentForwarder = new PaymentFunction(this, 'payment-forwarder');
+    paymentForwarderResource.addMethod('POST', new LambdaIntegration(paymentForwarder));
   }
 
   private setupRestApi() {

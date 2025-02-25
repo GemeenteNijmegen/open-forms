@@ -53,6 +53,9 @@
           "spawn": "bundle:nl-wallet/token/token.lambda"
         },
         {
+          "spawn": "bundle:payment/payment.lambda"
+        },
+        {
           "spawn": "bundle:prefill-demo/handler.lambda"
         }
       ]
@@ -90,6 +93,24 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/nl-wallet/token/token.lambda.ts --target=\"node20\" --platform=\"node\" --outfile=\"assets/nl-wallet/token/token.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
+        }
+      ]
+    },
+    "bundle:payment/payment.lambda": {
+      "name": "bundle:payment/payment.lambda",
+      "description": "Create a JavaScript bundle from src/payment/payment.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/payment/payment.lambda.ts --target=\"node20\" --platform=\"node\" --outfile=\"assets/payment/payment.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
+        }
+      ]
+    },
+    "bundle:payment/payment.lambda:watch": {
+      "name": "bundle:payment/payment.lambda:watch",
+      "description": "Continuously update the JavaScript bundle from src/payment/payment.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/payment/payment.lambda.ts --target=\"node20\" --platform=\"node\" --outfile=\"assets/payment/payment.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
         }
       ]
     },

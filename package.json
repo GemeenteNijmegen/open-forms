@@ -8,6 +8,8 @@
     "bundle:nl-wallet/prefill/prefill.lambda:watch": "npx projen bundle:nl-wallet/prefill/prefill.lambda:watch",
     "bundle:nl-wallet/token/token.lambda": "npx projen bundle:nl-wallet/token/token.lambda",
     "bundle:nl-wallet/token/token.lambda:watch": "npx projen bundle:nl-wallet/token/token.lambda:watch",
+    "bundle:payment/payment.lambda": "npx projen bundle:payment/payment.lambda",
+    "bundle:payment/payment.lambda:watch": "npx projen bundle:payment/payment.lambda:watch",
     "bundle:prefill-demo/handler.lambda": "npx projen bundle:prefill-demo/handler.lambda",
     "bundle:prefill-demo/handler.lambda:watch": "npx projen bundle:prefill-demo/handler.lambda:watch",
     "clobber": "npx projen clobber",
