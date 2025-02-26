@@ -60,7 +60,6 @@ junit.xml
 .parcel-cache/
 !/src/nl-wallet/prefill/prefill-function.ts
 !/src/nl-wallet/token/token-function.ts
-!/src/payment/payment-function.ts
 !/src/prefill-demo/handler-function.ts
 !/.github/workflows/emergency.yml
 !/.github/workflows/auto-merge.yml

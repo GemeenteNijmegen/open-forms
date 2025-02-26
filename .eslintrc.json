@@ -151,7 +151,6 @@
           "**/build-tools/**",
           "src/nl-wallet/prefill/prefill.lambda.ts",
           "src/nl-wallet/token/token.lambda.ts",
-          "src/payment/payment.lambda.ts",
           "src/prefill-demo/handler.lambda.ts",
           ".projenrc.ts",
           "projenrc/**/*.ts"

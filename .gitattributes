@@ -22,7 +22,6 @@
 /package.json linguist-generated
 /src/nl-wallet/prefill/prefill-function.ts linguist-generated
 /src/nl-wallet/token/token-function.ts linguist-generated
-/src/payment/payment-function.ts linguist-generated
 /src/prefill-demo/handler-function.ts linguist-generated
 /tsconfig.dev.json linguist-generated
 /tsconfig.json linguist-generated
