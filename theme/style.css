@@ -3,7 +3,7 @@
  * Generated on Wed, 12 Feb 2025 10:35:15 GMT
  */
 
- body {
+body {
   --todo-accordion-border-radius: 0px;
   --todo-accordion-section-border-block-end-width: 1px;
   --todo-accordion-section-border-color: #A3A3A3;
@@ -944,15 +944,16 @@ body {
   --of-utrecht-form-field-background-color: #ffffff;
   --of-utrecht-form-field-checkbox-background-color: #FFFFFF;
 }
+
 @font-face {
   font-display: swap;
   font-family: 'Oranda';
   font-style: normal;
   /* font-weight: $font-weight-bold; */
   src:
-  local(Oranda BT Bold),
-  url('https://componenten.nijmegen.nl/v6.4.0/oranda_bold_bt.04c85cb2.woff2') format('woff2'),
-  url('https://componenten.nijmegen.nl/v6.4.0/oranda_bold_bt.8e266873.woff') format('woff');
+    local(Oranda BT Bold),
+    url('https://componenten.nijmegen.nl/v6.4.0/oranda_bold_bt.04c85cb2.woff2') format('woff2'),
+    url('https://componenten.nijmegen.nl/v6.4.0/oranda_bold_bt.8e266873.woff') format('woff');
 }
 
 @font-face {
@@ -961,15 +962,15 @@ body {
   font-style: normal;
   /* font-weight: $font-weight-normal; */
   src:
-  local(Oranda BT Roman),
-  url('https://componenten.nijmegen.nl/v6.4.0/oranda_bt.bde3d05f.woff2') format('woff2'),
-  url('https://componenten.nijmegen.nl/v6.4.0/oranda_bt.05235f9a.woff') format('woff');
+    local(Oranda BT Roman),
+    url('https://componenten.nijmegen.nl/v6.4.0/oranda_bt.bde3d05f.woff2') format('woff2'),
+    url('https://componenten.nijmegen.nl/v6.4.0/oranda_bt.05235f9a.woff') format('woff');
 }
 
 
 /* This cannot be manged by tokens.. */
 .openforms-subtitle {
-  font-family: Oranda,sans-serif !important;
+  font-family: Oranda, sans-serif !important;
   font-feature-settings: liga;
   text-rendering: optimizeLegibility;
   color: #a80a2d;
@@ -977,7 +978,7 @@ body {
 }
 
 .utrecht-page-header {
-  box-shadow: 0 2px 5px 0 rgba(0,0,0,.16),0 2px 10px 0 rgba(0,0,0,.12);
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .16), 0 2px 10px 0 rgba(0, 0, 0, .12);
 }
 
 /* Make sure that in the big view:
@@ -988,6 +989,7 @@ body {
   .utrecht-page-header {
     margin-bottom: 10px;
   }
+
   .openforms-progress-indicator {
     border-radius: 0.5rem;
   }
@@ -999,25 +1001,28 @@ body {
 }
 
 .utrecht-button--secondary-action {
-  border: 2px solid !important; /* I cannot do this with the design tokens... */
+  border: 2px solid !important;
+  /* I cannot do this with the design tokens... */
 }
 
 
 /*
  * Yivi login hack for BSN (DigiD OIDC)
  */
- .openforms-login-button > .utrecht-button-link[href*="digid_oidc"]::after {
+.openforms-login-button>.utrecht-button-link[href*="digid_oidc"]::after {
   content: 'Inloggen met Yivi als persoon';
   text-indent: 0;
   display: block;
   line-height: initial;
 }
-.openforms-login-button > .utrecht-button-link[href*="digid_oidc"] {
+
+.openforms-login-button>.utrecht-button-link[href*="digid_oidc"] {
   text-indent: -9999px !important;
   line-height: 0 !important;
 }
-.openforms-login-button > .utrecht-button-link[href*="digid_oidc"] + .openforms-login-button-logo > img {
-  content:url("https://mijn.nijmegen.nl/static/images/yivi.svg");
+
+.openforms-login-button>.utrecht-button-link[href*="digid_oidc"]+.openforms-login-button-logo>img {
+  content: url("https://mijn.nijmegen.nl/static/images/yivi.svg");
   height: 46px;
   width: 46px;
 }
@@ -1025,6 +1030,8 @@ body {
 /*
  * Yivi login hack for KVK (eHerkenning OIDC)
  */
+
+/* DISABLED AS WE DO NOT HAVE YIVI FOR KVK CONFIGURED YET this connection is currently used form eHerkenning
 .openforms-login-button > .utrecht-button-link[href*="eherkenning_oidc"]::after {
   content: 'Inloggen met Yivi als ondernemer';
   text-indent: 0;
@@ -1040,3 +1047,4 @@ body {
   height: 46px;
   width: 46px;
 }
+*/
