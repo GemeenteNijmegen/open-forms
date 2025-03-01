@@ -37,7 +37,7 @@
     "@gemeentenijmegen/projen-project-type": "^1.8.7",
     "@stylistic/eslint-plugin": "^2",
     "@types/jest": "^29.5.14",
-    "@types/node": "^22.13.5",
+    "@types/node": "^22.13.7",
     "@typescript-eslint/eslint-plugin": "^8",
     "@typescript-eslint/parser": "^8",
     "aws-cdk": "^2",
@@ -51,7 +51,7 @@
     "projen": "^0.91.13",
     "ts-jest": "^29.2.6",
     "ts-node": "^10.9.2",
-    "typescript": "^5.7.3"
+    "typescript": "^5.8.2"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.758.0",
