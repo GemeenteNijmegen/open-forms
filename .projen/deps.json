@@ -88,6 +88,10 @@
       "type": "runtime"
     },
     {
+      "name": "@aws-sdk/client-s3",
+      "type": "runtime"
+    },
+    {
       "name": "@gemeentenijmegen/apigateway-http",
       "type": "runtime"
     },
@@ -112,6 +116,10 @@
       "type": "runtime"
     },
     {
+      "name": "@types/jsonwebtoken",
+      "type": "runtime"
+    },
+    {
       "name": "aws-cdk-lib",
       "version": "^2.1.0",
       "type": "runtime"
@@ -127,6 +135,10 @@
     },
     {
       "name": "jose",
+      "type": "runtime"
+    },
+    {
+      "name": "jsonwebtoken",
       "type": "runtime"
     },
     {
