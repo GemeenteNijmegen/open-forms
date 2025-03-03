@@ -28,10 +28,13 @@ interface SubmissionForwarderOptions {
  */
 export class SubmissionForwarder extends Construct {
   private readonly apikey: Secret;
+  private readonly parameters?: { objectsApikey: Secret };
   constructor(scope: Construct, id: string, private readonly options: SubmissionForwarderOptions) {
     super(scope, id);
 
+    this.parameters = this.setupParameters();
     this.apikey = this.setupApiKeySecret();
+
     this.setupLambda();
   }
 
@@ -43,19 +46,36 @@ export class SubmissionForwarder extends Construct {
       },
     });
   }
+
+  private setupParameters() {
+    const objectsApikey = new Secret(this, 'objects-apikey', {
+      description: 'API key used by submission forwarder for authentication at Objects API',
+    });
+
+    return {
+      objectsApikey
+    }
+  }
+
   private setupLambda() {
     const logs = new LogGroup(this, 'logs', {
       encryptionKey: this.options.key,
       retention: RetentionDays.SIX_MONTHS,
     });
 
+    if (!this.parameters) {
+      throw Error('Parameters should be created first')
+    }
+
     const forwarder = new ForwarderFunction(this, 'forwarder', {
       logGroup: logs,
       environment: {
         API_KEY_ARN: this.apikey.secretArn,
         POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'DEBUG',
+        OBJECTS_API_APIKEY_ARN: this.parameters.objectsApikey.secretArn,
       },
     });
+    this.parameters.objectsApikey.grantRead(forwarder);
     this.apikey.grantRead(forwarder);
 
     this.options.key.grantEncryptDecrypt(forwarder);

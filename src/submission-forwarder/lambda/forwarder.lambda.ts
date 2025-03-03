@@ -1,7 +1,9 @@
 import { Logger } from '@aws-lambda-powertools/logger';
+import { AWS } from '@gemeentenijmegen/utils';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { authenticate } from './authenticate';
 import { Notification, NotificationSchema } from './Notification';
+import { ObjectsApiClient } from './ObjectsApiClient';
 
 const logger = new Logger();
 
@@ -13,18 +15,33 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
   const notification = getNotification(event);
   logger.debug('Parsed notification', { notification });
 
+  // Handle test notifications
   if (notification.kanaal == 'test') {
     logger.info('Test notificatie ontvangen');
     return response({ message: 'OK - test event' });
   }
 
-  // TODO Get the object from the object api
+  // Get the object from the object api
+  const objectClient = await getObjectsApiClient();
+  const object = objectClient.getObject(notification.resourceUrl);
+  logger.debug('Retreived object', { object });
+
 
   // TODO Collect de documents from the document API and forward those to the target S3 bucket
 
   // TODO Construct a nice SQS message to send to the ESB
 
   return response({ message: 'OK' });
+}
+
+let objectsApiClient: undefined | ObjectsApiClient = undefined;
+async function getObjectsApiClient() {
+  if (!objectsApiClient) {
+    objectsApiClient = new ObjectsApiClient({
+      apikey: await AWS.getSecret(process.env.OBJECTS_API_APIKEY_ARN!),
+    })
+  }
+  return objectsApiClient;
 }
 
 /**

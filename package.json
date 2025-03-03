@@ -61,6 +61,7 @@
     "@gemeentenijmegen/apigateway-http": "^0.0.22",
     "@gemeentenijmegen/aws-constructs": "^0.0.30",
     "@gemeentenijmegen/design-tokens": "^0.0.2-alpha.6",
+    "@gemeentenijmegen/modules-zgw-client": "^0.0.4",
     "@gemeentenijmegen/utils": "^0.0.25",
     "@types/aws-lambda": "^8.10.147",
     "aws-cdk-lib": "^2.1.0",
