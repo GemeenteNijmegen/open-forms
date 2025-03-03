@@ -67,8 +67,8 @@ export class MainStack extends Stack {
         {
           api: api,
           stage: api.deploymentStage,
-        }
-      ]
+        },
+      ],
     });
 
     const key = api.addApiKey('ApiKey', {
