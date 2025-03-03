@@ -39,7 +39,7 @@
     "@gemeentenijmegen/projen-project-type": "^1.8.7",
     "@stylistic/eslint-plugin": "^2",
     "@types/jest": "^29.5.14",
-    "@types/node": "^22.13.5",
+    "@types/node": "^22.13.8",
     "@typescript-eslint/eslint-plugin": "^8",
     "@typescript-eslint/parser": "^8",
     "aws-cdk": "^2",
@@ -53,14 +53,14 @@
     "projen": "^0.91.13",
     "ts-jest": "^29.2.6",
     "ts-node": "^10.9.2",
-    "typescript": "^5.7.3"
+    "typescript": "^5.8.2"
   },
   "dependencies": {
     "@aws-lambda-powertools/logger": "^2.15.0",
-    "@aws-sdk/client-dynamodb": "^3.751.0",
+    "@aws-sdk/client-dynamodb": "^3.758.0",
     "@gemeentenijmegen/apigateway-http": "^0.0.22",
     "@gemeentenijmegen/aws-constructs": "^0.0.30",
-    "@gemeentenijmegen/design-tokens": "^0.0.2-alpha.5",
+    "@gemeentenijmegen/design-tokens": "^0.0.2-alpha.6",
     "@gemeentenijmegen/utils": "^0.0.25",
     "@types/aws-lambda": "^8.10.147",
     "aws-cdk-lib": "^2.1.0",
