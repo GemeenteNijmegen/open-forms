@@ -63,6 +63,12 @@ export class MainStack extends Stack {
 
     const plan = api.addUsagePlan('UsagePlan', {
       description: 'OpenForms supporting infra API gateway',
+      apiStages: [
+        {
+          api: api,
+          stage: api.deploymentStage,
+        }
+      ]
     });
 
     const key = api.addApiKey('ApiKey', {
