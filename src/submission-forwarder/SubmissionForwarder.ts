@@ -15,6 +15,11 @@ interface SubmissionForwarderOptions {
    * KMS key used for encrypting the logs
    */
   key: IKey;
+  /**
+   * Log level
+   * @default DEBUG
+   */
+  logLevel: string;
 }
 
 /**
@@ -47,7 +52,8 @@ export class SubmissionForwarder extends Construct {
     const forwarder = new ForwarderFunction(this, 'forwarder', {
       logGroup: logs,
       environment: {
-        API_KEY_ARN: this.apikey.secretArn
+        API_KEY_ARN: this.apikey.secretArn,
+        POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'DEBUG',
       }
     });
     this.apikey.grantRead(forwarder);
