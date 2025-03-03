@@ -23,7 +23,7 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
   // Get the object from the object api
   const objectClient = await getObjectsApiClient();
-  const object = objectClient.getObject(notification.resourceUrl);
+  const object = await objectClient.getObject(notification.resourceUrl);
   logger.debug('Retreived object', { object });
 
 
@@ -37,9 +37,10 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
 let objectsApiClient: undefined | ObjectsApiClient = undefined;
 async function getObjectsApiClient() {
   if (!objectsApiClient) {
+    logger.info('Initalizing new objects api client...');
     objectsApiClient = new ObjectsApiClient({
       apikey: await AWS.getSecret(process.env.OBJECTS_API_APIKEY_ARN!),
-    })
+    });
   }
   return objectsApiClient;
 }

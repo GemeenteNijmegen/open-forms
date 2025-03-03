@@ -53,8 +53,8 @@ export class SubmissionForwarder extends Construct {
     });
 
     return {
-      objectsApikey
-    }
+      objectsApikey,
+    };
   }
 
   private setupLambda() {
@@ -64,7 +64,7 @@ export class SubmissionForwarder extends Construct {
     });
 
     if (!this.parameters) {
-      throw Error('Parameters should be created first')
+      throw Error('Parameters should be created first');
     }
 
     const forwarder = new ForwarderFunction(this, 'forwarder', {
