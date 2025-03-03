@@ -40,7 +40,7 @@ export class SubmissionForwarderHandler {
     // Get the object from the object api
     const objectClient = await this.options.zgwClientFactory.getObjectsApiClient();
     const object = await objectClient.getObject(notification.resourceUrl);
-    const submission = SubmissionSchema.parse(object);
+    const submission = SubmissionSchema.parse(object.record.data);
     logger.debug('Retreived submisison', { submission });
 
     // Collect de documents from the document API and forward those to the target S3 bucket
@@ -50,8 +50,19 @@ export class SubmissionForwarderHandler {
     // Store the pdf in S3
     const uuid = this.getUuidFromUrl(submission.pdf);
     const pdfData = await documentenClient.enkelvoudiginformatieobjectDownload({ uuid });
-    await this.storeInS3(submission.reference, submission.reference + '.pdf', pdfData);
+    await this.storeInS3(submission.reference, submission.reference + '.pdf', pdfData.data);
 
+    // Store attachments in S3
+    for (const attachment of submission.attachments) {
+      const attachmentUuid = this.getUuidFromUrl(attachment);
+      const attachmentDetails = await documentenClient.enkelvoudiginformatieobjectRetrieve({ uuid: attachmentUuid });
+      const attachmentData = await documentenClient.enkelvoudiginformatieobjectDownload({ uuid: attachmentUuid });
+      if (!attachmentDetails.data.bestandsnaam) {
+        logger.error('Missing attachment with uuid, as it does not have a filename', { uuid: attachmentUuid });
+        continue;
+      }
+      await this.storeInS3(submission.reference, attachmentDetails.data.bestandsnaam, attachmentData.data);
+    }
 
     // TODO Construct a nice SQS message to send to the ESB
 

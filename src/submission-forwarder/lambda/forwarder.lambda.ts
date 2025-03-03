@@ -6,6 +6,7 @@ import { ZgwClientFactory } from './ZgwClientFactory';
 
 const logger = new Logger();
 
+
 export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   logger.debug('event', { event });
 
@@ -18,14 +19,23 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
   ]);
 
   const submissionForwarderHandler = new SubmissionForwarderHandler({
-    zgwClientFactory: new ZgwClientFactory({
-      clientIdSsm: env.DOCUMENTEN_CLIENT_ID_SSM,
-      clientSecretArn: env.DOCUMENTEN_CLIENT_SECRET_ARN,
-      objectsApikeyArn: env.OBJECTS_API_APIKEY_ARN,
-    }),
+    zgwClientFactory: getZgwClientFactory(env),
     documentenBaseUrl: env.DOCUMENTEN_BASE_URL,
     bucketName: env.SUBMISSION_BUCKET_NAME,
   });
   return submissionForwarderHandler.handle(event);
 
+}
+
+let clientFactory: ZgwClientFactory | undefined = undefined;
+
+function getZgwClientFactory(env: Record<string, string>) {
+  if (!clientFactory) {
+    clientFactory = new ZgwClientFactory({
+      clientIdSsm: env.DOCUMENTEN_CLIENT_ID_SSM,
+      clientSecretArn: env.DOCUMENTEN_CLIENT_SECRET_ARN,
+      objectsApikeyArn: env.OBJECTS_API_APIKEY_ARN,
+    });
+  }
+  return clientFactory;
 }

@@ -1,3 +1,4 @@
+import { Duration } from 'aws-cdk-lib';
 import { LambdaIntegration, Resource } from 'aws-cdk-lib/aws-apigateway';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
@@ -104,6 +105,7 @@ export class SubmissionForwarder extends Construct {
 
     const forwarder = new ForwarderFunction(this, 'forwarder', {
       logGroup: logs,
+      timeout: Duration.minutes(5), // Allow to run for a long time as we need to download/upload multiple documents
       environment: {
         API_KEY_ARN: this.apikey.secretArn,
         POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'DEBUG',
