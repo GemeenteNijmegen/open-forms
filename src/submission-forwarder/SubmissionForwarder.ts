@@ -19,7 +19,7 @@ interface SubmissionForwarderOptions {
    * Log level
    * @default DEBUG
    */
-  logLevel: string;
+  logLevel?: string;
 }
 
 /**
@@ -54,7 +54,7 @@ export class SubmissionForwarder extends Construct {
       environment: {
         API_KEY_ARN: this.apikey.secretArn,
         POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'DEBUG',
-      }
+      },
     });
     this.apikey.grantRead(forwarder);
 

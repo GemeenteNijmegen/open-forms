@@ -15,7 +15,7 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
   if (notification.kanaal == 'test') {
     logger.info('Test notificatie ontvangen');
-    return response({ message: 'OK - test event' })
+    return response({ message: 'OK - test event' });
   }
 
   // TODO Get the object from the object api
@@ -24,14 +24,14 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
   // TODO Construct a nice SQS message to send to the ESB
 
-  return response({ message: 'OK' })
+  return response({ message: 'OK' });
 }
 
 /**
  * Construct a simple response for the API Gateway to return
- * @param body 
- * @param statusCode 
- * @returns 
+ * @param body
+ * @param statusCode
+ * @returns
  */
 function response(body?: any, statusCode: number = 200): APIGatewayProxyResult {
   return {
@@ -39,15 +39,15 @@ function response(body?: any, statusCode: number = 200): APIGatewayProxyResult {
     body: JSON.stringify(body) ?? '{}',
     headers: {
       'Content-Type': 'application/json',
-    }
+    },
   };
 }
 
 
 /**
  * Parses the event and constructs a Notification
- * @param event 
- * @returns 
+ * @param event
+ * @returns
  */
 function getNotification(event: APIGatewayProxyEvent): Notification {
   if (!event.body) {
