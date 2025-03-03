@@ -10,6 +10,7 @@ import { Construct } from 'constructs';
 import { Configurable } from './Configuration';
 import { PrefillDemo } from './prefill-demo/PrefillDemoConstruct';
 import { Statics } from './Statics';
+import { SubmissionForwarder } from './submission-forwarder/SubmissionForwarder';
 
 interface MainStackProps extends StackProps, Configurable { }
 
@@ -36,6 +37,13 @@ export class MainStack extends Stack {
       resource: prefillDemo,
     });
 
+    // Setup the submission forwarder
+    const forwarderResource = this.api.root.addResource('submission-forwarder');
+    new SubmissionForwarder(this, 'submission-forwarder', {
+      key: this.key,
+      resource: forwarderResource,
+    });
+
   }
 
   private setupRestApi() {
@@ -52,6 +60,19 @@ export class MainStack extends Stack {
         securityPolicy: SecurityPolicy.TLS_1_2,
       },
     });
+
+    const plan = api.addUsagePlan('UsagePlan', {
+      apiStages: [
+        { api: api },
+      ],
+      description: 'OpenForms supporting infra API gateway',
+    });
+
+    const key = api.addApiKey('ApiKey', {
+      description: 'OpenForms supporting infra API key',
+    });
+
+    plan.addApiKey(key);
 
     new ARecord(this, 'a-record', {
       target: RecordTarget.fromAlias(new ApiGatewayDomain(api.domainName!)),
