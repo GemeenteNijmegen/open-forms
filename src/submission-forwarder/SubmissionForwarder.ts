@@ -10,7 +10,7 @@ import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
 import { Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
-import { ForwarderFunction } from './lambda/forwarder-function';
+import { ForwarderFunction } from './forwarder-lambda/forwarder-function';
 import { ReceiverFunction } from './receiver-lambda/receiver-function';
 
 interface SubmissionForwarderOptions {
