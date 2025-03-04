@@ -103,6 +103,7 @@ export class SubmissionForwarder extends Construct {
     const internalQueue = new Queue(this, 'internal-queue', {
       encryption: QueueEncryption.KMS,
       encryptionMasterKey: this.options.key,
+      visibilityTimeout: Duration.minutes(10), // Note must be bigger than handler lambda timeout
     });
 
     // Create a receiver lambda (listens to the endpoint and publishes to internal queue)
