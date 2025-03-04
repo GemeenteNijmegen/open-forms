@@ -11,6 +11,8 @@ export const SubmissionSchema = z.object({
   type: z.string(),
   reference: z.string(),
   attachments: z.array(z.string()),
+  AppId: z.string(),
+  networkshare: z.string().optional(),
 });
 
 export type Submission = z.infer<typeof SubmissionSchema>;

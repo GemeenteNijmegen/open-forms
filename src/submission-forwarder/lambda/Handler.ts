@@ -12,7 +12,7 @@ const s3 = new S3Client();
 
 interface SubmissionForwarderHandlerOptions {
   zgwClientFactory: ZgwClientFactory;
-  documentenBaseUrl: string; // E.g. https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten
+  documentenBaseUrl: string;
   bucketName: string;
 }
 

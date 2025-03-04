@@ -1,9 +1,12 @@
+import { Criticality, DeadLetterQueue } from '@gemeentenijmegen/aws-constructs';
 import { Duration } from 'aws-cdk-lib';
 import { LambdaIntegration, Resource } from 'aws-cdk-lib/aws-apigateway';
+import { AccessKey, Role, User } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { BlockPublicAccess, Bucket } from 'aws-cdk-lib/aws-s3';
 import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
+import { Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 import { ForwarderFunction } from './lambda/forwarder-function';
@@ -23,6 +26,10 @@ interface SubmissionForwarderOptions {
    * @default DEBUG
    */
   logLevel?: string;
+  /**
+   * Criticality
+   */
+  criticality: Criticality;
 }
 
 /**
@@ -30,6 +37,7 @@ interface SubmissionForwarderOptions {
  * to the Gemeente Nijmegen ESB.
  */
 export class SubmissionForwarder extends Construct {
+  private readonly queue: Queue;
   private readonly bucket: Bucket;
   private readonly apikey: Secret;
   private readonly parameters?: {
@@ -41,10 +49,12 @@ export class SubmissionForwarder extends Construct {
   constructor(scope: Construct, id: string, private readonly options: SubmissionForwarderOptions) {
     super(scope, id);
 
+    this.queue = this.setupEsbQueue();
     this.parameters = this.setupParameters();
     this.bucket = this.setupSubmissionsBucket();
     this.apikey = this.setupApiKeySecret();
 
+    this.setupEsbUser();
     this.setupLambda();
   }
 
@@ -129,4 +139,47 @@ export class SubmissionForwarder extends Construct {
     this.options.key.grantEncryptDecrypt(forwarder);
     this.options.resource.addMethod('POST', new LambdaIntegration(forwarder));
   }
+
+
+  private setupEsbQueue() {
+
+    const dlq = new DeadLetterQueue(this, 'esb-dead-letter-queue', {
+      alarmDescription: 'ESB Dead letter queue not empty',
+      alarmCriticality: this.options.criticality.increase(), // Bump by one
+      queueOptions: {
+        fifo: true,
+      },
+      kmsKey: this.options.key,
+    });
+
+    return new Queue(this, 'esb-queue', {
+      fifo: true,
+      encryption: QueueEncryption.KMS,
+      encryptionMasterKey: this.options.key,
+      deadLetterQueue: {
+        queue: dlq.dlq,
+        maxReceiveCount: 3,
+      },
+    });
+
+  }
+
+  private setupEsbUser() {
+    const user = new User(this, 'esb-user');
+    const credentials = new AccessKey(this, 'esb-credentials', { user });
+    new Secret(this, 'esb-credentials-secret', {
+      secretStringValue: credentials.secretAccessKey,
+      description: 'Secret access key for ESB user',
+    });
+
+    const role = new Role(this, 'esb-role', {
+      assumedBy: user,
+      description: 'Role to assume for ESB user',
+    });
+
+    this.queue.grantConsumeMessages(role);
+    this.bucket.grantRead(role);
+    this.options.key.grantDecrypt(role);
+  }
+
 }
