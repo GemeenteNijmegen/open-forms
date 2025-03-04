@@ -56,7 +56,7 @@
           "spawn": "bundle:prefill-demo/handler.lambda"
         },
         {
-          "spawn": "bundle:submission-forwarder/lambda/forwarder.lambda"
+          "spawn": "bundle:submission-forwarder/forwarder-lambda/forwarder.lambda"
         },
         {
           "spawn": "bundle:submission-forwarder/receiver-lambda/receiver.lambda"
@@ -117,21 +117,21 @@
         }
       ]
     },
-    "bundle:submission-forwarder/lambda/forwarder.lambda": {
-      "name": "bundle:submission-forwarder/lambda/forwarder.lambda",
-      "description": "Create a JavaScript bundle from src/submission-forwarder/lambda/forwarder.lambda.ts",
+    "bundle:submission-forwarder/forwarder-lambda/forwarder.lambda": {
+      "name": "bundle:submission-forwarder/forwarder-lambda/forwarder.lambda",
+      "description": "Create a JavaScript bundle from src/submission-forwarder/forwarder-lambda/forwarder.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/submission-forwarder/lambda/forwarder.lambda.ts --target=\"node20\" --platform=\"node\" --outfile=\"assets/submission-forwarder/lambda/forwarder.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
+          "exec": "esbuild --bundle src/submission-forwarder/forwarder-lambda/forwarder.lambda.ts --target=\"node20\" --platform=\"node\" --outfile=\"assets/submission-forwarder/forwarder-lambda/forwarder.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
         }
       ]
     },
-    "bundle:submission-forwarder/lambda/forwarder.lambda:watch": {
-      "name": "bundle:submission-forwarder/lambda/forwarder.lambda:watch",
-      "description": "Continuously update the JavaScript bundle from src/submission-forwarder/lambda/forwarder.lambda.ts",
+    "bundle:submission-forwarder/forwarder-lambda/forwarder.lambda:watch": {
+      "name": "bundle:submission-forwarder/forwarder-lambda/forwarder.lambda:watch",
+      "description": "Continuously update the JavaScript bundle from src/submission-forwarder/forwarder-lambda/forwarder.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/submission-forwarder/lambda/forwarder.lambda.ts --target=\"node20\" --platform=\"node\" --outfile=\"assets/submission-forwarder/lambda/forwarder.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
+          "exec": "esbuild --bundle src/submission-forwarder/forwarder-lambda/forwarder.lambda.ts --target=\"node20\" --platform=\"node\" --outfile=\"assets/submission-forwarder/forwarder-lambda/forwarder.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
         }
       ]
     },
