@@ -3,9 +3,9 @@ import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
 import { documenten } from '@gemeentenijmegen/modules-zgw-client';
 import { SQSRecord } from 'aws-lambda';
-import { ZgwClientFactory } from './ZgwClientFactory';
 import { Notification, NotificationSchema } from '../shared/Notification';
 import { Submission, SubmissionSchema } from '../shared/Submission';
+import { ZgwClientFactory } from './ZgwClientFactory';
 
 const logger = new Logger();
 const s3 = new S3Client();
@@ -73,6 +73,8 @@ export class SubmissionForwarderHandler {
       await sqs.send(new SendMessageCommand({
         MessageBody: JSON.stringify(submission),
         QueueUrl: queueUrl,
+        MessageGroupId: 'Submissions',
+        MessageDeduplicationId: submission.reference,
       }));
     } catch (error) {
       logger.error('Could not send submission to ESB queue', { error });
