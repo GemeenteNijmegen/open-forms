@@ -15,6 +15,7 @@ const project = new GemeenteNijmegenCdkApp({
     '@types/aws-lambda',
     '@aws-sdk/client-dynamodb',
     '@aws-sdk/client-s3',
+    '@aws-sdk/client-sqs',
     '@aws-lambda-powertools/logger',
     'zod',
     '@gemeentenijmegen/modules-zgw-client',

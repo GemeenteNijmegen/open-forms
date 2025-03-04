@@ -153,6 +153,7 @@
           "src/nl-wallet/token/token.lambda.ts",
           "src/prefill-demo/handler.lambda.ts",
           "src/submission-forwarder/lambda/forwarder.lambda.ts",
+          "src/submission-forwarder/receiver-lambda/receiver.lambda.ts",
           ".projenrc.ts",
           "projenrc/**/*.ts"
         ],

@@ -1,19 +1,21 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
 import { documenten } from '@gemeentenijmegen/modules-zgw-client';
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { authenticate } from './authenticate';
-import { Notification, NotificationSchema } from './Notification';
-import { SubmissionSchema } from './Submission';
+import { SQSRecord } from 'aws-lambda';
 import { ZgwClientFactory } from './ZgwClientFactory';
+import { Notification, NotificationSchema } from '../shared/Notification';
+import { Submission, SubmissionSchema } from '../shared/Submission';
 
 const logger = new Logger();
 const s3 = new S3Client();
+const sqs = new SQSClient();
 
 interface SubmissionForwarderHandlerOptions {
   zgwClientFactory: ZgwClientFactory;
   documentenBaseUrl: string;
   bucketName: string;
+  queueUrl: string;
 }
 
 export class SubmissionForwarderHandler {
@@ -24,18 +26,10 @@ export class SubmissionForwarderHandler {
    */
   constructor(private readonly options: SubmissionForwarderHandlerOptions) { }
 
-  async handle(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
-
-    await authenticate(event);
+  async handle(event: SQSRecord) {
 
     const notification = this.getNotification(event);
     logger.debug('Parsed notification', { notification });
-
-    // Handle test notifications
-    if (notification.kanaal == 'test') {
-      logger.info('Test notificatie ontvangen');
-      return this.response({ message: 'OK - test event' });
-    }
 
     // Get the object from the object api
     const objectClient = await this.options.zgwClientFactory.getObjectsApiClient();
@@ -64,9 +58,26 @@ export class SubmissionForwarderHandler {
       await this.storeInS3(submission.reference, attachmentDetails.data.bestandsnaam, attachmentData.data);
     }
 
-    // TODO Construct a nice SQS message to send to the ESB
+    // Construct SQS message to send to the ESB
+    await this.sendNotificationToQueue(this.options.queueUrl, submission);
 
-    return this.response({ message: 'OK' });
+  }
+
+  /**
+   * Send a notification to an sqs queue
+   * @param queueUrl
+   * @param submission
+   */
+  private async sendNotificationToQueue(queueUrl: string, submission: Submission) {
+    try {
+      await sqs.send(new SendMessageCommand({
+        MessageBody: JSON.stringify(submission),
+        QueueUrl: queueUrl,
+      }));
+    } catch (error) {
+      logger.error('Could not send submission to ESB queue', { error });
+      throw new Error('Failed to send submission to ESB queue');
+    }
   }
 
   private async storeInS3(kenmerk: string, filename: string, data: any) {
@@ -84,35 +95,12 @@ export class SubmissionForwarderHandler {
   }
 
   /**
-   * Construct a simple response for the API Gateway to return
-   * @param body
-   * @param statusCode
-   * @returns
-   */
-  private response(body?: any, statusCode: number = 200): APIGatewayProxyResult {
-    return {
-      statusCode,
-      body: JSON.stringify(body) ?? '{}',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
-  }
-
-  /**
    * Parses the event and constructs a Notification
    * @param event
    * @returns
    */
-  private getNotification(event: APIGatewayProxyEvent): Notification {
-    if (!event.body) {
-      throw Error('No body found in event');
-    }
-    let body = event.body;
-    if (event.isBase64Encoded) {
-      body = Buffer.from(event.body, 'base64').toString('utf-8');
-    }
-    const bodyJson = JSON.parse(body);
+  private getNotification(event: SQSRecord): Notification {
+    const bodyJson = JSON.parse(event.body);
     return NotificationSchema.parse(bodyJson);
   }
 

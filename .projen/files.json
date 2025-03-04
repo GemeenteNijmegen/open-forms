@@ -20,6 +20,7 @@
     "src/nl-wallet/token/token-function.ts",
     "src/prefill-demo/handler-function.ts",
     "src/submission-forwarder/lambda/forwarder-function.ts",
+    "src/submission-forwarder/receiver-lambda/receiver-function.ts",
     "tsconfig.dev.json",
     "tsconfig.json"
   ],

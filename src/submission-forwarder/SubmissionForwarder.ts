@@ -3,6 +3,7 @@ import { Duration } from 'aws-cdk-lib';
 import { LambdaIntegration, Resource } from 'aws-cdk-lib/aws-apigateway';
 import { AccessKey, Role, User } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
+import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { BlockPublicAccess, Bucket } from 'aws-cdk-lib/aws-s3';
 import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
@@ -10,6 +11,7 @@ import { Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 import { ForwarderFunction } from './lambda/forwarder-function';
+import { ReceiverFunction } from './receiver-lambda/receiver-function';
 
 interface SubmissionForwarderOptions {
   /**
@@ -39,8 +41,8 @@ interface SubmissionForwarderOptions {
 export class SubmissionForwarder extends Construct {
   private readonly queue: Queue;
   private readonly bucket: Bucket;
-  private readonly apikey: Secret;
   private readonly parameters?: {
+    apikey: Secret;
     objectsApikey: Secret;
     documentenApiBaseUrl: StringParameter;
     documentenApiClientId: StringParameter;
@@ -52,31 +54,19 @@ export class SubmissionForwarder extends Construct {
     this.queue = this.setupEsbQueue();
     this.parameters = this.setupParameters();
     this.bucket = this.setupSubmissionsBucket();
-    this.apikey = this.setupApiKeySecret();
 
     this.setupEsbUser();
     this.setupLambda();
   }
 
-  private setupSubmissionsBucket() {
-    return new Bucket(this, 'submissions-bucket', {
-      encryptionKey: this.options.key,
-      bucketKeyEnabled: true, // Save cost
-      enforceSSL: true,
-      blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
-    });
-  }
-
-  private setupApiKeySecret() {
-    return new Secret(this, 'api-key', {
+  private setupParameters() {
+    const apikey = new Secret(this, 'api-key', {
       description: 'API Key for authentication in submission forwarder',
       generateSecretString: {
         excludePunctuation: true,
       },
     });
-  }
 
-  private setupParameters() {
     const objectsApikey = new Secret(this, 'objects-apikey', {
       description: 'API key used by submission forwarder for authentication at Objects API',
     });
@@ -96,6 +86,7 @@ export class SubmissionForwarder extends Construct {
     });
 
     return {
+      apikey,
       objectsApikey,
       documentenApiBaseUrl,
       documentenApiClientId,
@@ -104,20 +95,44 @@ export class SubmissionForwarder extends Construct {
   }
 
   private setupLambda() {
-    const logs = new LogGroup(this, 'logs', {
-      encryptionKey: this.options.key,
-      retention: RetentionDays.SIX_MONTHS,
-    });
-
     if (!this.parameters) {
       throw Error('Parameters should be created first');
     }
 
+    // Setup a internal queue
+    const internalQueue = new Queue(this, 'internal-queue', {
+      encryption: QueueEncryption.KMS,
+      encryptionMasterKey: this.options.key,
+    });
+
+    // Create a receiver lambda (listens to the endpoint and publishes to internal queue)
+    const receiver = new ReceiverFunction(this, 'receiver', {
+      logGroup: new LogGroup(this, 'receiver-logs', {
+        encryptionKey: this.options.key,
+        retention: RetentionDays.SIX_MONTHS,
+      }),
+      timeout: Duration.seconds(3),
+      description: 'Submission-forwarder receiver endpoint',
+      environment: {
+        POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'DEBUG',
+        API_KEY_ARN: this.parameters.apikey.secretArn,
+        QUEUE_URL: internalQueue.queueUrl,
+      },
+    });
+    internalQueue.grantSendMessages(receiver);
+    this.parameters.apikey.grantRead(receiver);
+    this.options.key.grantEncryptDecrypt(receiver);
+    this.options.resource.addMethod('POST', new LambdaIntegration(receiver));
+
+    // Create a forwarder lambda (listens to the internal queue)
     const forwarder = new ForwarderFunction(this, 'forwarder', {
-      logGroup: logs,
+      logGroup: new LogGroup(this, 'logs', {
+        encryptionKey: this.options.key,
+        retention: RetentionDays.SIX_MONTHS,
+      }),
+      description: 'Submission-forwarder forwaring to ESB lambda',
       timeout: Duration.minutes(5), // Allow to run for a long time as we need to download/upload multiple documents
       environment: {
-        API_KEY_ARN: this.apikey.secretArn,
         POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'DEBUG',
 
         // Provided directly trough env.
@@ -128,21 +143,24 @@ export class SubmissionForwarder extends Construct {
         OBJECTS_API_APIKEY_ARN: this.parameters.objectsApikey.secretArn,
         DOCUMENTEN_CLIENT_ID_SSM: this.parameters.documentenApiClientId.parameterName,
         DOCUMENTEN_CLIENT_SECRET_ARN: this.parameters.documentenApiClientSecret.secretArn,
+        QUEUE_URL: this.queue.queueUrl,
       },
     });
     this.bucket.grantPut(forwarder);
-    this.apikey.grantRead(forwarder);
+    this.queue.grantSendMessages(forwarder);
     this.parameters.objectsApikey.grantRead(forwarder);
     this.parameters.documentenApiClientId.grantRead(forwarder);
     this.parameters.documentenApiClientSecret.grantRead(forwarder);
-
     this.options.key.grantEncryptDecrypt(forwarder);
-    this.options.resource.addMethod('POST', new LambdaIntegration(forwarder));
+
+    forwarder.addEventSource(new SqsEventSource(internalQueue, {
+      batchSize: 1, // This might be a very long running lambda therefore just run it uniquely every time
+      reportBatchItemFailures: true, // See implementation
+    }));
   }
 
 
   private setupEsbQueue() {
-
     const dlq = new DeadLetterQueue(this, 'esb-dead-letter-queue', {
       alarmDescription: 'ESB Dead letter queue not empty',
       alarmCriticality: this.options.criticality.increase(), // Bump by one
@@ -161,7 +179,15 @@ export class SubmissionForwarder extends Construct {
         maxReceiveCount: 3,
       },
     });
+  }
 
+  private setupSubmissionsBucket() {
+    return new Bucket(this, 'submissions-bucket', {
+      encryptionKey: this.options.key,
+      bucketKeyEnabled: true, // Save cost
+      enforceSSL: true,
+      blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
+    });
   }
 
   private setupEsbUser() {
