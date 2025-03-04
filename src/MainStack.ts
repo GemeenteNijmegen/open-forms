@@ -42,6 +42,7 @@ export class MainStack extends Stack {
     new SubmissionForwarder(this, 'submission-forwarder', {
       key: this.key,
       resource: forwarderResource,
+      criticality: props.configuration.criticality,
     });
 
   }
