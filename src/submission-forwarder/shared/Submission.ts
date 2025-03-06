@@ -13,6 +13,7 @@ export const SubmissionSchema = z.object({
   attachments: z.array(z.string()),
   AppId: z.string(),
   networkshare: z.string().optional(),
+  saveFiles: z.record(z.string(), z.string()).optional(),
 });
 
 export type Submission = z.infer<typeof SubmissionSchema>;

@@ -4,6 +4,7 @@ import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
 import { documenten } from '@gemeentenijmegen/modules-zgw-client';
 import { SQSRecord } from 'aws-lambda';
 import { ZgwClientFactory } from './ZgwClientFactory';
+import { EsbSubmission } from '../shared/EsbSubmission';
 import { Notification, NotificationSchema } from '../shared/Notification';
 import { Submission, SubmissionSchema } from '../shared/Submission';
 
@@ -37,16 +38,59 @@ export class SubmissionForwarderHandler {
     const submission = SubmissionSchema.parse(object.record.data);
     logger.debug('Retreived submisison', { submission });
 
+    // Only handle submissions with a netweork share
+    if (!submission.networkshare) {
+      logger.error('Submission does not have a networkshare location, ignoring the submission');
+      return;
+    }
+
     // Collect de documents from the document API and forward those to the target S3 bucket
     const httpClient = await this.options.zgwClientFactory.getDocumentenClient(this.options.documentenBaseUrl);
     const documentenClient = new documenten.Enkelvoudiginformatieobjecten(httpClient);
 
-    // Store the pdf in S3
+    // Download PDF, Attachments and create save files in S3 bucket
+    const pdfS3Url = await this.downloadPdf(submission, documentenClient);
+    const attachmentS3Urls = await this.downloadAttachments(submission, documentenClient);
+    const saveFileS3Urls = await this.createSaveFiles(submission);
+    const s3Files: string[] = [
+      pdfS3Url,
+      ...attachmentS3Urls,
+      ...saveFileS3Urls,
+    ];
+
+    // Build an EsbSubmission and send it to the queue
+    const esb: EsbSubmission = {
+      s3Files: s3Files,
+      folderName: submission.reference,
+      targetNetworkLocation: submission.networkshare,
+    };
+    await this.sendNotificationToQueue(this.options.queueUrl, esb);
+
+  }
+
+  /**
+   * Download the submisison PDF to the S3 bucket
+   * @param submission
+   * @param documentenClient
+   * @returns - pdf url in s3 bucket
+   */
+  private async downloadPdf(submission: Submission, documentenClient: documenten.Enkelvoudiginformatieobjecten) {
     const uuid = this.getUuidFromUrl(submission.pdf);
     const pdfData = await documentenClient.enkelvoudiginformatieobjectDownload({ uuid });
     await this.storeInS3(submission.reference, submission.reference + '.pdf', pdfData.data);
+    const pdfS3Path = `s3://${this.options.bucketName}/${submission.reference}/${submission.reference}.pdf`;
+    return pdfS3Path;
+  }
 
-    // Store attachments in S3
+  /**
+   * If submission has attachments, download the attachments to the S3 bucket
+   * @param submission
+   * @param documentenClient
+   * @returns - urls of the s3 objects
+   */
+  private async downloadAttachments(submission: Submission, documentenClient: documenten.Enkelvoudiginformatieobjecten) {
+    const s3Files: string[] = [];
+
     for (const attachment of submission.attachments) {
       const attachmentUuid = this.getUuidFromUrl(attachment);
       const attachmentDetails = await documentenClient.enkelvoudiginformatieobjectRetrieve({ uuid: attachmentUuid });
@@ -55,12 +99,33 @@ export class SubmissionForwarderHandler {
         logger.error('Missing attachment with uuid, as it does not have a filename', { uuid: attachmentUuid });
         continue;
       }
+
       await this.storeInS3(submission.reference, attachmentDetails.data.bestandsnaam, attachmentData.data);
+      const attachmentS3Path = `s3://${this.options.bucketName}/${submission.reference}/${attachmentDetails.data.bestandsnaam}`;
+      s3Files.push(attachmentS3Path);
     }
 
-    // Construct SQS message to send to the ESB
-    await this.sendNotificationToQueue(this.options.queueUrl, submission);
+    return s3Files;
+  }
 
+  /**
+   * Check if the submission requires save files
+   * If so, create them and return the paths.
+   * @param submission
+   * @returns - List of paths of the created save files
+   */
+  private async createSaveFiles(submission: Submission) {
+    const s3Files: string[] = [];
+
+    for (const saveFile of Object.entries(submission.saveFiles ?? {})) {
+      const name = saveFile[0];
+      const value = saveFile[1];
+      await this.storeInS3(submission.reference, `${name}.txt`, value);
+      const attachmentS3Path = `s3://${this.options.bucketName}/${submission.reference}/${name}.txt`;
+      s3Files.push(attachmentS3Path);
+    }
+
+    return s3Files;
   }
 
   /**
@@ -68,13 +133,13 @@ export class SubmissionForwarderHandler {
    * @param queueUrl
    * @param submission
    */
-  private async sendNotificationToQueue(queueUrl: string, submission: Submission) {
+  private async sendNotificationToQueue(queueUrl: string, esb: EsbSubmission) {
     try {
       await sqs.send(new SendMessageCommand({
-        MessageBody: JSON.stringify(submission),
+        MessageBody: JSON.stringify(esb),
         QueueUrl: queueUrl,
-        MessageGroupId: 'Submissions',
-        MessageDeduplicationId: submission.reference,
+        MessageGroupId: 'EsbSubmissions',
+        MessageDeduplicationId: esb.folderName,
       }));
     } catch (error) {
       logger.error('Could not send submission to ESB queue', { error });
