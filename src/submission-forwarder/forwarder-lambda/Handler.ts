@@ -1,6 +1,7 @@
 import { Logger } from '@aws-lambda-powertools/logger';
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { S3Client } from '@aws-sdk/client-s3';
 import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
+import { Upload } from '@aws-sdk/lib-storage';
 import { documenten } from '@gemeentenijmegen/modules-zgw-client';
 import { SQSRecord } from 'aws-lambda';
 import { EsbSubmission } from '../shared/EsbSubmission';
@@ -100,7 +101,7 @@ export class SubmissionForwarderHandler {
         continue;
       }
 
-      await this.storeInS3(submission.reference, attachmentDetails.data.bestandsnaam, attachmentData.data);
+      await this.storeInS3(submission.reference, attachmentDetails.data.bestandsnaam, attachmentData.data.stream());
       const attachmentS3Path = `s3://${this.options.bucketName}/${submission.reference}/${attachmentDetails.data.bestandsnaam}`;
       s3Files.push(attachmentS3Path);
     }
@@ -149,11 +150,21 @@ export class SubmissionForwarderHandler {
 
   private async storeInS3(kenmerk: string, filename: string, data: any) {
     const key = `${kenmerk}/${filename}`;
-    await s3.send(new PutObjectCommand({
-      Bucket: this.options.bucketName,
-      Key: key,
-      Body: data,
-    }));
+    const upload = new Upload({ // parallel multipart upload
+      client: s3,
+      params: {
+        Bucket: this.options.bucketName,
+        Key: key,
+        Body: data,
+      },
+    });
+    await upload.done();
+
+    // await s3.send(new PutObjectCommand({
+    //   Bucket: this.options.bucketName,
+    //   Key: key,
+    //   Body: data,
+    // }));
   }
 
   private getUuidFromUrl(url: string) {

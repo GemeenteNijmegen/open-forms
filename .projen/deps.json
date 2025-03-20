@@ -96,6 +96,10 @@
       "type": "runtime"
     },
     {
+      "name": "@aws-sdk/lib-storage",
+      "type": "runtime"
+    },
+    {
       "name": "@gemeentenijmegen/apigateway-http",
       "type": "runtime"
     },

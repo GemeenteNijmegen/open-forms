@@ -21,6 +21,7 @@ const project = new GemeenteNijmegenCdkApp({
     '@gemeentenijmegen/modules-zgw-client',
     'jsonwebtoken',
     '@types/jsonwebtoken',
+    '@aws-sdk/lib-storage',
   ],
 });
 
