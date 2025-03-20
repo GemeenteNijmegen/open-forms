@@ -3,10 +3,10 @@ import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
 import { documenten } from '@gemeentenijmegen/modules-zgw-client';
 import { SQSRecord } from 'aws-lambda';
-import { ZgwClientFactory } from './ZgwClientFactory';
 import { EsbSubmission } from '../shared/EsbSubmission';
 import { Notification, NotificationSchema } from '../shared/Notification';
 import { Submission, SubmissionSchema } from '../shared/Submission';
+import { ZgwClientFactory } from './ZgwClientFactory';
 
 const logger = new Logger();
 const s3 = new S3Client();
@@ -77,7 +77,7 @@ export class SubmissionForwarderHandler {
   private async downloadPdf(submission: Submission, documentenClient: documenten.Enkelvoudiginformatieobjecten) {
     const uuid = this.getUuidFromUrl(submission.pdf);
     const pdfData = await documentenClient.enkelvoudiginformatieobjectDownload({ uuid });
-    await this.storeInS3(submission.reference, submission.reference + '.pdf', pdfData.data);
+    await this.storeInS3(submission.reference, submission.reference + '.pdf', pdfData.data.stream());
     const pdfS3Path = `s3://${this.options.bucketName}/${submission.reference}/${submission.reference}.pdf`;
     return pdfS3Path;
   }
