@@ -4,10 +4,10 @@ import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
 import { Upload } from '@aws-sdk/lib-storage';
 import { documenten } from '@gemeentenijmegen/modules-zgw-client';
 import { SQSRecord } from 'aws-lambda';
+import { ZgwClientFactory } from './ZgwClientFactory';
 import { EsbSubmission } from '../shared/EsbSubmission';
 import { Notification, NotificationSchema } from '../shared/Notification';
 import { Submission, SubmissionSchema } from '../shared/Submission';
-import { ZgwClientFactory } from './ZgwClientFactory';
 
 const logger = new Logger();
 const s3 = new S3Client();
@@ -81,8 +81,12 @@ export class SubmissionForwarderHandler {
     if (!pdfData) {
       throw Error('Could not get PDF from documents api');
     }
+<<<<<<< HEAD
     const pdfContents = Buffer.from(pdfData.data as any, 'binary'); // Note it looks like pdfData.data is a File, this is false its binary data disguising as a string.
     await this.storeInS3(submission.reference, submission.reference + '.pdf', pdfContents);
+=======
+    await this.storeInS3(submission.reference, submission.reference + '.pdf', pdfData.data.bytes); // Note bytes is not a function in lambda runtime?
+>>>>>>> b5f7a1f70cdf774c94641c094decd28392d9553a
     const pdfS3Path = `s3://${this.options.bucketName}/${submission.reference}/${submission.reference}.pdf`;
     return pdfS3Path;
   }
