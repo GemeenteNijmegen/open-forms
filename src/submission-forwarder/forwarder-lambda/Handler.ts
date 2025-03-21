@@ -4,10 +4,10 @@ import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
 import { Upload } from '@aws-sdk/lib-storage';
 import { documenten } from '@gemeentenijmegen/modules-zgw-client';
 import { SQSRecord } from 'aws-lambda';
+import { ZgwClientFactory } from './ZgwClientFactory';
 import { EsbSubmission } from '../shared/EsbSubmission';
 import { Notification, NotificationSchema } from '../shared/Notification';
 import { Submission, SubmissionSchema } from '../shared/Submission';
-import { ZgwClientFactory } from './ZgwClientFactory';
 
 const logger = new Logger();
 const s3 = new S3Client();
@@ -81,7 +81,7 @@ export class SubmissionForwarderHandler {
     if (!pdfData) {
       throw Error('Could not get PDF from documents api');
     }
-    await this.storeInS3(submission.reference, submission.reference + '.pdf', pdfData.data.bytes);  // Note bytes is not a function in lambda runtime?
+    await this.storeInS3(submission.reference, submission.reference + '.pdf', pdfData.data.bytes); // Note bytes is not a function in lambda runtime?
     const pdfS3Path = `s3://${this.options.bucketName}/${submission.reference}/${submission.reference}.pdf`;
     return pdfS3Path;
   }
