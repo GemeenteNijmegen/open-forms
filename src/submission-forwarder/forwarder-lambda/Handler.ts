@@ -77,7 +77,9 @@ export class SubmissionForwarderHandler {
    */
   private async downloadPdf(submission: Submission, documentenClient: documenten.Enkelvoudiginformatieobjecten) {
     const uuid = this.getUuidFromUrl(submission.pdf);
-    const pdfData = await documentenClient.enkelvoudiginformatieobjectDownload({ uuid });
+    const pdfData = await documentenClient.enkelvoudiginformatieobjectDownload({ uuid }, {
+      responseEncoding: 'binary',
+    });
     if (!pdfData) {
       throw Error('Could not get PDF from documents api');
     }

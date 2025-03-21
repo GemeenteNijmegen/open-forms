@@ -18,11 +18,6 @@ runLiveTests('Live get document tests', () => {
     });
     console.log('File downloaded... writing to disk');
 
-    // const buffer = Buffer.from(data.data.bytes, 'binary');
-    // const ws = createWriteStream('test.pdf');
-    // ws.write(buffer);
-    // ws.end();
-
     const file = data.data as any; // It is NOT a File/Blob but in reality its a string?
     console.log(typeof file); // Should be 'object' is 'string'
 
