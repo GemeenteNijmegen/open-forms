@@ -101,7 +101,9 @@ export class SubmissionForwarderHandler {
     for (const attachment of submission.attachments) {
       const attachmentUuid = this.getUuidFromUrl(attachment);
       const attachmentDetails = await documentenClient.enkelvoudiginformatieobjectRetrieve({ uuid: attachmentUuid });
-      const attachmentData = await documentenClient.enkelvoudiginformatieobjectDownload({ uuid: attachmentUuid });
+      const attachmentData = await documentenClient.enkelvoudiginformatieobjectDownload({ uuid: attachmentUuid }, {
+        responseEncoding: 'binary',
+      });
       if (!attachmentDetails.data.bestandsnaam) {
         logger.error('Missing attachment with uuid, as it does not have a filename', { uuid: attachmentUuid });
         continue;
