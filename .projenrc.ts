@@ -23,6 +23,11 @@ const project = new GemeenteNijmegenCdkApp({
     '@types/jsonwebtoken',
     '@aws-sdk/lib-storage',
   ],
+  jestOptions: {
+    jestConfig: {
+      setupFiles: ['dotenv/config'],
+    },
+  },
 });
 
 

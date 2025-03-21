@@ -81,7 +81,8 @@ export class SubmissionForwarderHandler {
     if (!pdfData) {
       throw Error('Could not get PDF from documents api');
     }
-    await this.storeInS3(submission.reference, submission.reference + '.pdf', pdfData.data.bytes);  // Note bytes is not a function in lambda runtime?
+    const pdfContents = Buffer.from(pdfData.data as any, 'binary'); // Note it looks like pdfData.data is a File, this is false its binary data disguising as a string.
+    await this.storeInS3(submission.reference, submission.reference + '.pdf', pdfContents);
     const pdfS3Path = `s3://${this.options.bucketName}/${submission.reference}/${submission.reference}.pdf`;
     return pdfS3Path;
   }
@@ -104,7 +105,8 @@ export class SubmissionForwarderHandler {
         continue;
       }
 
-      await this.storeInS3(submission.reference, attachmentDetails.data.bestandsnaam, attachmentData.data.bytes); // Note bytes is not a function in lambda runtime?
+      const contents = Buffer.from(attachmentData.data as any, 'binary'); // Note it looks like pdfData.data is a File, this is false its binary data disguising as a string.
+      await this.storeInS3(submission.reference, attachmentDetails.data.bestandsnaam, contents);
       const attachmentS3Path = `s3://${this.options.bucketName}/${submission.reference}/${attachmentDetails.data.bestandsnaam}`;
       s3Files.push(attachmentS3Path);
     }
