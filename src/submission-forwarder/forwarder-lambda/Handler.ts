@@ -4,10 +4,10 @@ import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
 import { Upload } from '@aws-sdk/lib-storage';
 import { documenten } from '@gemeentenijmegen/modules-zgw-client';
 import { SQSRecord } from 'aws-lambda';
+import { ZgwClientFactory } from './ZgwClientFactory';
 import { EsbSubmission } from '../shared/EsbSubmission';
 import { Notification, NotificationSchema } from '../shared/Notification';
 import { Submission, SubmissionSchema } from '../shared/Submission';
-import { ZgwClientFactory } from './ZgwClientFactory';
 
 const logger = new Logger();
 const s3 = new S3Client();

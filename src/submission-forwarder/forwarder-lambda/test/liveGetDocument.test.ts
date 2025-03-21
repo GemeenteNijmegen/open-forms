@@ -1,6 +1,6 @@
+import { writeFileSync } from 'fs';
 import { documenten } from '@gemeentenijmegen/modules-zgw-client';
 import { HttpClient as DocumentenHttpClient } from '@gemeentenijmegen/modules-zgw-client/lib/documenten-generated-client';
-import { writeFileSync } from 'fs';
 import * as jwt from 'jsonwebtoken';
 
 
@@ -24,13 +24,12 @@ runLiveTests('Live get document tests', () => {
     // ws.end();
 
     const file = data.data as any; // It is NOT a File/Blob but in reality its a string?
-    console.log(typeof file);  // Should be 'object' is 'string'
+    console.log(typeof file); // Should be 'object' is 'string'
 
     const buffer = Buffer.from(file, 'binary');
     writeFileSync('test.pdf', buffer);
 
   });
-
 
 
 });
