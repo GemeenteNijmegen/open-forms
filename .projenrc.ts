@@ -28,6 +28,9 @@ const project = new GemeenteNijmegenCdkApp({
       setupFiles: ['dotenv/config'],
     },
   },
+  gitignore: [
+    'test.pdf', // Data from live test
+  ]
 });
 
 
