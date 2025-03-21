@@ -31,7 +31,7 @@ export async function handler(event: SQSEvent): Promise<SQSBatchResponse> {
     try {
       await submissionForwarderHandler.handle(record);
     } catch (error) {
-      logger.error('Failed to forward a submission', { data: record.messageId });
+      logger.error('Failed to forward a submission', { data: record.messageId, error });
       batchItemFailures.push({ itemIdentifier: record.messageId });
     }
   }
