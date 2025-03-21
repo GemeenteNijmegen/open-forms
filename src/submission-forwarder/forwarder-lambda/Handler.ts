@@ -4,10 +4,10 @@ import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
 import { Upload } from '@aws-sdk/lib-storage';
 import { documenten } from '@gemeentenijmegen/modules-zgw-client';
 import { SQSRecord } from 'aws-lambda';
-import { ZgwClientFactory } from './ZgwClientFactory';
 import { EsbSubmission } from '../shared/EsbSubmission';
 import { Notification, NotificationSchema } from '../shared/Notification';
 import { Submission, SubmissionSchema } from '../shared/Submission';
+import { ZgwClientFactory } from './ZgwClientFactory';
 
 const logger = new Logger();
 const s3 = new S3Client();
@@ -82,7 +82,7 @@ export class SubmissionForwarderHandler {
       throw Error('Could not get PDF from documents api');
     }
     const pdfContents = Buffer.from(pdfData.data as any, 'binary'); // Note it looks like pdfData.data is a File, this is false its binary data disguising as a string.
-    await this.storeInS3(submission.reference, submission.reference + '.pdf', pdfContents);
+    await this.storeInS3(submission.reference, submission.reference + '.pdf', pdfContents, 'application/pdf');
     const pdfS3Path = `s3://${this.options.bucketName}/${submission.reference}/${submission.reference}.pdf`;
     return pdfS3Path;
   }
@@ -106,7 +106,7 @@ export class SubmissionForwarderHandler {
       }
 
       const contents = Buffer.from(attachmentData.data as any, 'binary'); // Note it looks like pdfData.data is a File, this is false its binary data disguising as a string.
-      await this.storeInS3(submission.reference, attachmentDetails.data.bestandsnaam, contents);
+      await this.storeInS3(submission.reference, attachmentDetails.data.bestandsnaam, contents, attachmentDetails.data.formaat);
       const attachmentS3Path = `s3://${this.options.bucketName}/${submission.reference}/${attachmentDetails.data.bestandsnaam}`;
       s3Files.push(attachmentS3Path);
     }
@@ -153,23 +153,22 @@ export class SubmissionForwarderHandler {
     }
   }
 
-  private async storeInS3(kenmerk: string, filename: string, data: any) {
+  private async storeInS3(kenmerk: string, filename: string, data: Buffer | string, formaat?: string) {
     const key = `${kenmerk}/${filename}`;
+    logger.debug('Uploading file...', {
+      filePath: key,
+      fileSize: data instanceof Buffer ? data.byteLength : data.length,
+    });
     const upload = new Upload({ // parallel multipart upload
       client: s3,
       params: {
         Bucket: this.options.bucketName,
         Key: key,
         Body: data,
+        ContentType: formaat,
       },
     });
     await upload.done();
-
-    // await s3.send(new PutObjectCommand({
-    //   Bucket: this.options.bucketName,
-    //   Key: key,
-    //   Body: data,
-    // }));
   }
 
   private getUuidFromUrl(url: string) {
