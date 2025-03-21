@@ -30,7 +30,7 @@ const project = new GemeenteNijmegenCdkApp({
   },
   gitignore: [
     'test.pdf', // Data from live test
-  ]
+  ],
 });
 
 
