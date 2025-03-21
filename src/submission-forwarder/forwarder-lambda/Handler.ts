@@ -4,10 +4,10 @@ import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
 import { Upload } from '@aws-sdk/lib-storage';
 import { documenten } from '@gemeentenijmegen/modules-zgw-client';
 import { SQSRecord } from 'aws-lambda';
-import { ZgwClientFactory } from './ZgwClientFactory';
 import { EsbSubmission } from '../shared/EsbSubmission';
 import { Notification, NotificationSchema } from '../shared/Notification';
 import { Submission, SubmissionSchema } from '../shared/Submission';
+import { ZgwClientFactory } from './ZgwClientFactory';
 
 const logger = new Logger();
 const s3 = new S3Client();
@@ -78,7 +78,10 @@ export class SubmissionForwarderHandler {
   private async downloadPdf(submission: Submission, documentenClient: documenten.Enkelvoudiginformatieobjecten) {
     const uuid = this.getUuidFromUrl(submission.pdf);
     const pdfData = await documentenClient.enkelvoudiginformatieobjectDownload({ uuid });
-    await this.storeInS3(submission.reference, submission.reference + '.pdf', pdfData.data.stream());
+    if (!pdfData) {
+      throw Error('Could not get PDF from documents api');
+    }
+    await this.storeInS3(submission.reference, submission.reference + '.pdf', pdfData.data.bytes);  // Note bytes is not a function in lambda runtime?
     const pdfS3Path = `s3://${this.options.bucketName}/${submission.reference}/${submission.reference}.pdf`;
     return pdfS3Path;
   }
@@ -101,7 +104,7 @@ export class SubmissionForwarderHandler {
         continue;
       }
 
-      await this.storeInS3(submission.reference, attachmentDetails.data.bestandsnaam, attachmentData.data.stream());
+      await this.storeInS3(submission.reference, attachmentDetails.data.bestandsnaam, attachmentData.data.bytes); // Note bytes is not a function in lambda runtime?
       const attachmentS3Path = `s3://${this.options.bucketName}/${submission.reference}/${attachmentDetails.data.bestandsnaam}`;
       s3Files.push(attachmentS3Path);
     }

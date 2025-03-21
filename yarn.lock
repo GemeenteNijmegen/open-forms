@@ -544,10 +544,10 @@
     mnemonist "0.38.3"
     tslib "^2.6.2"
 
-"@aws-sdk/lib-storage@^3.758.0":
-  version "3.758.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/lib-storage/-/lib-storage-3.758.0.tgz#6fe6a128e6a1bc062cc3e4bd920774545ce94933"
-  integrity sha512-g07y7rA505zaTJNPTmvW4zYJA3gThFDE1be7kBUKhTKAdwv8jVSbOiAy2AhClXs2evSUoQiFFtD1xWxLRXPPRQ==
+"@aws-sdk/lib-storage@^3.772.0":
+  version "3.772.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/lib-storage/-/lib-storage-3.772.0.tgz#dcb9f740ea8da2b24c385d22d14bfb1559895aa2"
+  integrity sha512-d59NJAHDa7mGf82ApOdIp1FsN1i7/VlNTk2t3NIepH/8FsMTzKPZQvbMzqE33ba4oik7y6QrDliYXoRXB/nZPg==
   dependencies:
     "@smithy/abort-controller" "^4.0.1"
     "@smithy/middleware-endpoint" "^4.0.6"
