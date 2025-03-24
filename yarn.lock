@@ -3069,9 +3069,9 @@ camelcase@^6.2.0:
   integrity sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==
 
 caniuse-lite@^1.0.30001688:
-  version "1.0.30001706"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001706.tgz#902c3f896f4b2968031c3a546ab2ef8b465a2c8f"
-  integrity sha512-3ZczoTApMAZwPKYWmwVbQMFpXBDds3/0VciVoUwPUbldlYyVLmRVuRs/PcUZtHpbLRpzzDvrvnFuREsGt6lUug==
+  version "1.0.30001707"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001707.tgz#c5e104d199e6f4355a898fcd995a066c7eb9bf41"
+  integrity sha512-3qtRjw/HQSMlDWf+X79N206fepf4SOOU6SQLMaq/0KkZLmSjPxAkBOQQ+FxbHKfHmYLZFfdWsO3KA90ceHPSnw==
 
 case@1.6.3, case@^1.6.3:
   version "1.6.3"
@@ -6911,9 +6911,9 @@ swagger-schema-official@2.0.0-bab6bed:
   integrity sha512-rCC0NWGKr/IJhtRuPq/t37qvZHI/mH4I4sxflVM+qgVe5Z2uOCivzWaVbuioJaB61kvm5UvB7b49E+oBY0M8jA==
 
 swagger-typescript-api@^13.0.23:
-  version "13.0.24"
-  resolved "https://registry.yarnpkg.com/swagger-typescript-api/-/swagger-typescript-api-13.0.24.tgz#efd0fce2e02d41648e4699d00bb32ad3645734ef"
-  integrity sha512-gr0bz8RNgRswiY8hEJghPVC5Sv1D2dbePiYsfZavlg5vCUS/xXCdNNW6iKLx8yRYV7qo+tyRT31DEEzZPB3eEA==
+  version "13.0.25"
+  resolved "https://registry.yarnpkg.com/swagger-typescript-api/-/swagger-typescript-api-13.0.25.tgz#f094df425a4036de355a35df3dfb25a6f3ba985a"
+  integrity sha512-ZXjEQ7e4MN9uRutnmKE5sKTk4dIrnUFLbzeqIXeieHi6k5DwNJsNt0ttCPIoo3OjQr+LworNpEw2lfRtSqVXog==
   dependencies:
     "@types/swagger-schema-official" "^2.0.25"
     citty "^0.1.6"
