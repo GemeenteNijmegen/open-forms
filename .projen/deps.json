@@ -80,7 +80,23 @@
       "type": "build"
     },
     {
+      "name": "@aws-lambda-powertools/logger",
+      "type": "runtime"
+    },
+    {
       "name": "@aws-sdk/client-dynamodb",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-sdk/client-s3",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-sdk/client-sqs",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-sdk/lib-storage",
       "type": "runtime"
     },
     {
@@ -96,11 +112,19 @@
       "type": "runtime"
     },
     {
+      "name": "@gemeentenijmegen/modules-zgw-client",
+      "type": "runtime"
+    },
+    {
       "name": "@gemeentenijmegen/utils",
       "type": "runtime"
     },
     {
       "name": "@types/aws-lambda",
+      "type": "runtime"
+    },
+    {
+      "name": "@types/jsonwebtoken",
       "type": "runtime"
     },
     {
@@ -119,6 +143,14 @@
     },
     {
       "name": "jose",
+      "type": "runtime"
+    },
+    {
+      "name": "jsonwebtoken",
+      "type": "runtime"
+    },
+    {
+      "name": "zod",
       "type": "runtime"
     }
   ],

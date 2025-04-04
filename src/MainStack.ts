@@ -10,8 +10,9 @@ import { Construct } from 'constructs';
 import { Configurable } from './Configuration';
 import { PrefillDemo } from './prefill-demo/PrefillDemoConstruct';
 import { Statics } from './Statics';
+import { SubmissionForwarder } from './submission-forwarder/SubmissionForwarder';
 
-interface MainStackProps extends StackProps, Configurable {}
+interface MainStackProps extends StackProps, Configurable { }
 
 export class MainStack extends Stack {
 
@@ -36,6 +37,14 @@ export class MainStack extends Stack {
       resource: prefillDemo,
     });
 
+    // Setup the submission forwarder
+    const forwarderResource = this.api.root.addResource('submission-forwarder');
+    new SubmissionForwarder(this, 'submission-forwarder', {
+      key: this.key,
+      resource: forwarderResource,
+      criticality: props.configuration.criticality,
+    });
+
   }
 
   private setupRestApi() {
@@ -52,6 +61,22 @@ export class MainStack extends Stack {
         securityPolicy: SecurityPolicy.TLS_1_2,
       },
     });
+
+    const plan = api.addUsagePlan('UsagePlan', {
+      description: 'OpenForms supporting infra API gateway',
+      apiStages: [
+        {
+          api: api,
+          stage: api.deploymentStage,
+        },
+      ],
+    });
+
+    const key = api.addApiKey('ApiKey', {
+      description: 'OpenForms supporting infra API key',
+    });
+
+    plan.addApiKey(key);
 
     new ARecord(this, 'a-record', {
       target: RecordTarget.fromAlias(new ApiGatewayDomain(api.domainName!)),
@@ -82,7 +107,6 @@ export class MainStack extends Stack {
 
     return key;
   }
-
 
   private importHostedzone() {
     const accountRootZoneId = StringParameter.valueForStringParameter(this, Statics.accountRootHostedZoneId);

@@ -1,3 +1,4 @@
+import { Criticality } from '@gemeentenijmegen/aws-constructs';
 import { Environment } from 'aws-cdk-lib';
 import { Statics } from './Statics';
 
@@ -32,19 +33,26 @@ export interface Configuration {
    * the workload AWS account in our default region.
    */
   deploymentEnvironment: Required<Environment>;
+
+  /**
+   * Criticality for the branch
+   */
+  criticality: Criticality;
 }
 
 
-const EnvironmentConfigurations: {[key:string]: Configuration} = {
+const EnvironmentConfigurations: { [key: string]: Configuration } = {
   acceptance: {
     branch: 'acceptance',
     buildEnvironment: Statics.gnBuildEnvironment,
     deploymentEnvironment: Statics.gnOpenFormsAccp,
+    criticality: new Criticality('medium'),
   },
   main: {
     branch: 'main',
     buildEnvironment: Statics.gnBuildEnvironment,
     deploymentEnvironment: Statics.gnOpenFormsProd,
+    criticality: new Criticality('high'),
   },
 };
 
