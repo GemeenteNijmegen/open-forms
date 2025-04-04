@@ -854,7 +854,7 @@ body {
   --utrecht-textarea-hover-color: #282828;
   --utrecht-textarea-hover-border-width: 2px;
   --utrecht-textarea-border-radius: 0px;
-  --utrecht-textarea-border-bottom-width: auto;
+  --utrecht-textarea-border-bottom-width: 1px;
   --utrecht-textarea-border-width: 1px;
   --utrecht-textarea-font-family: "Source Sans Pro", Tahoma, Verdana, sans-serif;
   --utrecht-textarea-font-weight: 400;
@@ -1230,11 +1230,24 @@ body {
 /** Additional tokens **/
 body {
   --of-input-font-weight: normal;
+  --of-view-background: #fff;
   --utrecht-form-label-font-weight: bold;
   --of-utrecht-form-field-background-color: #ffffff;
   --of-utrecht-form-field-checkbox-background-color: #FFFFFF;
-<<<<<<< Updated upstream
 }
+
+/* Links not in a specified content block get default styling */
+a {
+  color: #157c68;
+  text-decoration: underline;
+}
+
+/* .openforms-formio-content a has default styling */
+a:hover, .openforms-formio-content a:hover {
+  color: #157c68;
+  text-decoration: none;
+}
+
 
 @font-face {
   font-display: swap;
@@ -1256,35 +1269,16 @@ body {
     local(Oranda BT Roman),
     url('https://componenten.nijmegen.nl/v6.4.0/oranda_bt.bde3d05f.woff2') format('woff2'),
     url('https://componenten.nijmegen.nl/v6.4.0/oranda_bt.05235f9a.woff') format('woff');
-=======
-  --of-utrecht-form-field-radio-background-color: #FFFFFF;
-  --of-utrecht-form-label-radio-padding-inline-start: 0;
-  --of-utrecht-form-label-radio-padding-inline-end: 0;
-  --of-utrecht-form-label-radio-padding-block-start: 4px;
-  --of-utrecht-form-label-radio-padding-block-end: 4px;
-
-  --of-utrecht-form-label-checkbox-padding-inline-start: 0;
-  --of-utrecht-form-label-checkbox-padding-inline-end: 0;
-  --of-utrecht-form-label-checkbox-padding-block-start: 4px;
-  --of-utrecht-form-label-checkbox-padding-block-end: 4px;
->>>>>>> Stashed changes
 }
 
 
 /* This cannot be manged by tokens.. */
 .openforms-subtitle {
-<<<<<<< Updated upstream
   font-family: Oranda, sans-serif !important;
   font-feature-settings: liga;
   text-rendering: optimizeLegibility;
   color: #a80a2d;
   font-size: 32px;
-=======
-  font-family: "Source Sans Pro", sans-serif !important;
-  color: #000;
-  font-weight: 600;
-  font-size: 2rem;
->>>>>>> Stashed changes
 }
 
 .utrecht-page-header {
@@ -1314,11 +1308,6 @@ body {
   .openforms-progress-indicator {
     border-radius: 0.5rem;
   }
-}
-
-/* Hovering links that are not part of the formio interface results in a blue highlight. This prevents that */
-.openforms-formio-content a:hover {
-  color: #157c68;
 }
 
 .utrecht-button--secondary-action {
