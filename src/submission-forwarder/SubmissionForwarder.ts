@@ -1,4 +1,4 @@
-import { Criticality, DeadLetterQueue } from '@gemeentenijmegen/aws-constructs';
+import { Criticality, DeadLetterQueue, ErrorMonitoringAlarm } from '@gemeentenijmegen/aws-constructs';
 import { Duration } from 'aws-cdk-lib';
 import { LambdaIntegration, Resource } from 'aws-cdk-lib/aws-apigateway';
 import { AccessKey, Role, User } from 'aws-cdk-lib/aws-iam';
@@ -39,7 +39,7 @@ interface SubmissionForwarderOptions {
  * to the Gemeente Nijmegen ESB.
  */
 export class SubmissionForwarder extends Construct {
-  private readonly queue: Queue;
+  private readonly EsbQueue: Queue;
   private readonly bucket: Bucket;
   private readonly parameters?: {
     apikey: Secret;
@@ -51,7 +51,7 @@ export class SubmissionForwarder extends Construct {
   constructor(scope: Construct, id: string, private readonly options: SubmissionForwarderOptions) {
     super(scope, id);
 
-    this.queue = this.setupEsbQueue();
+    this.EsbQueue = this.setupEsbQueue();
     this.parameters = this.setupParameters();
     this.bucket = this.setupSubmissionsBucket();
 
@@ -100,11 +100,7 @@ export class SubmissionForwarder extends Construct {
     }
 
     // Setup a internal queue
-    const internalQueue = new Queue(this, 'internal-queue', {
-      encryption: QueueEncryption.KMS,
-      encryptionMasterKey: this.options.key,
-      visibilityTimeout: Duration.minutes(10), // Note must be bigger than handler lambda timeout
-    });
+    const internalQueue = this.setupInternalQueue();
 
     // Create a receiver lambda (listens to the endpoint and publishes to internal queue)
     const receiver = new ReceiverFunction(this, 'receiver', {
@@ -144,11 +140,11 @@ export class SubmissionForwarder extends Construct {
         OBJECTS_API_APIKEY_ARN: this.parameters.objectsApikey.secretArn,
         DOCUMENTEN_CLIENT_ID_SSM: this.parameters.documentenApiClientId.parameterName,
         DOCUMENTEN_CLIENT_SECRET_ARN: this.parameters.documentenApiClientSecret.secretArn,
-        QUEUE_URL: this.queue.queueUrl,
+        QUEUE_URL: this.EsbQueue.queueUrl,
       },
     });
     this.bucket.grantPut(forwarder);
-    this.queue.grantSendMessages(forwarder);
+    this.EsbQueue.grantSendMessages(forwarder);
     this.parameters.objectsApikey.grantRead(forwarder);
     this.parameters.documentenApiClientId.grantRead(forwarder);
     this.parameters.documentenApiClientSecret.grantRead(forwarder);
@@ -158,8 +154,31 @@ export class SubmissionForwarder extends Construct {
       batchSize: 1, // This might be a very long running lambda therefore just run it uniquely every time
       reportBatchItemFailures: true, // See implementation
     }));
+
+    new ErrorMonitoringAlarm(this, 'alarm', {
+      criticality: new Criticality('high'),
+      lambda: forwarder,
+    });
   }
 
+
+  private setupInternalQueue() {
+    const dlq = new DeadLetterQueue(this, 'internal-dlq', {
+      kmsKey: this.options.key,
+      alarmDescription: 'Open Forms forwarder internal DLQ received messages',
+    });
+
+    const internalQueue = new Queue(this, 'internal-queue', {
+      encryption: QueueEncryption.KMS,
+      encryptionMasterKey: this.options.key,
+      visibilityTimeout: Duration.minutes(10), // Note must be bigger than handler lambda timeout
+      deadLetterQueue: {
+        queue: dlq.dlq,
+        maxReceiveCount: 3,
+      },
+    });
+    return internalQueue;
+  }
 
   private setupEsbQueue() {
     const dlq = new DeadLetterQueue(this, 'esb-dead-letter-queue', {
@@ -204,9 +223,8 @@ export class SubmissionForwarder extends Construct {
       description: 'Role to assume for ESB user',
     });
 
-    this.queue.grantConsumeMessages(role);
+    this.EsbQueue.grantConsumeMessages(role);
     this.bucket.grantRead(role);
     this.options.key.grantDecrypt(role);
   }
-
 }
