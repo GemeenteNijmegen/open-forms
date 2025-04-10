@@ -39,7 +39,8 @@ interface SubmissionForwarderOptions {
  * to the Gemeente Nijmegen ESB.
  */
 export class SubmissionForwarder extends Construct {
-  private readonly EsbQueue: Queue;
+  private readonly esbQueue: Queue;
+  private esbDeadLetterQueue?: Queue;
   private readonly bucket: Bucket;
   private readonly parameters?: {
     apikey: Secret;
@@ -51,7 +52,7 @@ export class SubmissionForwarder extends Construct {
   constructor(scope: Construct, id: string, private readonly options: SubmissionForwarderOptions) {
     super(scope, id);
 
-    this.EsbQueue = this.setupEsbQueue();
+    this.esbQueue = this.setupEsbQueue();
     this.parameters = this.setupParameters();
     this.bucket = this.setupSubmissionsBucket();
 
@@ -140,11 +141,12 @@ export class SubmissionForwarder extends Construct {
         OBJECTS_API_APIKEY_ARN: this.parameters.objectsApikey.secretArn,
         DOCUMENTEN_CLIENT_ID_SSM: this.parameters.documentenApiClientId.parameterName,
         DOCUMENTEN_CLIENT_SECRET_ARN: this.parameters.documentenApiClientSecret.secretArn,
-        QUEUE_URL: this.EsbQueue.queueUrl,
+        QUEUE_URL: this.esbQueue.queueUrl,
       },
     });
+
     this.bucket.grantPut(forwarder);
-    this.EsbQueue.grantSendMessages(forwarder);
+    this.esbQueue.grantSendMessages(forwarder);
     this.parameters.objectsApikey.grantRead(forwarder);
     this.parameters.documentenApiClientId.grantRead(forwarder);
     this.parameters.documentenApiClientSecret.grantRead(forwarder);
@@ -160,7 +162,6 @@ export class SubmissionForwarder extends Construct {
       lambda: forwarder,
     });
   }
-
 
   private setupInternalQueue() {
     const dlq = new DeadLetterQueue(this, 'internal-dlq', {
@@ -189,6 +190,8 @@ export class SubmissionForwarder extends Construct {
       },
       kmsKey: this.options.key,
     });
+
+    this.esbDeadLetterQueue = dlq.dlq;
 
     return new Queue(this, 'esb-queue', {
       fifo: true,
@@ -223,7 +226,8 @@ export class SubmissionForwarder extends Construct {
       description: 'Role to assume for ESB user',
     });
 
-    this.EsbQueue.grantConsumeMessages(role);
+    this.esbDeadLetterQueue?.grantSendMessages(role); // ESB publishes messages on DLQ on failure
+    this.esbQueue.grantConsumeMessages(role);
     this.bucket.grantRead(role);
     this.options.key.grantDecrypt(role);
   }

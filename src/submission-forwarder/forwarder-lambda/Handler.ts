@@ -39,8 +39,8 @@ export class SubmissionForwarderHandler {
     const submission = SubmissionSchema.parse(object.record.data);
     logger.debug('Retreived submisison', { submission });
 
-    // Only handle submissions with a netweork share
-    if (!submission.networkshare) {
+    // Only handle submissions with a network share
+    if (!submission.networkShare) {
       logger.error('Submission does not have a networkshare location, ignoring the submission');
       return;
     }
@@ -63,10 +63,15 @@ export class SubmissionForwarderHandler {
     const esb: EsbSubmission = {
       s3Files: s3Files,
       folderName: submission.reference,
-      targetNetworkLocation: submission.networkshare,
+      targetNetworkLocation: submission.networkShare,
     };
     await this.sendNotificationToQueue(this.options.queueUrl, esb);
 
+    // Also send files to monitoring location if provided in submission
+    if (submission.monitoringNetworkShare) {
+      const monitoringEsbMessage: EsbSubmission = { ...esb, targetNetworkLocation: submission.monitoringNetworkShare };
+      await this.sendNotificationToQueue(this.options.queueUrl, monitoringEsbMessage);
+    }
   }
 
   /**
@@ -127,7 +132,7 @@ export class SubmissionForwarderHandler {
   private async createSaveFiles(submission: Submission) {
     const s3Files: string[] = [];
 
-    for (const saveFile of Object.entries(submission.saveFiles ?? {})) {
+    for (const saveFile of Object.entries(submission.submissionValuesToFiles ?? {})) {
       const name = saveFile[0];
       const value = saveFile[1];
       await this.storeInS3(submission.reference, `${name}.txt`, value);
