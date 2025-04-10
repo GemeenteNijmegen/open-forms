@@ -5,15 +5,14 @@ import { z } from 'zod';
  * as a basis for the open forms registration.
  */
 export const SubmissionSchema = z.object({
-  bsn: z.string().optional(),
-  kvk: z.string().optional(),
+  bsn: z.string().optional().nullable(),
+  kvk: z.string().optional().nullable(),
   pdf: z.string(),
-  type: z.string(),
+  formName: z.string(),
   reference: z.string(),
   attachments: z.array(z.string()),
-  AppId: z.string(),
-  networkshare: z.string().optional(),
-  saveFiles: z.record(z.string(), z.string()).optional(),
+  networkShare: z.string().optional(),
+  submissionValuesToFiles: z.record(z.string(), z.string()).optional(),
 });
 
 export type Submission = z.infer<typeof SubmissionSchema>;

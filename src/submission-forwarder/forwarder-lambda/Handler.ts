@@ -127,7 +127,7 @@ export class SubmissionForwarderHandler {
   private async createSaveFiles(submission: Submission) {
     const s3Files: string[] = [];
 
-    for (const saveFile of Object.entries(submission.saveFiles ?? {})) {
+    for (const saveFile of Object.entries(submission.submissionValuesToFiles ?? {})) {
       const name = saveFile[0];
       const value = saveFile[1];
       await this.storeInS3(submission.reference, `${name}.txt`, value);

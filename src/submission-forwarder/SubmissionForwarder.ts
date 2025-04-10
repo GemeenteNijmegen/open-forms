@@ -144,6 +144,7 @@ export class SubmissionForwarder extends Construct {
         QUEUE_URL: this.esbQueue.queueUrl,
       },
     });
+
     this.bucket.grantPut(forwarder);
     this.esbQueue.grantSendMessages(forwarder);
     this.parameters.objectsApikey.grantRead(forwarder);
@@ -161,7 +162,6 @@ export class SubmissionForwarder extends Construct {
       lambda: forwarder,
     });
   }
-
 
   private setupInternalQueue() {
     const dlq = new DeadLetterQueue(this, 'internal-dlq', {
