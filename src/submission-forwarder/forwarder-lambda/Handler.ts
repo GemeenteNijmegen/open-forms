@@ -4,10 +4,10 @@ import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
 import { Upload } from '@aws-sdk/lib-storage';
 import { documenten } from '@gemeentenijmegen/modules-zgw-client';
 import { SQSRecord } from 'aws-lambda';
+import { ZgwClientFactory } from './ZgwClientFactory';
 import { EsbSubmission } from '../shared/EsbSubmission';
 import { Notification, NotificationSchema } from '../shared/Notification';
 import { Submission, SubmissionSchema } from '../shared/Submission';
-import { ZgwClientFactory } from './ZgwClientFactory';
 
 const logger = new Logger();
 const s3 = new S3Client();
@@ -39,7 +39,7 @@ export class SubmissionForwarderHandler {
     const submission = SubmissionSchema.parse(object.record.data);
     logger.debug('Retreived submisison', { submission });
 
-    // Only handle submissions with a netweork share
+    // Only handle submissions with a network share
     if (!submission.networkShare) {
       logger.error('Submission does not have a networkshare location, ignoring the submission');
       return;
@@ -67,6 +67,11 @@ export class SubmissionForwarderHandler {
     };
     await this.sendNotificationToQueue(this.options.queueUrl, esb);
 
+    // Also send files to monitoring location if provided in submission
+    if (submission.monitoringNetworkShare) {
+      const monitoringEsbMessage: EsbSubmission = { ...esb, targetNetworkLocation: submission.monitoringNetworkShare };
+      await this.sendNotificationToQueue(this.options.queueUrl, monitoringEsbMessage);
+    }
   }
 
   /**
