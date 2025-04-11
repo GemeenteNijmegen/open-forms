@@ -133,7 +133,7 @@ export class SubmissionForwarderHandler {
     const s3Files: string[] = [];
     const submissionValues: KeyValuePair[] = submission.submissionValuesToFiles ?? [];
     for (const [name, value] of submissionValues) {
-      if(value){
+      if (value) {
         const fileName = `${name}.txt`;
         const fileContent = String(value);
 
