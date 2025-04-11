@@ -34,7 +34,7 @@ describe('SubmissionForwarderHandler', () => {
     fakeSubmission = {
       pdf: 'https://pdfurl/723647238',
       attachments: ['https://atturl/823948'],
-      submissionValuesToFiles: { file1: 'file content' },
+      submissionValuesToFiles: [['file1', 'file content'], ['file1', 3], ['bsn', '']],
       reference: 'ref123',
       formName: 'formuliernaam',
       networkShare: 'nws://share',
@@ -123,6 +123,7 @@ describe('SubmissionForwarderHandler', () => {
     // Er mag maar 1 SQS-send call plaatsvinden, geen monitoringlocatie
     const sendMessageCalls = sqsMock.commandCalls(SendMessageCommand);
     expect(sendMessageCalls.length).toBe(1);
+    console.log('CommandCall', JSON.stringify(sendMessageCalls[0]));
 
     const payload = JSON.parse(sendMessageCalls[0].args[0].input.MessageBody!);
     expect(payload.targetNetworkLocation).toBe(emptyMonitoringSubmission.networkShare);
