@@ -7,7 +7,7 @@ import { SQSRecord } from 'aws-lambda';
 import { ZgwClientFactory } from './ZgwClientFactory';
 import { EsbSubmission } from '../shared/EsbSubmission';
 import { Notification, NotificationSchema } from '../shared/Notification';
-import { Submission, SubmissionSchema } from '../shared/Submission';
+import { KeyValuePair, Submission, SubmissionSchema } from '../shared/Submission';
 
 const logger = new Logger();
 const s3 = new S3Client();
@@ -124,24 +124,25 @@ export class SubmissionForwarderHandler {
   }
 
   /**
-   * Check if the submission requires save files
-   * If so, create them and return the paths.
-   * @param submission
-   * @returns - List of paths of the created save files
-   */
-  private async createSaveFiles(submission: Submission) {
+ * Check if the submission requires submissionValuesToFiles.
+ * If so, create them and return the paths.
+ * @param submission Submission data
+ * @returns - List of paths of the created save files
+ */
+  private async createSaveFiles(submission: Submission): Promise<string[]> {
     const s3Files: string[] = [];
+    const submissionValues: KeyValuePair[] = submission.submissionValuesToFiles ?? [];
+    for (const [name, value] of submissionValues) {
+      const fileName = `${name}.txt`;
+      const fileContent = String(value);
 
-    for (const saveFile of Object.entries(submission.submissionValuesToFiles ?? {})) {
-      const name = saveFile[0];
-      const value = saveFile[1];
-      await this.storeInS3(submission.reference, `${name}.txt`, value);
-      const attachmentS3Path = `s3://${this.options.bucketName}/${submission.reference}/${name}.txt`;
+      await this.storeInS3(submission.reference, fileName, fileContent);
+      const attachmentS3Path = `s3://${this.options.bucketName}/${submission.reference}/${fileName}`;
       s3Files.push(attachmentS3Path);
     }
-
     return s3Files;
   }
+
 
   /**
    * Send a notification to an sqs queue

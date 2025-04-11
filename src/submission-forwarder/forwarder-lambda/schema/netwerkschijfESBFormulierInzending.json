@@ -4,91 +4,116 @@
     "title": "netwerkschijfESBFormulierInzending",
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "required": [
-      "pdf",
-      "type",
-      "reference",
-      "attachments"
+        "pdf",
+        "reference",
+        "attachments",
+        "networkShare"    
     ],
     "properties": {
-      "bsn": {
-        "type": "string",
-        "examples": [
-          "999999333"
-        ],
-        "description": "BSN wanneer het formulier ingevuld is met Digid of Yivi met BSN."
-      },
-      "kvk": {
-        "type": "string",
-        "examples": [
-          "69599084"
-        ],
-        "description": "KvK-nummer wanneer het formulier ingevuld is met Eherkenning of Yivi met KvK."
-      },
-      "pdf": {
-        "type": "string",
-        "examples": [
-          "https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/93853c62-70b9-482a-b433-1733b98d163c"
-        ],
-        "description": "pdf url"
-      },
-      "formName": {
-        "type": "string",
-        "examples": [
-          "Contactformulier"
-        ],
-        "description": "productaanvraag type"
-      },
-      "reference": {
-        "type": "string",
-        "examples": [
-          "OF-AB7634HJ",
-          "Z02-39849384"
-        ],
-        "description": "submission public reference."
-      },
-      "attachments": {
-        "type": "array",
-        "items": {
-          "type": "string"
+        "bsn": {
+            "type": "string",
+            "examples": [
+                "999999333"
+            ],
+            "description": "BSN wanneer het formulier ingevuld is met Digid of Yivi met BSN."
         },
-        "examples": [
-          [
-            "https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/93853c62-70b9-482a-b433-1733b98d163c",
-            "https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/93853c62-70b9-482a-b433-1733b98d163c"
-          ]
-        ],
-        "description": "Bijlage urls"
-      },
-      "networkShare": {
-        "type": "string",
-        "examples": [
-          "//karelstad/data/gemeenschappelijk/Webformulieren/Accp/TDL"
-        ],
-        "description": "De hoofdmap op de netwerkschijf waar de een map aangemaakt moet worden en de bestanden naartoe geschreven worden"
-      },
-      "monitoringNetworkShare": {
-        "type": "string",
-        "examples": [
-          "/karelstad/data/gemeenschappelijk/Webformulieren/Accp/TDL/Monitoring"
-        ],
-        "description": "Optionele locatie voor monitoring. Indien deze waarde gevuld is, wordt de aanvraag met bijlagen ook in deze map geplaatst."
-      },
-      "submissionValuesToFiles": {
-        "type": "object",
-        "examples": [
-          {
-            "bsn": "999999333"
-          },
-          {
-            "geboorteDatum:": "01-01-2024"
-          }
-        ],
-        "description": "De key value pairs van data die apart opgeslagen wordt als een apart txt bestand naast de aanvraag pdf en bijlagen.",
-        "additionalProperties": {
-          "type": "string"
+        "kvk": {
+            "type": "string",
+            "examples": [
+                "69599084"
+            ],
+            "description": "KvK-nummer wanneer het formulier ingevuld is met Eherkenning of Yivi met KvK."
+        },
+        "pdf": {
+            "type": "string",
+            "examples": [
+                "https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/93853c62-70b9-482a-b433-1733b98d163c"
+            ],
+            "description": "pdf url"
+        },
+        "formName": {
+            "type": "string",
+            "examples": [
+                "Contactformulier"
+            ],
+            "description": "productaanvraag type"
+        },
+        "reference": {
+            "type": "string",
+            "examples": [
+                "OF-AB7634HJ",
+                "Z02-39849384"
+            ],
+            "description": "submission public reference."
+        },
+        "attachments": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "examples": [
+                [
+                    "https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/93853c62-70b9-482a-b433-1733b98d163c",
+                    "https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/93853c62-70b9-482a-b433-1733b98d163c"
+                ]
+            ],
+            "description": "Bijlage urls"
+        },
+        "networkShare": {
+            "type": "string",
+            "examples": [
+                "//karelstad/data/gemeenschappelijk/Webformulieren/Accp/TDL"
+            ],
+            "description": "De hoofdmap op de netwerkschijf waar de een map aangemaakt moet worden en de bestanden naartoe geschreven worden"
+        },
+        "monitoringNetworkShare": {
+            "type": "string",
+            "examples": [
+                "/karelstad/data/gemeenschappelijk/Webformulieren/Accp/TDL/Monitoring"
+            ],
+            "description": "Optionele locatie voor monitoring. Indien deze waarde gevuld is, wordt de aanvraag met bijlagen ook in deze map geplaatst."
+        },
+        "submissionValuesToFiles": {
+            "description": "De key value pairs van data die apart opgeslagen wordt als een apart txt bestand naast de aanvraag pdf en bijlagen.",
+            "oneOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "array",
+                        "minItems": 2,
+                        "maxItems": 2,
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                {
+                    "type": "null"
+                }
+            ],
+            "default": [],
+            "examples": [
+                [],
+                [
+                    [
+                        "bsn",
+                        "324324"
+                    ],
+                    [
+                        "savefileKeyEen",
+                        ""
+                    ]
+                ],
+                [
+                    [
+                        "test",
+                        ""
+                    ]
+                ],
+                null
+            ]
         }
-      }
     },
     "description": "Object om formulierinzendingen en bijlagen in de aangewezen mappen te plaatsen op de netwerkschijf via de ESB. De waarde networkShare moet gevuld zijn om de bestanden te plaatsen.",
     "additionalProperties": true
-  }
+}

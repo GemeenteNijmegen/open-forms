@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+
+export const KeyValuePairSchema = z.tuple([z.string(), z.union([z.string(), z.number()])]);
+export type KeyValuePair = z.infer<typeof KeyValuePairSchema>;
+
 /**
  * Schema based on the objecttype defined and used
  * as a basis for the open forms registration.
@@ -14,7 +18,11 @@ export const SubmissionSchema = z.object({
   attachments: z.array(z.string()),
   networkShare: z.string().optional(),
   monitoringNetworkShare: z.string().optional().nullable(),
-  submissionValuesToFiles: z.record(z.string(), z.string()).optional(),
+  submissionValuesToFiles: z
+    .union([
+      z.array(KeyValuePairSchema).optional(), // This ensures an array of key-value tuples.
+      z.null(),
+    ]).optional(),
 });
 
 export type Submission = z.infer<typeof SubmissionSchema>;

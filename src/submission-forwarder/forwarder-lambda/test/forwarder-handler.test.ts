@@ -34,7 +34,7 @@ describe('SubmissionForwarderHandler', () => {
     fakeSubmission = {
       pdf: 'https://pdfurl/723647238',
       attachments: ['https://atturl/823948'],
-      submissionValuesToFiles: { file1: 'file content' },
+      submissionValuesToFiles: [['file1', 'file content'], ['file1', 3]],
       reference: 'ref123',
       formName: 'formuliernaam',
       networkShare: 'nws://share',
