@@ -133,14 +133,19 @@ export class SubmissionForwarderHandler {
     const s3Files: string[] = [];
     const submissionValues: KeyValuePair[] = submission.submissionValuesToFiles ?? [];
     for (const [name, value] of submissionValues) {
-      if(value){
-        const fileName = `${name}.txt`;
-        const fileContent = String(value);
+        if(!value) continue;
+        try{
+          const fileName = `${name}.txt`;
+          const fileContent = String(value);
 
-        await this.storeInS3(submission.reference, fileName, fileContent);
-        const attachmentS3Path = `s3://${this.options.bucketName}/${submission.reference}/${fileName}`;
-        s3Files.push(attachmentS3Path);
-      }
+          await this.storeInS3(submission.reference, fileName, fileContent);
+          const attachmentS3Path = `s3://${this.options.bucketName}/${submission.reference}/${fileName}`;
+          s3Files.push(attachmentS3Path);
+        }
+        catch(error: any){
+          logger.error(`Failed to create saveFile for ${ name } - ${submission.reference}`);
+        }
+      
     }
     return s3Files;
   }
