@@ -46,8 +46,10 @@ export class SubmissionForwarder extends Construct {
     apikey: Secret;
     objectsApikey: Secret;
     documentenApiBaseUrl: StringParameter;
-    documentenApiClientId: StringParameter;
-    documentenApiClientSecret: Secret;
+    zakenApiBaseUrl: StringParameter;
+    catalogiApiBaseUrl: StringParameter;
+    mijnServicesOpenZaakApiClientId: StringParameter;
+    mijnServicesOpenZaakApiClientSecret: Secret;
   };
   constructor(scope: Construct, id: string, private readonly options: SubmissionForwarderOptions) {
     super(scope, id);
@@ -61,6 +63,7 @@ export class SubmissionForwarder extends Construct {
   }
 
   private setupParameters() {
+    const baseParameterName = '/open-forms/submissionforwarder/';
     const apikey = new Secret(this, 'api-key', {
       description: 'API Key for authentication in submission forwarder',
       generateSecretString: {
@@ -76,22 +79,36 @@ export class SubmissionForwarder extends Construct {
       stringValue: '-',
       description: 'Base URL used by submission-forwarder to reach the documenten API',
     });
-
-    const documentenApiClientId = new StringParameter(this, 'documentenApiClientId', {
-      stringValue: 'submission-forwarder',
-      description: 'Client ID used by submission-forwarder to authenticate at documenten API',
+    const zakenApiBaseUrl = new StringParameter(this, 'zakenApiBaseUrl', {
+      parameterName: `${baseParameterName}/zaken-api-base-url`,
+      stringValue: '-',
+      description: 'Base URL used by submission-forwarder to reach the zaken API',
+    });
+    const catalogiApiBaseUrl = new StringParameter(this, 'catalogiApiBaseUrl', {
+      parameterName: `${baseParameterName}/catalogi-api-base-url`,
+      stringValue: '-',
+      description: 'Base URL used by submission-forwarder to reach the catalogi API',
     });
 
-    const documentenApiClientSecret = new Secret(this, 'documentenApiClientSecret', {
-      description: 'Client secret used by submission-forwarder to authenticate at documenten API',
+    const mijnServicesOpenZaakApiClientId = new StringParameter(this, 'mijnServicesOpenZaakApiClientId', {
+      parameterName: `${baseParameterName}/mijn-services-open-zaak/client-id`,
+      stringValue: 'submission-forwarder',
+      description: 'Client ID used by submission-forwarder to authenticate at mijn services open zaak APIs',
+    });
+
+    const mijnServicesOpenZaakApiClientSecret = new Secret(this, 'mijnServicesOpenZaakApiClientSecret', {
+      secretName: `${baseParameterName}/mijn-services-open-zaak/client-secret`,
+      description: 'Client secret used by submission-forwarder to authenticate at mijn services open zaak APIs',
     });
 
     return {
       apikey,
       objectsApikey,
       documentenApiBaseUrl,
-      documentenApiClientId,
-      documentenApiClientSecret,
+      zakenApiBaseUrl,
+      catalogiApiBaseUrl,
+      mijnServicesOpenZaakApiClientId,
+      mijnServicesOpenZaakApiClientSecret,
     };
   }
 
@@ -136,11 +153,13 @@ export class SubmissionForwarder extends Construct {
         // Provided directly trough env.
         SUBMISSION_BUCKET_NAME: this.bucket.bucketName,
         DOCUMENTEN_BASE_URL: this.parameters.documentenApiBaseUrl.stringValue,
+        ZAKEN_BASE_URL: this.parameters.zakenApiBaseUrl.stringValue,
+        CATALOGI_BASE_URL: this.parameters.catalogiApiBaseUrl.stringValue,
 
         // Loaded dynamically
         OBJECTS_API_APIKEY_ARN: this.parameters.objectsApikey.secretArn,
-        DOCUMENTEN_CLIENT_ID_SSM: this.parameters.documentenApiClientId.parameterName,
-        DOCUMENTEN_CLIENT_SECRET_ARN: this.parameters.documentenApiClientSecret.secretArn,
+        MIJN_SERVICES_OPEN_ZAAK_CLIENT_ID_SSM: this.parameters.mijnServicesOpenZaakApiClientId.parameterName,
+        MIJN_SERVICES_OPEN_ZAAK_CLIENT_SECRET_ARN: this.parameters.mijnServicesOpenZaakApiClientSecret.secretArn,
         QUEUE_URL: this.esbQueue.queueUrl,
       },
     });
@@ -148,8 +167,8 @@ export class SubmissionForwarder extends Construct {
     this.bucket.grantPut(forwarder);
     this.esbQueue.grantSendMessages(forwarder);
     this.parameters.objectsApikey.grantRead(forwarder);
-    this.parameters.documentenApiClientId.grantRead(forwarder);
-    this.parameters.documentenApiClientSecret.grantRead(forwarder);
+    this.parameters.mijnServicesOpenZaakApiClientId.grantRead(forwarder);
+    this.parameters.mijnServicesOpenZaakApiClientSecret.grantRead(forwarder);
     this.options.key.grantEncryptDecrypt(forwarder);
 
     forwarder.addEventSource(new SqsEventSource(internalQueue, {

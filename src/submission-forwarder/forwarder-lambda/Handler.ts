@@ -16,6 +16,8 @@ const sqs = new SQSClient();
 interface SubmissionForwarderHandlerOptions {
   zgwClientFactory: ZgwClientFactory;
   documentenBaseUrl: string;
+  zakenBaseUrl: string;
+  catalogiBaseUrl: string;
   bucketName: string;
   queueUrl: string;
 }
@@ -49,7 +51,7 @@ export class SubmissionForwarderHandler {
     const httpClient = await this.options.zgwClientFactory.getDocumentenClient(this.options.documentenBaseUrl);
     const documentenClient = new documenten.Enkelvoudiginformatieobjecten(httpClient);
 
-    // Download PDF, Attachments and create save files in S3 bucket
+    // Download PDF, Attachments and create save files in S3 bucket. On retry overwritten.
     const pdfS3Url = await this.downloadPdf(submission, documentenClient);
     const attachmentS3Urls = await this.downloadAttachments(submission, documentenClient);
     const saveFileS3Urls = await this.createSaveFiles(submission);
@@ -72,6 +74,9 @@ export class SubmissionForwarderHandler {
       const monitoringEsbMessage: EsbSubmission = { ...esb, targetNetworkLocation: submission.monitoringNetworkShare };
       await this.sendNotificationToQueue(this.options.queueUrl, monitoringEsbMessage);
     }
+
+    // Make zaak to display in Mijn Nijmegen. Account for retries queue
+
   }
 
   /**

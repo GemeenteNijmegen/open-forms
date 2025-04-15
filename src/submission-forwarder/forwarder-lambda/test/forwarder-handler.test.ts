@@ -79,6 +79,8 @@ describe('SubmissionForwarderHandler', () => {
     handler = new SubmissionForwarderHandler({
       zgwClientFactory: fakeZgwClientFactory as ZgwClientFactory,
       documentenBaseUrl: 'https://documenten.api',
+      zakenBaseUrl: 'https://zaken.api',
+      catalogiBaseUrl: 'https://catalogi.ap',
       bucketName,
       queueUrl,
     });
@@ -123,7 +125,6 @@ describe('SubmissionForwarderHandler', () => {
     // Er mag maar 1 SQS-send call plaatsvinden, geen monitoringlocatie
     const sendMessageCalls = sqsMock.commandCalls(SendMessageCommand);
     expect(sendMessageCalls.length).toBe(1);
-    console.log('CommandCall', JSON.stringify(sendMessageCalls[0]));
 
     const payload = JSON.parse(sendMessageCalls[0].args[0].input.MessageBody!);
     expect(payload.targetNetworkLocation).toBe(emptyMonitoringSubmission.networkShare);
