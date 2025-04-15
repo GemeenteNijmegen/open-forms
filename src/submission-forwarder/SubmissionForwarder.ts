@@ -65,16 +65,15 @@ export class SubmissionForwarder extends Construct {
   private setupParameters() {
     const baseParameterName = '/open-forms/submissionforwarder/';
     // To be deleted for rename
-    const documentenApiClientSecret = new Secret(this, 'documentenApiClientSecret', {
+   new Secret(this, 'documentenApiClientSecret', {
       description: 'Client secret used by submission-forwarder to authenticate at documenten API',
     });
-    documentenApiClientSecret.applyRemovalPolicy(RemovalPolicy.DESTROY);
-    
-    const documentenApiClientId = new StringParameter(this, 'documentenApiClientId', {
+
+    new StringParameter(this, 'documentenApiClientId', {
       stringValue: 'submission-forwarder',
       description: 'Client ID used by submission-forwarder to authenticate at documenten API',
     });
-    documentenApiClientId.applyRemovalPolicy(RemovalPolicy.DESTROY);
+
 
     const apikey = new Secret(this, 'api-key', {
       description: 'API Key for authentication in submission forwarder',
