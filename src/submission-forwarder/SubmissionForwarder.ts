@@ -1,5 +1,5 @@
 import { Criticality, DeadLetterQueue, ErrorMonitoringAlarm } from '@gemeentenijmegen/aws-constructs';
-import { Duration} from 'aws-cdk-lib';
+import { Duration } from 'aws-cdk-lib';
 import { LambdaIntegration, Resource } from 'aws-cdk-lib/aws-apigateway';
 import { AccessKey, Role, User } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
@@ -65,7 +65,7 @@ export class SubmissionForwarder extends Construct {
   private setupParameters() {
     const baseParameterName = '/open-forms/submissionforwarder/';
     // To be deleted for rename
-   new Secret(this, 'documentenApiClientSecret', {
+    new Secret(this, 'documentenApiClientSecret', {
       description: 'Client secret used by submission-forwarder to authenticate at documenten API',
     });
 
@@ -91,24 +91,24 @@ export class SubmissionForwarder extends Construct {
       description: 'Base URL used by submission-forwarder to reach the documenten API',
     });
     const zakenApiBaseUrl = new StringParameter(this, 'zakenApiBaseUrl', {
-      parameterName: `${baseParameterName}/zaken-api-base-url`,
+      parameterName: `${baseParameterName}zaken-api-base-url`,
       stringValue: '-',
       description: 'Base URL used by submission-forwarder to reach the zaken API',
     });
     const catalogiApiBaseUrl = new StringParameter(this, 'catalogiApiBaseUrl', {
-      parameterName: `${baseParameterName}/catalogi-api-base-url`,
+      parameterName: `${baseParameterName}catalogi-api-base-url`,
       stringValue: '-',
       description: 'Base URL used by submission-forwarder to reach the catalogi API',
     });
 
     const mijnServicesOpenZaakApiClientId = new StringParameter(this, 'mijnServicesOpenZaakApiClientId', {
-      parameterName: `${baseParameterName}/mijn-services-open-zaak/client-id`,
+      parameterName: `${baseParameterName}mijn-services-open-zaak/client-id`,
       stringValue: 'submission-forwarder',
       description: 'Client ID used by submission-forwarder to authenticate at mijn services open zaak APIs',
     });
 
     const mijnServicesOpenZaakApiClientSecret = new Secret(this, 'mijnServicesOpenZaakApiClientSecret', {
-      secretName: `${baseParameterName}/mijn-services-open-zaak/client-secret`,
+      secretName: `${baseParameterName}mijn-services-open-zaak/client-secret`,
       description: 'Client secret used by submission-forwarder to authenticate at mijn services open zaak APIs',
     });
 
