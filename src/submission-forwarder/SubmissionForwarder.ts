@@ -1,5 +1,5 @@
 import { Criticality, DeadLetterQueue, ErrorMonitoringAlarm } from '@gemeentenijmegen/aws-constructs';
-import { Duration } from 'aws-cdk-lib';
+import { Duration, RemovalPolicy } from 'aws-cdk-lib';
 import { LambdaIntegration, Resource } from 'aws-cdk-lib/aws-apigateway';
 import { AccessKey, Role, User } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
@@ -64,6 +64,12 @@ export class SubmissionForwarder extends Construct {
 
   private setupParameters() {
     const baseParameterName = '/open-forms/submissionforwarder/';
+    // To be deleted for rename
+    const documentenApiClientSecret = new Secret(this, 'documentenApiClientSecret', {
+      description: 'Client secret used by submission-forwarder to authenticate at documenten API',
+    });
+    documentenApiClientSecret.applyRemovalPolicy(RemovalPolicy.DESTROY);
+    
     const apikey = new Secret(this, 'api-key', {
       description: 'API Key for authentication in submission forwarder',
       generateSecretString: {
