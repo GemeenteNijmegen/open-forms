@@ -68,7 +68,7 @@
     "@gemeentenijmegen/aws-constructs": "^0.0.33",
     "@gemeentenijmegen/design-tokens": "^0.0.2-alpha.16",
     "@gemeentenijmegen/modules-zgw-client": "^0.0.4",
-    "@gemeentenijmegen/utils": "^0.0.27",
+    "@gemeentenijmegen/utils": "^0.0.28",
     "@types/aws-lambda": "^8.10.149",
     "@types/jsonwebtoken": "^9.0.9",
     "aws-cdk-lib": "^2.1.0",
@@ -76,7 +76,7 @@
     "dotenv": "^16.5.0",
     "jose": "^5.10.0",
     "jsonwebtoken": "^9.0.2",
-    "zod": "^3.24.2"
+    "zod": "^3.24.3"
   },
   "license": "EUPL-1.2",
   "publishConfig": {
