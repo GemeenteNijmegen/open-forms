@@ -73,6 +73,8 @@ describe('SubmissionForwarderHandler', () => {
     fakeZgwClientFactory = {
       getObjectsApiClient: jest.fn().mockResolvedValue(fakeObjectsApiClient),
       getDocumentenClient: jest.fn().mockResolvedValue(fakeHttpClient),
+      getZakenClient: jest.fn().mockResolvedValue(fakeHttpClient),
+      getCatalogiClient: jest.fn().mockResolvedValue(fakeHttpClient),
     };
 
     // Maak de handler met de fake dependencies

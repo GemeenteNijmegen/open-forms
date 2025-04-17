@@ -8,6 +8,7 @@ import { ZgwClientFactory } from './ZgwClientFactory';
 import { EsbSubmission } from '../shared/EsbSubmission';
 import { Notification, NotificationSchema } from '../shared/Notification';
 import { KeyValuePair, Submission, SubmissionSchema } from '../shared/Submission';
+import { ESBFolderSubmissionZaak } from './ESBFolderSubmissionZaak/ESBFolderSubmissionZaak';
 
 const logger = new Logger();
 const s3 = new S3Client();
@@ -75,8 +76,14 @@ export class SubmissionForwarderHandler {
       await this.sendNotificationToQueue(this.options.queueUrl, monitoringEsbMessage);
     }
 
-    // Make zaak to display in Mijn Nijmegen. Account for retries queue
-
+    // Make zaak to display in Mijn Nijmegen. Account for retries queue by always checking if some part already exists
+    //const esbFolderSubmissionZaak =
+    await ESBFolderSubmissionZaak.create({
+      submission: submission,
+      zgwClientFactory: this.options.zgwClientFactory,
+      zakenApiBaseUrl: this.options.zakenBaseUrl,
+      catalogiApiBaseUrl: this.options.catalogiBaseUrl,
+    });
   }
 
   /**
