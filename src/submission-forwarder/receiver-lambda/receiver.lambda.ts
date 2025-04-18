@@ -3,11 +3,13 @@ import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
 import { MessageAttributeValue } from '@aws-sdk/client-sqs';
 import { environmentVariables } from '@gemeentenijmegen/utils';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { authenticate } from './authenticate';
 import { ZgwClientFactory } from '../forwarder-lambda/ZgwClientFactory';
 import { Notification, NotificationSchema } from '../shared/Notification';
 import { Submission, SubmissionSchema } from '../shared/Submission';
+import { trace } from '../shared/trace';
+import { authenticate } from './authenticate';
 
+const HANDLER_ID = 'receiver';
 const logger = new Logger();
 const sns = new SNSClient();
 
@@ -55,8 +57,8 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
     // Figure out attributes to send to topic
     const attributes: Record<string, MessageAttributeValue> = {
-      internalNotificationEmails: { DataType: 'string', StringValue: 'false' },
-      networkShare: { DataType: 'string', StringValue: 'false' },
+      internalNotificationEmails: { DataType: 'String', StringValue: 'false' },
+      networkShare: { DataType: 'String', StringValue: 'false' },
     };
     if (submission.networkShare || submission.monitoringNetworkShare) {
       attributes.networkShare.StringValue = 'true';
@@ -67,6 +69,7 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
     // Send object incl. tags to SNS
     await sendNotificationToTopic(env.TOPIC_ARN, object, attributes);
+    await trace(submission.reference, HANDLER_ID, true);
     return response({ message: 'OK' });
 
   } catch (error) {
