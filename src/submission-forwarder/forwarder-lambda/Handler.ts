@@ -6,9 +6,11 @@ import { documenten } from '@gemeentenijmegen/modules-zgw-client';
 import { SNSEventRecord } from 'aws-lambda';
 import { EsbSubmission } from '../shared/EsbSubmission';
 import { KeyValuePair, Submission, SubmissionSchema } from '../shared/Submission';
+import { trace } from '../shared/trace';
 import { ESBFolderSubmissionZaak } from './ESBFolderSubmissionZaak/ESBFolderSubmissionZaak';
 import { ZgwClientFactory } from './ZgwClientFactory';
 
+const HANDLER_ID = 'ESB_FORWARDER';
 const logger = new Logger();
 const s3 = new S3Client();
 const sqs = new SQSClient();
@@ -70,7 +72,10 @@ export class SubmissionForwarderHandler {
       await this.sendNotificationToQueue(this.options.queueUrl, monitoringEsbMessage);
     }
 
+    await trace(submission.reference, HANDLER_ID, 'OK');
+
     // Make zaak to display in Mijn Nijmegen. Account for retries queue by always checking if some part already exists
+    // TODO move to own lambda for ZGW registration
     //const esbFolderSubmissionZaak =
     await ESBFolderSubmissionZaak.create({
       submission: submission,
