@@ -319,6 +319,7 @@ export class SubmissionForwarder extends Construct {
     const backupLambda = new BackupFunction(this, 'backup-function', {
       description: 'Writes SNS messages to S3 bucket',
       environment: {
+        POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'DEBUG',
         BACKUP_BUCKET: backupBucket.bucketName,
         TRACE_TABLE_NAME: this.traceTable.tableName,
       },
@@ -338,6 +339,7 @@ export class SubmissionForwarder extends Construct {
     const internalNotificationMailLambda = new InternalNotificationMailFunction(this, 'internal-notification-function', {
       description: 'Sends internal notification emails',
       environment: {
+        POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'DEBUG',
         MAIL_FROM_DOMAIN: accountHostedZoneName,
         TRACE_TABLE_NAME: this.traceTable.tableName,
       },
