@@ -66,6 +66,10 @@ describe('receiver', () => {
       topicArn: 'arn:topci:aws:somewhere',
     });
     await handler.handle(fakeEvent as any);
+
+    // Should push to SNS
+    const published = snsMock.commandCalls(PublishCommand);
+    expect(published.length).toBe(1);
   });
 
 

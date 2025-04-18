@@ -155,8 +155,10 @@ export class SubmissionForwarder extends Construct {
         MIJN_SERVICES_OPEN_ZAAK_CLIENT_ID_SSM: this.parameters.mijnServicesOpenZaakApiClientId.parameterName,
         MIJN_SERVICES_OPEN_ZAAK_CLIENT_SECRET_ARN: this.parameters.mijnServicesOpenZaakApiClientSecret.secretArn,
         OBJECTS_API_APIKEY_ARN: this.parameters.objectsApikey.secretArn,
+        TRACE_TABLE_NAME: this.traceTable.tableName,
       },
     });
+    this.traceTable.grantWriteData(receiver);
     this.parameters.apikey.grantRead(receiver);
     this.options.key.grantEncryptDecrypt(receiver);
     this.options.resource.addMethod('POST', new LambdaIntegration(receiver));
@@ -193,9 +195,11 @@ export class SubmissionForwarder extends Construct {
         MIJN_SERVICES_OPEN_ZAAK_CLIENT_ID_SSM: this.parameters.mijnServicesOpenZaakApiClientId.parameterName,
         MIJN_SERVICES_OPEN_ZAAK_CLIENT_SECRET_ARN: this.parameters.mijnServicesOpenZaakApiClientSecret.secretArn,
         QUEUE_URL: this.esbQueue.queueUrl,
+        TRACE_TABLE_NAME: this.traceTable.tableName,
       },
     });
 
+    this.traceTable.grantWriteData(forwarder);
     this.bucket.grantPut(forwarder);
     this.esbQueue.grantSendMessages(forwarder);
     this.parameters.objectsApikey.grantRead(forwarder);
@@ -316,8 +320,10 @@ export class SubmissionForwarder extends Construct {
       description: 'Writes SNS messages to S3 bucket',
       environment: {
         BACKUP_BUCKET: backupBucket.bucketName,
+        TRACE_TABLE_NAME: this.traceTable.tableName,
       },
     });
+    this.traceTable.grantWriteData(backupLambda);
     backupBucket.grantWrite(backupLambda);
 
     backupLambda.addEventSource(new SnsEventSource(this.topic, {
