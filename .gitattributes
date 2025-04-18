@@ -27,6 +27,7 @@
 /src/submission-forwarder/forwarder-lambda/forwarder-function.ts linguist-generated
 /src/submission-forwarder/internal-notification-mail-lambda/internalNotificationMail-function.ts linguist-generated
 /src/submission-forwarder/receiver-lambda/receiver-function.ts linguist-generated
+/src/submission-forwarder/resubmit-lambda/resubmit-function.ts linguist-generated
 /tsconfig.dev.json linguist-generated
 /tsconfig.json linguist-generated
 /yarn.lock linguist-generated

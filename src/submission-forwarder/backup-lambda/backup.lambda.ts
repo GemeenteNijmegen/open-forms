@@ -1,7 +1,7 @@
+import { randomUUID } from 'crypto';
 import { Logger } from '@aws-lambda-powertools/logger';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { SNSEvent } from 'aws-lambda';
-import { randomUUID } from 'crypto';
 import { SubmissionSchema } from '../shared/Submission';
 import { trace } from '../shared/trace';
 

@@ -66,6 +66,9 @@
         },
         {
           "spawn": "bundle:submission-forwarder/receiver-lambda/receiver.lambda"
+        },
+        {
+          "spawn": "bundle:submission-forwarder/resubmit-lambda/resubmit.lambda"
         }
       ]
     },
@@ -192,6 +195,24 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/submission-forwarder/receiver-lambda/receiver.lambda.ts --target=\"node20\" --platform=\"node\" --outfile=\"assets/submission-forwarder/receiver-lambda/receiver.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
+        }
+      ]
+    },
+    "bundle:submission-forwarder/resubmit-lambda/resubmit.lambda": {
+      "name": "bundle:submission-forwarder/resubmit-lambda/resubmit.lambda",
+      "description": "Create a JavaScript bundle from src/submission-forwarder/resubmit-lambda/resubmit.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/submission-forwarder/resubmit-lambda/resubmit.lambda.ts --target=\"node20\" --platform=\"node\" --outfile=\"assets/submission-forwarder/resubmit-lambda/resubmit.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
+        }
+      ]
+    },
+    "bundle:submission-forwarder/resubmit-lambda/resubmit.lambda:watch": {
+      "name": "bundle:submission-forwarder/resubmit-lambda/resubmit.lambda:watch",
+      "description": "Continuously update the JavaScript bundle from src/submission-forwarder/resubmit-lambda/resubmit.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/submission-forwarder/resubmit-lambda/resubmit.lambda.ts --target=\"node20\" --platform=\"node\" --outfile=\"assets/submission-forwarder/resubmit-lambda/resubmit.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
         }
       ]
     },

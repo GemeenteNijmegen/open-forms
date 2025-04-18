@@ -66,6 +66,7 @@ junit.xml
 !/src/submission-forwarder/forwarder-lambda/forwarder-function.ts
 !/src/submission-forwarder/internal-notification-mail-lambda/internalNotificationMail-function.ts
 !/src/submission-forwarder/receiver-lambda/receiver-function.ts
+!/src/submission-forwarder/resubmit-lambda/resubmit-function.ts
 !/.github/workflows/emergency.yml
 !/.github/workflows/auto-merge.yml
 !/.projenrc.ts

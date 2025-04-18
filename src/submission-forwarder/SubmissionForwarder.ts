@@ -17,6 +17,7 @@ import { BackupFunction } from './backup-lambda/backup-function';
 import { ForwarderFunction } from './forwarder-lambda/forwarder-function';
 import { InternalNotificationMailFunction } from './internal-notification-mail-lambda/internalNotificationMail-function';
 import { ReceiverFunction } from './receiver-lambda/receiver-function';
+import { ResubmitFunction } from './resubmit-lambda/resubmit-function';
 
 interface SubmissionForwarderOptions {
   /**
@@ -49,6 +50,7 @@ export class SubmissionForwarder extends Construct {
   private readonly bucket: Bucket;
   private readonly topic: Topic;
   private readonly traceTable: Table;
+  private readonly backupBucket: Bucket;
   private readonly parameters?: {
     apikey: Secret;
     objectsApikey: Secret;
@@ -61,6 +63,7 @@ export class SubmissionForwarder extends Construct {
   constructor(scope: Construct, id: string, private readonly options: SubmissionForwarderOptions) {
     super(scope, id);
 
+    this.backupBucket = this.setupBackupBucket();
     this.traceTable = this.setupTraceTable();
     this.esbQueue = this.setupEsbQueue();
     this.parameters = this.setupParameters();
@@ -72,6 +75,7 @@ export class SubmissionForwarder extends Construct {
     this.setupEsbForwarderLambda();
     this.setupBackupLambda();
     this.setupNotificationMailLambda();
+    this.setupResubmitLambda();
   }
 
   private setupParameters() {
@@ -302,7 +306,7 @@ export class SubmissionForwarder extends Construct {
     this.options.key.grantDecrypt(role);
   }
 
-  private setupBackupLambda() {
+  private setupBackupBucket() {
     const backupBucket = new Bucket(this, 'submissions-backup-bucket', {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       enforceSSL: true,
@@ -315,17 +319,20 @@ export class SubmissionForwarder extends Construct {
         },
       ],
     });
+    return backupBucket;
+  }
 
+  private setupBackupLambda() {
     const backupLambda = new BackupFunction(this, 'backup-function', {
       description: 'Writes SNS messages to S3 bucket',
       environment: {
         POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'DEBUG',
-        BACKUP_BUCKET: backupBucket.bucketName,
+        BACKUP_BUCKET: this.backupBucket.bucketName,
         TRACE_TABLE_NAME: this.traceTable.tableName,
       },
     });
     this.traceTable.grantWriteData(backupLambda);
-    backupBucket.grantWrite(backupLambda);
+    this.backupBucket.grantWrite(backupLambda);
 
     backupLambda.addEventSource(new SnsEventSource(this.topic, {
       filterPolicy: {
@@ -351,7 +358,7 @@ export class SubmissionForwarder extends Construct {
         'ses:SendEmail',
         'ses:SendRawEmail',
       ],
-    }),)
+    }));
     internalNotificationMailLambda.addEventSource(new SnsEventSource(this.topic, {
       filterPolicy: {
         internalNotificationEmails: SubscriptionFilter.stringFilter({ allowlist: ['true'] }),
@@ -373,6 +380,32 @@ export class SubmissionForwarder extends Construct {
       billingMode: BillingMode.PAY_PER_REQUEST,
       encryptionKey: this.options.key,
     });
+  }
+
+  private setupResubmitLambda() {
+    const apikey = new Secret(this, 'resubmit-api-key', {
+      description: 'API key for calling the resubmit endpoint',
+      generateSecretString: {
+        excludePunctuation: true,
+      },
+    });
+
+    const resubmitLambda = new ResubmitFunction(this, 'resubmit', {
+      description: 'Retry failed submissions by resubmitting',
+      environment: {
+        BACKUP_BUCKET: this.backupBucket.bucketName,
+        API_KEY: apikey.secretArn,
+        TOPIC_ARN: this.topic.topicArn,
+      },
+    });
+    this.topic.grantPublish(resubmitLambda);
+    apikey.grantRead(resubmitLambda);
+    this.bucket.grantRead(resubmitLambda);
+
+    // Setup API gateway path
+    const resource = this.options.resource.addResource('resubmit');
+    resource.addMethod('POST', new LambdaIntegration(resubmitLambda));
+
   }
 
 }

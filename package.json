@@ -18,6 +18,8 @@
     "bundle:submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda:watch": "npx projen bundle:submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda:watch",
     "bundle:submission-forwarder/receiver-lambda/receiver.lambda": "npx projen bundle:submission-forwarder/receiver-lambda/receiver.lambda",
     "bundle:submission-forwarder/receiver-lambda/receiver.lambda:watch": "npx projen bundle:submission-forwarder/receiver-lambda/receiver.lambda:watch",
+    "bundle:submission-forwarder/resubmit-lambda/resubmit.lambda": "npx projen bundle:submission-forwarder/resubmit-lambda/resubmit.lambda",
+    "bundle:submission-forwarder/resubmit-lambda/resubmit.lambda:watch": "npx projen bundle:submission-forwarder/resubmit-lambda/resubmit.lambda:watch",
     "clobber": "npx projen clobber",
     "compile": "npx projen compile",
     "default": "npx projen default",
