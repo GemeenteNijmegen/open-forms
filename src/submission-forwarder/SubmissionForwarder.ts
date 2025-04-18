@@ -146,7 +146,7 @@ export class SubmissionForwarder extends Construct {
         encryptionKey: this.options.key,
         retention: RetentionDays.SIX_MONTHS,
       }),
-      timeout: Duration.seconds(3),
+      timeout: Duration.seconds(6),
       description: 'Submission-forwarder receiver endpoint',
       environment: {
         POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'DEBUG',
