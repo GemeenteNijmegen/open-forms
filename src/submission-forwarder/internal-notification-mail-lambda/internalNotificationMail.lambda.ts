@@ -15,10 +15,10 @@ export async function handler(event: SNSEvent) {
   const submission = SubmissionSchema.parse(object);
   try {
     await sendNotificationMail(submission);
-    await trace(submission.reference, HANDLER_ID, true);
+    await trace(submission.reference, HANDLER_ID, 'OK');
   } catch (error) {
     logger.error('failed to send notificaiton mail', { error });
-    await trace(submission.reference, HANDLER_ID, false);
+    await trace(submission.reference, HANDLER_ID, 'FAILED');
   }
 }
 
