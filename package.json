@@ -10,6 +10,8 @@
     "bundle:nl-wallet/token/token.lambda:watch": "npx projen bundle:nl-wallet/token/token.lambda:watch",
     "bundle:prefill-demo/handler.lambda": "npx projen bundle:prefill-demo/handler.lambda",
     "bundle:prefill-demo/handler.lambda:watch": "npx projen bundle:prefill-demo/handler.lambda:watch",
+    "bundle:submission-forwarder/backup-lambda/backup.lambda": "npx projen bundle:submission-forwarder/backup-lambda/backup.lambda",
+    "bundle:submission-forwarder/backup-lambda/backup.lambda:watch": "npx projen bundle:submission-forwarder/backup-lambda/backup.lambda:watch",
     "bundle:submission-forwarder/forwarder-lambda/forwarder.lambda": "npx projen bundle:submission-forwarder/forwarder-lambda/forwarder.lambda",
     "bundle:submission-forwarder/forwarder-lambda/forwarder.lambda:watch": "npx projen bundle:submission-forwarder/forwarder-lambda/forwarder.lambda:watch",
     "bundle:submission-forwarder/mail-lambda/mail.lambda": "npx projen bundle:submission-forwarder/mail-lambda/mail.lambda",

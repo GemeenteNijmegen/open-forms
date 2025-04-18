@@ -56,6 +56,9 @@
           "spawn": "bundle:prefill-demo/handler.lambda"
         },
         {
+          "spawn": "bundle:submission-forwarder/backup-lambda/backup.lambda"
+        },
+        {
           "spawn": "bundle:submission-forwarder/forwarder-lambda/forwarder.lambda"
         },
         {
@@ -117,6 +120,24 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/prefill-demo/handler.lambda.ts --target=\"node20\" --platform=\"node\" --outfile=\"assets/prefill-demo/handler.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
+        }
+      ]
+    },
+    "bundle:submission-forwarder/backup-lambda/backup.lambda": {
+      "name": "bundle:submission-forwarder/backup-lambda/backup.lambda",
+      "description": "Create a JavaScript bundle from src/submission-forwarder/backup-lambda/backup.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/submission-forwarder/backup-lambda/backup.lambda.ts --target=\"node20\" --platform=\"node\" --outfile=\"assets/submission-forwarder/backup-lambda/backup.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
+        }
+      ]
+    },
+    "bundle:submission-forwarder/backup-lambda/backup.lambda:watch": {
+      "name": "bundle:submission-forwarder/backup-lambda/backup.lambda:watch",
+      "description": "Continuously update the JavaScript bundle from src/submission-forwarder/backup-lambda/backup.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/submission-forwarder/backup-lambda/backup.lambda.ts --target=\"node20\" --platform=\"node\" --outfile=\"assets/submission-forwarder/backup-lambda/backup.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
         }
       ]
     },

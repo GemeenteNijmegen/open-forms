@@ -11,6 +11,7 @@ import { LoggingProtocol, SubscriptionFilter, Topic } from 'aws-cdk-lib/aws-sns'
 import { Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
+import { BackupFunction } from './backup-lambda/backup-function';
 import { ForwarderFunction } from './forwarder-lambda/forwarder-function';
 import { ReceiverFunction } from './receiver-lambda/receiver-function';
 
@@ -63,6 +64,7 @@ export class SubmissionForwarder extends Construct {
 
     this.setupEsbUser();
     this.setupLambda();
+    this.setupBackupLambda();
   }
 
   private setupParameters() {
@@ -304,4 +306,28 @@ export class SubmissionForwarder extends Construct {
     this.bucket.grantRead(role);
     this.options.key.grantDecrypt(role);
   }
+
+  private setupBackupLambda() {
+    const backupBucket = new Bucket(this, 'submissions-backup-bucket', {
+      blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
+      enforceSSL: true,
+      encryptionKey: this.options.key,
+      bucketKeyEnabled: true, // Saves KSM costs
+    });
+
+    const backupLambda = new BackupFunction(this, 'backup-function', {
+      description: 'Writes SNS messages to S3 bucket',
+      environment: {
+        BACKUP_BUCKET: backupBucket.bucketName,
+      }
+    });
+    backupBucket.grantWrite(backupLambda);
+
+    backupLambda.addEventSource(new SnsEventSource(this.topic, {
+      filterPolicy: {
+        'resubmit': SubscriptionFilter.stringFilter({ denylist: ['true'] }) // Exclude resubmissions
+      },
+    }))
+  }
+
 }
