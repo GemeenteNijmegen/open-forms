@@ -45,6 +45,7 @@ export class ReceiverHandler {
       const attributes: Record<string, MessageAttributeValue> = {
         internalNotificationEmails: { DataType: 'String', StringValue: 'false' },
         networkShare: { DataType: 'String', StringValue: 'false' },
+        resubmit: { DataType: 'String', StringValue: 'false' },
       };
       if (submission.networkShare || submission.monitoringNetworkShare) {
         attributes.networkShare.StringValue = 'true';
