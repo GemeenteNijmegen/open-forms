@@ -62,7 +62,7 @@
           "spawn": "bundle:submission-forwarder/forwarder-lambda/forwarder.lambda"
         },
         {
-          "spawn": "bundle:submission-forwarder/mail-lambda/mail.lambda"
+          "spawn": "bundle:submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda"
         },
         {
           "spawn": "bundle:submission-forwarder/receiver-lambda/receiver.lambda"
@@ -159,21 +159,21 @@
         }
       ]
     },
-    "bundle:submission-forwarder/mail-lambda/mail.lambda": {
-      "name": "bundle:submission-forwarder/mail-lambda/mail.lambda",
-      "description": "Create a JavaScript bundle from src/submission-forwarder/mail-lambda/mail.lambda.ts",
+    "bundle:submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda": {
+      "name": "bundle:submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda",
+      "description": "Create a JavaScript bundle from src/submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/submission-forwarder/mail-lambda/mail.lambda.ts --target=\"node20\" --platform=\"node\" --outfile=\"assets/submission-forwarder/mail-lambda/mail.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
+          "exec": "esbuild --bundle src/submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda.ts --target=\"node20\" --platform=\"node\" --outfile=\"assets/submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
         }
       ]
     },
-    "bundle:submission-forwarder/mail-lambda/mail.lambda:watch": {
-      "name": "bundle:submission-forwarder/mail-lambda/mail.lambda:watch",
-      "description": "Continuously update the JavaScript bundle from src/submission-forwarder/mail-lambda/mail.lambda.ts",
+    "bundle:submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda:watch": {
+      "name": "bundle:submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda:watch",
+      "description": "Continuously update the JavaScript bundle from src/submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/submission-forwarder/mail-lambda/mail.lambda.ts --target=\"node20\" --platform=\"node\" --outfile=\"assets/submission-forwarder/mail-lambda/mail.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
+          "exec": "esbuild --bundle src/submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda.ts --target=\"node20\" --platform=\"node\" --outfile=\"assets/submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
         }
       ]
     },

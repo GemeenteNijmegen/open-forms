@@ -10,10 +10,10 @@ export async function handler(event: SNSEvent) {
   logger.debug('Received event', { event });
   const object = JSON.parse(event.Records[0].Sns.Message); // Can max be of length 1
   const submisison = SubmissionSchema.parse(object);
-  s3.send(new PutObjectCommand({
+  await s3.send(new PutObjectCommand({
     Bucket: process.env.BACKUP_TABLE_NAME,
     Key: submisison.reference,
     Body: JSON.stringify(submisison),
   }));
-  logger.info('Backup completed for object', { reference: submisison.reference })
+  logger.info('Backup completed for object', { reference: submisison.reference });
 }

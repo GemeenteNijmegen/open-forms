@@ -25,7 +25,7 @@
 /src/prefill-demo/handler-function.ts linguist-generated
 /src/submission-forwarder/backup-lambda/backup-function.ts linguist-generated
 /src/submission-forwarder/forwarder-lambda/forwarder-function.ts linguist-generated
-/src/submission-forwarder/mail-lambda/mail-function.ts linguist-generated
+/src/submission-forwarder/internal-notification-mail-lambda/internalNotificationMail-function.ts linguist-generated
 /src/submission-forwarder/receiver-lambda/receiver-function.ts linguist-generated
 /tsconfig.dev.json linguist-generated
 /tsconfig.json linguist-generated

@@ -154,7 +154,7 @@
           "src/prefill-demo/handler.lambda.ts",
           "src/submission-forwarder/backup-lambda/backup.lambda.ts",
           "src/submission-forwarder/forwarder-lambda/forwarder.lambda.ts",
-          "src/submission-forwarder/mail-lambda/mail.lambda.ts",
+          "src/submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda.ts",
           "src/submission-forwarder/receiver-lambda/receiver.lambda.ts",
           ".projenrc.ts",
           "projenrc/**/*.ts"

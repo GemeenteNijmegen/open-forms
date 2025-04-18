@@ -11,8 +11,10 @@ import { LoggingProtocol, SubscriptionFilter, Topic } from 'aws-cdk-lib/aws-sns'
 import { Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
+import { Statics } from '../Statics';
 import { BackupFunction } from './backup-lambda/backup-function';
 import { ForwarderFunction } from './forwarder-lambda/forwarder-function';
+import { InternalNotificationMailFunction } from './internal-notification-mail-lambda/internalNotificationMail-function';
 import { ReceiverFunction } from './receiver-lambda/receiver-function';
 
 interface SubmissionForwarderOptions {
@@ -65,6 +67,7 @@ export class SubmissionForwarder extends Construct {
     this.setupEsbUser();
     this.setupLambda();
     this.setupBackupLambda();
+    this.setupNotificationMailLambda();
   }
 
   private setupParameters() {
@@ -196,8 +199,8 @@ export class SubmissionForwarder extends Construct {
 
     forwarder.addEventSource(new SnsEventSource(this.topic, {
       filterPolicy: {
-        'networkShare': SubscriptionFilter.stringFilter({ allowlist: ['true'] })
-      }
+        networkShare: SubscriptionFilter.stringFilter({ allowlist: ['true'] }),
+      },
     }));
 
     new ErrorMonitoringAlarm(this, 'alarm', {
@@ -317,23 +320,38 @@ export class SubmissionForwarder extends Construct {
         {
           enabled: true,
           expiration: Duration.days(90),
-        }
-      ]
+        },
+      ],
     });
 
     const backupLambda = new BackupFunction(this, 'backup-function', {
       description: 'Writes SNS messages to S3 bucket',
       environment: {
         BACKUP_BUCKET: backupBucket.bucketName,
-      }
+      },
     });
     backupBucket.grantWrite(backupLambda);
 
     backupLambda.addEventSource(new SnsEventSource(this.topic, {
       filterPolicy: {
-        'resubmit': SubscriptionFilter.stringFilter({ denylist: ['true'] }) // Exclude resubmissions
+        resubmit: SubscriptionFilter.stringFilter({ denylist: ['true'] }), // Exclude resubmissions
       },
-    }))
+    }));
+  }
+
+  private setupNotificationMailLambda() {
+    const accountHostedZoneName = StringParameter.valueForStringParameter(this, Statics.accountRootHostedZoneName);
+    const internalNotificationMailLambda = new InternalNotificationMailFunction(this, 'internal-notification-function', {
+      description: 'Sends internal notification emails',
+      environment: {
+        MAIL_FROM_DOMAIN: accountHostedZoneName,
+      },
+    });
+    internalNotificationMailLambda.addEventSource(new SnsEventSource(this.topic, {
+      filterPolicy: {
+        internalNotificationEmails: SubscriptionFilter.stringFilter({ allowlist: ['true'] }),
+      },
+    }));
   }
 
 }
