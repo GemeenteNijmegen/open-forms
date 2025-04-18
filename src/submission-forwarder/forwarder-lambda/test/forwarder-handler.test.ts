@@ -1,7 +1,7 @@
 import { SQSClient, SendMessageCommand } from '@aws-sdk/client-sqs';
 import { Upload } from '@aws-sdk/lib-storage';
 import { documenten } from '@gemeentenijmegen/modules-zgw-client';
-import { SQSRecord } from 'aws-lambda';
+import { SNSEventRecord } from 'aws-lambda';
 import { mockClient } from 'aws-sdk-client-mock';
 import { SubmissionForwarderHandler } from '../Handler';
 import { ZgwClientFactory } from '../ZgwClientFactory';
@@ -17,7 +17,7 @@ const sqsMock = mockClient(SQSClient);
 
 describe('SubmissionForwarderHandler', () => {
   let fakeSubmission: any;
-  let fakeEvent: SQSRecord;
+  let fakeEvent: SNSEventRecord;
   let fakeObjectsApiClient: any;
   let fakeHttpClient: any;
   let fakeDocumentenClientInstance: any;
@@ -37,26 +37,32 @@ describe('SubmissionForwarderHandler', () => {
       submissionValuesToFiles: [['file1', 'file content'], ['file1', 3], ['bsn', '']],
       reference: 'ref123',
       formName: 'formuliernaam',
-      networkShare: 'nws://share',
-      monitoringNetworkShare: 'nws://monitoring',
+      networkShare: '//karelstad/webdata/Webformulieren/TESTA',
+      monitoringNetworkShare: '//karelstad/webdata/Webformulieren/TESTB',
+      internalNotificationEmails: [
+        'a@example.com',
+        'b@example.com',
+      ],
     };
 
     fakeEvent = {
-      body: JSON.stringify({
-        kanaal: 'kanaal',
-        hoofdObject: 'hoofdObject',
-        resource: 'object',
-        resourceUrl: 'https://objects.api/object/123',
-        actie: 'create',
-        aanmaakdatum: '01-01-2025',
-      }),
-    } as SQSRecord;
-
-    fakeObjectsApiClient = {
-      getObject: jest.fn().mockResolvedValue({
-        record: { data: fakeSubmission },
-      }),
-    };
+      Sns: {
+        Message: JSON.stringify({
+          bsn: '',
+          kvk: '',
+          pdf: 'https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/657d12d8-4dd6-4b16-98b6-d8d08885c9ba',
+          formName: 'Voorbeeld Netwerkschijf Registratie met Object',
+          reference: 'OF-P5KAZF',
+          attachments: [],
+          networkShare: '//karelstad/webdata/Webformulieren/TESTA',
+          monitoringNetworkShare: '//karelstad/webdata/Webformulieren/TESTB',
+          submissionValuesToFiles: [],
+          internalNotificationEmails: [
+            'devops@nijmegen.nl',
+          ],
+        }),
+      },
+    } as SNSEventRecord;
 
     // Fake HttpClient (inhoud niet belangrijk)
     fakeHttpClient = {};
@@ -98,7 +104,6 @@ describe('SubmissionForwarderHandler', () => {
     const uploadInstances = (Upload as any as jest.Mock).mock.instances;
     expect(uploadInstances.length).toBeGreaterThan(0);
 
-    expect(fakeZgwClientFactory.getObjectsApiClient).toHaveBeenCalled();
     expect(fakeZgwClientFactory.getDocumentenClient).toHaveBeenCalledWith('https://documenten.api');
 
     // SQS send message moet twee keer aangeroepen worden, ook monitoring
@@ -108,7 +113,8 @@ describe('SubmissionForwarderHandler', () => {
     // Haal de payloads op en controleer dat de targetNetworkLocation wordt overschreven voor de monitoring-notificatie
     const payloads = sendMessageCalls.map((call: any) => JSON.parse(call.args[0].input.MessageBody));
     const normalNotification = payloads.find((p: any) => p.targetNetworkLocation === fakeSubmission.networkShare);
-    const monitoringNotification = payloads.find((p:any) => p.targetNetworkLocation === fakeSubmission.monitoringNetworkShare);
+    console.log(payloads, fakeSubmission.networkShare);
+    const monitoringNotification = payloads.find((p: any) => p.targetNetworkLocation === fakeSubmission.monitoringNetworkShare);
     expect(normalNotification).toBeDefined();
     expect(monitoringNotification).toBeDefined();
   });
@@ -116,13 +122,11 @@ describe('SubmissionForwarderHandler', () => {
   it('should send only one notification when monitoringNetworkShare is not provided', async () => {
     const emptyMonitoringSubmission = { ...fakeSubmission, monitoringNetworkShare: '' }; // copy with spreader
 
-    fakeObjectsApiClient.getObject.mockResolvedValueOnce({
-      record: { data: emptyMonitoringSubmission },
-    });
     sqsMock.reset(); // reset de SQS-mock om de tellers weer op nul te zetten
     sqsMock.on(SendMessageCommand).resolves({});
 
-    await handler.handle(fakeEvent);
+    const event = { Sns: { Message: JSON.stringify(emptyMonitoringSubmission) } };
+    await handler.handle(event as any);
 
     // Er mag maar 1 SQS-send call plaatsvinden, geen monitoringlocatie
     const sendMessageCalls = sqsMock.commandCalls(SendMessageCommand);
@@ -134,10 +138,8 @@ describe('SubmissionForwarderHandler', () => {
 
   it('should not send any notification if networkShare is missing', async () => {
     const emptyNetworkShareSubmission = { ...fakeSubmission, networkShare: '' }; // copy with spreader
-    fakeObjectsApiClient.getObject.mockResolvedValueOnce({
-      record: { data: emptyNetworkShareSubmission },
-    });
-    await handler.handle(fakeEvent);
+    const event = { Sns: { Message: JSON.stringify(emptyNetworkShareSubmission) } };
+    await handler.handle(event as any);
     expect(sqsMock.commandCalls(SendMessageCommand).length).toBe(0);
   });
 });

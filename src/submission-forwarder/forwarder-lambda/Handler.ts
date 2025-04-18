@@ -3,12 +3,11 @@ import { S3Client } from '@aws-sdk/client-s3';
 import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
 import { Upload } from '@aws-sdk/lib-storage';
 import { documenten } from '@gemeentenijmegen/modules-zgw-client';
-import { SQSRecord } from 'aws-lambda';
-import { ZgwClientFactory } from './ZgwClientFactory';
+import { SNSEventRecord } from 'aws-lambda';
 import { EsbSubmission } from '../shared/EsbSubmission';
-import { Notification, NotificationSchema } from '../shared/Notification';
 import { KeyValuePair, Submission, SubmissionSchema } from '../shared/Submission';
 import { ESBFolderSubmissionZaak } from './ESBFolderSubmissionZaak/ESBFolderSubmissionZaak';
+import { ZgwClientFactory } from './ZgwClientFactory';
 
 const logger = new Logger();
 const s3 = new S3Client();
@@ -31,15 +30,10 @@ export class SubmissionForwarderHandler {
    */
   constructor(private readonly options: SubmissionForwarderHandlerOptions) { }
 
-  async handle(event: SQSRecord) {
+  async handle(event: SNSEventRecord) {
 
-    const notification = this.getNotification(event);
-    logger.debug('Parsed notification', { notification });
-
-    // Get the object from the object api
-    const objectClient = await this.options.zgwClientFactory.getObjectsApiClient();
-    const object = await objectClient.getObject(notification.resourceUrl);
-    const submission = SubmissionSchema.parse(object.record.data);
+    // Message is the submission
+    const submission = SubmissionSchema.parse(JSON.parse(event.Sns.Message));
     logger.debug('Retreived submisison', { submission });
 
     // Only handle submissions with a network share
@@ -154,7 +148,7 @@ export class SubmissionForwarderHandler {
         const attachmentS3Path = `s3://${this.options.bucketName}/${submission.reference}/${fileName}`;
         s3Files.push(attachmentS3Path);
       } catch (error: any) {
-        logger.error(`Failed to create saveFile for ${ name } - ${submission.reference}`);
+        logger.error(`Failed to create saveFile for ${name} - ${submission.reference}`);
       }
 
     }
@@ -203,15 +197,4 @@ export class SubmissionForwarderHandler {
     const parts = url.split('/');
     return parts[parts.length - 1];
   }
-
-  /**
-   * Parses the event and constructs a Notification
-   * @param event
-   * @returns
-   */
-  private getNotification(event: SQSRecord): Notification {
-    const bodyJson = JSON.parse(event.body);
-    return NotificationSchema.parse(bodyJson);
-  }
-
 }

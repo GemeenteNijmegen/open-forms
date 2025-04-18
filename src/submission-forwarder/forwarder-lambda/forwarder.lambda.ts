@@ -1,6 +1,6 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import { environmentVariables } from '@gemeentenijmegen/utils';
-import { SQSBatchItemFailure, SQSBatchResponse, SQSEvent } from 'aws-lambda';
+import { SNSEvent } from 'aws-lambda';
 import { SubmissionForwarderHandler } from './Handler';
 import { ZgwClientFactory } from './ZgwClientFactory';
 
@@ -18,7 +18,7 @@ const env = environmentVariables([
   'QUEUE_URL',
 ]);
 
-export async function handler(event: SQSEvent): Promise<SQSBatchResponse> {
+export async function handler(event: SNSEvent) {
   logger.debug('event', { event });
 
   const submissionForwarderHandler = new SubmissionForwarderHandler({
@@ -30,16 +30,19 @@ export async function handler(event: SQSEvent): Promise<SQSBatchResponse> {
     queueUrl: env.QUEUE_URL,
   });
 
-  const batchItemFailures: SQSBatchItemFailure[] = [];
+  let failed = false;
   for (const record of event.Records) {
     try {
       await submissionForwarderHandler.handle(record);
     } catch (error) {
-      logger.error('Failed to forward a submission', { data: record.messageId, error });
-      batchItemFailures.push({ itemIdentifier: record.messageId });
+      logger.error('Failed to forward a submission', { data: record.Sns.MessageId, error });
+      failed = true;
     }
   }
-  return { batchItemFailures };
+
+  if (failed) {
+    throw Error('Failed to process SNS event');
+  }
 
 }
 

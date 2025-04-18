@@ -3,11 +3,11 @@ import { Duration, Stack } from 'aws-cdk-lib';
 import { LambdaIntegration, Resource } from 'aws-cdk-lib/aws-apigateway';
 import { AccessKey, Effect, PolicyStatement, Role, ServicePrincipal, User } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
-import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
+import { SnsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { BlockPublicAccess, Bucket } from 'aws-cdk-lib/aws-s3';
 import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
-import { LoggingProtocol, Topic } from 'aws-cdk-lib/aws-sns';
+import { LoggingProtocol, SubscriptionFilter, Topic } from 'aws-cdk-lib/aws-sns';
 import { Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
@@ -192,9 +192,10 @@ export class SubmissionForwarder extends Construct {
     this.parameters.mijnServicesOpenZaakApiClientSecret.grantRead(forwarder);
     this.options.key.grantEncryptDecrypt(forwarder);
 
-    forwarder.addEventSource(new SqsEventSource(internalQueue, {
-      batchSize: 1, // This might be a very long running lambda therefore just run it uniquely every time
-      reportBatchItemFailures: true, // See implementation
+    forwarder.addEventSource(new SnsEventSource(this.topic, {
+      filterPolicy: {
+        'networkShare': SubscriptionFilter.stringFilter({ allowlist: ['true'] })
+      }
     }));
 
     new ErrorMonitoringAlarm(this, 'alarm', {
