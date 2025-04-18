@@ -345,6 +345,15 @@ export class SubmissionForwarder extends Construct {
       },
     });
     this.traceTable.grantWriteData(internalNotificationMailLambda);
+    internalNotificationMailLambda.addToRolePolicy(new PolicyStatement({
+      resources: [
+        `arn:aws:ses:${Stack.of(this).region}:${Stack.of(this).account}:*`
+      ],
+      actions: [
+        'ses:SendEmail',
+        'ses:SendRawEmail',
+      ],
+    }),)
     internalNotificationMailLambda.addEventSource(new SnsEventSource(this.topic, {
       filterPolicy: {
         internalNotificationEmails: SubscriptionFilter.stringFilter({ allowlist: ['true'] }),
