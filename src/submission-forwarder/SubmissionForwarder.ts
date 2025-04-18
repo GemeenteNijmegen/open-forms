@@ -313,6 +313,12 @@ export class SubmissionForwarder extends Construct {
       enforceSSL: true,
       encryptionKey: this.options.key,
       bucketKeyEnabled: true, // Saves KSM costs
+      lifecycleRules: [
+        {
+          enabled: true,
+          expiration: Duration.days(90),
+        }
+      ]
     });
 
     const backupLambda = new BackupFunction(this, 'backup-function', {
