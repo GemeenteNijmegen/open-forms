@@ -1,6 +1,7 @@
 import { Criticality, DeadLetterQueue, ErrorMonitoringAlarm } from '@gemeentenijmegen/aws-constructs';
 import { Duration, Stack } from 'aws-cdk-lib';
 import { LambdaIntegration, Resource } from 'aws-cdk-lib/aws-apigateway';
+import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { AccessKey, Effect, PolicyStatement, Role, ServicePrincipal, User } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { SnsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
@@ -47,6 +48,7 @@ export class SubmissionForwarder extends Construct {
   private esbDeadLetterQueue?: Queue;
   private readonly bucket: Bucket;
   private readonly topic: Topic;
+  private readonly traceTable: Table;
   private readonly parameters?: {
     apikey: Secret;
     objectsApikey: Secret;
@@ -59,6 +61,7 @@ export class SubmissionForwarder extends Construct {
   constructor(scope: Construct, id: string, private readonly options: SubmissionForwarderOptions) {
     super(scope, id);
 
+    this.traceTable = this.setupTraceTable();
     this.esbQueue = this.setupEsbQueue();
     this.parameters = this.setupParameters();
     this.bucket = this.setupSubmissionsBucket();
@@ -345,13 +348,31 @@ export class SubmissionForwarder extends Construct {
       description: 'Sends internal notification emails',
       environment: {
         MAIL_FROM_DOMAIN: accountHostedZoneName,
+        TRACE_TABLE_NAME: this.traceTable.tableName,
       },
     });
+    this.traceTable.grantWriteData(internalNotificationMailLambda);
     internalNotificationMailLambda.addEventSource(new SnsEventSource(this.topic, {
       filterPolicy: {
         internalNotificationEmails: SubscriptionFilter.stringFilter({ allowlist: ['true'] }),
       },
     }));
+
+  }
+
+  private setupTraceTable() {
+    return new Table(this, 'trace-table', {
+      partitionKey: { // in the format: <reference>#<handler> so e.g. OF-1234#BACKUP or OF-1234#NOTIFICATION_MAIL
+        name: 'trace',
+        type: AttributeType.STRING,
+      },
+      sortKey: {
+        name: 'timestamp',
+        type: AttributeType.STRING,
+      },
+      billingMode: BillingMode.PAY_PER_REQUEST,
+      encryptionKey: this.options.key,
+    });
   }
 
 }

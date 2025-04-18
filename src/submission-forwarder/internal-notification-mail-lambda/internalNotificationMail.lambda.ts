@@ -2,16 +2,27 @@ import { Logger } from '@aws-lambda-powertools/logger';
 import { SendEmailCommand, SESClient } from '@aws-sdk/client-ses';
 import { SNSEvent } from 'aws-lambda';
 import { Submission, SubmissionSchema } from '../shared/Submission';
+import { trace } from '../shared/trace';
 
+const HANDLER_ID = 'NOTIFICATION_MAIL';
 const logger = new Logger();
 const ses = new SESClient();
 const mailFromDomain = process.env.MAIL_FROM_DOMAIN!;
 
 export async function handler(event: SNSEvent) {
   logger.debug('Received event', { event });
-
   const object = JSON.parse(event.Records[0].Sns.Message); // Can max be of length 1
   const submission = SubmissionSchema.parse(object);
+  try {
+    await sendNotificationMail(submission);
+    await trace(submission.reference, HANDLER_ID, true);
+  } catch (error) {
+    logger.error('failed to send notificaiton mail', { error });
+    await trace(submission.reference, HANDLER_ID, false);
+  }
+}
+
+async function sendNotificationMail(submission: Submission) {
 
   if (!submission.internalNotificationEmails) {
     throw Error('No recipients set');
@@ -33,10 +44,7 @@ export async function handler(event: SNSEvent) {
     },
     Source: `notificatie@${mailFromDomain}`,
   }));
-
-  logger.info('Send notification email(s)!');
 }
-
 
 function constructNotificationEmail(submission: Submission) {
   return [
