@@ -1,12 +1,13 @@
 import { Criticality, DeadLetterQueue, ErrorMonitoringAlarm } from '@gemeentenijmegen/aws-constructs';
-import { Duration } from 'aws-cdk-lib';
+import { Duration, Stack } from 'aws-cdk-lib';
 import { LambdaIntegration, Resource } from 'aws-cdk-lib/aws-apigateway';
-import { AccessKey, Role, User } from 'aws-cdk-lib/aws-iam';
+import { AccessKey, Effect, PolicyStatement, Role, ServicePrincipal, User } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { BlockPublicAccess, Bucket } from 'aws-cdk-lib/aws-s3';
 import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
+import { LoggingProtocol, Topic } from 'aws-cdk-lib/aws-sns';
 import { Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
@@ -42,6 +43,7 @@ export class SubmissionForwarder extends Construct {
   private readonly esbQueue: Queue;
   private esbDeadLetterQueue?: Queue;
   private readonly bucket: Bucket;
+  private readonly topic: Topic;
   private readonly parameters?: {
     apikey: Secret;
     objectsApikey: Secret;
@@ -57,6 +59,7 @@ export class SubmissionForwarder extends Construct {
     this.esbQueue = this.setupEsbQueue();
     this.parameters = this.setupParameters();
     this.bucket = this.setupSubmissionsBucket();
+    this.topic = this.setupInternalTopic();
 
     this.setupEsbUser();
     this.setupLambda();
@@ -142,13 +145,20 @@ export class SubmissionForwarder extends Construct {
       environment: {
         POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'DEBUG',
         API_KEY_ARN: this.parameters.apikey.secretArn,
-        QUEUE_URL: internalQueue.queueUrl,
+        TOPIC_ARN: this.topic.topicArn,
+        MIJN_SERVICES_OPEN_ZAAK_CLIENT_ID_SSM: this.parameters.mijnServicesOpenZaakApiClientId.parameterName,
+        MIJN_SERVICES_OPEN_ZAAK_CLIENT_SECRET_ARN: this.parameters.mijnServicesOpenZaakApiClientSecret.secretArn,
+        OBJECTS_API_APIKEY_ARN: this.parameters.objectsApikey.secretArn,
       },
     });
     internalQueue.grantSendMessages(receiver);
     this.parameters.apikey.grantRead(receiver);
     this.options.key.grantEncryptDecrypt(receiver);
     this.options.resource.addMethod('POST', new LambdaIntegration(receiver));
+    this.topic.grantPublish(receiver);
+    this.parameters.objectsApikey.grantRead(receiver);
+    this.parameters.mijnServicesOpenZaakApiClientId.grantRead(receiver);
+    this.parameters.mijnServicesOpenZaakApiClientSecret.grantRead(receiver);
 
     // Create a forwarder lambda (listens to the internal queue)
     const forwarder = new ForwarderFunction(this, 'forwarder', {
@@ -209,6 +219,38 @@ export class SubmissionForwarder extends Construct {
       },
     });
     return internalQueue;
+  }
+
+  private setupInternalTopic() {
+    const region = Stack.of(this).region;
+    const account = Stack.of(this).account;
+    const logRole = new Role(this, 'log-role', {
+      assumedBy: new ServicePrincipal('sns.amazonaws.com'),
+      description: 'Role for logging submission delivery status',
+    });
+
+    logRole.addToPrincipalPolicy(new PolicyStatement({
+      effect: Effect.ALLOW,
+      actions: [
+        'logs:CreateLogGroup',
+        'logs:CreateLogStream',
+        'logs:PutLogEvents',
+      ],
+      resources: [
+        `arn:aws:logs:${region}:${account}:*`,
+      ],
+    }));
+    this.options.key.grantEncrypt(logRole);
+
+    return new Topic(this, 'internal-topic', {
+      enforceSSL: true,
+      masterKey: this.options.key,
+      loggingConfigs: [{
+        protocol: LoggingProtocol.LAMBDA,
+        failureFeedbackRole: logRole,
+        successFeedbackRole: logRole,
+      }],
+    });
   }
 
   private setupEsbQueue() {

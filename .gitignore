@@ -63,6 +63,7 @@ junit.xml
 !/src/nl-wallet/token/token-function.ts
 !/src/prefill-demo/handler-function.ts
 !/src/submission-forwarder/forwarder-lambda/forwarder-function.ts
+!/src/submission-forwarder/mail-lambda/mail-function.ts
 !/src/submission-forwarder/receiver-lambda/receiver-function.ts
 !/.github/workflows/emergency.yml
 !/.github/workflows/auto-merge.yml

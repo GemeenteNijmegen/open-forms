@@ -18,6 +18,7 @@ export const SubmissionSchema = z.object({
   attachments: z.array(z.string()),
   networkShare: z.string().optional(),
   monitoringNetworkShare: z.string().optional().nullable(),
+  internalNotificationEmails: z.array(z.string()).optional().nullable(),
   submissionValuesToFiles: z
     .union([
       z.array(KeyValuePairSchema).optional(), // This ensures an array of key-value tuples.

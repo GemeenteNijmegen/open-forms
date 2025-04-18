@@ -1,21 +1,44 @@
 import { Logger } from '@aws-lambda-powertools/logger';
-import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
+import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
+import { MessageAttributeValue } from '@aws-sdk/client-sqs';
 import { environmentVariables } from '@gemeentenijmegen/utils';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { authenticate } from './authenticate';
+import { ZgwClientFactory } from '../forwarder-lambda/ZgwClientFactory';
 import { Notification, NotificationSchema } from '../shared/Notification';
+import { Submission, SubmissionSchema } from '../shared/Submission';
 
 const logger = new Logger();
-const sqs = new SQSClient();
+const sns = new SNSClient();
+
+let clientFactory: ZgwClientFactory | undefined = undefined;
+
+const env = environmentVariables([
+  'MIJN_SERVICES_OPEN_ZAAK_CLIENT_ID_SSM',
+  'MIJN_SERVICES_OPEN_ZAAK_CLIENT_SECRET_ARN',
+  'OBJECTS_API_APIKEY_ARN',
+  'TOPIC_ARN',
+]);
+
+function getZgwClientFactory() {
+  if (!clientFactory) {
+    clientFactory = new ZgwClientFactory({
+      clientIdSsm: env.MIJN_SERVICES_OPEN_ZAAK_CLIENT_ID_SSM,
+      clientSecretArn: env.MIJN_SERVICES_OPEN_ZAAK_CLIENT_SECRET_ARN,
+      objectsApikeyArn: env.OBJECTS_API_APIKEY_ARN,
+    });
+  }
+  return clientFactory;
+}
 
 export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   logger.debug('event', { event });
 
-  const env = environmentVariables(['QUEUE_URL']);
   await authenticate(event);
 
   try {
     const notification = getNotification(event);
+    logger.debug('Parsed notification', { notification });
 
     // Handle test notifications
     if (notification.kanaal == 'test') {
@@ -23,8 +46,27 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
       return response({ message: 'OK - test event' });
     }
 
-    // Send notification to sqs
-    await sendNotificationToQueue(env.QUEUE_URL, notification);
+    // Get the object from the object api
+    const zgwClientFactory = getZgwClientFactory();
+    const objectClient = await zgwClientFactory.getObjectsApiClient();
+    const object = await objectClient.getObject(notification.resourceUrl);
+    const submission = SubmissionSchema.parse(object.record.data);
+    logger.debug('Retreived submisison', { submission });
+
+    // Figure out attributes to send to topic
+    const attributes: Record<string, MessageAttributeValue> = {
+      internalNotificationEmails: { DataType: 'string', StringValue: 'false' },
+      networkShare: { DataType: 'string', StringValue: 'false' },
+    };
+    if (submission.networkShare || submission.monitoringNetworkShare) {
+      attributes.networkShare.StringValue = 'true';
+    }
+    if (submission.internalNotificationEmails) {
+      attributes.internalNotificationEmails.StringValue = 'true';
+    }
+
+    // Send object incl. tags to SNS
+    await sendNotificationToTopic(env.TOPIC_ARN, object, attributes);
     return response({ message: 'OK' });
 
   } catch (error) {
@@ -78,15 +120,16 @@ function getNotification(event: APIGatewayProxyEvent): Notification {
   }
 }
 
-async function sendNotificationToQueue(queueUrl: string, notification: Notification) {
+async function sendNotificationToTopic(topicArn: string, submission: Submission, attributes: Record<string, MessageAttributeValue>) {
   try {
-    await sqs.send(new SendMessageCommand({
-      MessageBody: JSON.stringify(notification),
-      QueueUrl: queueUrl,
+    await sns.send(new PublishCommand({
+      Message: JSON.stringify(submission),
+      MessageAttributes: attributes,
+      TopicArn: topicArn,
     }));
   } catch (error) {
-    logger.error('Could not send notification to queue', { error });
-    throw new SendMessageError('Failed to send notification to queue');
+    logger.error('Could not send submission to topic', { error });
+    throw new SendMessageError('Failed to send submission to topic');
   }
 }
 
