@@ -346,9 +346,7 @@ export class SubmissionForwarder extends Construct {
     });
     this.traceTable.grantWriteData(internalNotificationMailLambda);
     internalNotificationMailLambda.addToRolePolicy(new PolicyStatement({
-      resources: [
-        `arn:aws:ses:${Stack.of(this).region}:${Stack.of(this).account}:*`
-      ],
+      resources: ['*'],
       actions: [
         'ses:SendEmail',
         'ses:SendRawEmail',
