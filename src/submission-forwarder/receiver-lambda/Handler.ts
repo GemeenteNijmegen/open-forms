@@ -55,7 +55,7 @@ export class ReceiverHandler {
       }
 
       // Send object incl. tags to SNS
-      await this.sendNotificationToTopic(this.options.topicArn, object, attributes);
+      await this.sendNotificationToTopic(this.options.topicArn, submission, attributes);
       await trace(submission.reference, HANDLER_ID, 'OK');
       return this.response({ message: 'OK' });
 
