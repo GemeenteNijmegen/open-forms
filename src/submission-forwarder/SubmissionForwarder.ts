@@ -68,7 +68,8 @@ export class SubmissionForwarder extends Construct {
     this.topic = this.setupInternalTopic();
 
     this.setupEsbUser();
-    this.setupLambda();
+    this.setupReceiverLambda();
+    this.setupEsbForwarderLambda();
     this.setupBackupLambda();
     this.setupNotificationMailLambda();
   }
@@ -134,13 +135,10 @@ export class SubmissionForwarder extends Construct {
     };
   }
 
-  private setupLambda() {
+  private setupReceiverLambda() {
     if (!this.parameters) {
       throw Error('Parameters should be created first');
     }
-
-    // Setup a internal queue
-    const internalQueue = this.setupInternalQueue();
 
     // Create a receiver lambda (listens to the endpoint and publishes to internal queue)
     const receiver = new ReceiverFunction(this, 'receiver', {
@@ -159,7 +157,6 @@ export class SubmissionForwarder extends Construct {
         OBJECTS_API_APIKEY_ARN: this.parameters.objectsApikey.secretArn,
       },
     });
-    internalQueue.grantSendMessages(receiver);
     this.parameters.apikey.grantRead(receiver);
     this.options.key.grantEncryptDecrypt(receiver);
     this.options.resource.addMethod('POST', new LambdaIntegration(receiver));
@@ -167,6 +164,12 @@ export class SubmissionForwarder extends Construct {
     this.parameters.objectsApikey.grantRead(receiver);
     this.parameters.mijnServicesOpenZaakApiClientId.grantRead(receiver);
     this.parameters.mijnServicesOpenZaakApiClientSecret.grantRead(receiver);
+  }
+
+  private setupEsbForwarderLambda() {
+    if (!this.parameters) {
+      throw Error('Parameters should be created first');
+    }
 
     // Create a forwarder lambda (listens to the internal queue)
     const forwarder = new ForwarderFunction(this, 'forwarder', {
@@ -210,24 +213,6 @@ export class SubmissionForwarder extends Construct {
       criticality: new Criticality('high'),
       lambda: forwarder,
     });
-  }
-
-  private setupInternalQueue() {
-    const dlq = new DeadLetterQueue(this, 'internal-dlq', {
-      kmsKey: this.options.key,
-      alarmDescription: 'Open Forms forwarder internal DLQ received messages',
-    });
-
-    const internalQueue = new Queue(this, 'internal-queue', {
-      encryption: QueueEncryption.KMS,
-      encryptionMasterKey: this.options.key,
-      visibilityTimeout: Duration.minutes(10), // Note must be bigger than handler lambda timeout
-      deadLetterQueue: {
-        queue: dlq.dlq,
-        maxReceiveCount: 3,
-      },
-    });
-    return internalQueue;
   }
 
   private setupInternalTopic() {
