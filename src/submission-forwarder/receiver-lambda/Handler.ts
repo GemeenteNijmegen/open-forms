@@ -43,6 +43,7 @@ export class ReceiverHandler {
 
       // Figure out attributes to send to topic
       const attributes: Record<string, MessageAttributeValue> = {
+        reference: { DataType: 'String', StringValue: submission.reference },
         internalNotificationEmails: { DataType: 'String', StringValue: 'false' },
         networkShare: { DataType: 'String', StringValue: 'false' },
         resubmit: { DataType: 'String', StringValue: 'false' },
