@@ -1,6 +1,7 @@
 import { Criticality, DeadLetterQueue, ErrorMonitoringAlarm } from '@gemeentenijmegen/aws-constructs';
 import { Duration, Stack } from 'aws-cdk-lib';
 import { LambdaIntegration, Resource } from 'aws-cdk-lib/aws-apigateway';
+import { ComparisonOperator, Stats, TreatMissingData } from 'aws-cdk-lib/aws-cloudwatch';
 import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { AccessKey, Effect, PolicyStatement, Role, ServicePrincipal, User } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
@@ -244,7 +245,7 @@ export class SubmissionForwarder extends Construct {
     }));
     this.options.key.grantEncrypt(logRole);
 
-    return new Topic(this, 'internal-topic', {
+    const topic = new Topic(this, 'internal-topic', {
       enforceSSL: true,
       masterKey: this.options.key,
       loggingConfigs: [{
@@ -253,6 +254,19 @@ export class SubmissionForwarder extends Construct {
         successFeedbackRole: logRole,
       }],
     });
+
+    topic.metricNumberOfNotificationsFailed({
+      period: Duration.minutes(5),
+      statistic: Stats.SUM,
+    }).createAlarm(this, 'topic-failed-alarm', {
+      threshold: 1,
+      evaluationPeriods: 1,
+      treatMissingData: TreatMissingData.NOT_BREACHING,
+      comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+      alarmName: 'submission-forwarder-delivery-failed-alarm' + this.options.criticality.alarmSuffix(),
+    });
+
+    return topic;
   }
 
   private setupEsbQueue() {
