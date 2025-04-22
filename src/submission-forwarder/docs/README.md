@@ -19,3 +19,8 @@ De ESB heeft een interne retry en kan berichten op de AWS DLQ zetten wanneer afh
 
 ## Objecttype
 Het schema dat we gebruiken voor het objecttype kan je [hier vinden](../schema/netwerkschijfESBFormulierInzending.json).
+
+## Submission trace
+Er is een tabel (dynamodb) waarin alle lambda's een trace record wegschrijven als ze een verwerking hebben gedaan van een submission. De key is dan het submission ID en het handler ID (bijv. `receiver` of `esb_forwarder`). De sortkey is een timestamp. 
+
+Idee is dat we hier later wat automatische logging / monitoring op kunnen inrichten (e.g. registraties die fout zijn gegaan volgen).
