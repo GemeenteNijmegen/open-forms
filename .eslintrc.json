@@ -157,6 +157,7 @@
           "src/submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda.ts",
           "src/submission-forwarder/receiver-lambda/receiver.lambda.ts",
           "src/submission-forwarder/resubmit-lambda/resubmit.lambda.ts",
+          "src/submission-forwarder/zgw-registration-lambda/zgw-registration.lambda.ts",
           ".projenrc.ts",
           "projenrc/**/*.ts"
         ],

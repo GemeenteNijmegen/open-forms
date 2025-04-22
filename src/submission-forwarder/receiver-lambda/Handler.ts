@@ -4,10 +4,10 @@ import { Logger } from '@aws-lambda-powertools/logger';
 import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
 import { MessageAttributeValue } from '@aws-sdk/client-sqs';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { ZgwClientFactory } from '../forwarder-lambda/ZgwClientFactory';
 import { Notification, NotificationSchema } from '../shared/Notification';
 import { Submission, SubmissionSchema } from '../shared/Submission';
 import { trace } from '../shared/trace';
+import { ZgwClientFactory } from '../shared/ZgwClientFactory';
 
 const HANDLER_ID = 'receiver';
 const logger = new Logger();

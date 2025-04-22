@@ -69,6 +69,9 @@
         },
         {
           "spawn": "bundle:submission-forwarder/resubmit-lambda/resubmit.lambda"
+        },
+        {
+          "spawn": "bundle:submission-forwarder/zgw-registration-lambda/zgw-registration.lambda"
         }
       ]
     },
@@ -213,6 +216,24 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/submission-forwarder/resubmit-lambda/resubmit.lambda.ts --target=\"node20\" --platform=\"node\" --outfile=\"assets/submission-forwarder/resubmit-lambda/resubmit.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
+        }
+      ]
+    },
+    "bundle:submission-forwarder/zgw-registration-lambda/zgw-registration.lambda": {
+      "name": "bundle:submission-forwarder/zgw-registration-lambda/zgw-registration.lambda",
+      "description": "Create a JavaScript bundle from src/submission-forwarder/zgw-registration-lambda/zgw-registration.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/submission-forwarder/zgw-registration-lambda/zgw-registration.lambda.ts --target=\"node20\" --platform=\"node\" --outfile=\"assets/submission-forwarder/zgw-registration-lambda/zgw-registration.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
+        }
+      ]
+    },
+    "bundle:submission-forwarder/zgw-registration-lambda/zgw-registration.lambda:watch": {
+      "name": "bundle:submission-forwarder/zgw-registration-lambda/zgw-registration.lambda:watch",
+      "description": "Continuously update the JavaScript bundle from src/submission-forwarder/zgw-registration-lambda/zgw-registration.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/submission-forwarder/zgw-registration-lambda/zgw-registration.lambda.ts --target=\"node20\" --platform=\"node\" --outfile=\"assets/submission-forwarder/zgw-registration-lambda/zgw-registration.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
         }
       ]
     },

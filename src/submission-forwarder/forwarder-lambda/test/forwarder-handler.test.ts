@@ -3,8 +3,8 @@ import { Upload } from '@aws-sdk/lib-storage';
 import { documenten } from '@gemeentenijmegen/modules-zgw-client';
 import { SNSEventRecord } from 'aws-lambda';
 import { mockClient } from 'aws-sdk-client-mock';
+import { ZgwClientFactory } from '../../shared/ZgwClientFactory';
 import { SubmissionForwarderHandler } from '../Handler';
-import { ZgwClientFactory } from '../ZgwClientFactory';
 
 
 jest.mock('@aws-sdk/lib-storage', () => ({

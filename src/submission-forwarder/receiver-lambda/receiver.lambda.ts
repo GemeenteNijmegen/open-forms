@@ -3,7 +3,7 @@ import { environmentVariables } from '@gemeentenijmegen/utils';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { authenticate } from './authenticate';
 import { ReceiverHandler } from './Handler';
-import { ZgwClientFactory } from '../forwarder-lambda/ZgwClientFactory';
+import { ZgwClientFactory } from '../shared/ZgwClientFactory';
 
 const logger = new Logger();
 

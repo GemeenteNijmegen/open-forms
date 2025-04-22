@@ -1,7 +1,7 @@
 import { HttpClient as CatalogiHttpClient } from '@gemeentenijmegen/modules-zgw-client/lib/catalogi-generated-client';
 import { HttpClient as ZakenHttpClient } from '@gemeentenijmegen/modules-zgw-client/lib/zaken-generated-client';
 import { Submission } from '../../shared/Submission';
-import { ZgwClientFactory } from '../ZgwClientFactory';
+import { ZgwClientFactory } from '../../shared/ZgwClientFactory';
 
 /**
  * A folder submission Zaak is a submission - aanvraag - in open forms
@@ -40,8 +40,7 @@ export class ESBFolderSubmissionZaak {
     } catch (err: any) {
       // Add powertools logger
       throw Error(
-        `Creating ESBFolderSubmissionZaak failed ${
-          err instanceof Error ? err.stack : JSON.stringify(err)
+        `Creating ESBFolderSubmissionZaak failed ${err instanceof Error ? err.stack : JSON.stringify(err)
         }`,
       );
     }
@@ -53,7 +52,7 @@ export class ESBFolderSubmissionZaak {
     private readonly submission: Submission,
     private readonly zakenHttpClient: ZakenHttpClient,
     private readonly catalogiHttpClient: CatalogiHttpClient,
-  ) {}
+  ) { }
 
   public get zakenClient(): ZakenHttpClient {
     return this.zakenHttpClient;
