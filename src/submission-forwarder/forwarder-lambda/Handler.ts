@@ -138,9 +138,13 @@ export class SubmissionForwarderHandler {
       try {
         if (submission.kvk) {
           await this.storeInS3(submission.reference, 'kvk.txt', submission.kvk);
+          const attachmentS3Path = `s3://${this.options.bucketName}/${submission.reference}/kvk.txt`;
+          s3Files.push(attachmentS3Path);
         }
         if (submission.bsn) {
           await this.storeInS3(submission.reference, 'bsn.txt', submission.bsn);
+          const attachmentS3Path = `s3://${this.options.bucketName}/${submission.reference}/bsn.txt`;
+          s3Files.push(attachmentS3Path);
         }
       } catch (error: any) {
         console.log('Failed to create kvk/bsn save file');
