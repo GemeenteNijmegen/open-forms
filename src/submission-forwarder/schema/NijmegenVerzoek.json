@@ -1,0 +1,142 @@
+{
+    "$id": "NijmegenVerzoek",
+    "type": "object",
+    "title": "NijmegenVerzoek",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "required": [
+        "pdf",
+        "reference",
+        "attachments",
+        "networkShare"
+    ],
+    "properties": {
+        "bsn": {
+            "type": "string",
+            "examples": [
+                "999999333"
+            ],
+            "description": "BSN wanneer het formulier ingevuld is met Digid of Yivi met BSN."
+        },
+        "kvk": {
+            "type": "string",
+            "examples": [
+                "69599084"
+            ],
+            "description": "KvK-nummer wanneer het formulier ingevuld is met Eherkenning of Yivi met KvK."
+        },
+        "pdf": {
+            "type": "string",
+            "examples": [
+                "https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/93853c62-70b9-482a-b433-1733b98d163c"
+            ],
+            "description": "pdf url"
+        },
+        "formName": {
+            "type": "string",
+            "examples": [
+                "Contactformulier"
+            ],
+            "description": "productaanvraag type"
+        },
+        "reference": {
+            "type": "string",
+            "examples": [
+                "OF-AB7634HJ",
+                "Z02-39849384"
+            ],
+            "description": "submission public reference."
+        },
+        "attachments": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "examples": [
+                [
+                    "https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/93853c62-70b9-482a-b433-1733b98d163c",
+                    "https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/93853c62-70b9-482a-b433-1733b98d163c"
+                ]
+            ],
+            "description": "Bijlage urls"
+        },
+        "networkShare": {
+            "type": "string",
+            "examples": [
+                "//karelstad/data/gemeenschappelijk/Webformulieren/Accp/TDL"
+            ],
+            "description": "De hoofdmap op de netwerkschijf waar de een map aangemaakt moet worden en de bestanden naartoe geschreven worden"
+        },
+        "monitoringNetworkShare": {
+            "type": "string",
+            "examples": [
+                "/karelstad/data/gemeenschappelijk/Webformulieren/Accp/TDL/Monitoring"
+            ],
+            "description": "Optionele locatie voor monitoring. Indien deze waarde gevuld is, wordt de aanvraag met bijlagen ook in deze map geplaatst."
+        },
+        "internalNotificationEmails": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "format": "email"
+            },
+            "description": "E‑mail addresses of internal employees or departments to notify when a new submission arrives.",
+            "default": [],
+            "examples": [
+                [
+                    "ops-team@example.com",
+                    "support@example.com"
+                ]
+            ]
+        },
+        "submissionValuesToFiles": {
+            "description": "De key value pairs van data die apart opgeslagen wordt als een apart txt bestand naast de aanvraag pdf en bijlagen.",
+            "oneOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "array",
+                        "minItems": 2,
+                        "maxItems": 2,
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                {
+                    "type": "null"
+                }
+            ],
+            "default": [],
+            "examples": [
+                [],
+                [
+                    [
+                        "bsn",
+                        "324324"
+                    ],
+                    [
+                        "savefileKeyEen",
+                        ""
+                    ]
+                ],
+                [
+                    [
+                        "test",
+                        ""
+                    ]
+                ],
+                null
+            ]
+        },
+        "bsnOrKvkToFile": {
+            "type": "boolean",
+            "examples": [
+                true,
+                false
+            ],
+            "description": "Indicates if the bsn / kvk field should be saved to a separate text file."
+        }
+    },
+    "description": "Object om formulierinzendingen en bijlagen te registreren als een verzoek in de objecten API. Vanuit hier pakt onze logica/aws infra het verder op en afhankijk van het object zullen er andere acties plaatsvinden.",
+    "additionalProperties": true
+}

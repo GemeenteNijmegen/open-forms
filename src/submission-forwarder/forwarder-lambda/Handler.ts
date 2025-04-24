@@ -132,6 +132,22 @@ export class SubmissionForwarderHandler {
  */
   private async createSaveFiles(submission: Submission): Promise<string[]> {
     const s3Files: string[] = [];
+
+    // BSN or KVK save file
+    if (submission.bsnOrKvkToFile) {
+      try {
+        if (submission.kvk) {
+          await this.storeInS3(submission.reference, 'kvk.txt', submission.kvk);
+        }
+        if (submission.bsn) {
+          await this.storeInS3(submission.reference, 'bsn.txt', submission.bsn);
+        }
+      } catch (error: any) {
+        console.log('Failed to create kvk/bsn save file');
+      }
+    }
+
+    // Other save files based on free data structure
     const submissionValues: KeyValuePair[] = submission.submissionValuesToFiles ?? [];
     for (const [name, value] of submissionValues) {
       if (!value) continue;
@@ -145,7 +161,6 @@ export class SubmissionForwarderHandler {
       } catch (error: any) {
         logger.error(`Failed to create saveFile for ${name} - ${submission.reference}`);
       }
-
     }
     return s3Files;
   }

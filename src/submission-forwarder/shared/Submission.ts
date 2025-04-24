@@ -24,6 +24,7 @@ export const SubmissionSchema = z.object({
       z.array(KeyValuePairSchema).optional(), // This ensures an array of key-value tuples.
       z.null(),
     ]).optional(),
+  bsnOrKvkToFile: z.boolean().optional().nullable(),
 });
 
 export type Submission = z.infer<typeof SubmissionSchema>;
