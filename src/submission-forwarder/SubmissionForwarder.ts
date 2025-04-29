@@ -254,6 +254,19 @@ export class SubmissionForwarder extends Construct {
         level: LogLevel.ALL,
       },
     });
+    forwarderLambda.grantInvoke(stepfunction);
+    notificationEmailLambda.grantInvoke(stepfunction);
+    this.backupBucket.grantWrite(stepfunction);
+    stepfunction.addToRolePolicy(new PolicyStatement({
+      actions: [
+        'xray:PutTraceSegments',
+        'xray:PutTelemetryRecords',
+        'xray:GetSamplingRules',
+        'xray:GetSamplingTargets',
+      ],
+      effect: Effect.ALLOW,
+      resources: ['*'],
+    }));
 
     return stepfunction;
   }
