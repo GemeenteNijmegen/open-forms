@@ -114,7 +114,8 @@
             "States.ALL"
           ],
           "Comment": "ZGW Error catcher",
-          "Next": "Has notification email?"
+          "Next": "Has notification email?",
+          "Output": "{% $states.input %}"
         }
       ]
     },
