@@ -245,7 +245,7 @@ export class SubmissionForwarder extends Construct {
     const stepfunction = new StateMachine(this, 'orchestrator', {
       comment: 'Orchestrates handling of the open-forms submissions',
       tracingEnabled: true,
-      definitionBody: DefinitionBody.fromFile('src/submission-forwarder/orchestration.json'),
+      definitionBody: DefinitionBody.fromFile('src/submission-forwarder/orchestration.asl.json'),
       definitionSubstitutions: {
         BACKUP_BUCKET_NAME: this.backupBucket.bucketName,
         FORWARDER_LAMBDA_ARN: forwarderLambda.functionArn,
