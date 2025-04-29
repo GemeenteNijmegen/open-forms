@@ -24,14 +24,10 @@
         {
           "Next": "Notification email",
           "Condition": "{% ($exists($states.input.internalNotificationEmails) and $exists($states.input.internalNotificationEmails[0])) %}",
-          "Comment": "internalNotificationEmails != empty"
+          "Comment": "internalNotificationEmail(s) provided"
         }
       ],
-      "Default": "No notification email"
-    },
-    "No notification email": {
-      "Type": "Pass",
-      "Next": "Success"
+      "Default": "Success"
     },
     "Notification email": {
       "Type": "Task",
@@ -66,7 +62,7 @@
           "Comment": "networkShare or monitoring provided"
         }
       ],
-      "Default": "No esb-forwarding"
+      "Default": "ZGW registration?"
     },
     "ESB Forwarder": {
       "Type": "Task",
@@ -90,10 +86,41 @@
           "JitterStrategy": "FULL"
         }
       ],
-      "Next": "Has notification email?"
+      "Next": "ZGW registration?"
     },
-    "No esb-forwarding": {
-      "Type": "Pass",
+    "ZGW registration?": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Next": "Register ZGW",
+          "Condition": "{% ($exists($.states.input.bsn) or $exists($.states.input.kvk)) %}",
+          "Comment": "Has bsn or kvk"
+        }
+      ],
+      "Default": "Has notification email?"
+    },
+    "Register ZGW": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Output": "{% $states.result.Payload %}",
+      "Arguments": {
+        "FunctionName": "${ZGW_REGISTRATION_LAMBDA_ARN}",
+        "Payload": "{% $states.input %}"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2,
+          "JitterStrategy": "FULL"
+        }
+      ],
       "Next": "Has notification email?"
     },
     "Success": {
