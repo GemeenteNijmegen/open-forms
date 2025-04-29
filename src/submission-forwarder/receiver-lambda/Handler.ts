@@ -129,11 +129,10 @@ export class ReceiverHandler {
   }
 
   async startExecution(submission: Submission) {
-    const timestamp = new Date().toISOString();
     const execution = await stepfunctions.send(new StartExecutionCommand({
       stateMachineArn: this.options.orchestratorArn,
       input: JSON.stringify(submission),
-      name: `${submission.reference}-${timestamp}`,
+      name: `${submission.reference}-${Date.now()}`,
     }));
     logger.info('Started orchestrator', { executionArn: execution.executionArn });
   }
