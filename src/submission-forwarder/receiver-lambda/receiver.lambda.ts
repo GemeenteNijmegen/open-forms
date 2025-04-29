@@ -1,9 +1,9 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import { environmentVariables } from '@gemeentenijmegen/utils';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { ZgwClientFactory } from '../shared/ZgwClientFactory';
 import { authenticate } from './authenticate';
 import { ReceiverHandler } from './Handler';
-import { ZgwClientFactory } from '../shared/ZgwClientFactory';
 
 const logger = new Logger();
 
@@ -37,7 +37,6 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
     zgwClientFactory: getZgwClientFactory(),
     topicArn: env.TOPIC_ARN,
     orchestratorArn: env.ORCHESTRATOR_ARN,
-    useOrchestration: process.env.USE_ORCHESTRATION === 'true',
   });
 
   try {

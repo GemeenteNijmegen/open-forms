@@ -19,7 +19,6 @@ interface ReceiverHandlerOptions {
   zgwClientFactory: ZgwClientFactory;
   topicArn: string;
   orchestratorArn: string;
-  useOrchestration: boolean;
 }
 
 export class ReceiverHandler {
@@ -59,12 +58,8 @@ export class ReceiverHandler {
         attributes.internalNotificationEmails.StringValue = 'true';
       }
 
-      if (this.options.useOrchestration) {
-        await this.startExecution(submission);
-      } else {
-        // Send object incl. tags to SNS
-        await this.sendNotificationToTopic(this.options.topicArn, submission, attributes);
-      }
+      await this.startExecution(submission);
+      await this.sendNotificationToTopic(this.options.topicArn, submission, attributes);
 
       await trace(submission.reference, HANDLER_ID, 'OK');
       return this.response({ message: 'OK' });

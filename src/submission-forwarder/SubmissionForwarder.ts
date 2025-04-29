@@ -171,7 +171,6 @@ export class SubmissionForwarder extends Construct {
         OBJECTS_API_APIKEY_ARN: this.parameters.objectsApikey.secretArn,
         TRACE_TABLE_NAME: this.traceTable.tableName,
         ORCHESTRATOR_ARN: orchestrator.stateMachineArn,
-        USE_ORCHESTRATION: 'false', // TODO for now enable manually to test if this actually works...
       },
     });
     this.traceTable.grantWriteData(receiver);
