@@ -11,7 +11,7 @@
       "Type": "Task",
       "Arguments": {
         "Body": "{% $states.input %}",
-        "Bucket": "BACKUP_BUCKET_NAME",
+        "Bucket": "${BACKUP_BUCKET_NAME}",
         "Key": "{% $states.input.reference %}"
       },
       "Resource": "arn:aws:states:::aws-sdk:s3:putObject",
@@ -38,7 +38,7 @@
       "Resource": "arn:aws:states:::lambda:invoke",
       "Output": "{% $states.result.Payload %}",
       "Arguments": {
-        "FunctionName": "NOTIFICATION_EMAIL_LAMBDA_ARN",
+        "FunctionName": "${NOTIFICATION_EMAIL_LAMBDA_ARN}",
         "Payload": "{% $states.input %}"
       },
       "Retry": [
@@ -73,7 +73,7 @@
       "Resource": "arn:aws:states:::lambda:invoke",
       "Output": "{% $states.input %}",
       "Arguments": {
-        "FunctionName": "FORWARDER_LAMBDA_ARN",
+        "FunctionName": "${FORWARDER_LAMBDA_ARN}",
         "Payload": "{% $states.input %}"
       },
       "Retry": [

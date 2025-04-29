@@ -17,6 +17,7 @@ const project = new GemeenteNijmegenCdkApp({
     '@aws-sdk/client-s3',
     '@aws-sdk/client-sqs',
     '@aws-sdk/client-sns',
+    '@aws-sdk/client-sfn',
     '@aws-sdk/client-ses',
     '@aws-lambda-powertools/logger',
     'zod',
@@ -24,6 +25,7 @@ const project = new GemeenteNijmegenCdkApp({
     'jsonwebtoken',
     '@types/jsonwebtoken',
     '@aws-sdk/lib-storage',
+
   ],
   jestOptions: {
     jestConfig: {

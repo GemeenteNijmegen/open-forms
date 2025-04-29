@@ -56,6 +56,8 @@ describe('receiver', () => {
     new ReceiverHandler({
       zgwClientFactory: fakeZgwClientFactory as any,
       topicArn: 'arn:topci:aws:somewhere',
+      orchestratorArn: 'arn:topci:aws:somewhere',
+      useOrchestration: false,
     });
 
   });
@@ -64,6 +66,8 @@ describe('receiver', () => {
     const handler = new ReceiverHandler({
       zgwClientFactory: fakeZgwClientFactory as any,
       topicArn: 'arn:topci:aws:somewhere',
+      orchestratorArn: 'arn:topci:aws:somewhere',
+      useOrchestration: false,
     });
     await handler.handle(fakeEvent as any);
 

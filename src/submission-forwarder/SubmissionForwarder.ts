@@ -74,13 +74,13 @@ export class SubmissionForwarder extends Construct {
     this.topic = this.setupInternalTopic();
 
     this.setupEsbUser();
-    this.setupReceiverLambda();
     const forwarder = this.setupEsbForwarderLambda();
     this.setupBackupLambda();
     const notification = this.setupNotificationMailLambda();
     this.setupResubmitLambda();
 
-    this.setupOrchestrationStepFunction(forwarder, notification);
+    const orchestrator = this.setupOrchestrationStepFunction(forwarder, notification);
+    this.setupReceiverLambda(orchestrator);
   }
 
   private setupParameters() {
@@ -144,7 +144,7 @@ export class SubmissionForwarder extends Construct {
     };
   }
 
-  private setupReceiverLambda() {
+  private setupReceiverLambda(orchestrator: StateMachine) {
     if (!this.parameters) {
       throw Error('Parameters should be created first');
     }
@@ -165,6 +165,8 @@ export class SubmissionForwarder extends Construct {
         MIJN_SERVICES_OPEN_ZAAK_CLIENT_SECRET_ARN: this.parameters.mijnServicesOpenZaakApiClientSecret.secretArn,
         OBJECTS_API_APIKEY_ARN: this.parameters.objectsApikey.secretArn,
         TRACE_TABLE_NAME: this.traceTable.tableName,
+        ORCHESTRATOR_ARN: orchestrator.stateMachineArn,
+        USE_ORCHESTRATION: 'false', // TODO for now enable manually to test if this actually works...
       },
     });
     this.traceTable.grantWriteData(receiver);
@@ -175,6 +177,7 @@ export class SubmissionForwarder extends Construct {
     this.parameters.objectsApikey.grantRead(receiver);
     this.parameters.mijnServicesOpenZaakApiClientId.grantRead(receiver);
     this.parameters.mijnServicesOpenZaakApiClientSecret.grantRead(receiver);
+    orchestrator.grantStartExecution(receiver);
   }
 
   private setupEsbForwarderLambda() {

@@ -1,6 +1,7 @@
 
 
 import { Logger } from '@aws-lambda-powertools/logger';
+import { SFNClient, StartExecutionCommand } from '@aws-sdk/client-sfn';
 import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
 import { MessageAttributeValue } from '@aws-sdk/client-sqs';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
@@ -12,10 +13,13 @@ import { ZgwClientFactory } from '../shared/ZgwClientFactory';
 const HANDLER_ID = 'receiver';
 const logger = new Logger();
 const sns = new SNSClient();
+const stepfunctions = new SFNClient();
 
 interface ReceiverHandlerOptions {
   zgwClientFactory: ZgwClientFactory;
   topicArn: string;
+  orchestratorArn: string;
+  useOrchestration: boolean;
 }
 
 export class ReceiverHandler {
@@ -55,8 +59,13 @@ export class ReceiverHandler {
         attributes.internalNotificationEmails.StringValue = 'true';
       }
 
-      // Send object incl. tags to SNS
-      await this.sendNotificationToTopic(this.options.topicArn, submission, attributes);
+      if (this.options.useOrchestration) {
+        await this.startExecution(submission);
+      } else {
+        // Send object incl. tags to SNS
+        await this.sendNotificationToTopic(this.options.topicArn, submission, attributes);
+      }
+
       await trace(submission.reference, HANDLER_ID, 'OK');
       return this.response({ message: 'OK' });
 
@@ -122,6 +131,16 @@ export class ReceiverHandler {
       logger.error('Could not send submission to topic', { error });
       throw new SendMessageError('Failed to send submission to topic');
     }
+  }
+
+  async startExecution(submission: Submission) {
+    const timestamp = new Date().toISOString();
+    const execution = await stepfunctions.send(new StartExecutionCommand({
+      stateMachineArn: this.options.orchestratorArn,
+      input: JSON.stringify(submission),
+      name: `${submission.reference}-${timestamp}`,
+    }));
+    logger.info('Started orchestrator', { executionArn: execution.executionArn });
   }
 
 }
