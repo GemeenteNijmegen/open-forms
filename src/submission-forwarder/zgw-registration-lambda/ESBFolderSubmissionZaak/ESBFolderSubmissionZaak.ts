@@ -116,6 +116,21 @@ export class ESBFolderSubmissionZaak {
     }
 
     // Add informatieobjecten to zaak
+    const zaakInformatieObjectApi = new zaken.Zaakinformatieobjecten(this.zakenClient);
+    const addedPdf = await zaakInformatieObjectApi.zaakinformatieobjectCreate({
+      zaak: zaakurl,
+      informatieobject: submission.pdf,
+    });
+    this.logger.debug('Addded pdf to zaak', { addedPdf });
+
+    // Or promise all for parallel
+    for (const attachment of submission.attachments ?? []) {
+      const added = await zaakInformatieObjectApi.zaakinformatieobjectCreate({
+        zaak: zaakurl,
+        informatieobject: attachment,
+      });
+      this.logger.debug('Added attachment to zaak', { added });
+    }
 
 
   }
