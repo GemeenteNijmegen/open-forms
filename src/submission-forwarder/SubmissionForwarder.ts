@@ -12,6 +12,7 @@ import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
 import { LoggingProtocol, SubscriptionFilter, Topic } from 'aws-cdk-lib/aws-sns';
 import { Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
+import { CustomerManagedEncryptionConfiguration, DefinitionBody, LogLevel, StateMachine } from 'aws-cdk-lib/aws-stepfunctions';
 import { Construct } from 'constructs';
 import { Statics } from '../Statics';
 import { BackupFunction } from './backup-lambda/backup-function';
@@ -77,6 +78,8 @@ export class SubmissionForwarder extends Construct {
     this.setupBackupLambda();
     this.setupNotificationMailLambda();
     this.setupResubmitLambda();
+
+    this.setupOrchestrationStepFunction();
   }
 
   private setupParameters() {
@@ -222,6 +225,29 @@ export class SubmissionForwarder extends Construct {
       criticality: new Criticality('high'),
       lambda: forwarder,
     });
+  }
+
+  private setupOrchestrationStepFunction() {
+
+    const logGroup = new LogGroup(this, 'orchestrator-logs', {
+      encryptionKey: this.options.key,
+    });
+
+    const stepfunction = new StateMachine(this, 'orchestrator', {
+      comment: 'Orchestrates handling of the open-forms submissions',
+      tracingEnabled: true,
+      definitionBody: DefinitionBody.fromFile('src/submission-forwarder/orchestration.json'),
+      definitionSubstitutions: {
+        'BACKUP_BUCKET_NAME': this.backupBucket.bucketName,
+      },
+      encryptionConfiguration: new CustomerManagedEncryptionConfiguration(this.options.key),
+      logs: {
+        destination: logGroup,
+        level: LogLevel.ALL,
+      }
+    });
+
+    return stepfunction;
   }
 
   private setupInternalTopic() {
