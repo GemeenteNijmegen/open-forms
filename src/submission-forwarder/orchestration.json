@@ -23,7 +23,7 @@
       "Choices": [
         {
           "Next": "Notification email",
-          "Condition": "{% ($exists($.internalNotificationEmails) and ($.internalNotificationEmails.length) > (0)) %}",
+          "Condition": "{% ($exists($states.input.internalNotificationEmails) and ($states.input.internalNotificationEmails.length) > (0)) %}",
           "Comment": "internalNotificationEmails != empty"
         }
       ],
@@ -62,7 +62,7 @@
       "Choices": [
         {
           "Next": "ESB Forwarder",
-          "Condition": "{% ($exists($networkShare) or $exists($monitoringNetworkShare)) %}",
+          "Condition": "{% ($exists($states.input.networkShare) or $exists($states.input.monitoringNetworkShare)) %}",
           "Comment": "networkShare or monitoring provided"
         }
       ],

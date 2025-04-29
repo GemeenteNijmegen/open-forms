@@ -254,6 +254,8 @@ export class SubmissionForwarder extends Construct {
         level: LogLevel.ALL,
       },
     });
+
+    // Make sure the stepfunction has the correct rights
     forwarderLambda.grantInvoke(stepfunction);
     notificationEmailLambda.grantInvoke(stepfunction);
     this.backupBucket.grantWrite(stepfunction);
