@@ -5,6 +5,7 @@ import { ComparisonOperator, Stats, TreatMissingData } from 'aws-cdk-lib/aws-clo
 import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { AccessKey, Effect, PolicyStatement, Role, ServicePrincipal, User } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
+import { Function } from 'aws-cdk-lib/aws-lambda';
 import { SnsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { BlockPublicAccess, Bucket } from 'aws-cdk-lib/aws-s3';
@@ -74,12 +75,12 @@ export class SubmissionForwarder extends Construct {
 
     this.setupEsbUser();
     this.setupReceiverLambda();
-    this.setupEsbForwarderLambda();
+    const forwarder = this.setupEsbForwarderLambda();
     this.setupBackupLambda();
-    this.setupNotificationMailLambda();
+    const notification = this.setupNotificationMailLambda();
     this.setupResubmitLambda();
 
-    this.setupOrchestrationStepFunction();
+    this.setupOrchestrationStepFunction(forwarder, notification);
   }
 
   private setupParameters() {
@@ -225,9 +226,14 @@ export class SubmissionForwarder extends Construct {
       criticality: new Criticality('high'),
       lambda: forwarder,
     });
+
+    return forwarder;
   }
 
-  private setupOrchestrationStepFunction() {
+  private setupOrchestrationStepFunction(
+    forwarderLambda: Function,
+    notificationEmailLambda: Function,
+  ) {
 
     const logGroup = new LogGroup(this, 'orchestrator-logs', {
       encryptionKey: this.options.key,
@@ -238,13 +244,15 @@ export class SubmissionForwarder extends Construct {
       tracingEnabled: true,
       definitionBody: DefinitionBody.fromFile('src/submission-forwarder/orchestration.json'),
       definitionSubstitutions: {
-        'BACKUP_BUCKET_NAME': this.backupBucket.bucketName,
+        BACKUP_BUCKET_NAME: this.backupBucket.bucketName,
+        FORWARDER_LAMBDA_ARN: forwarderLambda.functionArn,
+        NOTIFICATION_EMAIL_LAMBDA_ARN: notificationEmailLambda.functionArn,
       },
       encryptionConfiguration: new CustomerManagedEncryptionConfiguration(this.options.key),
       logs: {
         destination: logGroup,
         level: LogLevel.ALL,
-      }
+      },
     });
 
     return stepfunction;
@@ -404,7 +412,7 @@ export class SubmissionForwarder extends Construct {
         internalNotificationEmails: SubscriptionFilter.stringFilter({ allowlist: ['true'] }),
       },
     }));
-
+    return internalNotificationMailLambda;
   }
 
   private setupTraceTable() {
