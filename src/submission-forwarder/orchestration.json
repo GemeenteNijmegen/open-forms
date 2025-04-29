@@ -4,108 +4,97 @@
   "States": {
     "Log object": {
       "Type": "Pass",
-      "Next": "Parallel",
+      "Next": "Backup",
       "Comment": "Log the object we are processing"
     },
-    "Parallel": {
-      "Type": "Parallel",
-      "Branches": [
+    "Backup": {
+      "Type": "Task",
+      "Arguments": {
+        "Body": "{% $states.input %}",
+        "Bucket": "BACKUP_BUCKET_NAME",
+        "Key": "{% $states.input.reference %}"
+      },
+      "Resource": "arn:aws:states:::aws-sdk:s3:putObject",
+      "Next": "Forward to ESB?",
+      "Output": "{% $states.input %}"
+    },
+    "Has notification email?": {
+      "Type": "Choice",
+      "Choices": [
         {
-          "StartAt": "Backup",
-          "States": {
-            "Backup": {
-              "Type": "Task",
-              "Arguments": {
-                "Body": "{% $states.input %}",
-                "Bucket": "BACKUP_BUCKET_NAME",
-                "Key": "{% $states.input.reference %}"
-              },
-              "Resource": "arn:aws:states:::aws-sdk:s3:putObject",
-              "End": true
-            }
-          }
-        },
+          "Next": "Notification email",
+          "Condition": "{% ($exists($.internalNotificationEmails) and ($.internalNotificationEmails.length) > (0)) %}",
+          "Comment": "internalNotificationEmails != empty"
+        }
+      ],
+      "Default": "No notification email"
+    },
+    "No notification email": {
+      "Type": "Pass",
+      "Next": "Success"
+    },
+    "Notification email": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Output": "{% $states.result.Payload %}",
+      "Arguments": {
+        "FunctionName": "NOTIFICATION_EMAIL_LAMBDA_ARN",
+        "Payload": "{% $states.input %}"
+      },
+      "Retry": [
         {
-          "StartAt": "Forward to ESB?",
-          "States": {
-            "Forward to ESB?": {
-              "Type": "Choice",
-              "Choices": [
-                {
-                  "Next": "ESB Forwarder"
-                }
-              ],
-              "Default": "No esb-forwarding"
-            },
-            "ESB Forwarder": {
-              "Type": "Task",
-              "Resource": "arn:aws:states:::lambda:invoke",
-              "Output": "{% $states.input %}",
-              "Arguments": {
-                "FunctionName": "FORWARDER_LAMBDA_ARN",
-                "Payload": "{% $states.input %}"
-              },
-              "Retry": [
-                {
-                  "ErrorEquals": [
-                    "Lambda.ServiceException",
-                    "Lambda.AWSLambdaException",
-                    "Lambda.SdkClientException",
-                    "Lambda.TooManyRequestsException"
-                  ],
-                  "IntervalSeconds": 1,
-                  "MaxAttempts": 3,
-                  "BackoffRate": 2,
-                  "JitterStrategy": "FULL"
-                }
-              ],
-              "Next": "Has notification email?"
-            },
-            "No esb-forwarding": {
-              "Type": "Pass",
-              "Next": "Has notification email?"
-            },
-            "Has notification email?": {
-              "Type": "Choice",
-              "Choices": [
-                {
-                  "Next": "Notification email"
-                }
-              ],
-              "Default": "No notification email"
-            },
-            "Notification email": {
-              "Type": "Task",
-              "Resource": "arn:aws:states:::lambda:invoke",
-              "Output": "{% $states.result.Payload %}",
-              "Arguments": {
-                "FunctionName": "NOTIFICATION_EMAIL_LAMBDA_ARN",
-                "Payload": "{% $states.input %}"
-              },
-              "Retry": [
-                {
-                  "ErrorEquals": [
-                    "Lambda.ServiceException",
-                    "Lambda.AWSLambdaException",
-                    "Lambda.SdkClientException",
-                    "Lambda.TooManyRequestsException"
-                  ],
-                  "IntervalSeconds": 1,
-                  "MaxAttempts": 3,
-                  "BackoffRate": 2,
-                  "JitterStrategy": "FULL"
-                }
-              ],
-              "End": true
-            },
-            "No notification email": {
-              "Type": "Pass",
-              "End": true
-            }
-          }
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2,
+          "JitterStrategy": "FULL"
         }
       ],
       "Next": "Success"
+    },
+    "Forward to ESB?": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Next": "ESB Forwarder",
+          "Condition": "{% ($exists($networkShare) or $exists($monitoringNetworkShare)) %}",
+          "Comment": "networkShare or monitoring provided"
+        }
+      ],
+      "Default": "No esb-forwarding"
+    },
+    "ESB Forwarder": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Output": "{% $states.input %}",
+      "Arguments": {
+        "FunctionName": "FORWARDER_LAMBDA_ARN",
+        "Payload": "{% $states.input %}"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2,
+          "JitterStrategy": "FULL"
+        }
+      ],
+      "Next": "Has notification email?"
+    },
+    "No esb-forwarding": {
+      "Type": "Pass",
+      "Next": "Has notification email?"
     },
     "Success": {
       "Type": "Succeed"
