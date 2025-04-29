@@ -1,11 +1,9 @@
 import { SQSClient, SendMessageCommand } from '@aws-sdk/client-sqs';
 import { Upload } from '@aws-sdk/lib-storage';
 import { documenten } from '@gemeentenijmegen/modules-zgw-client';
-import { SNSEventRecord } from 'aws-lambda';
 import { mockClient } from 'aws-sdk-client-mock';
 import { ZgwClientFactory } from '../../shared/ZgwClientFactory';
 import { SubmissionForwarderHandler } from '../Handler';
-
 
 jest.mock('@aws-sdk/lib-storage', () => ({
   Upload: jest.fn().mockImplementation(() => ({
@@ -17,7 +15,7 @@ const sqsMock = mockClient(SQSClient);
 
 describe('SubmissionForwarderHandler', () => {
   let fakeSubmission: any;
-  let fakeEvent: SNSEventRecord;
+  // let fakeEvent: SNSEvent;
   let fakeObjectsApiClient: any;
   let fakeHttpClient: any;
   let fakeDocumentenClientInstance: any;
@@ -45,24 +43,26 @@ describe('SubmissionForwarderHandler', () => {
       ],
     };
 
-    fakeEvent = {
-      Sns: {
-        Message: JSON.stringify({
-          bsn: '',
-          kvk: '',
-          pdf: 'https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/657d12d8-4dd6-4b16-98b6-d8d08885c9ba',
-          formName: 'Voorbeeld Netwerkschijf Registratie met Object',
-          reference: 'OF-P5KAZF',
-          attachments: [],
-          networkShare: '//karelstad/webdata/Webformulieren/TESTA',
-          monitoringNetworkShare: '//karelstad/webdata/Webformulieren/TESTB',
-          submissionValuesToFiles: [],
-          internalNotificationEmails: [
-            'devops@nijmegen.nl',
-          ],
-        }),
-      },
-    } as SNSEventRecord;
+    // fakeEvent = {
+    //   Records: [{
+    //     Sns: {
+    //       Message: JSON.stringify({
+    //         bsn: '',
+    //         kvk: '',
+    //         pdf: 'https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/657d12d8-4dd6-4b16-98b6-d8d08885c9ba',
+    //         formName: 'Voorbeeld Netwerkschijf Registratie met Object',
+    //         reference: 'OF-P5KAZF',
+    //         attachments: [],
+    //         networkShare: '//karelstad/webdata/Webformulieren/TESTA',
+    //         monitoringNetworkShare: '//karelstad/webdata/Webformulieren/TESTB',
+    //         submissionValuesToFiles: [],
+    //         internalNotificationEmails: [
+    //           'devops@nijmegen.nl',
+    //         ],
+    //       }),
+    //     },
+    //   }]
+    // } as SNSEvent;
 
     // Fake HttpClient (inhoud niet belangrijk)
     fakeHttpClient = {};
@@ -99,7 +99,7 @@ describe('SubmissionForwarderHandler', () => {
   });
 
   it('should send both a normal and monitoring notification when monitoringNetworkShare is provided', async () => {
-    await handler.handle(fakeEvent);
+    await handler.handle(fakeSubmission);
     // Prevent unused import Upload
     const uploadInstances = (Upload as any as jest.Mock).mock.instances;
     expect(uploadInstances.length).toBeGreaterThan(0);
@@ -125,8 +125,7 @@ describe('SubmissionForwarderHandler', () => {
     sqsMock.reset(); // reset de SQS-mock om de tellers weer op nul te zetten
     sqsMock.on(SendMessageCommand).resolves({});
 
-    const event = { Sns: { Message: JSON.stringify(emptyMonitoringSubmission) } };
-    await handler.handle(event as any);
+    await handler.handle(emptyMonitoringSubmission);
 
     // Er mag maar 1 SQS-send call plaatsvinden, geen monitoringlocatie
     const sendMessageCalls = sqsMock.commandCalls(SendMessageCommand);
@@ -142,4 +141,5 @@ describe('SubmissionForwarderHandler', () => {
     await handler.handle(event as any);
     expect(sqsMock.commandCalls(SendMessageCommand).length).toBe(0);
   });
+
 });

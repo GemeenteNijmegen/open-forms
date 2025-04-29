@@ -273,6 +273,19 @@ export class SubmissionForwarder extends Construct {
       resources: ['*'],
     }));
 
+    // Make sure we get a notification if an execution fails
+
+    stepfunction.metricFailed({
+      period: Duration.minutes(5),
+      statistic: Stats.SUM,
+    }).createAlarm(this, 'topic-failed-alarm', {
+      threshold: 1,
+      evaluationPeriods: 1,
+      treatMissingData: TreatMissingData.NOT_BREACHING,
+      comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+      alarmName: 'submission-orchestrator-failed-alarm' + this.options.criticality.alarmSuffix(),
+    });
+
     return stepfunction;
   }
 

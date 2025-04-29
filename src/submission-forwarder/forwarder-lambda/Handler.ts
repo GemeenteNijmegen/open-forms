@@ -3,9 +3,8 @@ import { S3Client } from '@aws-sdk/client-s3';
 import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
 import { Upload } from '@aws-sdk/lib-storage';
 import { documenten } from '@gemeentenijmegen/modules-zgw-client';
-import { SNSEventRecord } from 'aws-lambda';
 import { EsbSubmission } from '../shared/EsbSubmission';
-import { KeyValuePair, Submission, SubmissionSchema } from '../shared/Submission';
+import { KeyValuePair, Submission } from '../shared/Submission';
 import { trace } from '../shared/trace';
 import { ZgwClientFactory } from '../shared/ZgwClientFactory';
 
@@ -32,10 +31,9 @@ export class SubmissionForwarderHandler {
    */
   constructor(private readonly options: SubmissionForwarderHandlerOptions) { }
 
-  async handle(event: SNSEventRecord) {
+  async handle(submission: Submission) {
 
     // Message is the submission
-    const submission = SubmissionSchema.parse(JSON.parse(event.Sns.Message));
     logger.debug('Retreived submisison', { submission });
 
     // Only handle submissions with a network share
