@@ -274,17 +274,18 @@ export class SubmissionForwarder extends Construct {
     }));
 
     // Make sure we get a notification if an execution fails
-
     stepfunction.metricFailed({
       period: Duration.minutes(5),
       statistic: Stats.SUM,
-    }).createAlarm(this, 'topic-failed-alarm', {
+    }).createAlarm(this, 'execution-failed-alarm', {
       threshold: 1,
       evaluationPeriods: 1,
       treatMissingData: TreatMissingData.NOT_BREACHING,
       comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
       alarmName: 'submission-orchestrator-failed-alarm' + this.options.criticality.alarmSuffix(),
     });
+
+    // TODO add alarms for timeout and maybe aborted? https://docs.aws.amazon.com/step-functions/latest/dg/procedure-cw-metrics.html
 
     return stepfunction;
   }
