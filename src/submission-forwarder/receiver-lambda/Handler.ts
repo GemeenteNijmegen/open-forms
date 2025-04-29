@@ -58,8 +58,8 @@ export class ReceiverHandler {
         attributes.internalNotificationEmails.StringValue = 'true';
       }
 
-      await this.startExecution(submission);
       await this.sendNotificationToTopic(this.options.topicArn, submission, attributes);
+      await this.startExecution(submission);
 
       await trace(submission.reference, HANDLER_ID, 'OK');
       return this.response({ message: 'OK' });

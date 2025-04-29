@@ -1,4 +1,5 @@
 import { DynamoDBClient, PutItemCommand } from '@aws-sdk/client-dynamodb';
+import { SFNClient, StartExecutionCommand } from '@aws-sdk/client-sfn';
 import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
 import { mockClient } from 'aws-sdk-client-mock';
 import { ReceiverHandler } from '../Handler';
@@ -7,6 +8,7 @@ import { ReceiverHandler } from '../Handler';
 describe('receiver', () => {
 
   // Mock AWS connections
+  const stepfunctionMock = mockClient(SFNClient);
   const snsMock = mockClient(SNSClient);
   const dynamodb = mockClient(DynamoDBClient);
   snsMock.on(PublishCommand).resolves({});
@@ -72,6 +74,10 @@ describe('receiver', () => {
     // Should push to SNS
     const published = snsMock.commandCalls(PublishCommand);
     expect(published.length).toBe(1);
+
+    // Should start execution
+    const executed = stepfunctionMock.commandCalls(StartExecutionCommand);
+    expect(executed.length).toBe(1);
   });
 
 

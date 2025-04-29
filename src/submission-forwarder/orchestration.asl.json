@@ -107,21 +107,16 @@
         "FunctionName": "${ZGW_REGISTRATION_LAMBDA_ARN}",
         "Payload": "{% $states.input %}"
       },
-      "Retry": [
+      "Next": "Has notification email?",
+      "Catch": [
         {
           "ErrorEquals": [
-            "Lambda.ServiceException",
-            "Lambda.AWSLambdaException",
-            "Lambda.SdkClientException",
-            "Lambda.TooManyRequestsException"
+            "States.ALL"
           ],
-          "IntervalSeconds": 1,
-          "MaxAttempts": 3,
-          "BackoffRate": 2,
-          "JitterStrategy": "FULL"
+          "Comment": "ZGW Error catcher",
+          "Next": "Has notification email?"
         }
-      ],
-      "Next": "Has notification email?"
+      ]
     },
     "Success": {
       "Type": "Succeed"
