@@ -21,6 +21,7 @@ import { ForwarderFunction } from './forwarder-lambda/forwarder-function';
 import { InternalNotificationMailFunction } from './internal-notification-mail-lambda/internalNotificationMail-function';
 import { ReceiverFunction } from './receiver-lambda/receiver-function';
 import { ResubmitFunction } from './resubmit-lambda/resubmit-function';
+import { ZgwRegistrationFunction } from './zgw-registration-lambda/zgw-registration-function';
 
 interface SubmissionForwarderOptions {
   /**
@@ -48,12 +49,14 @@ interface SubmissionForwarderOptions {
  * to the Gemeente Nijmegen ESB.
  */
 export class SubmissionForwarder extends Construct {
+
   private readonly esbQueue: Queue;
   private esbDeadLetterQueue?: Queue;
   private readonly bucket: Bucket;
   private readonly topic: Topic;
   private readonly traceTable: Table;
   private readonly backupBucket: Bucket;
+
   private readonly parameters?: {
     apikey: Secret;
     objectsApikey: Secret;
@@ -63,6 +66,7 @@ export class SubmissionForwarder extends Construct {
     mijnServicesOpenZaakApiClientId: StringParameter;
     mijnServicesOpenZaakApiClientSecret: Secret;
   };
+
   constructor(scope: Construct, id: string, private readonly options: SubmissionForwarderOptions) {
     super(scope, id);
 
@@ -74,12 +78,13 @@ export class SubmissionForwarder extends Construct {
     this.topic = this.setupInternalTopic();
 
     this.setupEsbUser();
+    this.setupBackupLambda(); // TODO remove when step function is live
     const forwarder = this.setupEsbForwarderLambda();
-    this.setupBackupLambda();
     const notification = this.setupNotificationMailLambda();
-    this.setupResubmitLambda();
+    const zgw = this.setupZgwRegistrationLambda();
+    this.setupResubmitLambda(); // TODO update to execute new stepfunction when live (or just use the console, but this is exposed in the API gateway, can be used in management portal)
 
-    const orchestrator = this.setupOrchestrationStepFunction(forwarder, notification);
+    const orchestrator = this.setupOrchestrationStepFunction(forwarder, notification, zgw);
     this.setupReceiverLambda(orchestrator);
   }
 
@@ -236,6 +241,7 @@ export class SubmissionForwarder extends Construct {
   private setupOrchestrationStepFunction(
     forwarderLambda: Function,
     notificationEmailLambda: Function,
+    zgwLambda: Function,
   ) {
 
     const logGroup = new LogGroup(this, 'orchestrator-logs', {
@@ -250,6 +256,7 @@ export class SubmissionForwarder extends Construct {
         BACKUP_BUCKET_NAME: this.backupBucket.bucketName,
         FORWARDER_LAMBDA_ARN: forwarderLambda.functionArn,
         NOTIFICATION_EMAIL_LAMBDA_ARN: notificationEmailLambda.functionArn,
+        ZGW_REGISTRATION_LAMBDA_ARN: zgwLambda.functionArn,
       },
       encryptionConfiguration: new CustomerManagedEncryptionConfiguration(this.options.key),
       logs: {
@@ -259,6 +266,7 @@ export class SubmissionForwarder extends Construct {
     });
 
     // Make sure the stepfunction has the correct rights
+    zgwLambda.grantInvoke(stepfunction);
     forwarderLambda.grantInvoke(stepfunction);
     notificationEmailLambda.grantInvoke(stepfunction);
     this.backupBucket.grantWrite(stepfunction);
@@ -419,6 +427,39 @@ export class SubmissionForwarder extends Construct {
         resubmit: SubscriptionFilter.stringFilter({ denylist: ['true'] }), // Exclude resubmissions
       },
     }));
+  }
+
+
+  private setupZgwRegistrationLambda() {
+
+    if (!this.parameters) {
+      throw Error('Expected parameters to be defined');
+    }
+
+    const zgwLambda = new ZgwRegistrationFunction(this, 'zgw-function', {
+      description: 'Registers submissions in ZGW',
+      environment: {
+        POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'DEBUG',
+        DOCUMENTEN_BASE_URL: this.parameters.documentenApiBaseUrl.stringValue,
+        ZAKEN_BASE_URL: this.parameters.zakenApiBaseUrl.stringValue,
+        CATALOGI_BASE_URL: this.parameters.catalogiApiBaseUrl.stringValue,
+        OBJECTS_API_APIKEY_ARN: this.parameters.objectsApikey.secretArn,
+        MIJN_SERVICES_OPEN_ZAAK_CLIENT_ID_SSM: this.parameters.mijnServicesOpenZaakApiClientId.parameterName,
+        MIJN_SERVICES_OPEN_ZAAK_CLIENT_SECRET_ARN: this.parameters.mijnServicesOpenZaakApiClientSecret.secretArn,
+      },
+    });
+    this.parameters.objectsApikey.grantRead(zgwLambda);
+    this.parameters.mijnServicesOpenZaakApiClientId.grantRead(zgwLambda);
+    this.parameters.mijnServicesOpenZaakApiClientSecret.grantRead(zgwLambda);
+    this.options.key.grantEncryptDecrypt(zgwLambda);
+
+    zgwLambda.addEventSource(new SnsEventSource(this.topic, {
+      filterPolicy: {
+        resubmit: SubscriptionFilter.stringFilter({ denylist: ['true'] }), // Exclude resubmissions
+      },
+    }));
+
+    return zgwLambda;
   }
 
   private setupNotificationMailLambda() {

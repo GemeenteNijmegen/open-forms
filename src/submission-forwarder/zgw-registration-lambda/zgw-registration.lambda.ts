@@ -1,7 +1,7 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import { environmentVariables } from '@gemeentenijmegen/utils';
-import { SNSEvent } from 'aws-lambda';
 import { SubmissionForwarderHandler } from './Handler';
+import { SubmissionSchema } from '../shared/Submission';
 import { ZgwClientFactory } from '../shared/ZgwClientFactory';
 
 const logger = new Logger();
@@ -16,7 +16,7 @@ const env = environmentVariables([
   'OBJECTS_API_APIKEY_ARN',
 ]);
 
-export async function handler(event: SNSEvent) {
+export async function handler(event: any) {
   logger.debug('event', { event });
 
   const submissionForwarderHandler = new SubmissionForwarderHandler({
@@ -26,11 +26,28 @@ export async function handler(event: SNSEvent) {
     catalogiBaseUrl: env.CATALOGI_BASE_URL,
   });
 
-  const record = event.Records[0];
+  let submission = undefined;
+
+  // Event is a SNS event
+  if (event.Records) {
+    submission = SubmissionSchema.parse(JSON.parse(event.Records[0].Sns.Message));
+  }
+
+  // Event is a submission object directly
+  if (event.reference && event.formName) {
+    submission = SubmissionSchema.parse(event);
+  }
+
   try {
-    await submissionForwarderHandler.handle(record);
+
+    if (!submission) {
+      throw Error('Event is not a SNS event nor a submission');
+    }
+
+    await submissionForwarderHandler.handle(submission);
+
   } catch (error) {
-    logger.error('Failed to forward a submission', { data: record.Sns.MessageId, error });
+    logger.error('Failed to forward a submission', { data: submission?.reference, error });
     throw Error('Failed register submission in ZGW');
   }
 }

@@ -93,7 +93,7 @@
       "Choices": [
         {
           "Next": "Register ZGW",
-          "Condition": "{% ($exists($.states.input.bsn) or $exists($.states.input.kvk)) %}",
+          "Condition": "{% ($exists($states.input.bsn) or $exists($states.input.kvk)) %}",
           "Comment": "Has bsn or kvk"
         }
       ],
