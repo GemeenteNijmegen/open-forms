@@ -29,12 +29,13 @@ export class SubmissionForwarderHandler {
     logger.debug('Retreived submisison', { submission });
 
     // Make zaak to display in Mijn Nijmegen. Account for retries queue by always checking if some part already exists
-    await ESBFolderSubmissionZaak.create({
-      submission: submission,
+    const esbFolderSubmissionZaak = await ESBFolderSubmissionZaak.create({
       zgwClientFactory: this.options.zgwClientFactory,
       zakenApiBaseUrl: this.options.zakenBaseUrl,
       catalogiApiBaseUrl: this.options.catalogiBaseUrl,
     });
+    await esbFolderSubmissionZaak.createEsbFolderZaak(submission);
+
 
     await trace(submission.reference, HANDLER_ID, 'OK');
   }
