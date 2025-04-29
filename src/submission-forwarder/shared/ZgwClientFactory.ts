@@ -27,7 +27,9 @@ export class ZgwClientFactory {
       async securityWorker(securityData: any) {
         return {
           headers: {
-            Authorization: `Bearer ${securityData?.token}`,
+            'Authorization': `Bearer ${securityData?.token}`,
+            'Content-Crs': 'EPSG:4326',
+            'Accept-Crs': 'EPSG:4326',
           },
         };
       },
@@ -61,7 +63,9 @@ export class ZgwClientFactory {
       async securityWorker(securityData: any) {
         return {
           headers: {
-            Authorization: `Bearer ${securityData?.token}`,
+            'Authorization': `Bearer ${securityData?.token}`,
+            'Content-Crs': 'EPSG:4326',
+            'Accept-Crs': 'EPSG:4326',
           },
         };
       },
