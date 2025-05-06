@@ -4,9 +4,9 @@ import { SFNClient, StartExecutionCommand } from '@aws-sdk/client-sfn';
 import { Response } from '@gemeentenijmegen/apigateway-http/lib/V1/Response';
 import { environmentVariables } from '@gemeentenijmegen/utils';
 import { APIGatewayProxyEvent, APIGatewayProxyResult, SNSEvent } from 'aws-lambda';
+import { authenticate } from './authenticate';
 import { Submission, SubmissionSchema } from '../shared/Submission';
 import { trace } from '../shared/trace';
-import { authenticate } from './authenticate';
 
 const HANDLER_ID = 'RESUBMIT';
 const logger = new Logger();
