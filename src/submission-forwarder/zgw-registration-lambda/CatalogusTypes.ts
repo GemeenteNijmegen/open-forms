@@ -74,7 +74,7 @@ export class CatalogusTypes {
       datumEindeGeldigheid: zt.eindeGeldigheid ?? '',
     }));
 
-    this.logger.debug(`CatalogusTypes getLatestZaaktypeWithVersionData for ${identificatie}`, { versions });
+    this.logger.debug(`CatalogusTypes getLatestZaaktypeWithVersionData for ${identificatie} latestZaaktype ${latestZaaktype.url}`, { versions });
     return {
       latestZaaktype,
       versions,

@@ -1,9 +1,8 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import { HttpClient as CatalogiHttpClient } from '@gemeentenijmegen/modules-zgw-client/lib/catalogi-generated-client';
 import * as catalogi from '@gemeentenijmegen/modules-zgw-client/lib/catalogi-generated-client';
-import { HttpClient as ZakenHttpClient } from '@gemeentenijmegen/modules-zgw-client/lib/zaken-generated-client';
+import { HttpClient as ZakenHttpClient, BetrokkeneTypeEnum } from '@gemeentenijmegen/modules-zgw-client/lib/zaken-generated-client';
 import * as zaken from '@gemeentenijmegen/modules-zgw-client/lib/zaken-generated-client';
-import { BetrokkeneTypeEnum } from '@gemeentenijmegen/modules-zgw-client/lib/zaken-generated-client/1.4.1';
 import { Submission } from '../../shared/Submission';
 import { ZgwClientFactory } from '../../shared/ZgwClientFactory';
 import { CatalogusTypes } from '../CatalogusTypes';
@@ -81,10 +80,11 @@ export class ESBFolderSubmissionZaak {
     const zaakExists = await zaakApi.zaakList({ identificatie: submission.reference });
     if (zaakExists.data.count != 0) {
       this.logger.warn(`Zaak ${submission.reference} already exists ${zaakExists.data.count}`);
-      // Should stop here, or only add status/rol
+      // TODO: Should stop here, or only add status/rol
     }
     const { zaaktype, statustype, roltype } = await this.getCatalogusTypes();
     const zgwToday = new Date().toISOString().substring(0, 'yyyy-mm-dd'.length);
+    this.logger.debug('Before zaakCreate');
     const createdZaak = await zaakApi.zaakCreate({
       identificatie: submission.reference, // OF-....
       zaaktype: zaaktype.url,
@@ -94,8 +94,11 @@ export class ESBFolderSubmissionZaak {
       verantwoordelijkeOrganisatie: this.GN_RSIN,
     });
     const zaakurl = createdZaak.data.url;
+    this.logger.debug(`Zaakcreate done ${zaakurl}`);
+
     if (statustype) {
       const statusApi = new zaken.Statussen(this.zakenClient);
+      this.logger.debug('Before statusCreate');
       const createdStatus = await statusApi.statusCreate({
         zaak: zaakurl,
         statustype: statustype.url,
@@ -103,33 +106,52 @@ export class ESBFolderSubmissionZaak {
       });
       this.logger.debug(`Created the Status: ${createdStatus.data.uuid}`);
     }
-    if (roltype) {
-      // Hier gaan nog dingen mis het Rol type in de modules door de verschillende varianten
+    if (roltype && (submission.bsn || submission.kvk)) {
+      // TODO: gebruik Rol in nieuwe versie modules
       const rolApi = new zaken.Rollen(this.zakenClient);
-      const createdRol = await rolApi.rolCreate({
+
+
+      const baseRol = {
         zaak: zaakurl,
         roltype: roltype.url,
-        betrokkeneType: BetrokkeneTypeEnum.NatuurlijkPersoon,
-        roltoelichting: 'maak hier een betere toelichting van',
-      } as Partial<zaken.Rol>);
-      this.logger.debug(`Created the Rol: ${createdRol.data}`);
+        roltoelichting: `${this.ZAAKTYPE_IDENTIFICATIE}`,
+      };
+      const bodyRol = submission.bsn ?
+        {
+          ...baseRol,
+          betrokkeneType: BetrokkeneTypeEnum.NatuurlijkPersoon,
+          betrokkeneIdentificatie: { inpBsn: submission.bsn },
+        }:
+        {
+          ...baseRol,
+          betrokkeneType: BetrokkeneTypeEnum.NietNatuurlijkPersoon,
+          betrokkeneIdentificatie: { innNnpId: submission.kvk },
+        };
+
+      this.logger.debug('Before rolCreate', { bodyRol });
+      const createdRol = await rolApi.rolCreate(bodyRol as Partial<zaken.Rol>);
+      this.logger.debug(`Created the Rol: ${JSON.stringify(createdRol.data)}`);
     }
 
     // Add informatieobjecten to zaak
+    // TODO: catalogi zaaktype en informatieobjecttype wijken af
+    this.logger.debug('InformatieObjecten');
     const zaakInformatieObjectApi = new zaken.Zaakinformatieobjecten(this.zakenClient);
+    this.logger.debug('Before addPdf');
     const addedPdf = await zaakInformatieObjectApi.zaakinformatieobjectCreate({
       zaak: zaakurl,
       informatieobject: submission.pdf,
     });
-    this.logger.debug('Addded pdf to zaak', { addedPdf });
+    this.logger.debug(`Addded pdf to zaak ${addedPdf.data.url}`);
 
     // Or promise all for parallel
+    this.logger.debug('Before adding attachments');
     for (const attachment of submission.attachments ?? []) {
       const added = await zaakInformatieObjectApi.zaakinformatieobjectCreate({
         zaak: zaakurl,
         informatieobject: attachment,
       });
-      this.logger.debug('Added attachment to zaak', { added });
+      this.logger.debug(`Added attachment to zaak ${added.data.uuid}`);
     }
 
 
@@ -153,18 +175,10 @@ export class ESBFolderSubmissionZaak {
     return { zaaktype, statustype, roltype };
   }
   /**
-   * TODO: in kleinere bestanden opdelen
+   * TODO:
+   * In kleinere bestanden opdelen
+   * Foutafhandeling en duidelijke errors - open zaak errors laten zien
+   * Catalogus mismatch zaaktype en informatieobjecttype
+   * Catalogus type data langer cachen  (en cache kunnen legen)
    */
-
-
-  // ZAKEN
-  // Check of zaak al bestaat, anders voeg zaak toe met OF-... identificatie
-  // Stel status in
-  // Voeg roltype toe met bsn/kvk (later mail / telefoon)
-  // Koppel docs uit submission aan zaak
-
-  //Foutafhandeling en duidelijke errors
-
-  // Grote TODO: waar schrijven we de formName weg in de zaak om in Mijn Nijmegen op te pakken
-  // Omschrijving in zaak - 1 call (zaakeigenschap vereist meerdere calls) en max 80 chars. Stel we hebben meer chars nodig, wellicht toelichting 1000 chars max.
 }

@@ -3,6 +3,7 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import { SFNClient, StartExecutionCommand } from '@aws-sdk/client-sfn';
 import { MessageAttributeValue } from '@aws-sdk/client-sqs';
+import { Response } from '@gemeentenijmegen/apigateway-http/lib/V1/Response';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { Notification, NotificationSchema } from '../shared/Notification';
 import { Submission, SubmissionSchema } from '../shared/Submission';
@@ -33,7 +34,7 @@ export class ReceiverHandler {
       // Handle test notifications
       if (notification.kanaal == 'test') {
         logger.info('Test notificatie ontvangen');
-        return this.response({ message: 'OK - test event' });
+        return Response.json({ message: 'OK - test event' });
       }
 
       // Get the object from the object api
@@ -59,35 +60,23 @@ export class ReceiverHandler {
       await this.startExecution(submission);
 
       await trace(submission.reference, HANDLER_ID, 'OK');
-      return this.response({ message: 'OK' });
 
-    } catch (error) {
+      return Response.ok();
+
+    } catch (error: unknown) {
       if (error instanceof ParseError) {
-        return this.response({ message: error.message }, 400);
+        return Response.error( 400, error.message);
       }
       if (error instanceof SendMessageError) {
-        return this.response({ message: error.message }, 502);
+        return Response.error( 502, error.message);
       }
       logger.error('Could not process notification', { error });
-      return this.response({ message: 'error.message' }, 500);
+      let message;
+      if (error instanceof Error) {
+        message = error.message;
+      }
+      return Response.error( 500, message);
     }
-
-  }
-
-  /**
-   * Construct a simple response for the API Gateway to return
-   * @param body
-   * @param statusCode
-   * @returns
-   */
-  response(body?: any, statusCode: number = 200): APIGatewayProxyResult {
-    return {
-      statusCode,
-      body: JSON.stringify(body) ?? '{}',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
   }
 
   /**
