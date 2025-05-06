@@ -21,6 +21,6 @@ export async function trace(reference: string, handler: string, message: string)
     trace: `${reference}#${handler}`,
     timestamp: new Date().toISOString(),
     message: message,
-  })
+  });
 
 }
