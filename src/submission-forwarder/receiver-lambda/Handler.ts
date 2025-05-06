@@ -2,7 +2,6 @@
 
 import { Logger } from '@aws-lambda-powertools/logger';
 import { SFNClient, StartExecutionCommand } from '@aws-sdk/client-sfn';
-import { MessageAttributeValue } from '@aws-sdk/client-sqs';
 import { Response } from '@gemeentenijmegen/apigateway-http/lib/V1/Response';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { Notification, NotificationSchema } from '../shared/Notification';
@@ -21,7 +20,6 @@ interface ReceiverHandlerOptions {
 }
 
 export class ReceiverHandler {
-
 
   constructor(private readonly options: ReceiverHandlerOptions) { }
 
@@ -43,20 +41,6 @@ export class ReceiverHandler {
       const submission = SubmissionSchema.parse(object.record.data);
       logger.debug('Retreived submisison', { submission });
 
-      // Figure out attributes to send to topic
-      const attributes: Record<string, MessageAttributeValue> = {
-        reference: { DataType: 'String', StringValue: submission.reference },
-        internalNotificationEmails: { DataType: 'String', StringValue: 'false' },
-        networkShare: { DataType: 'String', StringValue: 'false' },
-        resubmit: { DataType: 'String', StringValue: 'false' },
-      };
-      if (submission.networkShare || submission.monitoringNetworkShare) {
-        attributes.networkShare.StringValue = 'true';
-      }
-      if (submission.internalNotificationEmails) {
-        attributes.internalNotificationEmails.StringValue = 'true';
-      }
-
       await this.startExecution(submission);
 
       await trace(submission.reference, HANDLER_ID, 'OK');
@@ -65,17 +49,17 @@ export class ReceiverHandler {
 
     } catch (error: unknown) {
       if (error instanceof ParseError) {
-        return Response.error( 400, error.message);
+        return Response.error(400, error.message);
       }
       if (error instanceof SendMessageError) {
-        return Response.error( 502, error.message);
+        return Response.error(502, error.message);
       }
       logger.error('Could not process notification', { error });
       let message;
       if (error instanceof Error) {
         message = error.message;
       }
-      return Response.error( 500, message);
+      return Response.error(500, message);
     }
   }
 
