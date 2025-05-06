@@ -2,7 +2,6 @@ import { Criticality, DeadLetterQueue, ErrorMonitoringAlarm } from '@gemeentenij
 import { Duration } from 'aws-cdk-lib';
 import { LambdaIntegration, Resource } from 'aws-cdk-lib/aws-apigateway';
 import { ComparisonOperator, Stats, TreatMissingData } from 'aws-cdk-lib/aws-cloudwatch';
-import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { AccessKey, Effect, PolicyStatement, Role, User } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { Function } from 'aws-cdk-lib/aws-lambda';
@@ -50,7 +49,6 @@ export class SubmissionForwarder extends Construct {
   private readonly esbQueue: Queue;
   private esbDeadLetterQueue?: Queue;
   private readonly bucket: Bucket;
-  private readonly traceTable: Table;
   private readonly backupBucket: Bucket;
 
   private readonly parameters?: {
@@ -67,7 +65,6 @@ export class SubmissionForwarder extends Construct {
     super(scope, id);
 
     this.backupBucket = this.setupBackupBucket();
-    this.traceTable = this.setupTraceTable();
     this.esbQueue = this.setupEsbQueue();
     this.parameters = this.setupParameters();
     this.bucket = this.setupSubmissionsBucket();
@@ -162,11 +159,9 @@ export class SubmissionForwarder extends Construct {
         MIJN_SERVICES_OPEN_ZAAK_CLIENT_ID_SSM: this.parameters.mijnServicesOpenZaakApiClientId.parameterName,
         MIJN_SERVICES_OPEN_ZAAK_CLIENT_SECRET_ARN: this.parameters.mijnServicesOpenZaakApiClientSecret.secretArn,
         OBJECTS_API_APIKEY_ARN: this.parameters.objectsApikey.secretArn,
-        TRACE_TABLE_NAME: this.traceTable.tableName,
         ORCHESTRATOR_ARN: orchestrator.stateMachineArn,
       },
     });
-    this.traceTable.grantWriteData(receiver);
     this.parameters.apikey.grantRead(receiver);
     this.options.key.grantEncryptDecrypt(receiver);
     this.options.resource.addMethod('POST', new LambdaIntegration(receiver));
@@ -203,11 +198,9 @@ export class SubmissionForwarder extends Construct {
         MIJN_SERVICES_OPEN_ZAAK_CLIENT_ID_SSM: this.parameters.mijnServicesOpenZaakApiClientId.parameterName,
         MIJN_SERVICES_OPEN_ZAAK_CLIENT_SECRET_ARN: this.parameters.mijnServicesOpenZaakApiClientSecret.secretArn,
         QUEUE_URL: this.esbQueue.queueUrl,
-        TRACE_TABLE_NAME: this.traceTable.tableName,
       },
     });
 
-    this.traceTable.grantWriteData(forwarder);
     this.bucket.grantPut(forwarder);
     this.esbQueue.grantSendMessages(forwarder);
     this.parameters.objectsApikey.grantRead(forwarder);
@@ -383,10 +376,8 @@ export class SubmissionForwarder extends Construct {
       environment: {
         POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'DEBUG',
         MAIL_FROM_DOMAIN: accountHostedZoneName,
-        TRACE_TABLE_NAME: this.traceTable.tableName,
       },
     });
-    this.traceTable.grantWriteData(internalNotificationMailLambda);
     internalNotificationMailLambda.addToRolePolicy(new PolicyStatement({
       resources: ['*'],
       actions: [
@@ -396,21 +387,6 @@ export class SubmissionForwarder extends Construct {
     }));
 
     return internalNotificationMailLambda;
-  }
-
-  private setupTraceTable() {
-    return new Table(this, 'trace-table', {
-      partitionKey: { // in the format: <reference>#<handler> so e.g. OF-1234#BACKUP or OF-1234#NOTIFICATION_MAIL
-        name: 'trace',
-        type: AttributeType.STRING,
-      },
-      sortKey: {
-        name: 'timestamp',
-        type: AttributeType.STRING,
-      },
-      billingMode: BillingMode.PAY_PER_REQUEST,
-      encryptionKey: this.options.key,
-    });
   }
 
   private setupResubmitLambda() {

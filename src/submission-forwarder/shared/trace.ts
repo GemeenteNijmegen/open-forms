@@ -1,8 +1,6 @@
 import { Logger } from '@aws-lambda-powertools/logger';
-import { DynamoDBClient, PutItemCommand } from '@aws-sdk/client-dynamodb';
 
 const logger = new Logger();
-const dynamodb = new DynamoDBClient();
 
 /**
  * Log the reference and handler to dynamodb for a trace over the
@@ -19,13 +17,10 @@ export async function trace(reference: string, handler: string, message: string)
     return;
   }
 
-  await dynamodb.send(new PutItemCommand({
-    Item: {
-      trace: { S: `${reference}#${handler}` },
-      timestamp: { S: new Date().toISOString() },
-      message: { S: message },
-    },
-    TableName: process.env.TRACE_TABLE_NAME,
-  }));
+  logger.info('HANDLER-TRACE', {
+    trace: `${reference}#${handler}`,
+    timestamp: new Date().toISOString(),
+    message: message,
+  })
 
 }
