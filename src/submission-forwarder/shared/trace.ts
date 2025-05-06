@@ -19,8 +19,7 @@ export async function trace(reference: string, handler: string, message: string)
 
   logger.info('HANDLER-TRACE', {
     trace: `${reference}#${handler}`,
-    timestamp: new Date().toISOString(),
     message: message,
-  })
+  });
 
 }

@@ -1,99 +1,83 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import { GetObjectCommand, ListObjectsV2Command, S3Client } from '@aws-sdk/client-s3';
-import { MessageAttributeValue, PublishCommand, SNSClient } from '@aws-sdk/client-sns';
+import { SFNClient, StartExecutionCommand } from '@aws-sdk/client-sfn';
+import { Response } from '@gemeentenijmegen/apigateway-http/lib/V1/Response';
 import { environmentVariables } from '@gemeentenijmegen/utils';
 import { APIGatewayProxyEvent, APIGatewayProxyResult, SNSEvent } from 'aws-lambda';
-import { authenticate } from './authenticate';
 import { Submission, SubmissionSchema } from '../shared/Submission';
 import { trace } from '../shared/trace';
+import { authenticate } from './authenticate';
 
 const HANDLER_ID = 'RESUBMIT';
 const logger = new Logger();
 const s3 = new S3Client();
-const sns = new SNSClient();
+const stepfunctions = new SFNClient();
 
 const env = environmentVariables([
   'BACUP_BUCKET',
+  'ORCHESTRATOR_ARN',
 ]);
 
 export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   logger.debug('event', { event });
 
-  // TODO convert this lambda to restart stepfunction executions based on the reference
-
   await authenticate(event);
 
   const reference = event.queryStringParameters?.reference;
   if (!reference) {
-    return response({ message: 'Please provide a reference to resubmit (url param)' }, 400);
+    return Response.json({ message: 'Please provide a reference to resubmit (url param)' }, 400);
   }
 
   try {
 
-    const objects = await s3.send(new ListObjectsV2Command({
-      Bucket: env.BACUP_BUCKET,
-      Prefix: reference,
-    }));
+    const submission = await fetchSubmissionFromBackupBucket(reference);
+    await startNewExecution(submission);
 
-    if (objects.Contents?.length != 1) {
-      return response({ message: `Found ${objects.Contents?.length ?? 0} objects.` }, 400);
+    await trace(submission.reference, HANDLER_ID, 'OK');
+    return Response.json({ message: 'Failed to resubmit' }, 500);
+
+  } catch (error) {
+
+    if (error instanceof NotFoundError) {
+      logger.error(error.message);
+      return Response.json({ message: error.message }, 400);
     }
 
-    const object = objects.Contents[0].Key;
-
-    const backupObject = await s3.send(new GetObjectCommand({
-      Bucket: env.BACUP_BUCKET,
-      Key: object,
-    }));
-
-    const backup = JSON.parse(await backupObject.Body?.transformToString() ?? '{}') as SNSEvent;
-    const submission = SubmissionSchema.parse(JSON.parse(backup.Records[0].Sns.Message));
-
-    // Convert attributes for resubmit
-    const attributes: any = {};
-    Object.entries(backup.Records[0].Sns.MessageAttributes).forEach((x) => {
-      attributes[x[0]] = x[1];
-    });
-    attributes.resubmit = { Type: 'String', Value: 'true' };
-
-    await sendToTopic(env.TOPIC_ARN, submission, attributes);
-    await trace(submission.reference, HANDLER_ID, 'OK');
-
-    return response({ message: 'Failed to resubmit' }, 500);
-
-
-  } catch (error) {
     logger.error('Could not process notification', { error });
-    return response({ message: 'Failed to resubmit' }, 500);
+    return Response.json({ message: 'Failed to resubmit' }, 500);
   }
 
 }
 
-/**
- * Construct a simple response for the API Gateway to return
- * @param body
- * @param statusCode
- * @returns
- */
-function response(body?: any, statusCode: number = 200): APIGatewayProxyResult {
-  return {
-    statusCode,
-    body: JSON.stringify(body) ?? '{}',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  };
+async function fetchSubmissionFromBackupBucket(reference: string): Promise<Submission> {
+  const objects = await s3.send(new ListObjectsV2Command({
+    Bucket: env.BACUP_BUCKET,
+    Prefix: reference,
+  }));
+
+  if (objects.Contents?.length != 1) {
+    throw new NotFoundError(`Found ${objects.Contents?.length ?? 0} objects.`);
+  }
+
+  const object = objects.Contents[0].Key;
+
+  const backupObject = await s3.send(new GetObjectCommand({
+    Bucket: env.BACUP_BUCKET,
+    Key: object,
+  }));
+
+  const backup = JSON.parse(await backupObject.Body?.transformToString() ?? '{}') as SNSEvent;
+  const submission = SubmissionSchema.parse(JSON.parse(backup.Records[0].Sns.Message));
+  return submission;
 }
 
-async function sendToTopic(topicArn: string, submission: Submission, attributes: Record<string, MessageAttributeValue>) {
-  try {
-    await sns.send(new PublishCommand({
-      Message: JSON.stringify(submission),
-      MessageAttributes: attributes,
-      TopicArn: topicArn,
-    }));
-  } catch (error) {
-    logger.error('Could not send submission to topic', { error });
-    throw new Error('Failed to send submission to topic');
-  }
+async function startNewExecution(submission: Submission) {
+  const execution = await stepfunctions.send(new StartExecutionCommand({
+    stateMachineArn: env.ORCHESTRATOR_ARN,
+    input: JSON.stringify(submission),
+    name: `${submission.reference}-${Date.now()}`,
+  }));
+  logger.info('Started orchestrator', { executionArn: execution.executionArn });
 }
+
+class NotFoundError extends Error { };

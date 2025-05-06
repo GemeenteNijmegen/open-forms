@@ -73,10 +73,10 @@ export class SubmissionForwarder extends Construct {
     const forwarder = this.setupEsbForwarderLambda();
     const notification = this.setupNotificationMailLambda();
     const zgw = this.setupZgwRegistrationLambda();
-    this.setupResubmitLambda();
 
     const orchestrator = this.setupOrchestrationStepFunction(forwarder, notification, zgw);
     this.setupReceiverLambda(orchestrator);
+    this.setupResubmitLambda(orchestrator);
   }
 
   private setupParameters() {
@@ -389,9 +389,7 @@ export class SubmissionForwarder extends Construct {
     return internalNotificationMailLambda;
   }
 
-  private setupResubmitLambda() {
-
-    // TODO convert this in an API function and do not publish to the topic
+  private setupResubmitLambda(orchestrator: StateMachine) {
 
     const apikey = new Secret(this, 'resubmit-api-key', {
       description: 'API key for calling the resubmit endpoint',
@@ -405,6 +403,7 @@ export class SubmissionForwarder extends Construct {
       environment: {
         BACKUP_BUCKET: this.backupBucket.bucketName,
         API_KEY: apikey.secretArn,
+        ORCHESTRATOR_ARN: orchestrator.stateMachineArn,
       },
     });
     apikey.grantRead(resubmitLambda);
