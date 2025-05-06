@@ -1,22 +1,19 @@
 import { Criticality, DeadLetterQueue, ErrorMonitoringAlarm } from '@gemeentenijmegen/aws-constructs';
-import { Duration, Stack } from 'aws-cdk-lib';
+import { Duration } from 'aws-cdk-lib';
 import { LambdaIntegration, Resource } from 'aws-cdk-lib/aws-apigateway';
 import { ComparisonOperator, Stats, TreatMissingData } from 'aws-cdk-lib/aws-cloudwatch';
 import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
-import { AccessKey, Effect, PolicyStatement, Role, ServicePrincipal, User } from 'aws-cdk-lib/aws-iam';
+import { AccessKey, Effect, PolicyStatement, Role, User } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { Function } from 'aws-cdk-lib/aws-lambda';
-import { SnsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { BlockPublicAccess, Bucket } from 'aws-cdk-lib/aws-s3';
 import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
-import { LoggingProtocol, SubscriptionFilter, Topic } from 'aws-cdk-lib/aws-sns';
 import { Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { CustomerManagedEncryptionConfiguration, DefinitionBody, LogLevel, StateMachine } from 'aws-cdk-lib/aws-stepfunctions';
 import { Construct } from 'constructs';
 import { Statics } from '../Statics';
-import { BackupFunction } from './backup-lambda/backup-function';
 import { ForwarderFunction } from './forwarder-lambda/forwarder-function';
 import { InternalNotificationMailFunction } from './internal-notification-mail-lambda/internalNotificationMail-function';
 import { ReceiverFunction } from './receiver-lambda/receiver-function';
@@ -53,7 +50,6 @@ export class SubmissionForwarder extends Construct {
   private readonly esbQueue: Queue;
   private esbDeadLetterQueue?: Queue;
   private readonly bucket: Bucket;
-  private readonly topic: Topic;
   private readonly traceTable: Table;
   private readonly backupBucket: Bucket;
 
@@ -75,14 +71,12 @@ export class SubmissionForwarder extends Construct {
     this.esbQueue = this.setupEsbQueue();
     this.parameters = this.setupParameters();
     this.bucket = this.setupSubmissionsBucket();
-    this.topic = this.setupInternalTopic();
 
     this.setupEsbUser();
-    this.setupBackupLambda(); // TODO remove when step function is live
     const forwarder = this.setupEsbForwarderLambda();
     const notification = this.setupNotificationMailLambda();
     const zgw = this.setupZgwRegistrationLambda();
-    this.setupResubmitLambda(); // TODO update to execute new stepfunction when live (or just use the console, but this is exposed in the API gateway, can be used in management portal)
+    this.setupResubmitLambda();
 
     const orchestrator = this.setupOrchestrationStepFunction(forwarder, notification, zgw);
     this.setupReceiverLambda(orchestrator);
@@ -165,7 +159,6 @@ export class SubmissionForwarder extends Construct {
       environment: {
         POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'DEBUG',
         API_KEY_ARN: this.parameters.apikey.secretArn,
-        TOPIC_ARN: this.topic.topicArn,
         MIJN_SERVICES_OPEN_ZAAK_CLIENT_ID_SSM: this.parameters.mijnServicesOpenZaakApiClientId.parameterName,
         MIJN_SERVICES_OPEN_ZAAK_CLIENT_SECRET_ARN: this.parameters.mijnServicesOpenZaakApiClientSecret.secretArn,
         OBJECTS_API_APIKEY_ARN: this.parameters.objectsApikey.secretArn,
@@ -177,7 +170,6 @@ export class SubmissionForwarder extends Construct {
     this.parameters.apikey.grantRead(receiver);
     this.options.key.grantEncryptDecrypt(receiver);
     this.options.resource.addMethod('POST', new LambdaIntegration(receiver));
-    this.topic.grantPublish(receiver);
     this.parameters.objectsApikey.grantRead(receiver);
     this.parameters.mijnServicesOpenZaakApiClientId.grantRead(receiver);
     this.parameters.mijnServicesOpenZaakApiClientSecret.grantRead(receiver);
@@ -222,12 +214,6 @@ export class SubmissionForwarder extends Construct {
     this.parameters.mijnServicesOpenZaakApiClientId.grantRead(forwarder);
     this.parameters.mijnServicesOpenZaakApiClientSecret.grantRead(forwarder);
     this.options.key.grantEncryptDecrypt(forwarder);
-
-    forwarder.addEventSource(new SnsEventSource(this.topic, {
-      filterPolicy: {
-        networkShare: SubscriptionFilter.stringFilter({ allowlist: ['true'] }),
-      },
-    }));
 
     new ErrorMonitoringAlarm(this, 'alarm', {
       criticality: new Criticality('high'),
@@ -297,51 +283,6 @@ export class SubmissionForwarder extends Construct {
     return stepfunction;
   }
 
-  private setupInternalTopic() {
-    const region = Stack.of(this).region;
-    const account = Stack.of(this).account;
-    const logRole = new Role(this, 'log-role', {
-      assumedBy: new ServicePrincipal('sns.amazonaws.com'),
-      description: 'Role for logging submission delivery status',
-    });
-
-    logRole.addToPrincipalPolicy(new PolicyStatement({
-      effect: Effect.ALLOW,
-      actions: [
-        'logs:CreateLogGroup',
-        'logs:CreateLogStream',
-        'logs:PutLogEvents',
-      ],
-      resources: [
-        `arn:aws:logs:${region}:${account}:*`,
-      ],
-    }));
-    this.options.key.grantEncrypt(logRole);
-
-    const topic = new Topic(this, 'internal-topic', {
-      enforceSSL: true,
-      masterKey: this.options.key,
-      loggingConfigs: [{
-        protocol: LoggingProtocol.LAMBDA,
-        failureFeedbackRole: logRole,
-        successFeedbackRole: logRole,
-      }],
-    });
-
-    topic.metricNumberOfNotificationsFailed({
-      period: Duration.minutes(5),
-      statistic: Stats.SUM,
-    }).createAlarm(this, 'topic-failed-alarm', {
-      threshold: 1,
-      evaluationPeriods: 1,
-      treatMissingData: TreatMissingData.NOT_BREACHING,
-      comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-      alarmName: 'submission-forwarder-delivery-failed-alarm' + this.options.criticality.alarmSuffix(),
-    });
-
-    return topic;
-  }
-
   private setupEsbQueue() {
     const dlq = new DeadLetterQueue(this, 'esb-dead-letter-queue', {
       alarmDescription: 'ESB Dead letter queue not empty',
@@ -409,26 +350,6 @@ export class SubmissionForwarder extends Construct {
     return backupBucket;
   }
 
-  private setupBackupLambda() {
-    const backupLambda = new BackupFunction(this, 'backup-function', {
-      description: 'Writes SNS messages to S3 bucket',
-      environment: {
-        POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'DEBUG',
-        BACKUP_BUCKET: this.backupBucket.bucketName,
-        TRACE_TABLE_NAME: this.traceTable.tableName,
-      },
-    });
-    this.traceTable.grantWriteData(backupLambda);
-    this.backupBucket.grantWrite(backupLambda);
-
-    backupLambda.addEventSource(new SnsEventSource(this.topic, {
-      filterPolicy: {
-        resubmit: SubscriptionFilter.stringFilter({ denylist: ['true'] }), // Exclude resubmissions
-      },
-    }));
-  }
-
-
   private setupZgwRegistrationLambda() {
 
     if (!this.parameters) {
@@ -452,12 +373,6 @@ export class SubmissionForwarder extends Construct {
     this.parameters.mijnServicesOpenZaakApiClientSecret.grantRead(zgwLambda);
     this.options.key.grantEncryptDecrypt(zgwLambda);
 
-    zgwLambda.addEventSource(new SnsEventSource(this.topic, {
-      filterPolicy: {
-        resubmit: SubscriptionFilter.stringFilter({ denylist: ['true'] }), // Exclude resubmissions
-      },
-    }));
-
     return zgwLambda;
   }
 
@@ -479,11 +394,7 @@ export class SubmissionForwarder extends Construct {
         'ses:SendRawEmail',
       ],
     }));
-    internalNotificationMailLambda.addEventSource(new SnsEventSource(this.topic, {
-      filterPolicy: {
-        internalNotificationEmails: SubscriptionFilter.stringFilter({ allowlist: ['true'] }),
-      },
-    }));
+
     return internalNotificationMailLambda;
   }
 
@@ -503,6 +414,9 @@ export class SubmissionForwarder extends Construct {
   }
 
   private setupResubmitLambda() {
+
+    // TODO convert this in an API function and do not publish to the topic
+
     const apikey = new Secret(this, 'resubmit-api-key', {
       description: 'API key for calling the resubmit endpoint',
       generateSecretString: {
@@ -515,10 +429,8 @@ export class SubmissionForwarder extends Construct {
       environment: {
         BACKUP_BUCKET: this.backupBucket.bucketName,
         API_KEY: apikey.secretArn,
-        TOPIC_ARN: this.topic.topicArn,
       },
     });
-    this.topic.grantPublish(resubmitLambda);
     apikey.grantRead(resubmitLambda);
     this.bucket.grantRead(resubmitLambda);
 

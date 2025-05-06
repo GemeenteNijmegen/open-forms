@@ -14,12 +14,12 @@ const sns = new SNSClient();
 
 const env = environmentVariables([
   'BACUP_BUCKET',
-  'TOPIC_ARN',
 ]);
-
 
 export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   logger.debug('event', { event });
+
+  // TODO convert this lambda to restart stepfunction executions based on the reference
 
   await authenticate(event);
 

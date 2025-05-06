@@ -19,7 +19,6 @@
     "src/nl-wallet/prefill/prefill-function.ts",
     "src/nl-wallet/token/token-function.ts",
     "src/prefill-demo/handler-function.ts",
-    "src/submission-forwarder/backup-lambda/backup-function.ts",
     "src/submission-forwarder/forwarder-lambda/forwarder-function.ts",
     "src/submission-forwarder/internal-notification-mail-lambda/internalNotificationMail-function.ts",
     "src/submission-forwarder/receiver-lambda/receiver-function.ts",

@@ -26,26 +26,10 @@ export async function handler(event: any) {
     catalogiBaseUrl: env.CATALOGI_BASE_URL,
   });
 
-  let submission = undefined;
-
-  // Event is a SNS event
-  if (event.Records) {
-    submission = SubmissionSchema.parse(JSON.parse(event.Records[0].Sns.Message));
-  }
-
-  // Event is a submission object directly
-  if (event.reference && event.formName) {
-    submission = SubmissionSchema.parse(event);
-  }
+  const submission = SubmissionSchema.parse(event);
 
   try {
-
-    if (!submission) {
-      throw Error('Event is not a SNS event nor a submission');
-    }
-
     await submissionForwarderHandler.handle(submission);
-
   } catch (error) {
     logger.error('Failed to forward a submission', { data: submission?.reference, error });
     throw Error('Failed register submission in ZGW');

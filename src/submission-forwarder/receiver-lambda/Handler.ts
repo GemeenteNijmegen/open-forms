@@ -2,7 +2,6 @@
 
 import { Logger } from '@aws-lambda-powertools/logger';
 import { SFNClient, StartExecutionCommand } from '@aws-sdk/client-sfn';
-import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
 import { MessageAttributeValue } from '@aws-sdk/client-sqs';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { Notification, NotificationSchema } from '../shared/Notification';
@@ -12,7 +11,6 @@ import { ZgwClientFactory } from '../shared/ZgwClientFactory';
 
 const HANDLER_ID = 'receiver';
 const logger = new Logger();
-const sns = new SNSClient();
 const stepfunctions = new SFNClient();
 
 interface ReceiverHandlerOptions {
@@ -58,7 +56,6 @@ export class ReceiverHandler {
         attributes.internalNotificationEmails.StringValue = 'true';
       }
 
-      await this.sendNotificationToTopic(this.options.topicArn, submission, attributes);
       await this.startExecution(submission);
 
       await trace(submission.reference, HANDLER_ID, 'OK');
@@ -112,19 +109,6 @@ export class ReceiverHandler {
     } catch (error) {
       logger.error('Could not parse notification', { error });
       throw new ParseError('Failed to parse notification');
-    }
-  }
-
-  async sendNotificationToTopic(topicArn: string, submission: Submission, attributes: Record<string, MessageAttributeValue>) {
-    try {
-      await sns.send(new PublishCommand({
-        Message: JSON.stringify(submission),
-        MessageAttributes: attributes,
-        TopicArn: topicArn,
-      }));
-    } catch (error) {
-      logger.error('Could not send submission to topic', { error });
-      throw new SendMessageError('Failed to send submission to topic');
     }
   }
 

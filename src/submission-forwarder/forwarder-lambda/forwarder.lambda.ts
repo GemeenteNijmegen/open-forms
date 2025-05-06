@@ -1,6 +1,5 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import { environmentVariables } from '@gemeentenijmegen/utils';
-import { SNSEvent } from 'aws-lambda';
 import { SubmissionForwarderHandler } from './Handler';
 import { SubmissionSchema } from '../shared/Submission';
 import { ZgwClientFactory } from '../shared/ZgwClientFactory';
@@ -31,35 +30,9 @@ export async function handler(event: any) {
     queueUrl: env.QUEUE_URL,
   });
 
-  // Check if it has a reference and a formName -> Its a direct submission object
-  if (event.reference && event.formName) {
-    const submission = SubmissionSchema.parse(event);
-    await submissionForwarderHandler.handle(submission);
-  }
+  const submission = SubmissionSchema.parse(event);
+  await submissionForwarderHandler.handle(submission);
 
-  // Keeping it backwards compatible while introducing the stepfunction
-  // If it has records its an SNS event
-  if (event.Records) {
-    await handleSnsEvent(submissionForwarderHandler, event as SNSEvent);
-  }
-
-}
-
-async function handleSnsEvent(submissionForwarderHandler: SubmissionForwarderHandler, event: SNSEvent) {
-  let failed = false;
-  for (const record of event.Records) {
-    try {
-      const submission = SubmissionSchema.parse(JSON.parse(record.Sns.Message));
-      await submissionForwarderHandler.handle(submission);
-    } catch (error) {
-      logger.error('Failed to forward a submission', { data: record.Sns.MessageId, error });
-      failed = true;
-    }
-  }
-
-  if (failed) {
-    throw Error('Failed to process SNS event');
-  }
 }
 
 function getZgwClientFactory() {

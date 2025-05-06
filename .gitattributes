@@ -23,7 +23,6 @@
 /src/nl-wallet/prefill/prefill-function.ts linguist-generated
 /src/nl-wallet/token/token-function.ts linguist-generated
 /src/prefill-demo/handler-function.ts linguist-generated
-/src/submission-forwarder/backup-lambda/backup-function.ts linguist-generated
 /src/submission-forwarder/forwarder-lambda/forwarder-function.ts linguist-generated
 /src/submission-forwarder/internal-notification-mail-lambda/internalNotificationMail-function.ts linguist-generated
 /src/submission-forwarder/receiver-lambda/receiver-function.ts linguist-generated
