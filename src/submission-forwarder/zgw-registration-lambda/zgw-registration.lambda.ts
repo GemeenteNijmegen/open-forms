@@ -14,8 +14,6 @@ const env = environmentVariables([
   'MIJN_SERVICES_OPEN_ZAAK_CLIENT_ID_SSM',
   'MIJN_SERVICES_OPEN_ZAAK_CLIENT_SECRET_ARN',
   'OBJECTS_API_APIKEY_ARN',
-  'SUBMISSION_BUCKET_NAME',
-  'QUEUE_URL',
 ]);
 
 export async function handler(event: any) {
@@ -26,13 +24,16 @@ export async function handler(event: any) {
     documentenBaseUrl: env.DOCUMENTEN_BASE_URL,
     zakenBaseUrl: env.ZAKEN_BASE_URL,
     catalogiBaseUrl: env.CATALOGI_BASE_URL,
-    bucketName: env.SUBMISSION_BUCKET_NAME,
-    queueUrl: env.QUEUE_URL,
   });
 
   const submission = SubmissionSchema.parse(event);
-  await submissionForwarderHandler.handle(submission);
 
+  try {
+    await submissionForwarderHandler.handle(submission);
+  } catch (error) {
+    logger.error('Failed to forward a submission', { data: submission?.reference, error });
+    throw Error('Failed register submission in ZGW');
+  }
 }
 
 function getZgwClientFactory() {

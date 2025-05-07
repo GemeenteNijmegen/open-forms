@@ -1,5 +1,6 @@
 import { HttpClient as CatalogiHttpClient } from '@gemeentenijmegen/modules-zgw-client/lib/catalogi-generated-client';
 import { HttpClient as DocumentenHttpClient } from '@gemeentenijmegen/modules-zgw-client/lib/documenten-generated-client';
+import { HttpClient as ZakenHttpClient } from '@gemeentenijmegen/modules-zgw-client/lib/zaken-generated-client';
 import { AWS } from '@gemeentenijmegen/utils';
 import * as jwt from 'jsonwebtoken';
 import { ObjectsApiClient } from './ObjectsApiClient';
@@ -26,7 +27,9 @@ export class ZgwClientFactory {
       async securityWorker(securityData: any) {
         return {
           headers: {
-            Authorization: `Bearer ${securityData?.token}`,
+            'Authorization': `Bearer ${securityData?.token}`,
+            'Content-Crs': 'EPSG:4326',
+            'Accept-Crs': 'EPSG:4326',
           },
         };
       },
@@ -44,6 +47,25 @@ export class ZgwClientFactory {
         return {
           headers: {
             Authorization: `Bearer ${securityData?.token}`,
+          },
+        };
+      },
+    });
+    client.setSecurityData({ token });
+    return client;
+  }
+
+  async getZakenClient(baseUrl: string) {
+    const token = await this.createToken();
+    const client = new ZakenHttpClient({
+      baseURL: baseUrl,
+      format: 'json',
+      async securityWorker(securityData: any) {
+        return {
+          headers: {
+            'Authorization': `Bearer ${securityData?.token}`,
+            'Content-Crs': 'EPSG:4326',
+            'Accept-Crs': 'EPSG:4326',
           },
         };
       },

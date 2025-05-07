@@ -63,7 +63,10 @@ junit.xml
 !/src/nl-wallet/token/token-function.ts
 !/src/prefill-demo/handler-function.ts
 !/src/submission-forwarder/forwarder-lambda/forwarder-function.ts
+!/src/submission-forwarder/internal-notification-mail-lambda/internalNotificationMail-function.ts
 !/src/submission-forwarder/receiver-lambda/receiver-function.ts
+!/src/submission-forwarder/resubmit-lambda/resubmit-function.ts
+!/src/submission-forwarder/zgw-registration-lambda/zgw-registration-function.ts
 !/.github/workflows/emergency.yml
 !/.github/workflows/auto-merge.yml
 !/.projenrc.ts

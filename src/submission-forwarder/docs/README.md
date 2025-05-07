@@ -6,78 +6,21 @@ Zie ook:
 - [beheer tips en tricks](../../../docs/BeheerTipsAndTricks.md)
 
 ## Implementatie
-![Implementatie](./submission-forwarder.drawio.png)
+![Implementatie](./submission-forwarder-v2.drawio.png)
 
 ### Details ESB integratie
-TODO
+De ESB heeft een interne retry en kan berichten op de AWS DLQ zetten wanneer afhandeling aan de ESB kant niet lukt. Wij kunnen een redrive doen om berichten opnieuw bij de ESB in te dienen.
 
-### Details voor formulier bouwers
-- TODO inrichting documenteren
 
 ### Details voor formulier beheerders
-- TODO resubmit binnen 7 dagen, wat anders?
-
-
-## Testen
-TODO Hoe kunnen we testen?
-
+- In OpenFormulieren blijven inzendingen (als ze zijn doorgestuurd) nog 7 dagen staan. Als het doorsturen naar een registratie systeem faalt blijven formulieren 30 dagen staan.
+- Er is een interne backup ingebouwd (net als bij de oude webformulieren). De resubmit lambda bestaat nog niet. Hier blijven inzendingen 90 dagen bewaard. Dit is alleen het AWS SQS bericht, de documenten blijven in de documenten API.
 
 
 ## Objecttype
-We hanteren momenteel het volgende schema voor een object dat richting de ESB gaat.
-```json
-{
-  "type": "object",
-  "$schema": "http://json-schema.org/draft/2020-12/schema",
-  "required": [
-    "reference",
-    "pdf",
-    "attachments",
-    "type",
-    "AppId"
-  ],
-  "properties": {
-    "bsn": {
-      "type": "string"
-    },
-    "kvk": {
-      "type": "string"
-    },
-    "pdf": {
-      "type": "string"
-    },
-    "type": {
-      "type": "string"
-    },
-    "AppId": {
-      "type": "string"
-    },
-    "reference": {
-      "type": "string"
-    },
-    "attachments": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "netwerkshare": {
-      "type": "string"
-    }
-  }
-}
-```
+Het schema dat we gebruiken voor het objecttype kan je [hier vinden](../schema/netwerkschijfESBFormulierInzending.json).
 
-Een object ziet er dan zo uit:
-```json
-{
-  "bsn": "999992818",
-  "kvk": "",
-  "pdf": "https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/278b886a-cb2b-43ac-a585-bd51f799356a",
-  "type": "ESB route test formulier",
-  "AppId": "TDL",
-  "reference": "OF-ENUU6S",
-  "attachments": [],
-  "networkshare": "//karelstad/data/gemeenschappelijk/Webformulieren/Accp/TDL"
-}
-```
+## Submission trace
+Er is een tabel (dynamodb) waarin alle lambda's een trace record wegschrijven als ze een verwerking hebben gedaan van een submission. De key is dan het submission ID en het handler ID (bijv. `receiver` of `esb_forwarder`). De sortkey is een timestamp. 
+
+Idee is dat we hier later wat automatische logging / monitoring op kunnen inrichten (e.g. registraties die fout zijn gegaan volgen).

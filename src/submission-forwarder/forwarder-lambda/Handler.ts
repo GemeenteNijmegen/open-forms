@@ -3,12 +3,13 @@ import { S3Client } from '@aws-sdk/client-s3';
 import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
 import { Upload } from '@aws-sdk/lib-storage';
 import { documenten } from '@gemeentenijmegen/modules-zgw-client';
-import { SQSRecord } from 'aws-lambda';
-import { ZgwClientFactory } from './ZgwClientFactory';
 import { EsbSubmission } from '../shared/EsbSubmission';
-import { Notification, NotificationSchema } from '../shared/Notification';
-import { KeyValuePair, Submission, SubmissionSchema } from '../shared/Submission';
+import { KeyValuePair, Submission } from '../shared/Submission';
+import { trace } from '../shared/trace';
+import { ZgwClientFactory } from '../shared/ZgwClientFactory';
 
+
+const HANDLER_ID = 'ESB_FORWARDER';
 const logger = new Logger();
 const s3 = new S3Client();
 const sqs = new SQSClient();
@@ -16,6 +17,8 @@ const sqs = new SQSClient();
 interface SubmissionForwarderHandlerOptions {
   zgwClientFactory: ZgwClientFactory;
   documentenBaseUrl: string;
+  zakenBaseUrl: string;
+  catalogiBaseUrl: string;
   bucketName: string;
   queueUrl: string;
 }
@@ -28,15 +31,9 @@ export class SubmissionForwarderHandler {
    */
   constructor(private readonly options: SubmissionForwarderHandlerOptions) { }
 
-  async handle(event: SQSRecord) {
+  async handle(submission: Submission) {
 
-    const notification = this.getNotification(event);
-    logger.debug('Parsed notification', { notification });
-
-    // Get the object from the object api
-    const objectClient = await this.options.zgwClientFactory.getObjectsApiClient();
-    const object = await objectClient.getObject(notification.resourceUrl);
-    const submission = SubmissionSchema.parse(object.record.data);
+    // Message is the submission
     logger.debug('Retreived submisison', { submission });
 
     // Only handle submissions with a network share
@@ -49,7 +46,7 @@ export class SubmissionForwarderHandler {
     const httpClient = await this.options.zgwClientFactory.getDocumentenClient(this.options.documentenBaseUrl);
     const documentenClient = new documenten.Enkelvoudiginformatieobjecten(httpClient);
 
-    // Download PDF, Attachments and create save files in S3 bucket
+    // Download PDF, Attachments and create save files in S3 bucket. On retry overwritten.
     const pdfS3Url = await this.downloadPdf(submission, documentenClient);
     const attachmentS3Urls = await this.downloadAttachments(submission, documentenClient);
     const saveFileS3Urls = await this.createSaveFiles(submission);
@@ -72,6 +69,8 @@ export class SubmissionForwarderHandler {
       const monitoringEsbMessage: EsbSubmission = { ...esb, targetNetworkLocation: submission.monitoringNetworkShare };
       await this.sendNotificationToQueue(this.options.queueUrl, monitoringEsbMessage);
     }
+
+    await trace(submission.reference, HANDLER_ID, 'OK');
   }
 
   /**
@@ -131,6 +130,26 @@ export class SubmissionForwarderHandler {
  */
   private async createSaveFiles(submission: Submission): Promise<string[]> {
     const s3Files: string[] = [];
+
+    // BSN or KVK save file
+    if (submission.bsnOrKvkToFile) {
+      try {
+        if (submission.kvk) {
+          await this.storeInS3(submission.reference, 'kvk.txt', submission.kvk);
+          const attachmentS3Path = `s3://${this.options.bucketName}/${submission.reference}/kvk.txt`;
+          s3Files.push(attachmentS3Path);
+        }
+        if (submission.bsn) {
+          await this.storeInS3(submission.reference, 'bsn.txt', submission.bsn);
+          const attachmentS3Path = `s3://${this.options.bucketName}/${submission.reference}/bsn.txt`;
+          s3Files.push(attachmentS3Path);
+        }
+      } catch (error: any) {
+        console.log('Failed to create kvk/bsn save file');
+      }
+    }
+
+    // Other save files based on free data structure
     const submissionValues: KeyValuePair[] = submission.submissionValuesToFiles ?? [];
     for (const [name, value] of submissionValues) {
       if (!value) continue;
@@ -142,9 +161,8 @@ export class SubmissionForwarderHandler {
         const attachmentS3Path = `s3://${this.options.bucketName}/${submission.reference}/${fileName}`;
         s3Files.push(attachmentS3Path);
       } catch (error: any) {
-        logger.error(`Failed to create saveFile for ${ name } - ${submission.reference}`);
+        logger.error(`Failed to create saveFile for ${name} - ${submission.reference}`);
       }
-
     }
     return s3Files;
   }
@@ -191,15 +209,4 @@ export class SubmissionForwarderHandler {
     const parts = url.split('/');
     return parts[parts.length - 1];
   }
-
-  /**
-   * Parses the event and constructs a Notification
-   * @param event
-   * @returns
-   */
-  private getNotification(event: SQSRecord): Notification {
-    const bodyJson = JSON.parse(event.body);
-    return NotificationSchema.parse(bodyJson);
-  }
-
 }

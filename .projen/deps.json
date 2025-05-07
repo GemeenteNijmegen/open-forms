@@ -96,6 +96,18 @@
       "type": "runtime"
     },
     {
+      "name": "@aws-sdk/client-ses",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-sdk/client-sfn",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-sdk/client-sns",
+      "type": "runtime"
+    },
+    {
       "name": "@aws-sdk/client-sqs",
       "type": "runtime"
     },

@@ -16,12 +16,16 @@ const project = new GemeenteNijmegenCdkApp({
     '@aws-sdk/client-dynamodb',
     '@aws-sdk/client-s3',
     '@aws-sdk/client-sqs',
+    '@aws-sdk/client-sns',
+    '@aws-sdk/client-sfn',
+    '@aws-sdk/client-ses',
     '@aws-lambda-powertools/logger',
     'zod',
     '@gemeentenijmegen/modules-zgw-client',
     'jsonwebtoken',
     '@types/jsonwebtoken',
     '@aws-sdk/lib-storage',
+
   ],
   jestOptions: {
     jestConfig: {

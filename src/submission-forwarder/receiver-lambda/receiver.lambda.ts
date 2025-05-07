@@ -1,39 +1,46 @@
 import { Logger } from '@aws-lambda-powertools/logger';
-import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
 import { environmentVariables } from '@gemeentenijmegen/utils';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { authenticate } from './authenticate';
-import { Notification, NotificationSchema } from '../shared/Notification';
+import { ReceiverHandler } from './Handler';
+import { ZgwClientFactory } from '../shared/ZgwClientFactory';
 
 const logger = new Logger();
-const sqs = new SQSClient();
+
+let clientFactory: ZgwClientFactory | undefined = undefined;
+
+const env = environmentVariables([
+  'MIJN_SERVICES_OPEN_ZAAK_CLIENT_ID_SSM',
+  'MIJN_SERVICES_OPEN_ZAAK_CLIENT_SECRET_ARN',
+  'OBJECTS_API_APIKEY_ARN',
+  'ORCHESTRATOR_ARN',
+]);
+
+function getZgwClientFactory() {
+  if (!clientFactory) {
+    clientFactory = new ZgwClientFactory({
+      clientIdSsm: env.MIJN_SERVICES_OPEN_ZAAK_CLIENT_ID_SSM,
+      clientSecretArn: env.MIJN_SERVICES_OPEN_ZAAK_CLIENT_SECRET_ARN,
+      objectsApikeyArn: env.OBJECTS_API_APIKEY_ARN,
+    });
+  }
+  return clientFactory;
+}
 
 export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   logger.debug('event', { event });
 
-  const env = environmentVariables(['QUEUE_URL']);
   await authenticate(event);
 
+  const receiverHandler = new ReceiverHandler({
+    zgwClientFactory: getZgwClientFactory(),
+    topicArn: env.TOPIC_ARN,
+    orchestratorArn: env.ORCHESTRATOR_ARN,
+  });
+
   try {
-    const notification = getNotification(event);
-
-    // Handle test notifications
-    if (notification.kanaal == 'test') {
-      logger.info('Test notificatie ontvangen');
-      return response({ message: 'OK - test event' });
-    }
-
-    // Send notification to sqs
-    await sendNotificationToQueue(env.QUEUE_URL, notification);
-    return response({ message: 'OK' });
-
+    return await receiverHandler.handle(event);
   } catch (error) {
-    if (error instanceof ParseError) {
-      return response({ message: error.message }, 400);
-    }
-    if (error instanceof SendMessageError) {
-      return response({ message: error.message }, 502);
-    }
     logger.error('Could not process notification', { error });
     return response({ message: 'error.message' }, 500);
   }
@@ -55,40 +62,3 @@ function response(body?: any, statusCode: number = 200): APIGatewayProxyResult {
     },
   };
 }
-
-/**
- * Parses the event and constructs a Notification
- * @param event
- * @returns
- */
-function getNotification(event: APIGatewayProxyEvent): Notification {
-  try {
-    if (!event.body) {
-      throw Error('No body found in event');
-    }
-    let body = event.body;
-    if (event.isBase64Encoded) {
-      body = Buffer.from(event.body, 'base64').toString('utf-8');
-    }
-    const bodyJson = JSON.parse(body);
-    return NotificationSchema.parse(bodyJson);
-  } catch (error) {
-    logger.error('Could not parse notification', { error });
-    throw new ParseError('Failed to parse notification');
-  }
-}
-
-async function sendNotificationToQueue(queueUrl: string, notification: Notification) {
-  try {
-    await sqs.send(new SendMessageCommand({
-      MessageBody: JSON.stringify(notification),
-      QueueUrl: queueUrl,
-    }));
-  } catch (error) {
-    logger.error('Could not send notification to queue', { error });
-    throw new SendMessageError('Failed to send notification to queue');
-  }
-}
-
-class ParseError extends Error { }
-class SendMessageError extends Error { }

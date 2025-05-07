@@ -1,6 +1,3 @@
-# Woweb webformulieren koppeling
-
-- Huidige koppeling: zie volgende tab (drawio)
 
 ## VIP specifics in formulieren
 
