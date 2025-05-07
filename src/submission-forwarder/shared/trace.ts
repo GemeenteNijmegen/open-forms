@@ -10,16 +10,8 @@ const logger = new Logger();
  * @returns
  */
 export async function trace(reference: string, handler: string, message: string) {
-
-  if (!process.env.TRACE_TABLE_NAME) {
-    // just log, this is not a braking part of the handlers
-    logger.error('Cannot log trace as the trace table name is not provided');
-    return;
-  }
-
   logger.info('HANDLER-TRACE', {
     trace: `${reference}#${handler}`,
     message: message,
   });
-
 }
