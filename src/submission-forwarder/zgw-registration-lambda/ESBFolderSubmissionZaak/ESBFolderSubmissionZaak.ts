@@ -51,7 +51,7 @@ export class ESBFolderSubmissionZaak {
   }
 
 
-  readonly ZAAKTYPE_IDENTIFICATIE = 'OF-ESB-FOLDERS';
+  readonly ZAAKTYPE_IDENTIFICATIE = 'OF-INZENDING';
   readonly ROL_OMSCHRIJVING_GENERIEK = 'initiator'; // enum field value
   readonly GN_RSIN = '001479179';
 
