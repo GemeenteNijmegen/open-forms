@@ -2,7 +2,6 @@
 import * as path from 'path';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
-import { Duration } from 'aws-cdk-lib';
 
 /**
  * Props for ZgwRegistrationFunction
@@ -21,7 +20,6 @@ export class ZgwRegistrationFunction extends lambda.Function {
       runtime: new lambda.Runtime('nodejs22.x', lambda.RuntimeFamily.NODEJS),
       handler: 'index.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '../../../assets/submission-forwarder/zgw-registration-lambda/zgw-registration.lambda')),
-      timeout: Duration.seconds(30),
     });
     this.addEnvironment('AWS_NODEJS_CONNECTION_REUSE_ENABLED', '1', { removeInEdge: true });
   }
