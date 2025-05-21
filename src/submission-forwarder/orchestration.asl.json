@@ -11,7 +11,7 @@
       "Type": "Task",
       "Arguments": {
         "Body": "{% $states.input %}",
-        "Bucket": "${BACKUP_BUCKET_NAME}",
+        "Bucket": "open-forms-main-stack-submissionforwardersubmissio-om51lonqnmo8",
         "Key": "{% $states.input.reference %}"
       },
       "Resource": "arn:aws:states:::aws-sdk:s3:putObject",
@@ -23,7 +23,7 @@
       "Choices": [
         {
           "Next": "Notification email",
-          "Condition": "{% ($exists($states.input.internalNotificationEmails) and $exists($states.input.internalNotificationEmails[0])) %}",
+          "Condition": "{% ($exists($states.context.Execution.Input.internalNotificationEmails) and $exists($states.context.Execution.Input.internalNotificationEmails[0])) %}",
           "Comment": "internalNotificationEmail(s) provided"
         }
       ],
@@ -34,8 +34,8 @@
       "Resource": "arn:aws:states:::lambda:invoke",
       "Output": "{% $states.result.Payload %}",
       "Arguments": {
-        "FunctionName": "${NOTIFICATION_EMAIL_LAMBDA_ARN}",
-        "Payload": "{% $states.input %}"
+        "FunctionName": "arn:aws:lambda:eu-central-1:043309345347:function:open-forms-main-stack-submissionforwarderinternaln-9u2jeGvmIdjB",
+        "Payload": "{% $states.context.Execution.Input %}"
       },
       "Retry": [
         {
@@ -69,7 +69,7 @@
       "Resource": "arn:aws:states:::lambda:invoke",
       "Output": "{% $states.input %}",
       "Arguments": {
-        "FunctionName": "${FORWARDER_LAMBDA_ARN}",
+        "FunctionName": "arn:aws:lambda:eu-central-1:043309345347:function:open-forms-main-stack-submissionforwarderF7BA6E68-VAYsi1POqsNN",
         "Payload": "{% $states.input %}"
       },
       "Retry": [
@@ -97,15 +97,14 @@
           "Comment": "Has bsn or kvk"
         }
       ],
-      "Default": "Has notification email?",
-      "Output": "{% $states.input %}"
+      "Default": "Has notification email?"
     },
     "Register ZGW": {
       "Type": "Task",
       "Resource": "arn:aws:states:::lambda:invoke",
       "Output": "{% $states.result.Payload %}",
       "Arguments": {
-        "FunctionName": "${ZGW_REGISTRATION_LAMBDA_ARN}",
+        "FunctionName": "arn:aws:lambda:eu-central-1:043309345347:function:open-forms-main-stack-submissionforwarderzgwfuncti-GX5fBs5ID5u9",
         "Payload": "{% $states.input %}"
       },
       "Next": "Has notification email?",
@@ -121,9 +120,7 @@
       ]
     },
     "Success": {
-      "Type": "Succeed",
-      "Next": "Has notification email?",
-      "Output": "{% $states.input %}"
+      "Type": "Succeed"
     }
   },
   "QueryLanguage": "JSONata"
