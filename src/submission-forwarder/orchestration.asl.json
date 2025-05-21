@@ -97,7 +97,8 @@
           "Comment": "Has bsn or kvk"
         }
       ],
-      "Default": "Has notification email?"
+      "Default": "Has notification email?",
+      "Output": "{% $states.input %}"
     },
     "Register ZGW": {
       "Type": "Task",
@@ -120,7 +121,9 @@
       ]
     },
     "Success": {
-      "Type": "Succeed"
+      "Type": "Succeed",
+      "Next": "Has notification email?",
+      "Output": "{% $states.input %}"
     }
   },
   "QueryLanguage": "JSONata"
