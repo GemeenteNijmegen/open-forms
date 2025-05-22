@@ -44,11 +44,56 @@ sequenceDiagram
 ## 2. Indienen formulier
 De inwoner logt in op Mijn Nijmegen, waar de taak voor de inwoner klaarstaat. Deze bevat een verwijzing naar het statusformulier. Met deze link wordt
 het statusformulier geopend, met vooringevuld de juiste gegevens uit de taak. De inwoner vult het formulier in en verzendt deze.
-De ingezonden formuliergegevens eindigen:
-**NB: Te maken keuze**
-- In de taak (het object). Documenten worden via een referentie beschikbaar (? TODO: Check hoe dit werkt)
-óf - Op een queue voor de ESB, met documenten in S3 (vgl huidig proces / nieuwe opzet Open Forms)
-De taakstatus wordt hierbij aangepast naar 'ingediend' (TODO: Check taakstatus naamgeving)
+
+De ingezonden formuliergegevens worden door Open Forms in de taak gezet.
+Op basis hiervan gaat een notificatie af (van objects API naar AWS):
+- Een notificatie wordt op een queue gezet, waar de ESB op pollt, documenten worden in S3 gezet die in deze notificatie staat
+De taakstatus wordt hierbij aangepast naar 'ingediend' door Open Forms
+
+```mermaid
+sequenceDiagram
+    participant Inwoner
+    participant Mijn Nijmegen
+    participant Objects API
+    participant Statusformulier
+    participant AWS
+    participant S3
+    participant AWS Queue
+
+    Inwoner->>Mijn Nijmegen: Logt in
+    activate Mijn Nijmegen
+    Mijn Nijmegen->>Objects API: Haalt Taak op (met link naar Statusformulier)
+    activate Objects API
+    Objects API-->>Mijn Nijmegen: Taak (met link)
+    deactivate Objects API
+    Mijn Nijmegen-->>Inwoner: Toont Taak (met link)
+    deactivate Mijn Nijmegen
+
+    Inwoner->>Statusformulier: Opent Statusformulier (met link)
+    activate Statusformulier
+    Statusformulier->>Objects API: Haalt Taak op (voor vooringevulde gegevens)
+    activate Objects API
+    Objects API-->>Statusformulier: Taak (met gegevens & taakstatus)
+    deactivate Objects API
+    Inwoner->>Statusformulier: Vult Formulier in & Verzendt
+    Statusformulier->>Objects API: Zet Formuliergegevens in Taak & Past Taakstatus aan naar 'Ingediend'
+    activate Objects API
+    Objects API-->>Statusformulier: Bevestiging
+    deactivate Objects API
+    deactivate Statusformulier
+
+    Objects API->>AWS: Notificatie taakwijziging
+    activate AWS
+    AWS->>S3: Save documents
+    activate S3
+    S3-->>AWS: Bevestiging
+    deactivate S3
+    AWS->>AWS Queue: Taak on queue
+    activate AWS Queue
+    AWS Queue-->>AWS: Bevestiging
+    deactivate AWS Queue
+    deactivate AWS
+```
 
 ## 3. Verwerken inzending
 De ESB pakt de inzending op (afh. van keuze, ofwel van queue of adhv notificatie vanuit taak) en verwerkt deze. De **beslisservice** bepaalt of de 
