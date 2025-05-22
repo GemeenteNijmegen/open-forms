@@ -104,7 +104,7 @@
             "Resource": "arn:aws:states:::lambda:invoke",
             "Output": "{% $states.input %}",
             "Arguments": {
-                "FunctionName": "{ZGW_REGISTRATION_LAMBDA_ARN}",
+                "FunctionName": "${ZGW_REGISTRATION_LAMBDA_ARN}",
                 "Payload": "{% $states.input %}"
             },
             "Next": "Has notification email?",
