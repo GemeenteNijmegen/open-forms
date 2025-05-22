@@ -1,127 +1,127 @@
 {
-  "Comment": "A description of my state machine",
-  "StartAt": "Log object",
-  "States": {
-    "Log object": {
-      "Type": "Pass",
-      "Next": "Backup",
-      "Comment": "Log the object we are processing"
-    },
-    "Backup": {
-      "Type": "Task",
-      "Arguments": {
-        "Body": "{% $states.input %}",
-        "Bucket": "${BACKUP_BUCKET_NAME}",
-        "Key": "{% $states.input.reference %}"
-      },
-      "Resource": "arn:aws:states:::aws-sdk:s3:putObject",
-      "Next": "Forward to ESB?",
-      "Output": "{% $states.input %}"
-    },
-    "Has notification email?": {
-      "Type": "Choice",
-      "Choices": [
-        {
-          "Next": "Notification email",
-          "Condition": "{% ($exists($states.input.internalNotificationEmails) and $exists($states.input.internalNotificationEmails[0])) %}",
-          "Comment": "internalNotificationEmail(s) provided"
+    "Comment": "A description of my state machine",
+    "StartAt": "Log object",
+    "States": {
+        "Log object": {
+            "Type": "Pass",
+            "Next": "Backup",
+            "Comment": "Log the object we are processing"
+        },
+        "Backup": {
+            "Type": "Task",
+            "Arguments": {
+                "Body": "{% $states.input %}",
+                "Bucket": "${BACKUP_BUCKET_NAME}",
+                "Key": "{% $states.input.reference %}"
+            },
+            "Resource": "arn:aws:states:::aws-sdk:s3:putObject",
+            "Next": "Forward to ESB?",
+            "Output": "{% $states.input %}"
+        },
+        "Has notification email?": {
+            "Type": "Choice",
+            "Choices": [
+                {
+                    "Next": "Notification email",
+                    "Condition": "{% ($exists($states.input.internalNotificationEmails) and $exists($states.input.internalNotificationEmails[0])) %}",
+                    "Comment": "internalNotificationEmail(s) provided"
+                }
+            ],
+            "Default": "Success"
+        },
+        "Notification email": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::lambda:invoke",
+            "Output": "{% $states.result.Payload %}",
+            "Arguments": {
+                "FunctionName": "${NOTIFICATION_EMAIL_LAMBDA_ARN}",
+                "Payload": "{% $states.input %}"
+            },
+            "Retry": [
+                {
+                    "ErrorEquals": [
+                        "Lambda.ServiceException",
+                        "Lambda.AWSLambdaException",
+                        "Lambda.SdkClientException",
+                        "Lambda.TooManyRequestsException"
+                    ],
+                    "IntervalSeconds": 1,
+                    "MaxAttempts": 3,
+                    "BackoffRate": 2,
+                    "JitterStrategy": "FULL"
+                }
+            ],
+            "Next": "Success"
+        },
+        "Forward to ESB?": {
+            "Type": "Choice",
+            "Choices": [
+                {
+                    "Next": "ESB Forwarder",
+                    "Condition": "{% ($exists($states.input.networkShare) or $exists($states.input.monitoringNetworkShare)) %}",
+                    "Comment": "networkShare or monitoring provided"
+                }
+            ],
+            "Default": "ZGW registration?"
+        },
+        "ESB Forwarder": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::lambda:invoke",
+            "Output": "{% $states.input %}",
+            "Arguments": {
+                "FunctionName": "${FORWARDER_LAMBDA_ARN}",
+                "Payload": "{% $states.input %}"
+            },
+            "Retry": [
+                {
+                    "ErrorEquals": [
+                        "Lambda.ServiceException",
+                        "Lambda.AWSLambdaException",
+                        "Lambda.SdkClientException",
+                        "Lambda.TooManyRequestsException"
+                    ],
+                    "IntervalSeconds": 1,
+                    "MaxAttempts": 3,
+                    "BackoffRate": 2,
+                    "JitterStrategy": "FULL"
+                }
+            ],
+            "Next": "ZGW registration?"
+        },
+        "ZGW registration?": {
+            "Type": "Choice",
+            "Choices": [
+                {
+                    "Next": "Register ZGW",
+                    "Condition": "{% ($exists($states.input.bsn) or $exists($states.input.kvk)) %}",
+                    "Comment": "Has bsn or kvk"
+                }
+            ],
+            "Default": "Has notification email?"
+        },
+        "Register ZGW": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::lambda:invoke",
+            "Output": "{% $states.input %}",
+            "Arguments": {
+                "FunctionName": "${ZGW_REGISTRATION_LAMBDA_ARN}",
+                "Payload": "{% $states.input %}"
+            },
+            "Next": "Has notification email?",
+            "Catch": [
+                {
+                    "ErrorEquals": [
+                        "States.ALL"
+                    ],
+                    "Comment": "ZGW Error catcher",
+                    "Next": "Has notification email?",
+                    "Output": "{% $states.input %}"
+                }
+            ]
+        },
+        "Success": {
+            "Type": "Succeed"
         }
-      ],
-      "Default": "Success"
     },
-    "Notification email": {
-      "Type": "Task",
-      "Resource": "arn:aws:states:::lambda:invoke",
-      "Output": "{% $states.result.Payload %}",
-      "Arguments": {
-        "FunctionName": "${NOTIFICATION_EMAIL_LAMBDA_ARN}",
-        "Payload": "{% $states.input %}"
-      },
-      "Retry": [
-        {
-          "ErrorEquals": [
-            "Lambda.ServiceException",
-            "Lambda.AWSLambdaException",
-            "Lambda.SdkClientException",
-            "Lambda.TooManyRequestsException"
-          ],
-          "IntervalSeconds": 1,
-          "MaxAttempts": 3,
-          "BackoffRate": 2,
-          "JitterStrategy": "FULL"
-        }
-      ],
-      "Next": "Success"
-    },
-    "Forward to ESB?": {
-      "Type": "Choice",
-      "Choices": [
-        {
-          "Next": "ESB Forwarder",
-          "Condition": "{% ($exists($states.input.networkShare) or $exists($states.input.monitoringNetworkShare)) %}",
-          "Comment": "networkShare or monitoring provided"
-        }
-      ],
-      "Default": "ZGW registration?"
-    },
-    "ESB Forwarder": {
-      "Type": "Task",
-      "Resource": "arn:aws:states:::lambda:invoke",
-      "Output": "{% $states.input %}",
-      "Arguments": {
-        "FunctionName": "${FORWARDER_LAMBDA_ARN}",
-        "Payload": "{% $states.input %}"
-      },
-      "Retry": [
-        {
-          "ErrorEquals": [
-            "Lambda.ServiceException",
-            "Lambda.AWSLambdaException",
-            "Lambda.SdkClientException",
-            "Lambda.TooManyRequestsException"
-          ],
-          "IntervalSeconds": 1,
-          "MaxAttempts": 3,
-          "BackoffRate": 2,
-          "JitterStrategy": "FULL"
-        }
-      ],
-      "Next": "ZGW registration?"
-    },
-    "ZGW registration?": {
-      "Type": "Choice",
-      "Choices": [
-        {
-          "Next": "Register ZGW",
-          "Condition": "{% ($exists($states.input.bsn) or $exists($states.input.kvk)) %}",
-          "Comment": "Has bsn or kvk"
-        }
-      ],
-      "Default": "Has notification email?"
-    },
-    "Register ZGW": {
-      "Type": "Task",
-      "Resource": "arn:aws:states:::lambda:invoke",
-      "Output": "{% $states.result.Payload %}",
-      "Arguments": {
-        "FunctionName": "${ZGW_REGISTRATION_LAMBDA_ARN}",
-        "Payload": "{% $states.input %}"
-      },
-      "Next": "Has notification email?",
-      "Catch": [
-        {
-          "ErrorEquals": [
-            "States.ALL"
-          ],
-          "Comment": "ZGW Error catcher",
-          "Next": "Has notification email?",
-          "Output": "{% $states.input %}"
-        }
-      ]
-    },
-    "Success": {
-      "Type": "Succeed"
-    }
-  },
-  "QueryLanguage": "JSONata"
+    "QueryLanguage": "JSONata"
 }
