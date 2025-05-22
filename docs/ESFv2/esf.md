@@ -5,7 +5,10 @@ We onderscheiden 3 processen in het ESF:
 2. Indienen formulier
 3. Verwerken formulier in suite + corsa
 
-## 1. Klaarzetten nieuwe taken
+Procesplaat:
+![Proces met verantwoordelijkheden](process-met-verantwoordelijkheden.drawio.png)
+
+## A. Klaarzetten nieuwe taken
 Maandelijks wordt een lijst uitgedraaid van deelnemers aan het elektronisch statusformulier. Op dit moment wordt de uitkering ook geblokkeerd.
 Deze wordt voor de ESB klaargezet in CSV-format. 
 Dit bestand bevat:
@@ -41,7 +44,7 @@ sequenceDiagram
     end
 ```
 
-## 2. Indienen formulier
+## B. Indienen formulier
 De inwoner logt in op Mijn Nijmegen, waar de taak voor de inwoner klaarstaat. Deze bevat een verwijzing naar het statusformulier. Met deze link wordt
 het statusformulier geopend, met vooringevuld de juiste gegevens uit de taak. De inwoner vult het formulier in en verzendt deze.
 
@@ -95,7 +98,7 @@ sequenceDiagram
     deactivate AWS
 ```
 
-## 3. Verwerken inzending
+## C. Verwerken inzending
 De ESB pakt de inzending op (afh. van keuze, ofwel van queue of adhv notificatie vanuit taak) en verwerkt deze. De **beslisservice** bepaalt of de 
 uitkering kan worden gedeblokkeerd, adhv. antwoorden. Dit bepaalt wat in suite/corsa moet worden aangemaakt. (Gelijk aan oude opzet). Hierbij:
 - Moeten documenten opgehaald (uit S3 of ZGW documenten)
