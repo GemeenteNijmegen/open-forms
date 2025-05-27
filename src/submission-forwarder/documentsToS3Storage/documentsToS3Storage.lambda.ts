@@ -3,11 +3,11 @@ import { S3Client } from '@aws-sdk/client-s3';
 
 import { Enkelvoudiginformatieobjecten } from '@gemeentenijmegen/modules-zgw-client/lib/documenten-generated-client';
 import { environmentVariables } from '@gemeentenijmegen/utils';
+import { SubmissionSchema } from '../shared/Submission';
+import { ZgwClientFactory } from '../shared/ZgwClientFactory';
 import { DocumentsToS3StorageHandler } from './DocumentsToS3StorageHandler';
 import { FileDownloader } from './FileDownloader';
 import { S3Uploader } from './S3Uploader';
-import { SubmissionSchema } from '../shared/Submission';
-import { ZgwClientFactory } from '../shared/ZgwClientFactory';
 
 const logger = new Logger();
 const s3Client = new S3Client({});
@@ -20,6 +20,7 @@ const env = environmentVariables([
   'MIJN_SERVICES_OPEN_ZAAK_CLIENT_ID_SSM',
   'MIJN_SERVICES_OPEN_ZAAK_CLIENT_SECRET_ARN',
   'SUBMISSION_BUCKET_NAME',
+  'OBJECTS_API_APIKEY_ARN'
 ]);
 
 export async function handler(event: any) {
