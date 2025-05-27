@@ -28,7 +28,7 @@ export class DocumentsToS3StorageHandler {
       ...submission.attachments.map(attachment => this.options.fileDownloader.fileDataFromDocument(attachment)),
     ];
     const fileData = await Promise.all(promises);
-    this.options.s3Uploader.storeBulk(submission.reference, fileData);
+    await this.options.s3Uploader.storeBulk(submission.reference, fileData);
 
     const files = s3PathsFromFileData(fileData, this.options.bucketName, submission.reference);
 
