@@ -194,12 +194,14 @@ export class SubmissionForwarder extends Construct {
         DOCUMENTEN_BASE_URL: this.parameters.documentenApiBaseUrl.stringValue,
 
         // Loaded dynamically
+        OBJECTS_API_APIKEY_ARN: this.parameters.objectsApikey.secretArn,
         MIJN_SERVICES_OPEN_ZAAK_CLIENT_ID_SSM: this.parameters.mijnServicesOpenZaakApiClientId.parameterName,
         MIJN_SERVICES_OPEN_ZAAK_CLIENT_SECRET_ARN: this.parameters.mijnServicesOpenZaakApiClientSecret.secretArn,
       },
     });
 
     this.bucket.grantPut(s3StorageFunction);
+    this.parameters.objectsApikey.grantRead(s3StorageFunction);
     this.parameters.mijnServicesOpenZaakApiClientId.grantRead(s3StorageFunction);
     this.parameters.mijnServicesOpenZaakApiClientSecret.grantRead(s3StorageFunction);
     this.options.key.grantEncryptDecrypt(s3StorageFunction);
