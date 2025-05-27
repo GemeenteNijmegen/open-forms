@@ -37,7 +37,7 @@ export async function handler(event: any) {
   });
 
   const submission = SubmissionSchema.parse(event);
-  await documentsToS3StorageHandler.handle(submission);
+  return await documentsToS3StorageHandler.handle(submission);
 }
 
 async function getDocumentenClient(zgwClientFactory: ZgwClientFactory, baseUrl: string) {
