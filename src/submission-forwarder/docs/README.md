@@ -6,7 +6,7 @@ Zie ook:
 - [beheer tips en tricks](../../../docs/BeheerTipsAndTricks.md)
 
 ## Implementatie
-![Implementatie](./submission-forwarder-v2.drawio.png)
+![Implementatie](submission-forwarder-v3.drawio.png)
 
 ### Details ESB integratie
 De ESB heeft een interne retry en kan berichten op de AWS DLQ zetten wanneer afhandeling aan de ESB kant niet lukt. Wij kunnen een redrive doen om berichten opnieuw bij de ESB in te dienen.
