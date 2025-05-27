@@ -1,6 +1,6 @@
-import { Logger } from "@aws-lambda-powertools/logger";
-import { S3Client } from "@aws-sdk/client-s3";
-import { Upload } from "@aws-sdk/lib-storage";
+import { Logger } from '@aws-lambda-powertools/logger';
+import { S3Client } from '@aws-sdk/client-s3';
+import { Upload } from '@aws-sdk/lib-storage';
 
 export class S3Uploader {
   private client: S3Client;
@@ -13,7 +13,7 @@ export class S3Uploader {
     this.logger = logger ?? new Logger();
   }
 
-  async storeBulk(kenmerk: string, fileData: {filename: string, data: Buffer | string, formaat?: string}[]) {
+  async storeBulk(kenmerk: string, fileData: { filename: string; data: Buffer | string; formaat?: string }[]) {
     await Promise.all(fileData.map(file => this.store(kenmerk, file.filename, file.data, file.formaat)));
   }
 

@@ -1,13 +1,13 @@
-import { Logger } from "@aws-lambda-powertools/logger";
-import { S3Client } from "@aws-sdk/client-s3";
-import { ZgwClientFactory } from '../shared/ZgwClientFactory';
+import { Logger } from '@aws-lambda-powertools/logger';
+import { S3Client } from '@aws-sdk/client-s3';
 
-import { Enkelvoudiginformatieobjecten } from "@gemeentenijmegen/modules-zgw-client/lib/documenten-generated-client";
+import { Enkelvoudiginformatieobjecten } from '@gemeentenijmegen/modules-zgw-client/lib/documenten-generated-client';
 import { environmentVariables } from '@gemeentenijmegen/utils';
+import { DocumentsToS3StorageHandler } from './DocumentsToS3StorageHandler';
+import { FileDownloader } from './FileDownloader';
+import { S3Uploader } from './S3Uploader';
 import { SubmissionSchema } from '../shared/Submission';
-import { DocumentsToS3StorageHandler } from "./DocumentsToS3StorageHandler";
-import { FileDownloader } from "./FileDownloader";
-import { S3Uploader } from "./S3Uploader";
+import { ZgwClientFactory } from '../shared/ZgwClientFactory';
 
 const logger = new Logger();
 const s3Client = new S3Client({});
@@ -24,7 +24,7 @@ const env = environmentVariables([
 
 export async function handler(event: any) {
   logger.debug('event', { event });
-  
+
 
   const documentsToS3StorageHandler = new DocumentsToS3StorageHandler({
     s3Uploader: new S3Uploader(env.SUBMISSION_BUCKET_NAME, s3Client, logger),
@@ -32,7 +32,7 @@ export async function handler(event: any) {
     documentenBaseUrl: env.DOCUMENTEN_BASE_URL,
     bucketName: env.SUBMISSION_BUCKET_NAME,
     s3Client,
-    logger
+    logger,
   });
 
   const submission = SubmissionSchema.parse(event);

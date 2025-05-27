@@ -179,8 +179,8 @@ export class SubmissionForwarder extends Construct {
     }
 
     // Create a forwarder lambda (listens to the internal queue)
-    const s3StorageFunction = new DocumentsToS3StorageFunction(this, 'forwarder', {
-      logGroup: new LogGroup(this, 'logs', {
+    const s3StorageFunction = new DocumentsToS3StorageFunction(this, 'docsToS3', {
+      logGroup: new LogGroup(this, 'docstoS3logs', {
         encryptionKey: this.options.key,
         retention: RetentionDays.SIX_MONTHS,
       }),
@@ -204,7 +204,7 @@ export class SubmissionForwarder extends Construct {
     this.parameters.mijnServicesOpenZaakApiClientSecret.grantRead(s3StorageFunction);
     this.options.key.grantEncryptDecrypt(s3StorageFunction);
 
-    new ErrorMonitoringAlarm(this, 'alarm', {
+    new ErrorMonitoringAlarm(this, 'docstos3alarm', {
       criticality: new Criticality('high'),
       lambda: s3StorageFunction,
     });

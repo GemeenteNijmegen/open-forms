@@ -1,5 +1,5 @@
-import { Logger } from "@aws-lambda-powertools/logger";
-import { Enkelvoudiginformatieobjecten } from "@gemeentenijmegen/modules-zgw-client/lib/documenten-generated-client";
+import { Logger } from '@aws-lambda-powertools/logger';
+import { Enkelvoudiginformatieobjecten } from '@gemeentenijmegen/modules-zgw-client/lib/documenten-generated-client';
 
 export class FileDownloader {
   private documenten: Enkelvoudiginformatieobjecten;
@@ -25,8 +25,8 @@ export class FileDownloader {
     const result = {
       data,
       filename: attachmentDetails.data.bestandsnaam,
-      format: attachmentDetails.data.formaat
-    }
+      format: attachmentDetails.data.formaat,
+    };
     return result;
   }
 
