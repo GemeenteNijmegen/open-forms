@@ -10,6 +10,8 @@
     "bundle:nl-wallet/token/token.lambda:watch": "npx projen bundle:nl-wallet/token/token.lambda:watch",
     "bundle:prefill-demo/handler.lambda": "npx projen bundle:prefill-demo/handler.lambda",
     "bundle:prefill-demo/handler.lambda:watch": "npx projen bundle:prefill-demo/handler.lambda:watch",
+    "bundle:submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda": "npx projen bundle:submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda",
+    "bundle:submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda:watch": "npx projen bundle:submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda:watch",
     "bundle:submission-forwarder/forwarder-lambda/forwarder.lambda": "npx projen bundle:submission-forwarder/forwarder-lambda/forwarder.lambda",
     "bundle:submission-forwarder/forwarder-lambda/forwarder.lambda:watch": "npx projen bundle:submission-forwarder/forwarder-lambda/forwarder.lambda:watch",
     "bundle:submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda": "npx projen bundle:submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda",
