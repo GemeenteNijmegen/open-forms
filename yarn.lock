@@ -1550,10 +1550,10 @@
   resolved "https://registry.yarnpkg.com/@gemeentenijmegen/aws-constructs/-/aws-constructs-0.0.36.tgz#fcf4cf54004ef6da3da8a08c59c662eca75f5caa"
   integrity sha512-GgnQlBP5v8yYHlqrwqRBC/b6CV/NcZ35OsALt0M3C3tAh9a+NVXyVaQwl4dSn4cgek8qzNDgl/Ux9Oqtune1sQ==
 
-"@gemeentenijmegen/design-tokens@^0.0.2-alpha.16":
-  version "0.0.2-alpha.16"
-  resolved "https://registry.yarnpkg.com/@gemeentenijmegen/design-tokens/-/design-tokens-0.0.2-alpha.16.tgz#6a8ec2186a79eb5c320950a0e136e818b73c6fb6"
-  integrity sha512-um5AQiLnzzMViw+5U2dbQGq1fbODT3kZ5sw0A4zBUmfjLDhnaVgLEybkqSX4JxsEJtrH2gkfMTWej5KeeZPdxA==
+"@gemeentenijmegen/design-tokens@^0.0.2-alpha.19":
+  version "0.0.2-alpha.19"
+  resolved "https://registry.yarnpkg.com/@gemeentenijmegen/design-tokens/-/design-tokens-0.0.2-alpha.19.tgz#a93540fe0eecfcb6e29dfbfd0ab6da046ddea3b8"
+  integrity sha512-YSN2i62nJZroaTGwtEEw9OYVQ2MJgfMPKYMfhItOrBTWlc9DXbOEx8l8yR7RXuJVBq/qWNXI2m4lCOfuy9nxmA==
 
 "@gemeentenijmegen/modules-zgw-client@^0.0.6":
   version "0.0.6"
@@ -3897,9 +3897,9 @@ ejs@^3.1.10:
     jake "^10.8.5"
 
 electron-to-chromium@^1.5.149:
-  version "1.5.157"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.157.tgz#553b122522ac7bba6f1a0dd7d50b14f297736f75"
-  integrity sha512-/0ybgsQd1muo8QlnuTpKwtl0oX5YMlUGbm8xyqgDU00motRkKFFbUJySAQBWcY79rVqNLWIWa87BGVGClwAB2w==
+  version "1.5.158"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.158.tgz#e5f01fc7fdf810d9d223e30593e0839c306276d4"
+  integrity sha512-9vcp2xHhkvraY6AHw2WMi+GDSLPX42qe2xjYaVoZqFRJiOcilVQFq9mZmpuHEQpzlgGDelKlV7ZiGcmMsc8WxQ==
 
 emittery@^0.13.1:
   version "0.13.1"
@@ -7967,7 +7967,7 @@ yocto-queue@^0.1.0:
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
 
-zod@^3.25.28:
-  version "3.25.28"
-  resolved "https://registry.yarnpkg.com/zod/-/zod-3.25.28.tgz#8ab13d04afa05933598fd9fca32490ca92c7ea3a"
-  integrity sha512-/nt/67WYKnr5by3YS7LroZJbtcCBurDKKPBPWWzaxvVCGuG/NOsiKkrjoOhI8mJ+SQUXEbUzeB3S+6XDUEEj7Q==
+zod@^3.25.29:
+  version "3.25.29"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.25.29.tgz#4f0f3e01322b178942905764856e3b4969299d09"
+  integrity sha512-xetH/muIYuAyN7YJGKh99jkBQq/XbGEyTkv7JC4YYsWppHmfoU1MDoQa441WD1QMDaeCaEBO0e0hl1iSmluNQQ==
