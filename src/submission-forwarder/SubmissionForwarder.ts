@@ -13,6 +13,7 @@ import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { CustomerManagedEncryptionConfiguration, DefinitionBody, LogLevel, StateMachine } from 'aws-cdk-lib/aws-stepfunctions';
 import { Construct } from 'constructs';
 import { Statics } from '../Statics';
+import { DocumentsToS3StorageFunction } from './documentsToS3Storage/documentsToS3Storage-function';
 import { ForwarderFunction } from './forwarder-lambda/forwarder-function';
 import { InternalNotificationMailFunction } from './internal-notification-mail-lambda/internalNotificationMail-function';
 import { ReceiverFunction } from './receiver-lambda/receiver-function';
@@ -70,11 +71,12 @@ export class SubmissionForwarder extends Construct {
     this.bucket = this.setupSubmissionsBucket();
 
     this.setupEsbUser();
+    const documentStorage = this.setupDocumentStorageLambda();
     const forwarder = this.setupEsbForwarderLambda();
     const notification = this.setupNotificationMailLambda();
     const zgw = this.setupZgwRegistrationLambda();
 
-    const orchestrator = this.setupOrchestrationStepFunction(forwarder, notification, zgw);
+    const orchestrator = this.setupOrchestrationStepFunction(documentStorage, forwarder, notification, zgw);
     this.setupReceiverLambda(orchestrator);
     this.setupResubmitLambda(orchestrator);
   }
@@ -171,6 +173,45 @@ export class SubmissionForwarder extends Construct {
     orchestrator.grantStartExecution(receiver);
   }
 
+  private setupDocumentStorageLambda() {
+    if (!this.parameters) {
+      throw Error('Parameters should be created first');
+    }
+
+    // Create a forwarder lambda (listens to the internal queue)
+    const s3StorageFunction = new DocumentsToS3StorageFunction(this, 'docsToS3', {
+      logGroup: new LogGroup(this, 'docstoS3logs', {
+        encryptionKey: this.options.key,
+        retention: RetentionDays.SIX_MONTHS,
+      }),
+      description: 'Submission documents to S3 lambda',
+      timeout: Duration.minutes(5), // Allow to run for a long time as we need to download/upload multiple documents
+      environment: {
+        POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'DEBUG',
+
+        // Provided directly trough env.
+        SUBMISSION_BUCKET_NAME: this.bucket.bucketName,
+        DOCUMENTEN_BASE_URL: this.parameters.documentenApiBaseUrl.stringValue,
+
+        // Loaded dynamically
+        MIJN_SERVICES_OPEN_ZAAK_CLIENT_ID_SSM: this.parameters.mijnServicesOpenZaakApiClientId.parameterName,
+        MIJN_SERVICES_OPEN_ZAAK_CLIENT_SECRET_ARN: this.parameters.mijnServicesOpenZaakApiClientSecret.secretArn,
+      },
+    });
+
+    this.bucket.grantPut(s3StorageFunction);
+    this.parameters.mijnServicesOpenZaakApiClientId.grantRead(s3StorageFunction);
+    this.parameters.mijnServicesOpenZaakApiClientSecret.grantRead(s3StorageFunction);
+    this.options.key.grantEncryptDecrypt(s3StorageFunction);
+
+    new ErrorMonitoringAlarm(this, 'docstos3alarm', {
+      criticality: new Criticality('high'),
+      lambda: s3StorageFunction,
+    });
+
+    return s3StorageFunction;
+  }
+
   private setupEsbForwarderLambda() {
     if (!this.parameters) {
       throw Error('Parameters should be created first');
@@ -217,6 +258,7 @@ export class SubmissionForwarder extends Construct {
   }
 
   private setupOrchestrationStepFunction(
+    documentStorageLambda: Function,
     forwarderLambda: Function,
     notificationEmailLambda: Function,
     zgwLambda: Function,
@@ -232,6 +274,7 @@ export class SubmissionForwarder extends Construct {
       definitionBody: DefinitionBody.fromFile('src/submission-forwarder/orchestration.asl.json'),
       definitionSubstitutions: {
         BACKUP_BUCKET_NAME: this.backupBucket.bucketName,
+        S3_STORAGE_LAMBDA_ARN: documentStorageLambda.functionArn,
         FORWARDER_LAMBDA_ARN: forwarderLambda.functionArn,
         NOTIFICATION_EMAIL_LAMBDA_ARN: notificationEmailLambda.functionArn,
         ZGW_REGISTRATION_LAMBDA_ARN: zgwLambda.functionArn,

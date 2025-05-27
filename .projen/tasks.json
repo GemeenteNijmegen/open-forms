@@ -56,6 +56,9 @@
           "spawn": "bundle:prefill-demo/handler.lambda"
         },
         {
+          "spawn": "bundle:submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda"
+        },
+        {
           "spawn": "bundle:submission-forwarder/forwarder-lambda/forwarder.lambda"
         },
         {
@@ -123,6 +126,24 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/prefill-demo/handler.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"assets/prefill-demo/handler.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
+        }
+      ]
+    },
+    "bundle:submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda": {
+      "name": "bundle:submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda",
+      "description": "Create a JavaScript bundle from src/submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"assets/submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
+        }
+      ]
+    },
+    "bundle:submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda:watch": {
+      "name": "bundle:submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda:watch",
+      "description": "Continuously update the JavaScript bundle from src/submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"assets/submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
         }
       ]
     },

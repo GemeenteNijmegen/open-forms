@@ -159,7 +159,7 @@ In `formtaak.verzonden_data` zit na het indienen door inwoner (Proces B stap 9) 
 <details>
     <summary>objectvoorbeeld</summary>
 
-```
+```json
     {
             "type": "https://mijn-services.accp.nijmegen.nl/objecttypes/api/v2/objecttypes/6df21057-e07c-4909-8933-d70b79cfd15e",
             "record": {
@@ -207,7 +207,7 @@ In `formtaak.verzonden_data` zit na het indienen door inwoner (Proces B stap 9) 
 <details>
     <summary>Objectdefinitie (JSON Schema)</summary>
 
-```
+```json
 {
   "type": "object",
   "$defs": {
