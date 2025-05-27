@@ -288,6 +288,7 @@ export class SubmissionForwarder extends Construct {
 
     // Make sure the stepfunction has the correct rights
     zgwLambda.grantInvoke(stepfunction);
+    documentStorageLambda.grantInvoke(stepfunction);
     forwarderLambda.grantInvoke(stepfunction);
     notificationEmailLambda.grantInvoke(stepfunction);
     this.backupBucket.grantWrite(stepfunction);
