@@ -99,7 +99,7 @@ describe('SubmissionForwarderHandler', () => {
   });
 
   it('should send both a normal and monitoring notification when monitoringNetworkShare is provided', async () => {
-    await handler.handle(fakeSubmission);
+    await handler.handle(fakeSubmission, ['https://example.com']);
     // Prevent unused import Upload
     const uploadInstances = (Upload as any as jest.Mock).mock.instances;
     expect(uploadInstances.length).toBeGreaterThan(0);
@@ -125,7 +125,7 @@ describe('SubmissionForwarderHandler', () => {
     sqsMock.reset(); // reset de SQS-mock om de tellers weer op nul te zetten
     sqsMock.on(SendMessageCommand).resolves({});
 
-    await handler.handle(emptyMonitoringSubmission);
+    await handler.handle(emptyMonitoringSubmission, ['https://example.com']);
 
     // Er mag maar 1 SQS-send call plaatsvinden, geen monitoringlocatie
     const sendMessageCalls = sqsMock.commandCalls(SendMessageCommand);
@@ -138,7 +138,7 @@ describe('SubmissionForwarderHandler', () => {
   it('should not send any notification if networkShare is missing', async () => {
     const emptyNetworkShareSubmission = { ...fakeSubmission, networkShare: '' }; // copy with spreader
     const event = { Sns: { Message: JSON.stringify(emptyNetworkShareSubmission) } };
-    await handler.handle(event as any);
+    await handler.handle(event as any, ['https://example.com']);
     expect(sqsMock.commandCalls(SendMessageCommand).length).toBe(0);
   });
 

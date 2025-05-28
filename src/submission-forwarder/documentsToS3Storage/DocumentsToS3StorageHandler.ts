@@ -1,9 +1,9 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import { S3Client } from '@aws-sdk/client-s3';
-import { Submission } from '../shared/Submission';
 import { FileDownloader } from './FileDownloader';
 import { s3PathsFromFileData } from './s3PathsFromFileData';
 import { S3Uploader } from './S3Uploader';
+import { Submission } from '../shared/Submission';
 
 
 export interface DocumentsToS3StorageHandlerOptions {

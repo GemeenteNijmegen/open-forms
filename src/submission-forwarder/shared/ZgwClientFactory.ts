@@ -105,11 +105,11 @@ export class ZgwClientFactory {
 
   private async loadCredentials() {
     if (!this.clientId || !this.clientSecret || !this.objectsApikey) {
-      try { 
+      try {
         this.clientId = await AWS.getParameter(this.credentials.clientIdSsm);
         this.clientSecret = await AWS.getSecret(this.credentials.clientSecretArn);
         this.objectsApikey = await AWS.getSecret(this.credentials.objectsApikeyArn);
-      } catch(error) {
+      } catch (error) {
         console.error('Error retrieving credentials for zgwclient', error);
         throw error;
       }

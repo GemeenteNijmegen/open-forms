@@ -1,8 +1,8 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import { environmentVariables } from '@gemeentenijmegen/utils';
+import { SubmissionForwarderHandler } from './Handler';
 import { SubmissionSchema } from '../shared/Submission';
 import { ZgwClientFactory } from '../shared/ZgwClientFactory';
-import { SubmissionForwarderHandler } from './Handler';
 
 const logger = new Logger();
 
