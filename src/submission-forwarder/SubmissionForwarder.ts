@@ -180,6 +180,7 @@ export class SubmissionForwarder extends Construct {
 
     // Create a forwarder lambda (listens to the internal queue)
     const s3StorageFunction = new DocumentsToS3StorageFunction(this, 'docsToS3', {
+      memorySize: 1024,
       logGroup: new LogGroup(this, 'docstoS3logs', {
         encryptionKey: this.options.key,
         retention: RetentionDays.SIX_MONTHS,
