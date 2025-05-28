@@ -1,4 +1,6 @@
-
+/**
+ * This function creates s3 url paths from the filedata.
+ */
 export function s3PathsFromFileData(
   fileData: {
     data: Buffer<ArrayBuffer>;
@@ -7,9 +9,6 @@ export function s3PathsFromFileData(
   }[],
   bucketName: string,
   reference: string) {
-
-  fileData.shift();
   const files = fileData.map(data => `s3://${bucketName}/${reference}/${data.filename}`);
-  files.push(`s3://${bucketName}/${reference}/${reference}.pdf`);
   return files;
 }

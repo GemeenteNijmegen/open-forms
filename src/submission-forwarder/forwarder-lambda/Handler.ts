@@ -2,7 +2,6 @@ import { Logger } from '@aws-lambda-powertools/logger';
 import { S3Client } from '@aws-sdk/client-s3';
 import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
 import { Upload } from '@aws-sdk/lib-storage';
-import { documenten } from '@gemeentenijmegen/modules-zgw-client';
 import { EsbSubmission } from '../shared/EsbSubmission';
 import { KeyValuePair, Submission } from '../shared/Submission';
 import { trace } from '../shared/trace';
@@ -43,13 +42,6 @@ export class SubmissionForwarderHandler {
       return;
     }
 
-    // Collect de documents from the document API and forward those to the target S3 bucket
-    const httpClient = await this.options.zgwClientFactory.getDocumentenClient(this.options.documentenBaseUrl);
-    const documentenClient = new documenten.Enkelvoudiginformatieobjecten(httpClient);
-
-    // Download PDF, Attachments and create save files in S3 bucket. On retry overwritten.
-    // const pdfS3Url = await this.downloadPdf(submission, documentenClient);
-    // const attachmentS3Urls = await this.downloadAttachments(submission, documentenClient);
     const saveFileS3Urls = await this.createSaveFiles(submission);
     const s3Files: string[] = [
       ...filePaths,
@@ -71,55 +63,6 @@ export class SubmissionForwarderHandler {
     }
 
     await trace(submission.reference, HANDLER_ID, 'OK');
-  }
-
-  /**
-   * Download the submisison PDF to the S3 bucket
-   * @param submission
-   * @param documentenClient
-   * @returns - pdf url in s3 bucket
-   */
-  private async downloadPdf(submission: Submission, documentenClient: documenten.Enkelvoudiginformatieobjecten) {
-    const uuid = this.getUuidFromUrl(submission.pdf);
-    const pdfData = await documentenClient.enkelvoudiginformatieobjectDownload({ uuid }, {
-      responseEncoding: 'binary',
-    });
-    if (!pdfData) {
-      throw Error('Could not get PDF from documents api');
-    }
-    const pdfContents = Buffer.from(pdfData.data as any, 'binary'); // Note it looks like pdfData.data is a File, this is false its binary data disguising as a string.
-    await this.storeInS3(submission.reference, submission.reference + '.pdf', pdfContents, 'application/pdf');
-    const pdfS3Path = `s3://${this.options.bucketName}/${submission.reference}/${submission.reference}.pdf`;
-    return pdfS3Path;
-  }
-
-  /**
-   * If submission has attachments, download the attachments to the S3 bucket
-   * @param submission
-   * @param documentenClient
-   * @returns - urls of the s3 objects
-   */
-  private async downloadAttachments(submission: Submission, documentenClient: documenten.Enkelvoudiginformatieobjecten) {
-    const s3Files: string[] = [];
-
-    for (const attachment of submission.attachments) {
-      const attachmentUuid = this.getUuidFromUrl(attachment);
-      const attachmentDetails = await documentenClient.enkelvoudiginformatieobjectRetrieve({ uuid: attachmentUuid });
-      const attachmentData = await documentenClient.enkelvoudiginformatieobjectDownload({ uuid: attachmentUuid }, {
-        responseEncoding: 'binary',
-      });
-      if (!attachmentDetails.data.bestandsnaam) {
-        logger.error('Missing attachment with uuid, as it does not have a filename', { uuid: attachmentUuid });
-        continue;
-      }
-
-      const contents = Buffer.from(attachmentData.data as any, 'binary'); // Note it looks like pdfData.data is a File, this is false its binary data disguising as a string.
-      await this.storeInS3(submission.reference, attachmentDetails.data.bestandsnaam, contents, attachmentDetails.data.formaat);
-      const attachmentS3Path = `s3://${this.options.bucketName}/${submission.reference}/${attachmentDetails.data.bestandsnaam}`;
-      s3Files.push(attachmentS3Path);
-    }
-
-    return s3Files;
   }
 
   /**
