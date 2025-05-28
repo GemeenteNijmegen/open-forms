@@ -67,7 +67,6 @@
     "Store files in S3": {
       "Type": "Task",
       "Resource": "arn:aws:states:::lambda:invoke",
-      "Output": "{% $states.input %}",
       "Arguments": {
         "FunctionName": "${S3_STORAGE_LAMBDA_ARN}",
         "Payload": "{% $states.input %}"
@@ -91,7 +90,7 @@
     "ESB Forwarder": {
       "Type": "Task",
       "Resource": "arn:aws:states:::lambda:invoke",
-      "Output": "{% $states.input %}",
+      "Output": "{% $states.input.submission %}",
       "Arguments": {
         "FunctionName": "${FORWARDER_LAMBDA_ARN}",
         "Payload": "{% $states.input %}"
