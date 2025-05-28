@@ -1,8 +1,8 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import { environmentVariables } from '@gemeentenijmegen/utils';
-import { SubmissionForwarderHandler } from './Handler';
 import { SubmissionSchema } from '../shared/Submission';
 import { ZgwClientFactory } from '../shared/ZgwClientFactory';
+import { SubmissionForwarderHandler } from './Handler';
 
 const logger = new Logger();
 
@@ -30,8 +30,8 @@ export async function handler(event: any) {
     queueUrl: env.QUEUE_URL,
   });
 
-  const submission = SubmissionSchema.parse(event.submission);
-  const filePaths = event.filePaths;
+  const submission = SubmissionSchema.parse(event.Payload.submission);
+  const filePaths = event.Payload.filePaths;
   await submissionForwarderHandler.handle(submission, filePaths);
 
 }
