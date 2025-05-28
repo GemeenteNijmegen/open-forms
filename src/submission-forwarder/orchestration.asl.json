@@ -90,7 +90,7 @@
     "ESB Forwarder": {
       "Type": "Task",
       "Resource": "arn:aws:states:::lambda:invoke",
-      "Output": "{% $states.input.submission %}",
+      "Output": "{% $states.input.Payload.submission %}",
       "Arguments": {
         "FunctionName": "${FORWARDER_LAMBDA_ARN}",
         "Payload": "{% $states.input %}"
