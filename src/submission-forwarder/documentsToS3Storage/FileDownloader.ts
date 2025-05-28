@@ -1,5 +1,13 @@
+import path from 'path';
 import { Logger } from '@aws-lambda-powertools/logger';
 import { Enkelvoudiginformatieobjecten } from '@gemeentenijmegen/modules-zgw-client/lib/documenten-generated-client';
+
+/**
+ * This class is responsible for downloading files from ZGW documenten storage.
+ *
+ * It takes in URL's to enkelvoudiginformatieobjecten, and returns an object
+ * containing the data (as a Buffer), the filename and file format.
+ */
 
 export class FileDownloader {
   private documenten: Enkelvoudiginformatieobjecten;
@@ -10,7 +18,14 @@ export class FileDownloader {
     this.logger = new Logger();
   }
 
-  async fileDataFromDocument(url: string) {
+  /**
+   * Retrieve an enkelvoudiginformatieobject from URL, return relevant data for storage and forwarding.
+   *
+   * @param url         the enkelvoudiginformatieObject to retrieve
+   * @param pathPrefix  optional prefix to add to the filename. Used to make sure attachment-filenames can't collide with submission filenames. This
+   *                    will be joined using path.join, so no path separator is necessary.
+   */
+  async fileDataFromDocument(url: string, pathPrefix?: string) {
     const uuid = this.getUuidFromUrl(url);
     const attachmentDetails = await this.documenten.enkelvoudiginformatieobjectRetrieve({ uuid });
     const attachmentData = await this.documenten.enkelvoudiginformatieobjectDownload({ uuid }, {
@@ -21,10 +36,11 @@ export class FileDownloader {
       throw Error('No filename found for file');
     }
 
+    const filePath = pathPrefix ? path.join(pathPrefix, attachmentDetails.data.bestandsnaam) : attachmentDetails.data.bestandsnaam;
     const data = Buffer.from(attachmentData.data as any, 'binary'); // Note it looks like pdfData.data is a File, this is false its binary data disguising as a string.
     const result = {
       data,
-      filename: attachmentDetails.data.bestandsnaam,
+      filename: filePath,
       format: attachmentDetails.data.formaat,
     };
     return result;

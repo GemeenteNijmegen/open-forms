@@ -1,9 +1,9 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import { S3Client } from '@aws-sdk/client-s3';
-import { Submission } from '../shared/Submission';
 import { FileDownloader } from './FileDownloader';
 import { s3PathsFromFileData } from './s3PathsFromFileData';
 import { S3Uploader } from './S3Uploader';
+import { Submission } from '../shared/Submission';
 
 
 export interface DocumentsToS3StorageHandlerOptions {
@@ -25,10 +25,10 @@ export class DocumentsToS3StorageHandler {
     // get files from documents
     const promises = [
       this.options.fileDownloader.fileDataFromDocument(submission.pdf),
-      ...submission.attachments.map(attachment => this.options.fileDownloader.fileDataFromDocument(attachment)),
+      ...submission.attachments.map(attachment => this.options.fileDownloader.fileDataFromDocument(attachment, 'attachments')),
     ];
     const fileData = await Promise.all(promises);
-    
+
     fileData[0].filename = `${submission.reference}.pdf`;
     await this.options.s3Uploader.storeBulk(submission.reference, fileData);
 

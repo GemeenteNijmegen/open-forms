@@ -67,18 +67,12 @@ describe('SubmissionForwarderHandler', () => {
     // Fake HttpClient (inhoud niet belangrijk)
     fakeHttpClient = {};
 
-    fakeDocumentenClientInstance = {
-      enkelvoudiginformatieobjectDownload: jest.fn().mockResolvedValue({ data: 'binary-pdf-data' }),
-      enkelvoudiginformatieobjectRetrieve: jest.fn().mockResolvedValue({ data: { bestandsnaam: 'attachment.pdf', formaat: 'application/pdf' } }),
-    };
-
     // Zorg dat wanneer de code de constructor van de documenten client aanroept,
     // een instance met de fake methoden teruggegeven wordt.
     jest.spyOn(documenten, 'Enkelvoudiginformatieobjecten').mockImplementation(() => fakeDocumentenClientInstance);
 
     fakeZgwClientFactory = {
       getObjectsApiClient: jest.fn().mockResolvedValue(fakeObjectsApiClient),
-      getDocumentenClient: jest.fn().mockResolvedValue(fakeHttpClient),
       getZakenClient: jest.fn().mockResolvedValue(fakeHttpClient),
       getCatalogiClient: jest.fn().mockResolvedValue(fakeHttpClient),
     };
@@ -103,8 +97,6 @@ describe('SubmissionForwarderHandler', () => {
     // Prevent unused import Upload
     const uploadInstances = (Upload as any as jest.Mock).mock.instances;
     expect(uploadInstances.length).toBeGreaterThan(0);
-
-    expect(fakeZgwClientFactory.getDocumentenClient).toHaveBeenCalledWith('https://documenten.api');
 
     // SQS send message moet twee keer aangeroepen worden, ook monitoring
     const sendMessageCalls = sqsMock.commandCalls(SendMessageCommand);

@@ -41,4 +41,14 @@ describe('SubmissionForwarderHandler', () => {
     expect(result.format).toBe('application/pdf');
   });
 
+  test('should be able to store a document under a subpath', async () => {
+    const downloader = new FileDownloader(fakeDocumentenClientInstance);
+    const resultWithPath = await downloader.fileDataFromDocument('https://example.com/ec5d587c-ee8f-43c6-8be0-7dbc826b07f1', 'somepath');
+    const result = await downloader.fileDataFromDocument('https://example.com/ec5d587c-ee8f-43c6-8be0-7dbc826b07f1');
+    expect(result).toHaveProperty('data');
+    expect(resultWithPath.filename).toContain('somepath/');
+    expect(result.filename).not.toContain('somepath/');
+    expect(result.format).toBe('application/pdf');
+  });
+
 });
