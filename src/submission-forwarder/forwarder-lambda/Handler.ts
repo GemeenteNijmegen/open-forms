@@ -23,6 +23,7 @@ interface SubmissionForwarderHandlerOptions {
   queueUrl: string;
 }
 
+
 export class SubmissionForwarderHandler {
 
 
@@ -31,7 +32,7 @@ export class SubmissionForwarderHandler {
    */
   constructor(private readonly options: SubmissionForwarderHandlerOptions) { }
 
-  async handle(submission: Submission) {
+  async handle(submission: Submission, filePaths: string[]) {
 
     // Message is the submission
     logger.debug('Retreived submisison', { submission });
@@ -47,12 +48,11 @@ export class SubmissionForwarderHandler {
     const documentenClient = new documenten.Enkelvoudiginformatieobjecten(httpClient);
 
     // Download PDF, Attachments and create save files in S3 bucket. On retry overwritten.
-    const pdfS3Url = await this.downloadPdf(submission, documentenClient);
-    const attachmentS3Urls = await this.downloadAttachments(submission, documentenClient);
+    // const pdfS3Url = await this.downloadPdf(submission, documentenClient);
+    // const attachmentS3Urls = await this.downloadAttachments(submission, documentenClient);
     const saveFileS3Urls = await this.createSaveFiles(submission);
     const s3Files: string[] = [
-      pdfS3Url,
-      ...attachmentS3Urls,
+      ...filePaths,
       ...saveFileS3Urls,
     ];
 
