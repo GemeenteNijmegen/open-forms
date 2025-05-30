@@ -118,6 +118,9 @@ export class SubmissionForwarderHandler {
    */
   private async sendNotificationToQueue(queueUrl: string, esb: EsbSubmission) {
     try {
+
+      console.debug('Sending to queue', { esb });
+
       await sqs.send(new SendMessageCommand({
         MessageBody: JSON.stringify(esb),
         QueueUrl: queueUrl,
