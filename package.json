@@ -87,7 +87,7 @@
     "dotenv": "^16.5.0",
     "jose": "^5.10.0",
     "jsonwebtoken": "^9.0.2",
-    "zod": "^3.25.42"
+    "zod": "^3.25.43"
   },
   "license": "EUPL-1.2",
   "publishConfig": {
