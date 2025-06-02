@@ -544,3 +544,36 @@ In `formtaak.verzonden_data` zit na het indienen door inwoner (Proces B stap 9) 
 ```
 
 </details>
+
+## Notify-API
+De API is te bevragen op https://api.notifynl.nl. De API-documentatie is te vinden op
+https://docs.notifications.service.gov.uk/rest-api.html#rest-api-documentation (deze is gelijk aan de NL-variant).
+
+Aandachtspunten:
+Je moet de juiste template-ID's hebben (e-mail en sms). Voorbeeldcall:
+
+```bash
+curl --location 'https://api.notifynl.nl/v2/notifications/email' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer <JWT>' \
+--data-raw '{
+  "email_address": "me@example.com",
+  "template_id": "<e-mailtemplateid>",
+  "personalisation": {
+    "klant.voornaam": "Amala",
+    "klant.voorvoegselAchternaam": "van de",
+    "klant.achternaam": "Putten",
+    "taak.heeft_verloopdatum": "21 februari 2026"
+    }
+}
+'
+```
+
+JWT: 
+- De API-key in Notify bestaat uit 3 delen:
+- Naam
+- iss-UUID
+- JWT-secret
+
+`<naam>-<iss-UUID>-<jwt-secret>`
+De jwt moet de iss-uuid gebruiken in de body. Zie de [auth-documentatie](https://docs.notifications.service.gov.uk/rest-api.html#headers) voor details.
