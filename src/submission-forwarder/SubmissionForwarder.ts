@@ -68,7 +68,7 @@ export class SubmissionForwarder extends Construct {
 
     this.backupBucket = this.setupBackupBucket();
     this.esbQueue = this.setupEsbQueue();
-    
+
     this.parameters = this.setupParameters();
     this.bucket = this.setupSubmissionsBucket();
 

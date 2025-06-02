@@ -1,8 +1,8 @@
+import { createHash } from 'crypto';
 import { Logger } from '@aws-lambda-powertools/logger';
 import { S3Client } from '@aws-sdk/client-s3';
 import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
 import { Upload } from '@aws-sdk/lib-storage';
-import { createHash } from 'crypto';
 import { EsbSubmission } from '../shared/EsbSubmission';
 import { KeyValuePair, Submission } from '../shared/Submission';
 import { trace } from '../shared/trace';
