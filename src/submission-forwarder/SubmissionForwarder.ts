@@ -13,6 +13,7 @@ import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { CustomerManagedEncryptionConfiguration, DefinitionBody, LogLevel, StateMachine } from 'aws-cdk-lib/aws-stepfunctions';
 import { Construct } from 'constructs';
 import { Statics } from '../Statics';
+import { DeliveryQueue } from './DeliveryQueue';
 import { DocumentsToS3StorageFunction } from './documentsToS3Storage/documentsToS3Storage-function';
 import { ForwarderFunction } from './forwarder-lambda/forwarder-function';
 import { InternalNotificationMailFunction } from './internal-notification-mail-lambda/internalNotificationMail-function';
@@ -67,10 +68,14 @@ export class SubmissionForwarder extends Construct {
 
     this.backupBucket = this.setupBackupBucket();
     this.esbQueue = this.setupEsbQueue();
+    
     this.parameters = this.setupParameters();
     this.bucket = this.setupSubmissionsBucket();
 
-    this.setupEsbUser();
+    const esbRole = this.setupEsbUser();
+
+    this.setupESF(esbRole);
+
     const documentStorage = this.setupDocumentStorageLambda();
     const forwarder = this.setupEsbForwarderLambda();
     const notification = this.setupNotificationMailLambda();
@@ -79,6 +84,13 @@ export class SubmissionForwarder extends Construct {
     const orchestrator = this.setupOrchestrationStepFunction(documentStorage, forwarder, notification, zgw);
     this.setupReceiverLambda(orchestrator);
     this.setupResubmitLambda(orchestrator);
+  }
+
+  private setupESF(esbRole: Role) {
+    new DeliveryQueue(this, 'efs-queue', {
+      key: this.options.key,
+      role: esbRole,
+    });
   }
 
   private setupParameters() {
@@ -372,6 +384,7 @@ export class SubmissionForwarder extends Construct {
     this.esbQueue.grantConsumeMessages(role);
     this.bucket.grantRead(role);
     this.options.key.grantDecrypt(role);
+    return role;
   }
 
   private setupBackupBucket() {
