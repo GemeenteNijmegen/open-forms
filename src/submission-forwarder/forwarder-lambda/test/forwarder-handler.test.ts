@@ -67,18 +67,12 @@ describe('SubmissionForwarderHandler', () => {
     // Fake HttpClient (inhoud niet belangrijk)
     fakeHttpClient = {};
 
-    fakeDocumentenClientInstance = {
-      enkelvoudiginformatieobjectDownload: jest.fn().mockResolvedValue({ data: 'binary-pdf-data' }),
-      enkelvoudiginformatieobjectRetrieve: jest.fn().mockResolvedValue({ data: { bestandsnaam: 'attachment.pdf', formaat: 'application/pdf' } }),
-    };
-
     // Zorg dat wanneer de code de constructor van de documenten client aanroept,
     // een instance met de fake methoden teruggegeven wordt.
     jest.spyOn(documenten, 'Enkelvoudiginformatieobjecten').mockImplementation(() => fakeDocumentenClientInstance);
 
     fakeZgwClientFactory = {
       getObjectsApiClient: jest.fn().mockResolvedValue(fakeObjectsApiClient),
-      getDocumentenClient: jest.fn().mockResolvedValue(fakeHttpClient),
       getZakenClient: jest.fn().mockResolvedValue(fakeHttpClient),
       getCatalogiClient: jest.fn().mockResolvedValue(fakeHttpClient),
     };
@@ -99,12 +93,10 @@ describe('SubmissionForwarderHandler', () => {
   });
 
   it('should send both a normal and monitoring notification when monitoringNetworkShare is provided', async () => {
-    await handler.handle(fakeSubmission);
+    await handler.handle(fakeSubmission, ['https://example.com']);
     // Prevent unused import Upload
     const uploadInstances = (Upload as any as jest.Mock).mock.instances;
     expect(uploadInstances.length).toBeGreaterThan(0);
-
-    expect(fakeZgwClientFactory.getDocumentenClient).toHaveBeenCalledWith('https://documenten.api');
 
     // SQS send message moet twee keer aangeroepen worden, ook monitoring
     const sendMessageCalls = sqsMock.commandCalls(SendMessageCommand);
@@ -125,7 +117,7 @@ describe('SubmissionForwarderHandler', () => {
     sqsMock.reset(); // reset de SQS-mock om de tellers weer op nul te zetten
     sqsMock.on(SendMessageCommand).resolves({});
 
-    await handler.handle(emptyMonitoringSubmission);
+    await handler.handle(emptyMonitoringSubmission, ['https://example.com']);
 
     // Er mag maar 1 SQS-send call plaatsvinden, geen monitoringlocatie
     const sendMessageCalls = sqsMock.commandCalls(SendMessageCommand);
@@ -138,7 +130,7 @@ describe('SubmissionForwarderHandler', () => {
   it('should not send any notification if networkShare is missing', async () => {
     const emptyNetworkShareSubmission = { ...fakeSubmission, networkShare: '' }; // copy with spreader
     const event = { Sns: { Message: JSON.stringify(emptyNetworkShareSubmission) } };
-    await handler.handle(event as any);
+    await handler.handle(event as any, ['https://example.com']);
     expect(sqsMock.commandCalls(SendMessageCommand).length).toBe(0);
   });
 

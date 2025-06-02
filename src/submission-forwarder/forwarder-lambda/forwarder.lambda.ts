@@ -30,8 +30,9 @@ export async function handler(event: any) {
     queueUrl: env.QUEUE_URL,
   });
 
-  const submission = SubmissionSchema.parse(event);
-  await submissionForwarderHandler.handle(submission);
+  const submission = SubmissionSchema.parse(event.Payload.submission);
+  const filePaths = event.Payload.filePaths;
+  await submissionForwarderHandler.handle(submission, filePaths);
 
 }
 

@@ -12,6 +12,6 @@ const logger = new Logger();
 export async function trace(reference: string, handler: string, message: string) {
   logger.info('HANDLER-TRACE', {
     trace: `${reference}#${handler}`,
-    message: message,
+    traceMessage: message,
   });
 }
