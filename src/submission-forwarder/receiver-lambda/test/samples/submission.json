@@ -1,0 +1,27 @@
+{
+    "url": "https://example.com/objects/api/v2/objects/5a02c14e-2dea-4dc0-bdef-292595c15d3f",
+    "uuid": "5a02c14e-2dea-4dc0-bdef-292595c15d3f",
+    "type": "https://example.com/objecttypes/api/v2/objecttypes/d3713c2b-307c-4c07-8eaa-c2c6d75869cf",
+    "record": {
+        "index": 1,
+        "typeVersion": 3,
+        "data": {
+            "bsn": "999999333",
+            "kvk": "",
+            "pdf": "https://example.com/documenten/api/v1/enkelvoudiginformatieobjecten/03c047e1-0083-4d8b-8b31-714564b9fdb9",
+            "formName": "Een formuliernaam",
+            "reference": "OF-ABC123",
+            "attachments": [],
+            "networkShare": "//someshare/test",
+            "internalNotificationEmails": [
+                "test@example.com"
+            ]
+        },
+        "geometry": null,
+        "startAt": "2025-06-02",
+        "endAt": null,
+        "registrationAt": "2025-06-02",
+        "correctionFor": null,
+        "correctedBy": null
+    }
+}

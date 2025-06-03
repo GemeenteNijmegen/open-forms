@@ -1,0 +1,52 @@
+{
+  "type": "https://example.com/objecttypes/api/v2/objecttypes/6df21057-e07c-4909-8933-d70b79cfd15e",
+  "record": {
+    "typeVersion": 3,
+    "data": {
+      "soort": "formtaak",
+      "titel": "Statusformulier invullen",
+      "status": "open",
+      "eigenaar": "nijmegen",
+      "formtaak": {
+        "formulier": {
+          "soort": "url",
+          "value": "https://example.com/statusformulier"
+        },
+        "data": {
+          "dossiernummer": "dossier-test-1",
+          "periodenummer": "202506",
+          "email": "test@example.com",
+          "telefoon": "1234567890"
+        },
+        "verzonden_data": {
+          "pdf": "https://example.com/documenten/api/v1/enkelvoudiginformatieobjecten/e73ea0f5-2088-4f75-b862-5ebc962e8f47",
+          "email": "test@example.com",
+          "telefoon": "1234567891",
+          "attachments": [],
+          "studiegewijzigd": "nee",
+          "vakantiegewijzigd": "nee",
+          "vermogengewijzigd": "nee",
+          "inkomstengewijzigd": "nee",
+          "woonsituatiegewijzigd": "nee",
+          "vrijwilligerswerkgewijzigd": "nee"
+      }
+      },
+      "koppeling": {
+        "uuid": "4c9b685d-3a9c-4216-9bb8-cac7fb2456e1",
+        "registratie": "zaak"
+      },
+      "verloopdatum": "2025-05-21 00:00:00",
+      "identificatie": {
+        "type": "bsn",
+        "value": "900026236"
+      },
+      "verwerker_taak_id": "client_task"
+    },
+    "geometry": null,
+    "startAt": "2025-05-26",
+    "endAt": null,
+    "registrationAt": "2025-05-26",
+    "correctionFor": null,
+    "correctedBy": null
+  }
+}

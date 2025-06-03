@@ -6,9 +6,10 @@ import { Response } from '@gemeentenijmegen/apigateway-http/lib/V1/Response';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { ParseError, SendMessageError } from './ErrorTypes';
 import { NotificationEventParser } from './NotificationEventParser';
-import { Submission, SubmissionSchema } from '../shared/Submission';
+import { ObjectParser, objectParserResult } from './ObjectParser';
 import { trace } from '../shared/trace';
 import { ZgwClientFactory } from '../shared/ZgwClientFactory';
+import { ObjectSchema } from '../shared/ZgwObject';
 
 const HANDLER_ID = 'receiver';
 const logger = new Logger();
@@ -18,14 +19,18 @@ interface ReceiverHandlerOptions {
   zgwClientFactory: ZgwClientFactory;
   topicArn: string;
   orchestratorArn: string;
+  supportedObjectTypes: string;
 }
 
-export class ReceiverHandler {
 
-  constructor(private readonly options: ReceiverHandlerOptions) { }
+export class ReceiverHandler {
+  private objectParser: ObjectParser;
+
+  constructor(private readonly options: ReceiverHandlerOptions) {
+    this.objectParser = new ObjectParser(options.supportedObjectTypes);
+  }
 
   async handle(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
-
     try {
       const notification = NotificationEventParser.parse(event, logger);
       logger.debug('Parsed notification', { notification });
@@ -39,15 +44,16 @@ export class ReceiverHandler {
       if (notification.resource == 'object') {
         // Get the object from the object api
         const objectClient = await this.options.zgwClientFactory.getObjectsApiClient();
-        const object = await objectClient.getObject(notification.resourceUrl);
+        const object = ObjectSchema.parse(await objectClient.getObject(notification.resourceUrl));
+        const result = this.objectParser.parse(object);
+        // const submission = SubmissionSchema.parse(object.record.data);
+        logger.debug('Retrieved object', { result });
 
-        const submission = SubmissionSchema.parse(object.record.data);
-        logger.debug('Retreived submisison', { submission });
-
-        await this.startExecution(submission);
-        await trace(submission.reference, HANDLER_ID, 'OK');
+        await this.startExecution(result);
+        await trace(result.reference, HANDLER_ID, 'OK');
         return Response.ok();
       }
+
       logger.warn('Unknown notification type');
       return Response.error(422, 'Unknown notification type, cannot process');
     } catch (error: unknown) {
@@ -67,11 +73,11 @@ export class ReceiverHandler {
   }
 
 
-  async startExecution(submission: Submission) {
+  async startExecution(result: objectParserResult) {
     const execution = await stepfunctions.send(new StartExecutionCommand({
       stateMachineArn: this.options.orchestratorArn,
-      input: JSON.stringify(submission),
-      name: `${submission.reference}-${Date.now()}`,
+      input: JSON.stringify(result),
+      name: `${result.reference}-${Date.now()}`,
     }));
     logger.info('Started orchestrator', { executionArn: execution.executionArn });
   }
