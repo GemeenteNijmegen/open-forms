@@ -1,7 +1,7 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import { APIGatewayProxyEvent } from 'aws-lambda';
-import { Notification, NotificationSchema } from '../shared/Notification';
 import { ParseError } from './ErrorTypes';
+import { Notification, NotificationSchema } from '../shared/Notification';
 
 export class NotificationEventParser {
   /**

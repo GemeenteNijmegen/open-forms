@@ -4,11 +4,11 @@ import { Logger } from '@aws-lambda-powertools/logger';
 import { SFNClient, StartExecutionCommand } from '@aws-sdk/client-sfn';
 import { Response } from '@gemeentenijmegen/apigateway-http/lib/V1/Response';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { ParseError, SendMessageError } from './ErrorTypes';
+import { NotificationEventParser } from './NotificationEventParser';
 import { Submission, SubmissionSchema } from '../shared/Submission';
 import { trace } from '../shared/trace';
 import { ZgwClientFactory } from '../shared/ZgwClientFactory';
-import { ParseError, SendMessageError } from './ErrorTypes';
-import { NotificationEventParser } from './NotificationEventParser';
 
 const HANDLER_ID = 'receiver';
 const logger = new Logger();
@@ -36,13 +36,13 @@ export class ReceiverHandler {
         return Response.json({ message: 'OK - test event' });
       }
 
-      if(notification.resource == 'object') {
-         // Get the object from the object api
-         const objectClient = await this.options.zgwClientFactory.getObjectsApiClient();
-         const object = await objectClient.getObject(notification.resourceUrl);
-         
-         const submission = SubmissionSchema.parse(object.record.data);
-         logger.debug('Retreived submisison', { submission });
+      if (notification.resource == 'object') {
+        // Get the object from the object api
+        const objectClient = await this.options.zgwClientFactory.getObjectsApiClient();
+        const object = await objectClient.getObject(notification.resourceUrl);
+
+        const submission = SubmissionSchema.parse(object.record.data);
+        logger.debug('Retreived submisison', { submission });
 
         await this.startExecution(submission);
         await trace(submission.reference, HANDLER_ID, 'OK');

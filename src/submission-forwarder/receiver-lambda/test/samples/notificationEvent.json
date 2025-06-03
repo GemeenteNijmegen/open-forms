@@ -1,0 +1,4 @@
+{
+        "body": "{\"kanaal\": \"objecten\", \"hoofdObject\": \"https://example.com/objects/api/v2/objects/714eb3e8-2db1-4da2-bacd-c2c08187ceaf\", \"resource\": \"object\", \"resourceUrl\": \"https://example.com/objects/api/v2/objects/714eb3e8-2db1-4da2-bacd-c2c08187ceaf\", \"actie\": \"partial_update\", \"aanmaakdatum\": \"2025-06-02T14:48:27.666Z\", \"kenmerken\": {\"objectType\": \"https://example.com/objecttypes/api/v2/objecttypes/6df21057-e07c-4909-8933-d70b79cfd15e\"}}",
+        "isBase64Encoded": false
+    }
