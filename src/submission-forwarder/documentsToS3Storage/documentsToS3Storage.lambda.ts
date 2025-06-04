@@ -3,11 +3,11 @@ import { S3Client } from '@aws-sdk/client-s3';
 
 import { Enkelvoudiginformatieobjecten } from '@gemeentenijmegen/modules-zgw-client/lib/documenten-generated-client';
 import { environmentVariables } from '@gemeentenijmegen/utils';
-import { EnrichedZgwObjectDataSchema } from '../shared/EnrichedZgwObjectData';
-import { ZgwClientFactory } from '../shared/ZgwClientFactory';
 import { DocumentsToS3StorageHandler } from './DocumentsToS3StorageHandler';
 import { FileDownloader } from './FileDownloader';
 import { S3Uploader } from './S3Uploader';
+import { EnrichedZgwObjectDataSchema } from '../shared/EnrichedZgwObjectData';
+import { ZgwClientFactory } from '../shared/ZgwClientFactory';
 
 const logger = new Logger();
 const s3Client = new S3Client({});
