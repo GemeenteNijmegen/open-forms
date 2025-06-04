@@ -85,7 +85,21 @@
           "JitterStrategy": "FULL"
         }
       ],
-      "Next": "ESB Forwarder"
+      "Next": "Is ESF statusform?"
+    },
+    "Is ESF statusform?": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Next": "ESF found",
+          "Condition": "{% ($contains($states.input.record.data.formtaak.formulier.value, \"nijmegen.nl/statusformulier\") and $exists($states.input.record.data.formtaak.formulier.value)) %}"
+        }
+      ],
+      "Default": "ESB Forwarder"
+    },
+    "ESF found": {
+      "Type": "Pass",
+      "Next": "Success"
     },
     "ESB Forwarder": {
       "Type": "Task",

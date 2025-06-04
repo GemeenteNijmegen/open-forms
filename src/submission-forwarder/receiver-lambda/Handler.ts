@@ -4,7 +4,8 @@ import { Logger } from '@aws-lambda-powertools/logger';
 import { SFNClient, StartExecutionCommand } from '@aws-sdk/client-sfn';
 import { Response } from '@gemeentenijmegen/apigateway-http/lib/V1/Response';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { Notification, NotificationSchema } from '../shared/Notification';
+import { ParseError, SendMessageError } from './ErrorTypes';
+import { NotificationEventParser } from './NotificationEventParser';
 import { Submission, SubmissionSchema } from '../shared/Submission';
 import { trace } from '../shared/trace';
 import { ZgwClientFactory } from '../shared/ZgwClientFactory';
@@ -26,7 +27,7 @@ export class ReceiverHandler {
   async handle(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
 
     try {
-      const notification = this.getNotification(event);
+      const notification = NotificationEventParser.parse(event, logger);
       logger.debug('Parsed notification', { notification });
 
       // Handle test notifications
@@ -35,18 +36,20 @@ export class ReceiverHandler {
         return Response.json({ message: 'OK - test event' });
       }
 
-      // Get the object from the object api
-      const objectClient = await this.options.zgwClientFactory.getObjectsApiClient();
-      const object = await objectClient.getObject(notification.resourceUrl);
-      const submission = SubmissionSchema.parse(object.record.data);
-      logger.debug('Retreived submisison', { submission });
+      if (notification.resource == 'object') {
+        // Get the object from the object api
+        const objectClient = await this.options.zgwClientFactory.getObjectsApiClient();
+        const object = await objectClient.getObject(notification.resourceUrl);
 
-      await this.startExecution(submission);
+        const submission = SubmissionSchema.parse(object.record.data);
+        logger.debug('Retreived submisison', { submission });
 
-      await trace(submission.reference, HANDLER_ID, 'OK');
-
-      return Response.ok();
-
+        await this.startExecution(submission);
+        await trace(submission.reference, HANDLER_ID, 'OK');
+        return Response.ok();
+      }
+      logger.warn('Unknown notification type');
+      return Response.error(422, 'Unknown notification type, cannot process');
     } catch (error: unknown) {
       if (error instanceof ParseError) {
         return Response.error(400, error.message);
@@ -63,27 +66,6 @@ export class ReceiverHandler {
     }
   }
 
-  /**
-   * Parses the event and constructs a Notification
-   * @param event
-   * @returns
-   */
-  getNotification(event: APIGatewayProxyEvent): Notification {
-    try {
-      if (!event.body) {
-        throw Error('No body found in event');
-      }
-      let body = event.body;
-      if (event.isBase64Encoded) {
-        body = Buffer.from(event.body, 'base64').toString('utf-8');
-      }
-      const bodyJson = JSON.parse(body);
-      return NotificationSchema.parse(bodyJson);
-    } catch (error) {
-      logger.error('Could not parse notification', { error });
-      throw new ParseError('Failed to parse notification');
-    }
-  }
 
   async startExecution(submission: Submission) {
     const execution = await stepfunctions.send(new StartExecutionCommand({
@@ -96,5 +78,4 @@ export class ReceiverHandler {
 
 }
 
-export class ParseError extends Error { }
-export class SendMessageError extends Error { }
+
