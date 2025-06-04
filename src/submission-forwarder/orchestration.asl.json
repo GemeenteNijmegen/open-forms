@@ -15,7 +15,7 @@
         "Key": "{% $states.input.reference %}"
       },
       "Resource": "arn:aws:states:::aws-sdk:s3:putObject",
-      "Next": "Forward to ESB?",
+      "Next": "Files to S3?",
       "Output": "{% $states.input %}"
     },
     "Has notification email?": {
@@ -53,7 +53,7 @@
       ],
       "Next": "Success"
     },
-    "Forward to ESB?": {
+    "Files to S3?": {
       "Type": "Choice",
       "Choices": [
         {
@@ -85,9 +85,9 @@
           "JitterStrategy": "FULL"
         }
       ],
-      "Next": "Is ESF statusform?"
+      "Next": "Networkshare or ESF?"
     },
-    "Is ESF statusform?": {
+    "Networkshare or ESF?": {
       "Type": "Choice",
       "Choices": [
         {
