@@ -23,7 +23,7 @@
       "Choices": [
         {
           "Next": "Notification email",
-          "Condition": "{% ($exists($states.input.internalNotificationEmails) and $exists($states.input.internalNotificationEmails[0])) %}",
+          "Condition": "{% ($exists($states.input.enrichedObject.internalNotificationEmails) and $exists($states.input.enrichedObject.internalNotificationEmails[0])) %}",
           "Comment": "internalNotificationEmail(s) provided"
         }
       ],
@@ -85,7 +85,8 @@
           "JitterStrategy": "FULL"
         }
       ],
-      "Next": "Networkshare or ESF?"
+      "Next": "Networkshare or ESF?",
+      "Output": "{% $states.result.Payload %}"
     },
     "Networkshare or ESF?": {
       "Type": "Choice",
@@ -93,12 +94,12 @@
         {
           "Comment": "has statusformulier URL",
           "Next": "ESF ESB Queue",
-          "Condition": "{% ($contains($states.input.taak.formtaak.formulier.value, \"nijmegen.nl/statusformulier\") and $exists($states.input.taak.formtaak.formulier.value)) %}"
+          "Condition": "{% ($contains($states.input.enrichedObject.taak.formtaak.formulier.value, \"nijmegen.nl/statusformulier\") and $exists($states.input.enrichedObject.taak.formtaak.formulier.value)) %}"
         },
         {
           "Comment": "contains networkshare / monitoring",
           "Next": "ESB Forwarder",
-          "Condition": "{% ($exists($states.input.Payload.submission.networkShare) or $exists($states.input.Payload.submission.monitoringNetworkShare)) %}"
+          "Condition": "{% ($exists($states.input.enrichedObject.networkShare) or $exists($states.input.enrichedObject.monitoringNetworkShare)) %}"
         }
       ],
       "Default": "ZGW registration?"
@@ -141,7 +142,7 @@
       "Choices": [
         {
           "Next": "Register ZGW",
-          "Condition": "{% ($exists($states.input.bsn) or $exists($states.input.kvk)) %}",
+          "Condition": "{% ($exists($states.input.enrichedObject.bsn) or $exists($states.input.enrichedObject.kvk)) %}",
           "Comment": "Has bsn or kvk"
         }
       ],

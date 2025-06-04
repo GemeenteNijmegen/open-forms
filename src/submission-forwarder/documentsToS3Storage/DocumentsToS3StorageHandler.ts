@@ -37,7 +37,7 @@ export class DocumentsToS3StorageHandler {
     const filePaths = s3PathsFromFileData(fileData, this.options.bucketName, objectData.reference);
 
     return {
-      submission: objectData,
+      enrichedObject: objectData,
       filePaths,
     };
   }
