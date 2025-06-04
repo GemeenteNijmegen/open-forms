@@ -299,7 +299,7 @@ export class SubmissionForwarder extends Construct {
         FORWARDER_LAMBDA_ARN: forwarderLambda.functionArn,
         NOTIFICATION_EMAIL_LAMBDA_ARN: notificationEmailLambda.functionArn,
         ZGW_REGISTRATION_LAMBDA_ARN: zgwLambda.functionArn,
-        ESF_QUEUE_ARN: esfQueue.queueUrl,
+        ESF_QUEUE_URL: esfQueue.queueUrl,
       },
       encryptionConfiguration: new CustomerManagedEncryptionConfiguration(this.options.key),
       logs: {
