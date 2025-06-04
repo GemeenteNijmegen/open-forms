@@ -6,7 +6,8 @@ import { Response } from '@gemeentenijmegen/apigateway-http/lib/V1/Response';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { ParseError, SendMessageError } from './ErrorTypes';
 import { NotificationEventParser } from './NotificationEventParser';
-import { ObjectParser, objectParserResult } from './ObjectParser';
+import { ObjectParser } from './ObjectParser';
+import { EnrichedZgwObjectData } from '../shared/EnrichedZgwObjectData';
 import { trace } from '../shared/trace';
 import { ZgwClientFactory } from '../shared/ZgwClientFactory';
 import { ObjectSchema } from '../shared/ZgwObject';
@@ -75,7 +76,7 @@ export class ReceiverHandler {
   }
 
 
-  async startExecution(result: objectParserResult) {
+  async startExecution(result: EnrichedZgwObjectData) {
     const execution = await stepfunctions.send(new StartExecutionCommand({
       stateMachineArn: this.options.orchestratorArn,
       input: JSON.stringify(result),

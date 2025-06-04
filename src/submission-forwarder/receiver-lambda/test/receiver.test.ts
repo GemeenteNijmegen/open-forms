@@ -40,6 +40,7 @@ describe('receiver', () => {
   let fakeObjectsApiClient: any = {
     getObject: jest.fn().mockResolvedValue({
       type: 'https://example.com/objecturl',
+      url: 'https://example.com/objecturl',
       record: { data: fakeSubmission },
     }),
   };

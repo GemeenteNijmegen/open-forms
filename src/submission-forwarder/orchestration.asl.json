@@ -92,19 +92,24 @@
       "Choices": [
         {
           "Comment": "has statusformulier URL",
-          "Next": "ESF found",
+          "Next": "ESF ESB Queue",
           "Condition": "{% ($contains($states.input.taak.formtaak.formulier.value, \"nijmegen.nl/statusformulier\") and $exists($states.input.taak.formtaak.formulier.value)) %}"
         },
         {
+          "Comment": "contains networkshare / monitoring",
           "Next": "ESB Forwarder",
-          "Condition": "{% ($exists($states.input.networkShare) or $exists($states.input.monitoringNetworkShare)) %}",
-          "Comment": "contains networkshare / monitoring"
+          "Condition": "{% ($exists($states.input.Payload.submission.networkShare) or $exists($states.input.Payload.submission.monitoringNetworkShare)) %}"
         }
       ],
       "Default": "ZGW registration?"
     },
-    "ESF found": {
-      "Type": "Pass",
+    "ESF ESB Queue": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sqs:sendMessage",
+      "Arguments": {
+        "MessageBody": "{% $states.input %}",
+        "QueueUrl": "${ESF_QUEUE_URL}"
+      },
       "Next": "Success"
     },
     "ESB Forwarder": {

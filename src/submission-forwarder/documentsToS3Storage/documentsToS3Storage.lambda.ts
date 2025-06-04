@@ -3,11 +3,11 @@ import { S3Client } from '@aws-sdk/client-s3';
 
 import { Enkelvoudiginformatieobjecten } from '@gemeentenijmegen/modules-zgw-client/lib/documenten-generated-client';
 import { environmentVariables } from '@gemeentenijmegen/utils';
+import { EnrichedZgwObjectDataSchema } from '../shared/EnrichedZgwObjectData';
+import { ZgwClientFactory } from '../shared/ZgwClientFactory';
 import { DocumentsToS3StorageHandler } from './DocumentsToS3StorageHandler';
 import { FileDownloader } from './FileDownloader';
 import { S3Uploader } from './S3Uploader';
-import { SubmissionSchema } from '../shared/Submission';
-import { ZgwClientFactory } from '../shared/ZgwClientFactory';
 
 const logger = new Logger();
 const s3Client = new S3Client({});
@@ -36,8 +36,9 @@ export async function handler(event: any) {
     logger,
   });
 
-  const submission = SubmissionSchema.parse(event);
-  return documentsToS3StorageHandler.handle(submission);
+  // Data can be a submission object or esf taak, but both are presented in a common format
+  const objectData = EnrichedZgwObjectDataSchema.parse(event);
+  return documentsToS3StorageHandler.handle(objectData);
 }
 
 async function getDocumentenClient(zgwClientFactory: ZgwClientFactory, baseUrl: string) {
