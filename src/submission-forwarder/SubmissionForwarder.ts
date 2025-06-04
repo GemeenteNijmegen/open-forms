@@ -493,8 +493,8 @@ class ForwarderParameters extends Construct {
 
   addForwarderParameters() {
     this.supportedObjectTypes = new StringParameter(this, 'objectTypes', {
-      stringValue: 'submission:https://example.com/objecttypes/api/v2/objecttypes/d3713c2b-307c-4c07-8eaa-c2c6d75869cf,esftaak:https://example.com/objecttypes/api/v2/objecttypes/6df21057-e07c-4909-8933-d70b79cfd15e',
-      description: 'name:url pairs (comma-separated) defining supported objecttypes',
+      stringValue: 'submission##https://example.com/objecttypes/api/v2/objecttypes/d3713c2b-307c-4c07-8eaa-c2c6d75869cf;esftaak##https://example.com/objecttypes/api/v2/objecttypes/6df21057-e07c-4909-8933-d70b79cfd15e',
+      description: 'name##url pairs (semi-colon-separated) defining supported objecttypes',
     });
   }
 }
