@@ -431,7 +431,7 @@ export class SubmissionForwarder extends Construct {
 
   private setupNotificationMailLambda() {
     const accountHostedZoneName = StringParameter.valueForStringParameter(this, Statics.accountRootHostedZoneName);
-    const internalNotificationMailLambda = new InternalNotificationMailFunction(this, 'internal-notification', {
+    const internalNotificationMailLambda = new InternalNotificationMailFunction(this, 'internal-notification-function', {
       description: 'Sends internal notification emails',
       environment: {
         POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'DEBUG',
