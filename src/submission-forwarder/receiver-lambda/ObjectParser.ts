@@ -1,7 +1,7 @@
+import { UnknownObjectError } from './ErrorTypes';
 import { EsfTaak, EsfTaakSchema } from '../shared/EsfTaak';
 import { Submission, SubmissionSchema } from '../shared/Submission';
 import { ZgwObject } from '../shared/ZgwObject';
-import { UnknownObjectError } from './ErrorTypes';
 
 export interface objectParserResult {
   pdf?: string;

@@ -4,12 +4,12 @@ import { Logger } from '@aws-lambda-powertools/logger';
 import { SFNClient, StartExecutionCommand } from '@aws-sdk/client-sfn';
 import { Response } from '@gemeentenijmegen/apigateway-http/lib/V1/Response';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { trace } from '../shared/trace';
-import { ZgwClientFactory } from '../shared/ZgwClientFactory';
-import { ObjectSchema } from '../shared/ZgwObject';
 import { ParseError, SendMessageError } from './ErrorTypes';
 import { NotificationEventParser } from './NotificationEventParser';
 import { ObjectParser, objectParserResult } from './ObjectParser';
+import { trace } from '../shared/trace';
+import { ZgwClientFactory } from '../shared/ZgwClientFactory';
+import { ObjectSchema } from '../shared/ZgwObject';
 
 const HANDLER_ID = 'receiver';
 const logger = new Logger();
