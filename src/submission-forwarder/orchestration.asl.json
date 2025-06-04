@@ -57,9 +57,9 @@
       "Type": "Choice",
       "Choices": [
         {
+          "Comment": "Has PDF key",
           "Next": "Store files in S3",
-          "Condition": "{% ($exists($states.input.networkShare) or $exists($states.input.monitoringNetworkShare)) %}",
-          "Comment": "networkShare or monitoring provided"
+          "Condition": "{% ($exists($states.input.pdf)) %}"
         }
       ],
       "Default": "ZGW registration?"
@@ -91,11 +91,17 @@
       "Type": "Choice",
       "Choices": [
         {
+          "Comment": "has statusformulier URL",
           "Next": "ESF found",
-          "Condition": "{% ($contains($states.input.record.data.formtaak.formulier.value, \"nijmegen.nl/statusformulier\") and $exists($states.input.record.data.formtaak.formulier.value)) %}"
+          "Condition": "{% ($contains($states.input.taak.formtaak.formulier.value, \"nijmegen.nl/statusformulier\") and $exists($states.input.taak.formtaak.formulier.value)) %}"
+        },
+        {
+          "Next": "ESB Forwarder",
+          "Condition": "{% ($exists($states.input.networkShare) or $exists($states.input.monitoringNetworkShare)) %}",
+          "Comment": "contains networkshare / monitoring"
         }
       ],
-      "Default": "ESB Forwarder"
+      "Default": "ZGW registration?"
     },
     "ESF found": {
       "Type": "Pass",
