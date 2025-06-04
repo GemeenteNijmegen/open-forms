@@ -1,12 +1,13 @@
-import { UnknownObjectError } from './ErrorTypes';
 import { EsfTaak, EsfTaakSchema } from '../shared/EsfTaak';
 import { Submission, SubmissionSchema } from '../shared/Submission';
 import { ZgwObject } from '../shared/ZgwObject';
+import { UnknownObjectError } from './ErrorTypes';
 
 export interface objectParserResult {
   pdf?: string;
   attachments?: string[];
   reference: string;
+  objectUrl: string;
   [key: string]: any;
 }
 interface objectType {
@@ -45,13 +46,17 @@ export class ObjectParser {
     const parsed = type.parser.parse(object.record.data);
     if (type.parser == SubmissionSchema) {
       let submission = parsed as Submission;
-      return submission;
+      return {
+        objectUrl: object.url,
+        ...submission
+      }
     } else if (type.parser == EsfTaakSchema) {
       let taak = parsed as EsfTaak;
       return {
         pdf: taak.formtaak.verzonden_data.pdf,
         attachments: taak.formtaak.verzonden_data.attachments,
         reference: `EFS-${taak.formtaak.data.dossiernummer}-${taak.formtaak.data.periodenummer}`,
+        objectUrl: object.url,
         taak,
       };
     }

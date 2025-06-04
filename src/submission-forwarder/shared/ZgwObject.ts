@@ -2,6 +2,7 @@ import z from 'zod';
 
 export const ObjectSchema = z.object({
   type: z.string().url(),
+  url: z.string().url(),
   record: z.object({
     data: z.object({}).passthrough(),
   }).passthrough(),
