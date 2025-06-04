@@ -313,6 +313,7 @@ export class SubmissionForwarder extends Construct {
     documentStorageLambda.grantInvoke(stepfunction);
     forwarderLambda.grantInvoke(stepfunction);
     notificationEmailLambda.grantInvoke(stepfunction);
+    esfQueue.grantSendMessages(stepfunction);
     this.backupBucket.grantWrite(stepfunction);
     stepfunction.addToRolePolicy(new PolicyStatement({
       actions: [
