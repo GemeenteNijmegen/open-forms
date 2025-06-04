@@ -14,6 +14,7 @@ const env = environmentVariables([
   'MIJN_SERVICES_OPEN_ZAAK_CLIENT_SECRET_ARN',
   'OBJECTS_API_APIKEY_ARN',
   'ORCHESTRATOR_ARN',
+  'SUPPORTED_OBJECTTYPES',
 ]);
 
 function getZgwClientFactory() {
@@ -36,6 +37,7 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
     zgwClientFactory: getZgwClientFactory(),
     topicArn: env.TOPIC_ARN,
     orchestratorArn: env.ORCHESTRATOR_ARN,
+    supportedObjectTypes: env.SUPPORTED_OBJECTTYPES,
   });
 
   try {

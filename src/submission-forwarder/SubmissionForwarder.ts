@@ -61,6 +61,7 @@ export class SubmissionForwarder extends Construct {
     catalogiApiBaseUrl: StringParameter;
     mijnServicesOpenZaakApiClientId: StringParameter;
     mijnServicesOpenZaakApiClientSecret: Secret;
+    supportedObjectTypes: StringParameter;
   };
 
   constructor(scope: Construct, id: string, private readonly options: SubmissionForwarderOptions) {
@@ -143,6 +144,8 @@ export class SubmissionForwarder extends Construct {
       description: 'Client secret used by submission-forwarder to authenticate at mijn services open zaak APIs',
     });
 
+    const additionalParameters = new ForwarderParameters(this, 'params');
+
     return {
       apikey,
       objectsApikey,
@@ -151,6 +154,7 @@ export class SubmissionForwarder extends Construct {
       catalogiApiBaseUrl,
       mijnServicesOpenZaakApiClientId,
       mijnServicesOpenZaakApiClientSecret,
+      supportedObjectTypes: additionalParameters.supportedObjectTypes,
     };
   }
 
@@ -174,6 +178,7 @@ export class SubmissionForwarder extends Construct {
         MIJN_SERVICES_OPEN_ZAAK_CLIENT_SECRET_ARN: this.parameters.mijnServicesOpenZaakApiClientSecret.secretArn,
         OBJECTS_API_APIKEY_ARN: this.parameters.objectsApikey.secretArn,
         ORCHESTRATOR_ARN: orchestrator.stateMachineArn,
+        SUPPORTED_OBJECTTYPES: this.parameters.supportedObjectTypes.stringValue,
       },
     });
     this.parameters.apikey.grantRead(receiver);
@@ -475,4 +480,19 @@ export class SubmissionForwarder extends Construct {
 
   }
 
+}
+
+class ForwarderParameters extends Construct {
+  public supportedObjectTypes: StringParameter;
+  constructor(scope: Construct, id: string) {
+    super(scope, id);
+    this.addForwarderParameters();
+  }
+
+  addForwarderParameters() {
+    this.supportedObjectTypes = new StringParameter(this, 'objectTypes', {
+      stringValue: 'submission:https://example.com/objecttypes/api/v2/objecttypes/d3713c2b-307c-4c07-8eaa-c2c6d75869cf,esftaak:https://example.com/objecttypes/api/v2/objecttypes/6df21057-e07c-4909-8933-d70b79cfd15e',
+      description: 'name:url pairs (comma-separated) defining supported objecttypes',
+    });
+  }
 }
