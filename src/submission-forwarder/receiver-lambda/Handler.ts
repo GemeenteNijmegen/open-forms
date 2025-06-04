@@ -4,12 +4,12 @@ import { Logger } from '@aws-lambda-powertools/logger';
 import { SFNClient, StartExecutionCommand } from '@aws-sdk/client-sfn';
 import { Response } from '@gemeentenijmegen/apigateway-http/lib/V1/Response';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { ParseError, SendMessageError } from './ErrorTypes';
-import { NotificationEventParser } from './NotificationEventParser';
-import { ObjectParser, objectParserResult } from './ObjectParser';
 import { trace } from '../shared/trace';
 import { ZgwClientFactory } from '../shared/ZgwClientFactory';
 import { ObjectSchema } from '../shared/ZgwObject';
+import { ParseError, SendMessageError } from './ErrorTypes';
+import { NotificationEventParser } from './NotificationEventParser';
+import { ObjectParser, objectParserResult } from './ObjectParser';
 
 const HANDLER_ID = 'receiver';
 const logger = new Logger();
@@ -44,8 +44,10 @@ export class ReceiverHandler {
       if (notification.resource == 'object') {
         // Get the object from the object api
         const objectClient = await this.options.zgwClientFactory.getObjectsApiClient();
-        const object = ObjectSchema.parse(await objectClient.getObject(notification.resourceUrl));
-        const result = this.objectParser.parse(object);
+        const zgwObjectResponse = await objectClient.getObject(notification.resourceUrl);
+        logger.debug(zgwObjectResponse);
+        const zgwObject = ObjectSchema.parse(zgwObjectResponse);
+        const result = this.objectParser.parse(zgwObject);
         // const submission = SubmissionSchema.parse(object.record.data);
         logger.debug('Retrieved object', { result });
 

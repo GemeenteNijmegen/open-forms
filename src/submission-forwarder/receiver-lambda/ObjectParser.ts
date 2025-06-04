@@ -1,7 +1,7 @@
-import { UnknownObjectError } from './ErrorTypes';
 import { EsfTaak, EsfTaakSchema } from '../shared/EsfTaak';
 import { Submission, SubmissionSchema } from '../shared/Submission';
 import { ZgwObject } from '../shared/ZgwObject';
+import { UnknownObjectError } from './ErrorTypes';
 
 export interface objectParserResult {
   pdf?: string;
@@ -40,7 +40,7 @@ export class ObjectParser {
   parse(object: ZgwObject): objectParserResult {
     const type = this.objectTypes.find(objectType => objectType.objectTypeUrl == object.type);
     if (!type) {
-      throw new UnknownObjectError('Unknown object type, unable to parse');
+      throw new UnknownObjectError(`Unknown object type, unable to parse, object type: ${object.type}`);
     }
     const parsed = type.parser.parse(object.record.data);
     if (type.parser == SubmissionSchema) {
