@@ -4,7 +4,7 @@ import { deduplicateFileNames } from './deduplicateFileNames';
 import { FileDownloader } from './FileDownloader';
 import { s3PathsFromFileData } from './s3PathsFromFileData';
 import { S3Uploader } from './S3Uploader';
-import { Submission } from '../shared/Submission';
+import { EnrichedZgwObjectData } from '../shared/EnrichedZgwObjectData';
 
 
 export interface DocumentsToS3StorageHandlerOptions {
@@ -22,22 +22,22 @@ export class DocumentsToS3StorageHandler {
    */
   constructor(private readonly options: DocumentsToS3StorageHandlerOptions) { }
 
-  async handle(submission: Submission) {
+  async handle(objectData: EnrichedZgwObjectData) {
     // get files from documents
     const promises = [
-      this.options.fileDownloader.fileDataFromDocument(submission.pdf),
-      ...submission.attachments.map(attachment => this.options.fileDownloader.fileDataFromDocument(attachment)),
+      this.options.fileDownloader.fileDataFromDocument(objectData.pdf),
+      ...objectData.attachments.map(attachment => this.options.fileDownloader.fileDataFromDocument(attachment)),
     ];
     let fileData = await Promise.all(promises);
 
-    fileData[0].filename = `${submission.reference}.pdf`;
+    fileData[0].filename = `${objectData.reference}.pdf`;
     fileData = deduplicateFileNames(fileData);
 
-    await this.options.s3Uploader.storeBulk(submission.reference, fileData);
-    const filePaths = s3PathsFromFileData(fileData, this.options.bucketName, submission.reference);
+    await this.options.s3Uploader.storeBulk(objectData.reference, fileData);
+    const filePaths = s3PathsFromFileData(fileData, this.options.bucketName, objectData.reference);
 
     return {
-      submission,
+      enrichedObject: objectData,
       filePaths,
     };
   }

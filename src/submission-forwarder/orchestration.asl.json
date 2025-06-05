@@ -15,7 +15,7 @@
         "Key": "{% $states.input.reference %}"
       },
       "Resource": "arn:aws:states:::aws-sdk:s3:putObject",
-      "Next": "Forward to ESB?",
+      "Next": "Files to S3?",
       "Output": "{% $states.input %}"
     },
     "Has notification email?": {
@@ -53,13 +53,13 @@
       ],
       "Next": "Success"
     },
-    "Forward to ESB?": {
+    "Files to S3?": {
       "Type": "Choice",
       "Choices": [
         {
+          "Comment": "Has PDF key",
           "Next": "Store files in S3",
-          "Condition": "{% ($exists($states.input.networkShare) or $exists($states.input.monitoringNetworkShare)) %}",
-          "Comment": "networkShare or monitoring provided"
+          "Condition": "{% ($exists($states.input.pdf)) %}"
         }
       ],
       "Default": "ZGW registration?"
@@ -85,26 +85,38 @@
           "JitterStrategy": "FULL"
         }
       ],
-      "Next": "Is ESF statusform?"
+      "Next": "Networkshare or ESF?",
+      "Output": "{% $states.result.Payload %}"
     },
-    "Is ESF statusform?": {
+    "Networkshare or ESF?": {
       "Type": "Choice",
       "Choices": [
         {
-          "Next": "ESF found",
-          "Condition": "{% ($contains($states.input.record.data.formtaak.formulier.value, \"nijmegen.nl/statusformulier\") and $exists($states.input.record.data.formtaak.formulier.value)) %}"
+          "Comment": "has statusformulier URL",
+          "Next": "ESF ESB Queue",
+          "Condition": "{% ($contains($states.input.enrichedObject.taak.formtaak.formulier.value, \"nijmegen.nl/statusformulier\") and $exists($states.input.enrichedObject.taak.formtaak.formulier.value)) %}"
+        },
+        {
+          "Comment": "contains networkshare / monitoring",
+          "Next": "ESB Forwarder",
+          "Condition": "{% ($exists($states.input.enrichedObject.networkShare) or $exists($states.input.enrichedObject.monitoringNetworkShare)) %}"
         }
       ],
-      "Default": "ESB Forwarder"
+      "Default": "ZGW registration?"
     },
-    "ESF found": {
-      "Type": "Pass",
+    "ESF ESB Queue": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sqs:sendMessage",
+      "Arguments": {
+        "MessageBody": "{% $states.input %}",
+        "QueueUrl": "${ESF_QUEUE_URL}"
+      },
       "Next": "Success"
     },
     "ESB Forwarder": {
       "Type": "Task",
       "Resource": "arn:aws:states:::lambda:invoke",
-      "Output": "{% $states.input.Payload.submission %}",
+      "Output": "{% $states.input.enrichedObject %}",
       "Arguments": {
         "FunctionName": "${FORWARDER_LAMBDA_ARN}",
         "Payload": "{% $states.input %}"

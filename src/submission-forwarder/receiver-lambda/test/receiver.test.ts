@@ -39,6 +39,8 @@ describe('receiver', () => {
   let fakeHttpClient: any = {};
   let fakeObjectsApiClient: any = {
     getObject: jest.fn().mockResolvedValue({
+      type: 'https://example.com/objecturl',
+      url: 'https://example.com/objecturl',
       record: { data: fakeSubmission },
     }),
   };
@@ -56,6 +58,7 @@ describe('receiver', () => {
       zgwClientFactory: fakeZgwClientFactory as any,
       topicArn: 'arn:topci:aws:somewhere',
       orchestratorArn: 'arn:topci:aws:somewhere',
+      supportedObjectTypes: 'submission##https://example.com/objecturl',
     });
 
   });
@@ -65,6 +68,7 @@ describe('receiver', () => {
       zgwClientFactory: fakeZgwClientFactory as any,
       topicArn: 'arn:topci:aws:somewhere',
       orchestratorArn: 'arn:topci:aws:somewhere',
+      supportedObjectTypes: 'submission##https://example.com/objecturl',
     });
     await handler.handle(fakeEvent as any);
 

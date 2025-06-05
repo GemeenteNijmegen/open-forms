@@ -61,6 +61,7 @@ export class SubmissionForwarder extends Construct {
     catalogiApiBaseUrl: StringParameter;
     mijnServicesOpenZaakApiClientId: StringParameter;
     mijnServicesOpenZaakApiClientSecret: Secret;
+    supportedObjectTypes: StringParameter;
   };
 
   constructor(scope: Construct, id: string, private readonly options: SubmissionForwarderOptions) {
@@ -74,20 +75,20 @@ export class SubmissionForwarder extends Construct {
 
     const esbRole = this.setupEsbUser();
 
-    this.setupESF(esbRole);
+    const esfQueue = this.setupESF(esbRole);
 
     const documentStorage = this.setupDocumentStorageLambda();
     const forwarder = this.setupEsbForwarderLambda();
     const notification = this.setupNotificationMailLambda();
     const zgw = this.setupZgwRegistrationLambda();
 
-    const orchestrator = this.setupOrchestrationStepFunction(documentStorage, forwarder, notification, zgw);
+    const orchestrator = this.setupOrchestrationStepFunction(documentStorage, forwarder, notification, zgw, esfQueue.queue);
     this.setupReceiverLambda(orchestrator);
     this.setupResubmitLambda(orchestrator);
   }
 
   private setupESF(esbRole: Role) {
-    new DeliveryQueue(this, 'efs-queue', {
+    return new DeliveryQueue(this, 'efs-queue', {
       key: this.options.key,
       role: esbRole,
     });
@@ -143,6 +144,8 @@ export class SubmissionForwarder extends Construct {
       description: 'Client secret used by submission-forwarder to authenticate at mijn services open zaak APIs',
     });
 
+    const additionalParameters = new ForwarderParameters(this, 'params');
+
     return {
       apikey,
       objectsApikey,
@@ -151,6 +154,7 @@ export class SubmissionForwarder extends Construct {
       catalogiApiBaseUrl,
       mijnServicesOpenZaakApiClientId,
       mijnServicesOpenZaakApiClientSecret,
+      supportedObjectTypes: additionalParameters.supportedObjectTypes,
     };
   }
 
@@ -174,6 +178,7 @@ export class SubmissionForwarder extends Construct {
         MIJN_SERVICES_OPEN_ZAAK_CLIENT_SECRET_ARN: this.parameters.mijnServicesOpenZaakApiClientSecret.secretArn,
         OBJECTS_API_APIKEY_ARN: this.parameters.objectsApikey.secretArn,
         ORCHESTRATOR_ARN: orchestrator.stateMachineArn,
+        SUPPORTED_OBJECTTYPES: this.parameters.supportedObjectTypes.stringValue,
       },
     });
     this.parameters.apikey.grantRead(receiver);
@@ -277,6 +282,7 @@ export class SubmissionForwarder extends Construct {
     forwarderLambda: Function,
     notificationEmailLambda: Function,
     zgwLambda: Function,
+    esfQueue: Queue,
   ) {
 
     const logGroup = new LogGroup(this, 'orchestrator-logs', {
@@ -293,6 +299,7 @@ export class SubmissionForwarder extends Construct {
         FORWARDER_LAMBDA_ARN: forwarderLambda.functionArn,
         NOTIFICATION_EMAIL_LAMBDA_ARN: notificationEmailLambda.functionArn,
         ZGW_REGISTRATION_LAMBDA_ARN: zgwLambda.functionArn,
+        ESF_QUEUE_URL: esfQueue.queueUrl,
       },
       encryptionConfiguration: new CustomerManagedEncryptionConfiguration(this.options.key),
       logs: {
@@ -306,6 +313,7 @@ export class SubmissionForwarder extends Construct {
     documentStorageLambda.grantInvoke(stepfunction);
     forwarderLambda.grantInvoke(stepfunction);
     notificationEmailLambda.grantInvoke(stepfunction);
+    esfQueue.grantSendMessages(stepfunction);
     this.backupBucket.grantWrite(stepfunction);
     stepfunction.addToRolePolicy(new PolicyStatement({
       actions: [
@@ -475,4 +483,19 @@ export class SubmissionForwarder extends Construct {
 
   }
 
+}
+
+class ForwarderParameters extends Construct {
+  public supportedObjectTypes: StringParameter;
+  constructor(scope: Construct, id: string) {
+    super(scope, id);
+    this.addForwarderParameters();
+  }
+
+  addForwarderParameters() {
+    this.supportedObjectTypes = new StringParameter(this, 'objectTypes', {
+      stringValue: 'submission##https://example.com/objecttypes/api/v2/objecttypes/d3713c2b-307c-4c07-8eaa-c2c6d75869cf;esftaak##https://example.com/objecttypes/api/v2/objecttypes/6df21057-e07c-4909-8933-d70b79cfd15e',
+      description: 'name##url pairs (semi-colon-separated) defining supported objecttypes',
+    });
+  }
 }

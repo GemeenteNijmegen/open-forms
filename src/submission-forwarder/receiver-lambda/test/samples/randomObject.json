@@ -1,0 +1,18 @@
+{
+  "url": "https://example.com/objects/api/v2/objects/5a02c14e",
+  "uuid": "5a02c14e",
+  "type": "https://example.com/objecttypes/api/v2/objecttypes/somethingelse",
+  "record": {
+    "index": 1,
+    "typeVersion": 3,
+    "data": {
+      "somekey": "somevalue"
+    },
+    "geometry": null,
+    "startAt": "2025-06-02",
+    "endAt": null,
+    "registrationAt": "2025-06-02",
+    "correctionFor": null,
+    "correctedBy": null
+  }
+}

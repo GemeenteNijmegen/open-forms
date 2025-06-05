@@ -6,7 +6,7 @@ import { environmentVariables } from '@gemeentenijmegen/utils';
 import { DocumentsToS3StorageHandler } from './DocumentsToS3StorageHandler';
 import { FileDownloader } from './FileDownloader';
 import { S3Uploader } from './S3Uploader';
-import { SubmissionSchema } from '../shared/Submission';
+import { EnrichedZgwObjectDataSchema } from '../shared/EnrichedZgwObjectData';
 import { ZgwClientFactory } from '../shared/ZgwClientFactory';
 
 const logger = new Logger();
@@ -36,8 +36,9 @@ export async function handler(event: any) {
     logger,
   });
 
-  const submission = SubmissionSchema.parse(event);
-  return documentsToS3StorageHandler.handle(submission);
+  // Data can be a submission object or esf taak, but both are presented in a common format
+  const objectData = EnrichedZgwObjectDataSchema.parse(event);
+  return documentsToS3StorageHandler.handle(objectData);
 }
 
 async function getDocumentenClient(zgwClientFactory: ZgwClientFactory, baseUrl: string) {
