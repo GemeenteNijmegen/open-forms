@@ -23,7 +23,7 @@
       "Choices": [
         {
           "Next": "Notification email",
-          "Condition": "{% ($exists($states.input.enrichedObject.internalNotificationEmails) and $exists($states.input.enrichedObject.internalNotificationEmails[0])) %}",
+          "Condition": "{% ($exists($states.input.internalNotificationEmails) and $exists($states.input.internalNotificationEmails[0])) %}",
           "Comment": "internalNotificationEmail(s) provided"
         }
       ],
@@ -142,7 +142,7 @@
       "Choices": [
         {
           "Next": "Register ZGW",
-          "Condition": "{% ($exists($states.input.enrichedObject.bsn) or $exists($states.input.enrichedObject.kvk)) %}",
+          "Condition": "{% ($exists($states.input.bsn) or $exists($states.input.kvk)) %}",
           "Comment": "Has bsn or kvk"
         }
       ],
