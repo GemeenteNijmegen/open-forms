@@ -11,6 +11,9 @@ export const EsfTaakSchema = z.object({
       value: z.string().url(),
     }),
     data: z.object({
+      clientnummer: z.string(),
+      termijnvanordedatum: z.string(),
+      inkhef: z.string(),
       dossiernummer: z.string(),
       periodenummer: z.string(),
       email: z.string().email(),
