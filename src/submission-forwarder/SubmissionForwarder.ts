@@ -93,7 +93,7 @@ export class SubmissionForwarder extends Construct {
       role: esbRole,
       QueueProps: {
         retentionPeriod: Duration.days(14),
-      }
+      },
     });
   }
 

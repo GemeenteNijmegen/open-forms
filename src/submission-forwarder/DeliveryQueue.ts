@@ -22,13 +22,13 @@ interface DeliveryQeueProps {
    * Optional: By default we use a fifo queue. Set to false for a regular queue.
    */
   fifo?: boolean;
-  
+
   /**
    * Queue props to modify. Encryption mode, dead letterqueue, and fifo will be
-   * overridden. fifo is controlled by its own param, encryption and DLQ are 
+   * overridden. fifo is controlled by its own param, encryption and DLQ are
    * mandatory.
    */
-  QueueProps?: QueueProps; 
+  QueueProps?: QueueProps;
 }
 
 /**
@@ -51,7 +51,7 @@ export class DeliveryQueue extends Construct {
     key: IKey;
     alarmCriticality?: Criticality;
     fifo: boolean;
-    queueProps?: QueueProps,
+    queueProps?: QueueProps;
   }) {
     const { key, alarmCriticality, fifo, queueProps } = options;
     const dlq = new DeadLetterQueue(this, 'esb-dead-letter-queue', {
