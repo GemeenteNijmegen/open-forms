@@ -49,7 +49,21 @@ function constructNotificationEmail(submission: Submission) {
   return [
     `Er is een nieuwe aanvraag ${submission.formName} binnengekomen met kenmerk ${submission.reference}`,
     'U kunt de aanvraag op de volgende locaties terugvinden:',
-    submission.networkShare ?? '',
-    submission.monitoringNetworkShare ?? '',
+    replaceForwardSlashes(submission.networkShare),
+    replaceForwardSlashes(submission.monitoringNetworkShare),
   ].join('\n');
+}
+
+/**
+ * @param stringToTransform
+ * @returns string without forward slashes, only backslashes
+ */
+export function replaceForwardSlashes(stringToTransform: string | undefined | null): string {
+  if (!stringToTransform) {
+    return '';
+  }
+  if (stringToTransform.includes('/')) {
+    return stringToTransform.replace(/\//g, '\\');
+  }
+  return stringToTransform;
 }
