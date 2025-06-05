@@ -17,7 +17,10 @@
           "dossiernummer": "dossier-test-1",
           "periodenummer": "202506",
           "email": "test@example.com",
-          "telefoon": "1234567890"
+          "telefoon": "1234567890",
+          "clientnummer": "1234",
+          "termijnvanordedatum": "2025-07-01",
+          "inkhef": "waarde"
         },
         "verzonden_data": {
           "pdf": "https://example.com/documenten/api/v1/enkelvoudiginformatieobjecten/e73ea0f5-2088-4f75-b862-5ebc962e8f47",
