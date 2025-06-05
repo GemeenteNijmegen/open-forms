@@ -91,6 +91,9 @@ export class SubmissionForwarder extends Construct {
     return new DeliveryQueue(this, 'efs-queue', {
       key: this.options.key,
       role: esbRole,
+      QueueProps: {
+        retentionPeriod: Duration.days(14),
+      }
     });
   }
 
