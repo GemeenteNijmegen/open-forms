@@ -51,8 +51,8 @@ het statusformulier geopend, met vooringevuld de juiste gegevens uit de taak. De
 
 De ingezonden formuliergegevens worden door Open Forms in de taak gezet.
 Op basis hiervan gaat een notificatie af (van objects API naar AWS):
-- Een notificatie wordt op een queue gezet, waar de ESB op pollt, documenten worden in S3 gezet die in deze notificatie staat
-De taakstatus wordt hierbij aangepast naar 'ingediend' door Open Forms
+- Een (rijke) notificatie wordt op een queue gezet, waar de ESB op pollt, documenten worden in S3 gezet die in deze notificatie staat
+De taakstatus wordt hierbij aangepast naar 'afgerond' door Open Forms.
 
 ```mermaid
 sequenceDiagram
@@ -99,6 +99,75 @@ sequenceDiagram
     deactivate AWS Queue
     deactivate AWS
 ```
+
+<details>
+  <summary>
+   Voorbeeld van notificatie-bericht op SQS queue:
+  </summary>
+  ```json
+  {
+  "enrichedObject": {
+    "pdf": "https://example.com/documenten/api/v1/enkelvoudiginformatieobjecten/7f0d563f-8191-488a-9157-ca35d243a8f6",
+    "attachments": [],
+    "reference": "EFS-dossier-test-1-202506",
+    "objectUrl": "https://mijn-services.accp.nijmegen.nl/objects/api/v2/objects/714eb3e8-2db1-4da2-bacd-c2c08187ceaf",
+    "taak": {
+      "soort": "formtaak",
+      "titel": "Statusformulier invullen",
+      "status": "open",
+      "eigenaar": "nijmegen",
+      "formtaak": {
+        "formulier": {
+          "soort": "url",
+          "value": "https://example.com/statusformulier"
+        },
+        "data": {
+          "clientnummer": "123",
+          "termijnvanordedatum": "2025-07-05",
+          "inkhef": "waarde",
+          "dossiernummer": "dossier-test-1",
+          "periodenummer": "202506",
+          "email": "test@example.com",
+          "telefoon": "1234567890"
+        },
+        "verzonden_data": {
+          "email": "test@example.com",
+          "telefoon": "1234567890",
+          "inkomstengewijzigd": "nee",
+          "woonsituatiegewijzigd": "nee",
+          "vakantiegewijzigd": "nee",
+          "studiegewijzigd": "nee",
+          "vrijwilligerswerkgewijzigd": "nee",
+          "vermogengewijzigd": "nee",
+          "pdf": "https://example.com/documenten/api/v1/enkelvoudiginformatieobjecten/7f0d563f-8191-488a-9157-ca35d243a8f6",
+          "attachments": []
+        }
+      },
+      "verloopdatum": "2025-05-21 00:00:00",
+      "identificatie": {
+        "type": "bsn",
+        "value": "900026236"
+      },
+      "koppeling": {
+        "uuid": "4c9b685d-3a9c-4216-9bb8-cac7fb2456e1",
+        "registratie": "zaak"
+      },
+      "verwerker_taak_id": "client_task"
+    }
+  },
+  "filePaths": [
+    "s3://bucketnaam/EFS-dossier-test-1-202506/EFS-dossier-test-1-202506.pdf"
+  ],
+  "fileObjects": [
+    {
+      "bucket": "bucketnaam",
+      "objectKey": "EFS-dossier-test-1-202506/EFS-dossier-test-1-202506.pdf",
+      "fileName": "EFS-dossier-test-1-202506.pdf"
+    }
+  ]
+}
+```
+</details>
 
 ## C. Verwerken inzending
 De ESB pakt de inzending op (afh. van keuze, ofwel van queue of adhv notificatie vanuit taak) en verwerkt deze. De **beslisservice** bepaalt of de 
@@ -154,7 +223,7 @@ Bij het aanmaken van een taak (Proces A stap 3) doe je een [POST naar /objects](
 
 In `formtaak.data` wordt prefill-data (dossiernr, periode, email, telefoon) opgenomen. **TODO:** samen bepalen welke velden nodig zijn in de prefill.
 
-In `formtaak.verzonden_data` zit na het indienen door inwoner (Proces B stap 9) de relevante informatie na het indienen. **TODO:** Samen bepalen welke gegevens gestructureerd beschikbaar moeten zijn, en welke in de PDF-inzending voor de afdeling. (Opmerkingen hoeven vermoedelijk niet machine-readable te zijn).
+In `formtaak.verzonden_data` zit na het indienen door inwoner (Proces B stap 9) de relevante informatie na het indienen.
 
 <details>
     <summary>objectvoorbeeld</summary>
