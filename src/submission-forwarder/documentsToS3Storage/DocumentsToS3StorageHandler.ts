@@ -2,7 +2,7 @@ import { Logger } from '@aws-lambda-powertools/logger';
 import { S3Client } from '@aws-sdk/client-s3';
 import { deduplicateFileNames } from './deduplicateFileNames';
 import { FileDownloader } from './FileDownloader';
-import { s3PathsFromFileData } from './s3PathsFromFileData';
+import { s3PathsFromFileData, s3StructuredObjectsFromFileData } from './s3PathsFromFileData';
 import { S3Uploader } from './S3Uploader';
 import { EnrichedZgwObjectData } from '../shared/EnrichedZgwObjectData';
 
@@ -34,11 +34,15 @@ export class DocumentsToS3StorageHandler {
     fileData = deduplicateFileNames(fileData);
 
     await this.options.s3Uploader.storeBulk(objectData.reference, fileData);
+    // We add both filePaths and fileObjects for backwards compatibility reasons. We only have one client, after it's been
+    // modified filePaths can be removed. TODO (10-6-2025): Check with ESB if filePaths is still in use
     const filePaths = s3PathsFromFileData(fileData, this.options.bucketName, objectData.reference);
+    const fileObjects = s3StructuredObjectsFromFileData(fileData, this.options.bucketName, objectData.reference);
 
     return {
       enrichedObject: objectData,
       filePaths,
+      fileObjects,
     };
   }
 }
