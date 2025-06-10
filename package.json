@@ -49,7 +49,7 @@
     "@gemeentenijmegen/projen-project-type": "^1.10.5",
     "@stylistic/eslint-plugin": "^2",
     "@types/jest": "^29.5.14",
-    "@types/node": "^22.15.30",
+    "@types/node": "^22.15.31",
     "@typescript-eslint/eslint-plugin": "^8",
     "@typescript-eslint/parser": "^8",
     "aws-cdk": "^2",
@@ -78,7 +78,7 @@
     "@gemeentenijmegen/apigateway-http": "^0.0.26",
     "@gemeentenijmegen/aws-constructs": "^0.0.36",
     "@gemeentenijmegen/design-tokens": "^0.0.2-alpha.22",
-    "@gemeentenijmegen/modules-zgw-client": "^0.0.6",
+    "@gemeentenijmegen/modules-zgw-client": "^0.0.7",
     "@gemeentenijmegen/utils": "^0.0.32",
     "@types/aws-lambda": "^8.10.149",
     "@types/jsonwebtoken": "^9.0.9",
@@ -87,7 +87,7 @@
     "dotenv": "^16.5.0",
     "jose": "^5.10.0",
     "jsonwebtoken": "^9.0.2",
-    "zod": "^3.25.56"
+    "zod": "^3.25.57"
   },
   "license": "EUPL-1.2",
   "publishConfig": {
