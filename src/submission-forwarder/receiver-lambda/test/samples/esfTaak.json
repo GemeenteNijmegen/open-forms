@@ -1,6 +1,7 @@
 {
   "type": "https://example.com/objecttypes/api/v2/objecttypes/6df21057-e07c-4909-8933-d70b79cfd15e",
   "url": "https://example.com/objects/api/v2/objects/6df21057-e07c-4909-8933-d70b79cfd15e",
+  "uuid": "6df21057-e07c-4909-8933-d70b79cfd15e",
   "record": {
     "typeVersion": 3,
     "data": {

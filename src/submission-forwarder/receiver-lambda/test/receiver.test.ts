@@ -41,6 +41,7 @@ describe('receiver', () => {
     getObject: jest.fn().mockResolvedValue({
       type: 'https://example.com/objecturl',
       url: 'https://example.com/objecturl',
+      uuid: '02e286e7-934a-4301-a523-a7870116fd84',
       record: { data: fakeSubmission },
     }),
   };
