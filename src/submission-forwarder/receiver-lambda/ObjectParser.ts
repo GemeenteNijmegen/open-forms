@@ -42,6 +42,7 @@ export class ObjectParser {
       let submission = parsed as Submission;
       return {
         objectUrl: object.url,
+        objectUUID: object.uuid,
         ...submission,
       };
     } else if (type.parser == EsfTaakSchema) {
@@ -51,6 +52,7 @@ export class ObjectParser {
         attachments: taak.formtaak.verzonden_data.attachments,
         reference: `EFS-${taak.formtaak.data.dossiernummer}-${taak.formtaak.data.periodenummer}`,
         objectUrl: object.url,
+        objectUUID: object.uuid,
         taak,
       };
     }
