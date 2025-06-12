@@ -1,20 +1,16 @@
-
-
 import { Logger } from '@aws-lambda-powertools/logger';
-import { SFNClient, StartExecutionCommand } from '@aws-sdk/client-sfn';
 import { Response } from '@gemeentenijmegen/apigateway-http/lib/V1/Response';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { ParseError, SendMessageError } from './ErrorTypes';
 import { NotificationEventParser } from './NotificationEventParser';
 import { ObjectParser } from './ObjectParser';
-import { EnrichedZgwObjectData } from '../shared/EnrichedZgwObjectData';
+import { StepFunction } from './StepFunction';
 import { trace } from '../shared/trace';
 import { ZgwClientFactory } from '../shared/ZgwClientFactory';
 import { ObjectSchema } from '../shared/ZgwObject';
 
 const HANDLER_ID = 'receiver';
 const logger = new Logger();
-const stepfunctions = new SFNClient();
 
 interface ReceiverHandlerOptions {
   zgwClientFactory: ZgwClientFactory;
@@ -23,12 +19,13 @@ interface ReceiverHandlerOptions {
   supportedObjectTypes: string;
 }
 
-
 export class ReceiverHandler {
   private objectParser: ObjectParser;
+  private stepFunction: StepFunction;
 
   constructor(private readonly options: ReceiverHandlerOptions) {
     this.objectParser = new ObjectParser(options.supportedObjectTypes);
+    this.stepFunction = new StepFunction(this.options.orchestratorArn );
   }
 
   async handle(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
@@ -52,7 +49,7 @@ export class ReceiverHandler {
         // const submission = SubmissionSchema.parse(object.record.data);
         logger.debug('Retrieved object', { result });
 
-        await this.startExecution(result);
+        await this.stepFunction.startExecution(result);
         await trace(result.reference, HANDLER_ID, 'OK');
         return Response.ok();
       }
@@ -74,17 +71,4 @@ export class ReceiverHandler {
       return Response.error(500, message);
     }
   }
-
-
-  async startExecution(result: EnrichedZgwObjectData) {
-    const execution = await stepfunctions.send(new StartExecutionCommand({
-      stateMachineArn: this.options.orchestratorArn,
-      input: JSON.stringify(result),
-      name: `${result.reference}-${Date.now()}`,
-    }));
-    logger.info('Started orchestrator', { executionArn: execution.executionArn });
-  }
-
 }
-
-

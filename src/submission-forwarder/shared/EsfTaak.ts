@@ -20,6 +20,7 @@ export const EsfTaakSchema = z.object({
       telefoon: z.string().optional(),
     }).passthrough(),
     verzonden_data: z.object({
+      formulierreferentie: z.string(),
       email: z.string().email(),
       telefoon: z.string(),
       inkomstengewijzigd: z.string(),
