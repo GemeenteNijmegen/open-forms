@@ -24,6 +24,7 @@
           "inkhef": "waarde"
         },
         "verzonden_data": {
+          "formulierreferentie": "OF-TEST123",
           "pdf": "https://example.com/documenten/api/v1/enkelvoudiginformatieobjecten/e73ea0f5-2088-4f75-b862-5ebc962e8f47",
           "email": "test@example.com",
           "telefoon": "1234567891",
