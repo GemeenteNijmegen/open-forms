@@ -50,7 +50,7 @@ export class ObjectParser {
       return {
         pdf: taak.formtaak.verzonden_data.pdf,
         attachments: taak.formtaak.verzonden_data.attachments,
-        reference: `EFS-${taak.formtaak.verzonden_data.formulierreferentie}-${taak.formtaak.data.dossiernummer}-${taak.formtaak.data.periodenummer}`,
+        reference: `ESF-${taak.formtaak.verzonden_data.formulierreferentie}-${taak.formtaak.data.dossiernummer}-${taak.formtaak.data.periodenummer}`,
         objectUrl: object.url,
         objectUUID: object.uuid,
         taak,

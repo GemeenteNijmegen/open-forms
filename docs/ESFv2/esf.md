@@ -109,7 +109,7 @@ sequenceDiagram
   "enrichedObject": {
     "pdf": "https://example.com/documenten/api/v1/enkelvoudiginformatieobjecten/7f0d563f-8191-488a-9157-ca35d243a8f6",
     "attachments": [],
-    "reference": "EFS-dossier-test-1-202506",
+    "reference": "ESF-dossier-test-1-202506",
     "objectUrl": "https://mijn-services.accp.nijmegen.nl/objects/api/v2/objects/714eb3e8-2db1-4da2-bacd-c2c08187ceaf",
     "taak": {
       "soort": "formtaak",
@@ -156,13 +156,13 @@ sequenceDiagram
     }
   },
   "filePaths": [
-    "s3://bucketnaam/EFS-dossier-test-1-202506/EFS-dossier-test-1-202506.pdf"
+    "s3://bucketnaam/ESF-dossier-test-1-202506/ESF-dossier-test-1-202506.pdf"
   ],
   "fileObjects": [
     {
       "bucket": "bucketnaam",
-      "objectKey": "EFS-dossier-test-1-202506/EFS-dossier-test-1-202506.pdf",
-      "fileName": "EFS-dossier-test-1-202506.pdf"
+      "objectKey": "ESF-dossier-test-1-202506/ESF-dossier-test-1-202506.pdf",
+      "fileName": "ESF-dossier-test-1-202506.pdf"
     }
   ]
 }
