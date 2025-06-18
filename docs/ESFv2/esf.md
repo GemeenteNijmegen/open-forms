@@ -51,6 +51,9 @@ het statusformulier geopend, met vooringevuld de juiste gegevens uit de taak. De
 
 De ingezonden formuliergegevens worden door Open Forms in de taak gezet.
 Op basis hiervan gaat een notificatie af (van objects API naar AWS):
+- De receiver pakt deze notificatie op, en zet deze door naar de Step Function áls de status 'afgerond is'. Andere statussen worden genegeerd, omdat
+  dit een nieuw object of een volledig verwerkt object kan zijn (in proces 3 wordt de status aangepast, wat géén trigger moet zijn, om infinite loops
+  te voorkomen).
 - Een (rijke) notificatie wordt op een queue gezet, waar de ESB op pollt, documenten worden in S3 gezet die in deze notificatie staat
 De taakstatus wordt hierbij aangepast naar 'afgerond' door Open Forms.
 
