@@ -1,4 +1,4 @@
-import { UnknownObjectError } from './ErrorTypes';
+import { InvalidStateError, UnknownObjectError } from './ErrorTypes';
 import { EnrichedZgwObjectData } from '../shared/EnrichedZgwObjectData';
 import { EsfTaak, EsfTaakSchema } from '../shared/EsfTaak';
 import { Submission, SubmissionSchema } from '../shared/Submission';
@@ -47,6 +47,7 @@ export class ObjectParser {
       };
     } else if (type.parser == EsfTaakSchema) {
       let taak = parsed as EsfTaak;
+      this.guardForwardableTask(taak);
       return {
         pdf: taak.formtaak.verzonden_data.pdf,
         attachments: taak.formtaak.verzonden_data.attachments,
@@ -57,6 +58,18 @@ export class ObjectParser {
       };
     }
     throw new UnknownObjectError('Unexpectedly reached end of parser');
+  }
+
+  /**
+   * Only pass on EsfTaken which have the status 'open'. We listen to updates
+   * to the object, but don't want to reprocess other statusses, since this
+   * would lead to an infinite loop: The next step in this process will update
+   * the object as well.
+   */
+  private guardForwardableTask(taak: EsfTaak) {
+    if (taak.status != 'afgerond') {
+      throw new InvalidStateError('Esf Taak found, only status afgerond should be processed');
+    }
   }
 
   /**
