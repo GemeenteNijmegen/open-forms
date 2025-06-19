@@ -2,162 +2,38 @@
     "formId": "f712e83a-6ea8-4d1c-9a72-9e36e67d5e1b",
     "formTypeId": "bezwaarmaken",
     "appId": "JUR",
-    "reference": "JUR34.319",
+    "reference": "OF-123ABC",
     "data": {
+        "fileObjects": [
+            {
+                "bucket": "bucketnaam",
+                "objectKey": "OF-123ABC/overzicht_aanvraag.pdf",
+                "fileName": "overzicht-aanvraag.pdf",
+                "objectType": "submission"
+            },
+            {
+                "bucket": "bucketnaam",
+                "objectKey": "OF-123ABC/overzicht_aanvraag.pdf",
+                "fileName": "overzicht-aanvraag.pdf",
+                "objectType": "attachment"
+            }
+        ],
+        "vipZaaktype": "7562e893-3d95-4114-bceb-b3407346e4ff",
         "isgemachtigde": "",
         "isgemachtigde1": "",
         "wiltUBezwaarMakenTegenBelastingen": "nee",
-        "kenmerk": "JUR-34.319",
+        "kenmerk": "OF-123ABC",
         "naamIngelogdeGebruiker": "H. de Jong",
         "inlogmiddel": "digid",
         "bsn": "900026236",
-        "vipZaaktype": "7562e893-3d95-4114-bceb-b3407346e4ff",
         "opWelkeDatumHeeftDeGemeenteHetBesluitBekendGemaaktOfDeBeschikkingGegeven": "20-06-2025",
         "welkKenmerkOfReferentienummerHeeftHetBesluitOfDeBeschikkingWaartegenUBezwaarMaakt": "jkebwfhjerw",
-        "waaromBentUHetNietEensMetHetBesluitOfDeBeschikking": "wrwer",
-        "vorige1": false,
-        "volgende1": true,
-        "digiDContactpersoon": {},
-        "hoeWiltUDatDeGemeenteContactMetUOpneemtOverUwBezwaarAlsDatNodigIs": "viaEMail",
-        "vorige4": false,
-        "volgende3": true,
-        "digiD": {
-            "voorWie": "mijzelf"
-        },
-        "vorige3": false,
-        "volgende2": true,
-        "ikHebAlleVragenNaarWaarheidBeantwoord": true,
-        "vorige2": false,
-        "verzenden1": true,
-        "nonhiddenfieldsform": {
-            "data": {
-                "naamIngelogdeGebruiker": "H. de Jong",
-                "straatnaam": "Kelfkensbos",
-                "huisnummerfield": "80-A-1",
-                "postcode": "6511 RN",
-                "woonplaats": "Nijmegen"
-            },
-            "metadata": {}
-        },
-        "volgende": true,
-        "bijlagenMeesturen": "jaUpload",
-        "email": {
-            "eMailadres": "testexample@nijmegen.nl",
-            "telefoonnummer": "061234567890"
-        },
-        "digitaalNamensMijzelfOfAdvocaat": {
-            "toevoegen": [
-                {
-                    "storage": "url",
-                    "name": "GN304 copy 3-3583da6c-8152-4f92-92d8-7d4a7fc3e85a.jpeg",
-                    "url": "https://app6-accp.nijmegen.nl/form/cloud/s3/upload/f712e83a-6ea8-4d1c-9a72-9e36e67d5e1b?baseUrl=https%3A%2F%2Fapp6-accp.nijmegen.nl&project=&form=/GN304 copy 3-3583da6c-8152-4f92-92d8-7d4a7fc3e85a.jpeg",
-                    "size": "1479511",
-                    "type": "image/jpeg",
-                    "reference": "caac11f72d5763ff1781f61f1450c29a",
-                    "originalName": "GN304_copy_3.jpeg",
-                    "location": "f712e83a-6ea8-4d1c-9a72-9e36e67d5e1b/files/GN304_copy_3.jpeg",
-                    "bucketName": "webforms-eformgenericserv-eformattuploads951db329-lm1p2s2mgzv3"
-                },
-                {
-                    "storage": "url",
-                    "name": "GN304 copy 6-7738e01f-9ad2-4074-9415-399c4c09ee2d.jpeg",
-                    "url": "https://app6-accp.nijmegen.nl/form/cloud/s3/upload/f712e83a-6ea8-4d1c-9a72-9e36e67d5e1b?baseUrl=https%3A%2F%2Fapp6-accp.nijmegen.nl&project=&form=/GN304 copy 6-7738e01f-9ad2-4074-9415-399c4c09ee2d.jpeg",
-                    "size": "1479511",
-                    "type": "image/jpeg",
-                    "reference": "c44dd8db4f0321b1d4f2fbd337c1718a",
-                    "originalName": "GN304_copy_6.jpeg",
-                    "location": "f712e83a-6ea8-4d1c-9a72-9e36e67d5e1b/files/GN304_copy_6.jpeg",
-                    "bucketName": "webforms-eformgenericserv-eformattuploads951db329-lm1p2s2mgzv3"
-                },
-                {
-                    "storage": "url",
-                    "name": "GN304 copy 5-558db21e-db86-4f3e-a294-69bbbdd06bd4.jpeg",
-                    "url": "https://app6-accp.nijmegen.nl/form/cloud/s3/upload/f712e83a-6ea8-4d1c-9a72-9e36e67d5e1b?baseUrl=https%3A%2F%2Fapp6-accp.nijmegen.nl&project=&form=/GN304 copy 5-558db21e-db86-4f3e-a294-69bbbdd06bd4.jpeg",
-                    "size": "1479511",
-                    "type": "image/jpeg",
-                    "reference": "6d18609a7c7f88eec208de1749996157",
-                    "originalName": "GN304_copy_5.jpeg",
-                    "location": "f712e83a-6ea8-4d1c-9a72-9e36e67d5e1b/files/GN304_copy_5.jpeg",
-                    "bucketName": "webforms-eformgenericserv-eformattuploads951db329-lm1p2s2mgzv3"
-                },
-                {
-                    "storage": "url",
-                    "name": "GN304 copy 4-3bbafb76-64e2-430d-9a36-5acddce1f4d6.jpeg",
-                    "url": "https://app6-accp.nijmegen.nl/form/cloud/s3/upload/f712e83a-6ea8-4d1c-9a72-9e36e67d5e1b?baseUrl=https%3A%2F%2Fapp6-accp.nijmegen.nl&project=&form=/GN304 copy 4-3bbafb76-64e2-430d-9a36-5acddce1f4d6.jpeg",
-                    "size": "1479511",
-                    "type": "image/jpeg",
-                    "reference": "37802438b81263efae0d8817dc19eace",
-                    "originalName": "GN304_copy_4.jpeg",
-                    "location": "f712e83a-6ea8-4d1c-9a72-9e36e67d5e1b/files/GN304_copy_4.jpeg",
-                    "bucketName": "webforms-eformgenericserv-eformattuploads951db329-lm1p2s2mgzv3"
-                }
-            ]
-        }
+        "eMailadres": "testexample@nijmegen.nl",
+        "telefoonnummer": "061234567890"
     },
-    "metadata": {
-        "timezone": "Europe/Amsterdam",
-        "offset": 120,
-        "origin": "https://app6-accp.nijmegen.nl",
-        "referrer": "",
-        "browserName": "Netscape",
-        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:139.0) Gecko/20100101 Firefox/139.0",
-        "pathName": "/",
-        "onLine": true,
-        "timestamp": [
-            2025,
-            6,
-            19,
-            11,
-            30,
-            55,
-            195825725
-        ]
-    },
+    "metadata": {},
     "employeeData": {},
-    "pdf": {
-        "reference": "a1ccc9a698231bc43943e4058bc4f1a2",
-        "location": "f712e83a-6ea8-4d1c-9a72-9e36e67d5e1b/pdf/JUR34.319",
-        "bucketName": "webforms-eformgenericserv-eformattuploads951db329-lm1p2s2mgzv3"
-    },
-    "brpData": {
-        "Persoon": {
-            "BSN": {
-                "BSN": "900026236"
-            },
-            "Persoonsgegevens": {
-                "Voorletters": "H.",
-                "Voornamen": "Hans",
-                "Voorvoegsel": "de",
-                "Geslachtsnaam": "Jong",
-                "Achternaam": "de Jong",
-                "Naam": "H. de Jong",
-                "Geboortedatum": "01-01-1956",
-                "Geslacht": "M",
-                "NederlandseNationaliteit": "Ja",
-                "Geboorteplaats": "Nijmegen",
-                "Geboorteland": "Nederland"
-            },
-            "Adres": {
-                "Straat": "Kelfkensbos",
-                "Huisnummer": "80-A-1",
-                "Gemeente": "Nijmegen",
-                "Postcode": "6511 RN",
-                "Woonplaats": "Nijmegen"
-            },
-            "Reisdocument": {
-                "Documentsoort": "",
-                "Documentnummer": "",
-                "Uitgiftedatum": "",
-                "Verloopdatum": ""
-            },
-            "ageLimits": {
-                "over12": "Yes",
-                "over16": "Yes",
-                "over18": "Yes",
-                "over21": "Yes",
-                "over65": "Yes"
-            }
-        }
-    },
+    "pdf": {},
+    "brpData": {},
     "bsn": "900026236"
 }
