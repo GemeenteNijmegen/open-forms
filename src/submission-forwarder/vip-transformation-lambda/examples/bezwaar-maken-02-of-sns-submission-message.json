@@ -2,163 +2,30 @@
     "formId": "8ce88554-94b6-45ae-a975-0e68b28d178e",
     "formTypeId": "bezwaarmaken",
     "appId": "JUR",
-    "reference": "JUR34.335",
+    "reference": "OF-KVK123",
+            "fileObjects": [
+            {
+                "bucket": "bucketnaam",
+                "objectKey": "OF-123ABC//pdf/open-forms Bezwaar Maken.pdf",
+                "fileName": "open-forms Bezwaar Maken.pdf",
+                "objectType": "submission"
+            },
+            {
+                "bucket": "webforms-eformgenericserv-eformattuploads951db329-lm1p2s2mgzv3",
+                "objectKey": "OF-123ABC/files/GN304_copy_11.jpeg",
+                "fileName": "GN304_copy_11.jpeg",
+                "objectType": "attachment"
+            }
+        ],
     "data": {
         "isgemachtigde": "",
-        "isgemachtigde1": "",
-        "wiltUBezwaarMakenTegenBelastingen": "nee",
-        "kenmerk": "JUR-34.335",
         "naamIngelogdeGebruiker": "Local Funzoom N.V.",
         "inlogmiddel": "eherkenning",
-        "bsn": "",
         "vipZaaktype": "7562e893-3d95-4114-bceb-b3407346e4ff",
         "opWelkeDatumHeeftDeGemeenteHetBesluitBekendGemaaktOfDeBeschikkingGegeven": "21-06-2025",
         "welkKenmerkOfReferentienummerHeeftHetBesluitOfDeBeschikkingWaartegenUBezwaarMaakt": "weewrwer",
-        "waaromBentUHetNietEensMetHetBesluitOfDeBeschikking": "ewrwer",
-        "vorige1": false,
-        "volgende1": true,
-        "digiDContactpersoon": {},
-        "hoeWiltUDatDeGemeenteContactMetUOpneemtOverUwBezwaarAlsDatNodigIs": "viaEMail",
-        "vorige4": false,
-        "volgende3": true,
-        "digiD": {},
-        "hoeBijlagen": "digitaal",
-        "vorige3": false,
-        "volgende2": true,
-        "ikHebAlleVragenNaarWaarheidBeantwoord": true,
-        "vorige2": false,
-        "verzenden1": true,
-        "eHerkenning": {
-            "voorWie1": "mijnBedrijfOfOrganisatie"
-        },
-        "naamContactpersoon": "wrwere",
-        "nonhiddenfieldsform": {
-            "data": {
-                "naamIngelogdeGebruiker": "Local Funzoom N.V.",
-                "straatnaam": "",
-                "huisnummerfield": "",
-                "postcode": "",
-                "woonplaats": ""
-            },
-            "metadata": {}
-        },
-        "volgende": true,
-        "bijlagenMeesturen": "jaUpload",
-        "email": {
-            "eMailadres": "testexample@nijmegen.nl",
-            "telefoonnummer": "061234567890"
-        },
-        "digitaalGeenAdvocaat": {
-            "toevoegen": [
-                {
-                    "storage": "url",
-                    "name": "GN304 copy 11-59c13c9f-5cf1-495f-bd83-19d9f1635a39.jpeg",
-                    "url": "https://app6-accp.nijmegen.nl/form/cloud/s3/upload/8ce88554-94b6-45ae-a975-0e68b28d178e?baseUrl=https%3A%2F%2Fapp6-accp.nijmegen.nl&project=&form=/GN304 copy 11-59c13c9f-5cf1-495f-bd83-19d9f1635a39.jpeg",
-                    "size": "1479511",
-                    "type": "image/jpeg",
-                    "reference": "62330af7e0482c4e266517a36b637ffc",
-                    "originalName": "GN304_copy_11.jpeg",
-                    "location": "8ce88554-94b6-45ae-a975-0e68b28d178e/files/GN304_copy_11.jpeg",
-                    "bucketName": "webforms-eformgenericserv-eformattuploads951db329-lm1p2s2mgzv3"
-                }
-            ],
-            "kopieVanDeMachtigingWaaropStaatDatUNamensIemandAndersBezwaarMagMaken": true
-        },
-        "digitaalNamensMijzelfOfAdvocaat": {
-            "toevoegen": [
-                {
-                    "storage": "url",
-                    "name": "GN304 copy 11-59c13c9f-5cf1-495f-bd83-19d9f1635a39.jpeg",
-                    "url": "https://app6-accp.nijmegen.nl/form/cloud/s3/upload/8ce88554-94b6-45ae-a975-0e68b28d178e?baseUrl=https%3A%2F%2Fapp6-accp.nijmegen.nl&project=&form=/GN304 copy 11-59c13c9f-5cf1-495f-bd83-19d9f1635a39.jpeg",
-                    "size": "1479511",
-                    "type": "image/jpeg",
-                    "reference": "62330af7e0482c4e266517a36b637ffc",
-                    "originalName": "GN304_copy_11.jpeg",
-                    "location": "8ce88554-94b6-45ae-a975-0e68b28d178e/files/GN304_copy_11.jpeg",
-                    "bucketName": "webforms-eformgenericserv-eformattuploads951db329-lm1p2s2mgzv3"
-                }
-            ]
-        }
-    },
-    "metadata": {
-        "timezone": "Europe/Amsterdam",
-        "offset": 120,
-        "origin": "https://app6-accp.nijmegen.nl",
-        "referrer": "",
-        "browserName": "Netscape",
-        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:139.0) Gecko/20100101 Firefox/139.0",
-        "pathName": "/",
-        "onLine": true,
-        "timestamp": [
-            2025,
-            6,
-            19,
-            13,
-            30,
-            57,
-            545684707
-        ]
-    },
-    "employeeData": {},
-    "pdf": {
-        "reference": "202c0340dad46f72e7261d7f700b26b6",
-        "location": "8ce88554-94b6-45ae-a975-0e68b28d178e/pdf/JUR34.335",
-        "bucketName": "webforms-eformgenericserv-eformattuploads951db329-lm1p2s2mgzv3"
-    },
-    "kvkData": {
-        "kvkNummer": "90004760",
-        "indNonMailing": "Nee",
-        "naam": "Local Funzoom N.V.",
-        "formeleRegistratiedatum": "20071224",
-        "materieleRegistratie": {
-            "datumAanvang": "20071224"
-        },
-        "statutaireNaam": "Local Funzoom N.V. - Statutory Naam",
-        "links": [
-            {
-                "rel": "self",
-                "href": "https://api.kvk.nl/test/api/v1/basisprofielen/90004760"
-            }
-        ],
-        "_embedded": {
-            "eigenaar": {
-                "rsin": "992235534",
-                "rechtsvorm": "Naamloze Vennootschap",
-                "uitgebreideRechtsvorm": "Naamloze Vennootschap",
-                "adressen": [
-                    {
-                        "type": "correspondentieadres",
-                        "indAfgeschermd": "Nee",
-                        "volledigAdres": "Postbus 99999 4822TT Breda 9011",
-                        "straatnaam": "Postbus",
-                        "postcode": "4822TT",
-                        "postbusnummer": 99999,
-                        "plaats": "Breda",
-                        "land": "Nederland"
-                    },
-                    {
-                        "type": "bezoekadres",
-                        "indAfgeschermd": "Nee",
-                        "volledigAdres": "Klepelstraat 1581346628486 4665                                 4665DD Denekamp 9010",
-                        "straatnaam": "Klepelstraat 1581346628486 9010",
-                        "huisnummer": 4665,
-                        "postcode": "4665DD",
-                        "plaats": "Denekamp",
-                        "land": "Nederland"
-                    }
-                ],
-                "links": [
-                    {
-                        "rel": "self",
-                        "href": "https://api.kvk.nl/test/api/v1/basisprofielen/90004760/eigenaar"
-                    },
-                    {
-                        "rel": "basisprofiel",
-                        "href": "https://api.kvk.nl/test/api/v1/basisprofielen/90004760"
-                    }
-                ]
-            }
-        }
+        "eMailadres": "testexample@nijmegen.nl",
+        "telefoonnummer": "061234567890"
     },
     "kvknummer": "90004760"
 }
