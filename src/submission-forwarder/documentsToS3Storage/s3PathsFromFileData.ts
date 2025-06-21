@@ -1,17 +1,17 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export interface FileData {
   data: Buffer<ArrayBuffer>;
   filename: string;
   format: string | undefined;
-  type?: 'submission' | 'attachment'
+  type?: 'submission' | 'attachment';
 }
 
 export const s3ObjectReferenceSchema = z.object({
-  bucket:  z.string(),
+  bucket: z.string(),
   objectKey: z.string(),
   fileName: z.string(),
-  objectType: z.enum(['submission', 'attachment']).optional()
+  objectType: z.enum(['submission', 'attachment']).optional(),
 });
 type s3ObjectReference = z.infer<typeof s3ObjectReferenceSchema>;
 /**
