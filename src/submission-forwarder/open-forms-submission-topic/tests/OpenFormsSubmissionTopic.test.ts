@@ -20,32 +20,6 @@ describe('OpenFormsSubmissionsTopic', () => {
     template = Template.fromStack(stack);
   });
 
-  it('creates the correct LogGroup name - important to get the correct name to prevent autocreating another', () => {
-    template.hasResourceProperties('AWS::Logs::LogGroup', {
-      // seems impossible to do it with literals
-      LogGroupName: {
-        'Fn::Join': [
-          '',
-          Match.arrayWith([
-            'sns/',
-            { Ref: 'AWS::Region' },
-            '/',
-            { Ref: 'AWS::AccountId' },
-            '/',
-            {
-              // pUll the real topicName attr
-              'Fn::GetAtt': [
-                Match.stringLikeRegexp('TestTopic.*'),
-                'TopicName',
-              ],
-            },
-          ]),
-        ],
-      },
-      RetentionInDays: 180,
-    });
-  });
-
   xit('creates an HTTPS subscription for each endpoint URL', () => {
     template.resourceCountIs('AWS::SNS::Subscription', urls.length);
     urls.forEach((url) => {

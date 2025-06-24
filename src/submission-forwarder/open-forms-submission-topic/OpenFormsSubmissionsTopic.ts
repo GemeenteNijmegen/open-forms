@@ -74,7 +74,6 @@ export class OpenFormsSubmissionsTopic extends Construct {
       this,
       'sns-submissiontopic-delivery-status-loggroup',
       {
-        logGroupName: `sns/${Aws.REGION}/${Aws.ACCOUNT_ID}/${this.topic.topicName}`,
         retention: RetentionDays.SIX_MONTHS,
         // No kms encryption because only the messageId is traceable and visible
       },
