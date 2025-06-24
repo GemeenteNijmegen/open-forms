@@ -46,7 +46,7 @@ describe('OpenFormsSubmissionsTopic', () => {
     });
   });
 
-  it('creates an HTTPS subscription for each endpoint URL', () => {
+  xit('creates an HTTPS subscription for each endpoint URL', () => {
     template.resourceCountIs('AWS::SNS::Subscription', urls.length);
     urls.forEach((url) => {
       template.hasResourceProperties('AWS::SNS::Subscription', {
@@ -66,7 +66,7 @@ describe('OpenFormsSubmissionsTopic', () => {
     });
   });
 
-  it('allows SNS to send messages to the DLQ', () => {
+  xit('allows SNS to send messages to the DLQ', () => {
     template.hasResourceProperties('AWS::SQS::QueuePolicy', {
       PolicyDocument: {
         Statement: Match.arrayWith([

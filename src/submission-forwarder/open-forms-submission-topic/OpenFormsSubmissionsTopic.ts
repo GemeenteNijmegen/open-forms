@@ -56,15 +56,17 @@ export class OpenFormsSubmissionsTopic extends Construct {
     this.dlq = dlqSetup.dlq;
     this.dlq.grantSendMessages(new ServicePrincipal('sns.amazonaws.com'));
 
-    props.endpointUrls.forEach((url) => {
-      this.topic.addSubscription(
-        new UrlSubscription(url, {
-          deadLetterQueue: this.dlq,
-          protocol: SubscriptionProtocol.HTTPS,
-          // No filterpolicy set right now, only one subscription and one type pushed to topic
-        }),
-      );
-    });
+    // Cloudformation seems to have issues with this setup for now
+
+    // props.endpointUrls.forEach((url) => {
+    //   this.topic.addSubscription(
+    //     new UrlSubscription(url, {
+    //       deadLetterQueue: this.dlq,
+    //       protocol: SubscriptionProtocol.HTTPS,
+    //       // No filterpolicy set right now, only one subscription and one type pushed to topic
+    //     }),
+    //   );
+    // });
   }
 
   private createLoggingConfig(): LoggingConfig {
