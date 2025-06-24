@@ -35,3 +35,26 @@ Even JZ4ALL has a `vipZaaktype`.
 
 ### BSN and KvkNummer
 
+
+
+### Example bezwaar maken definition fields needed
+
+Als alle velden gefilterd worden op vip_key of jz4all_key dan levert het dit lijstje op in bezwaar maken.
+
+```
+{
+  "isgemachtigde": "",
+  "isgemachtigde1": "",
+  "inlogmiddel": "",
+  "opWelkeDatumHeeftDeGemeenteHetBesluitBekendGemaaktOfDeBeschikkingGegeven": "",
+  "welkKenmerkOfReferentienummerHeeftHetBesluitOfDeBeschikkingWaartegenUBezwaarMaakt": "",
+  "naam": "",
+  "adres": "",
+  "kvKNummer": "",
+  "contactpersoon": "",
+  "naamContactpersoon": "",
+  "eMailadres": "",
+  "telefoonnummer": "",
+  "eMailadres1": ""
+}
+```

@@ -32,8 +32,7 @@ export class ParameterStack extends Stack {
     Tags.of(this).add('Project', Statics.projectName);
 
     this.addDummyParameters();
-
-
+    this.addSnsSubscriptionUrlParameters();
   }
 
   private addDummyParameters() {
@@ -43,5 +42,16 @@ export class ParameterStack extends Stack {
     });
   }
 
-
+  private addSnsSubscriptionUrlParameters() {
+    new StringParameter(this, 'ssm-sns-url-subscription-vip-1', {
+      parameterName: Statics.ssmSNSSubscriptionUrlVIP,
+      stringValue: '-',
+      description: 'SNS Topic Subscription URL for VIP Woweb',
+    });
+    new StringParameter(this, 'ssm-sns-url-subscription-jz4all-1', {
+      parameterName: Statics.ssmSNSSubscriptionUrlJZ4ALL,
+      stringValue: '-',
+      description: 'SNS Topic Subscription URL for JZ4ALL Woweb',
+    });
+  }
 }

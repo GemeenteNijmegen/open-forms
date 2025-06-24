@@ -24,6 +24,7 @@
     "src/submission-forwarder/internal-notification-mail-lambda/internalNotificationMail-function.ts",
     "src/submission-forwarder/receiver-lambda/receiver-function.ts",
     "src/submission-forwarder/resubmit-lambda/resubmit-function.ts",
+    "src/submission-forwarder/vip-transformation-lambda/vip-transformation-function.ts",
     "src/submission-forwarder/zgw-registration-lambda/zgw-registration-function.ts",
     "tsconfig.dev.json",
     "tsconfig.json"

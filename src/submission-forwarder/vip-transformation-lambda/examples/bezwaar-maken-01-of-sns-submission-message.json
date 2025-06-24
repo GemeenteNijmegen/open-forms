@@ -3,21 +3,21 @@
     "formTypeId": "bezwaarmaken",
     "appId": "JUR",
     "reference": "OF-123ABC",
+    "fileObjects": [
+        {
+            "bucket": "bucketnaam",
+            "objectKey": "OF-123ABC/overzicht_aanvraag.pdf",
+            "fileName": "overzicht-aanvraag.pdf",
+            "objectType": "submission"
+        },
+        {
+            "bucket": "bucketnaam",
+            "objectKey": "OF-123ABC/overzicht_aanvraag.pdf",
+            "fileName": "overzicht-aanvraag.pdf",
+            "objectType": "attachment"
+        }
+    ],
     "data": {
-        "fileObjects": [
-            {
-                "bucket": "bucketnaam",
-                "objectKey": "OF-123ABC/overzicht_aanvraag.pdf",
-                "fileName": "overzicht-aanvraag.pdf",
-                "objectType": "submission"
-            },
-            {
-                "bucket": "bucketnaam",
-                "objectKey": "OF-123ABC/overzicht_aanvraag.pdf",
-                "fileName": "overzicht-aanvraag.pdf",
-                "objectType": "attachment"
-            }
-        ],
         "vipZaaktype": "7562e893-3d95-4114-bceb-b3407346e4ff",
         "isgemachtigde": "",
         "isgemachtigde1": "",

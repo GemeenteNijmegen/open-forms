@@ -15,7 +15,7 @@ export function addTypeReferencesToFileData(orderedFileData: FileData[], referen
   orderedFileData = deduplicateFileNames(orderedFileData).map((file: FileData) => {
     return {
       ...file,
-      type: file.type ?? 'attachment'
+      type: file.type ?? 'attachment',
     };
   });
   return orderedFileData;

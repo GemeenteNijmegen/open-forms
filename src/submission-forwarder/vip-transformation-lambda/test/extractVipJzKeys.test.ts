@@ -1,5 +1,5 @@
-import * as fs from "fs";
-import * as path from "path";
+import * as fs from 'fs';
+import * as path from 'path';
 
 interface Component {
   key?: string;
@@ -11,8 +11,8 @@ interface Component {
 }
 /**
  * Fast test to extract all keys from a formdefinition
- * @param components 
- * @returns 
+ * @param components
+ * @returns
  */
 function flattenComponents(components: Component[]): Component[] {
   const result: Component[] = [];
@@ -35,12 +35,12 @@ function flattenComponents(components: Component[]): Component[] {
   return result;
 }
 
-test("extract components with jz4all_key or vip_key", () => {
+test('extract components with jz4all_key or vip_key', () => {
   const filePath = path.join(
     __dirname,
-    "../examples/bezwaar-maken-01-formdefinition.json"
+    '../examples/bezwaar-maken-01-formdefinition.json',
   );
-  const rawData = fs.readFileSync(filePath, "utf-8");
+  const rawData = fs.readFileSync(filePath, 'utf-8');
   const json = JSON.parse(rawData);
 
   const components = json.components || [];
