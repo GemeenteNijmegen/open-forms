@@ -62,15 +62,6 @@ export class OpenFormsSubmissionsTopic extends Construct {
       );
 
       subscription.node.addDependency(this.dlq);
-      // subscription.node.addDependency(this.topic);
-
-      // get the L1 CloudFormation objects and setup the dependency to make sure the deployment succeeds
-      // standard node.addDepedency creates a circular dependency
-      // const cfnSub = subscription.node.defaultChild as CfnSubscription;
-      // const cfnDlq = this.dlq.node.findChild('Resource') as CfnQueue;
-      // const cfnTopic = this.topic.node.defaultChild as CfnTopic;
-      // cfnSub.addDependency(cfnDlq);
-      // cfnSub.addDependency(cfnTopic);
     });
   }
 

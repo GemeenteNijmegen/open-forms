@@ -458,7 +458,7 @@ export class SubmissionForwarder extends Construct {
       StringParameter.fromStringParameterName(
         this,
         'jz4all-url-subscription-param-value',
-        Statics.ssmSNSSubscriptionUrlVIP,
+        Statics.ssmSNSSubscriptionUrlJZ4ALL,
       ).stringValue;
 
     const OpenFormsSubmissionTopic = new OpenFormsSubmissionsTopic(
