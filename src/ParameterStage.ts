@@ -31,16 +31,9 @@ export class ParameterStack extends Stack {
     Tags.of(this).add('cdkManaged', 'yes');
     Tags.of(this).add('Project', Statics.projectName);
 
-    this.addDummyParameters();
     this.addSnsSubscriptionUrlParameters();
   }
 
-  private addDummyParameters() {
-    new StringParameter(this, 'dummy-parameter', {
-      stringValue: '-',
-      parameterName: Statics.ssmDummyParameter,
-    });
-  }
 
   private addSnsSubscriptionUrlParameters() {
     new StringParameter(this, 'ssm-sns-url-subscription-vip-1', {
