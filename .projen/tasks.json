@@ -47,13 +47,13 @@
       "description": "Prepare assets",
       "steps": [
         {
+          "spawn": "bundle:prefill-demo/handler.lambda"
+        },
+        {
           "spawn": "bundle:nl-wallet/prefill/prefill.lambda"
         },
         {
           "spawn": "bundle:nl-wallet/token/token.lambda"
-        },
-        {
-          "spawn": "bundle:prefill-demo/handler.lambda"
         },
         {
           "spawn": "bundle:submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda"
@@ -69,6 +69,9 @@
         },
         {
           "spawn": "bundle:submission-forwarder/resubmit-lambda/resubmit.lambda"
+        },
+        {
+          "spawn": "bundle:submission-forwarder/vip-transformation-lambda/vip-transformation.lambda"
         },
         {
           "spawn": "bundle:submission-forwarder/zgw-registration-lambda/zgw-registration.lambda"
@@ -216,6 +219,24 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/submission-forwarder/resubmit-lambda/resubmit.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"assets/submission-forwarder/resubmit-lambda/resubmit.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
+        }
+      ]
+    },
+    "bundle:submission-forwarder/vip-transformation-lambda/vip-transformation.lambda": {
+      "name": "bundle:submission-forwarder/vip-transformation-lambda/vip-transformation.lambda",
+      "description": "Create a JavaScript bundle from src/submission-forwarder/vip-transformation-lambda/vip-transformation.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/submission-forwarder/vip-transformation-lambda/vip-transformation.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"assets/submission-forwarder/vip-transformation-lambda/vip-transformation.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
+        }
+      ]
+    },
+    "bundle:submission-forwarder/vip-transformation-lambda/vip-transformation.lambda:watch": {
+      "name": "bundle:submission-forwarder/vip-transformation-lambda/vip-transformation.lambda:watch",
+      "description": "Continuously update the JavaScript bundle from src/submission-forwarder/vip-transformation-lambda/vip-transformation.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/submission-forwarder/vip-transformation-lambda/vip-transformation.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"assets/submission-forwarder/vip-transformation-lambda/vip-transformation.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
         }
       ]
     },

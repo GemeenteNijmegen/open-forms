@@ -59,14 +59,15 @@ junit.xml
 /cdk.out/
 .cdk.staging/
 .parcel-cache/
+!/src/prefill-demo/handler-function.ts
 !/src/nl-wallet/prefill/prefill-function.ts
 !/src/nl-wallet/token/token-function.ts
-!/src/prefill-demo/handler-function.ts
 !/src/submission-forwarder/documentsToS3Storage/documentsToS3Storage-function.ts
 !/src/submission-forwarder/forwarder-lambda/forwarder-function.ts
 !/src/submission-forwarder/internal-notification-mail-lambda/internalNotificationMail-function.ts
 !/src/submission-forwarder/receiver-lambda/receiver-function.ts
 !/src/submission-forwarder/resubmit-lambda/resubmit-function.ts
+!/src/submission-forwarder/vip-transformation-lambda/vip-transformation-function.ts
 !/src/submission-forwarder/zgw-registration-lambda/zgw-registration-function.ts
 !/.github/workflows/emergency.yml
 !/.github/workflows/auto-merge.yml

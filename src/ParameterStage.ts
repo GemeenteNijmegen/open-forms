@@ -31,17 +31,20 @@ export class ParameterStack extends Stack {
     Tags.of(this).add('cdkManaged', 'yes');
     Tags.of(this).add('Project', Statics.projectName);
 
-    this.addDummyParameters();
-
-
+    this.addSnsSubscriptionUrlParameters();
   }
 
-  private addDummyParameters() {
-    new StringParameter(this, 'dummy-parameter', {
+
+  private addSnsSubscriptionUrlParameters() {
+    new StringParameter(this, 'ssm-sns-url-subscription-vip-1', {
+      parameterName: Statics.ssmSNSSubscriptionUrlVIP,
       stringValue: '-',
-      parameterName: Statics.ssmDummyParameter,
+      description: 'SNS Topic Subscription URL for VIP Woweb',
+    });
+    new StringParameter(this, 'ssm-sns-url-subscription-jz4all-1', {
+      parameterName: Statics.ssmSNSSubscriptionUrlJZ4ALL,
+      stringValue: '-',
+      description: 'SNS Topic Subscription URL for JZ4ALL Woweb',
     });
   }
-
-
 }

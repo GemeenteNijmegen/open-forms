@@ -1,6 +1,7 @@
 import path from 'path';
 import { Logger } from '@aws-lambda-powertools/logger';
 import { Enkelvoudiginformatieobjecten } from '@gemeentenijmegen/modules-zgw-client/lib/documenten-generated-client';
+import { FileData } from './s3PathsFromFileData';
 
 /**
  * This class is responsible for downloading files from ZGW documenten storage.
@@ -25,7 +26,7 @@ export class FileDownloader {
    * @param pathPrefix  optional prefix to add to the filename. Used to make sure attachment-filenames can't collide with submission filenames. This
    *                    will be joined using path.join, so no path separator is necessary.
    */
-  async fileDataFromDocument(url: string, pathPrefix?: string) {
+  async fileDataFromDocument(url: string, pathPrefix?: string): Promise<FileData> {
     const uuid = this.getUuidFromUrl(url);
     const attachmentDetails = await this.documenten.enkelvoudiginformatieobjectRetrieve({ uuid });
     const attachmentData = await this.documenten.enkelvoudiginformatieobjectDownload({ uuid }, {

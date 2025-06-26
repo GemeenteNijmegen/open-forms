@@ -1,0 +1,31 @@
+{
+  "formId": "8ce88554-94b6-45ae-a975-0e68b28d178e",
+  "formTypeId": "bezwaarmaken",
+  "appId": "JUR",
+  "reference": "OF-KVK123",
+  "fileObjects": [
+    {
+      "bucket": "bucketnaam",
+      "objectKey": "OF-123ABC//pdf/open-forms Bezwaar Maken.pdf",
+      "fileName": "open-forms Bezwaar Maken.pdf",
+      "objectType": "submission"
+    },
+    {
+      "bucket": "webforms-eformgenericserv-eformattuploads951db329-lm1p2s2mgzv3",
+      "objectKey": "OF-123ABC/files/GN304_copy_11.jpeg",
+      "fileName": "GN304_copy_11.jpeg",
+      "objectType": "attachment"
+    }
+  ],
+  "data": {
+    "isgemachtigde": "",
+    "naamIngelogdeGebruiker": "Local Funzoom N.V.",
+    "inlogmiddel": "eherkenning",
+    "vipZaaktype": "7562e893-3d95-4114-bceb-b3407346e4ff",
+    "opWelkeDatumHeeftDeGemeenteHetBesluitBekendGemaaktOfDeBeschikkingGegeven": "21-06-2025",
+    "welkKenmerkOfReferentienummerHeeftHetBesluitOfDeBeschikkingWaartegenUBezwaarMaakt": "weewrwer",
+    "eMailadres": "testexample@nijmegen.nl",
+    "telefoonnummer": "061234567890"
+  },
+  "kvknummer": "90004760"
+}

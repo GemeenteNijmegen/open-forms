@@ -1,10 +1,11 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import { Response } from '@gemeentenijmegen/apigateway-http/lib/V1/Response';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { ParseError, SendMessageError } from './ErrorTypes';
+import { InvalidStateError, ParseError, SendMessageError, UnknownObjectError } from './ErrorTypes';
 import { NotificationEventParser } from './NotificationEventParser';
 import { ObjectParser } from './ObjectParser';
 import { StepFunction } from './StepFunction';
+import { EsfTaak } from '../shared/EsfTaak';
 import { trace } from '../shared/trace';
 import { ZgwClientFactory } from '../shared/ZgwClientFactory';
 import { ObjectSchema } from '../shared/ZgwObject';
@@ -45,13 +46,25 @@ export class ReceiverHandler {
         const zgwObjectResponse = await objectClient.getObject(notification.resourceUrl);
         logger.debug(zgwObjectResponse);
         const zgwObject = ObjectSchema.parse(zgwObjectResponse);
-        const result = this.objectParser.parse(zgwObject);
-        // const submission = SubmissionSchema.parse(object.record.data);
-        logger.debug('Retrieved object', { result });
+        try {
+          const result = this.objectParser.parse(zgwObject);
+          // const submission = SubmissionSchema.parse(object.record.data);
+          logger.debug('Retrieved object', { result });
 
-        await this.stepFunction.startExecution(result);
-        await trace(result.reference, HANDLER_ID, 'OK');
-        return Response.ok();
+          await this.stepFunction.startExecution(result);
+          await trace(result.reference, HANDLER_ID, 'OK');
+          return Response.ok();
+        } catch (err) {
+          if (err instanceof UnknownObjectError) {
+            logger.info('Not a recognized object type.', err.message);
+            return Response.ok();
+          } else if (err instanceof InvalidStateError) {
+            logger.info('Object not in a valid state for processing.', err.message);
+            return Response.ok();
+          } else {
+            throw err;
+          }
+        }
       }
 
       logger.warn('Unknown notification type');

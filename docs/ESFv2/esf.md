@@ -51,6 +51,9 @@ het statusformulier geopend, met vooringevuld de juiste gegevens uit de taak. De
 
 De ingezonden formuliergegevens worden door Open Forms in de taak gezet.
 Op basis hiervan gaat een notificatie af (van objects API naar AWS):
+- De receiver pakt deze notificatie op, en zet deze door naar de Step Function áls de status 'afgerond is'. Andere statussen worden genegeerd, omdat
+  dit een nieuw object of een volledig verwerkt object kan zijn (in proces 3 wordt de status aangepast, wat géén trigger moet zijn, om infinite loops
+  te voorkomen).
 - Een (rijke) notificatie wordt op een queue gezet, waar de ESB op pollt, documenten worden in S3 gezet die in deze notificatie staat
 De taakstatus wordt hierbij aangepast naar 'afgerond' door Open Forms.
 
@@ -109,7 +112,7 @@ sequenceDiagram
   "enrichedObject": {
     "pdf": "https://example.com/documenten/api/v1/enkelvoudiginformatieobjecten/7f0d563f-8191-488a-9157-ca35d243a8f6",
     "attachments": [],
-    "reference": "EFS-dossier-test-1-202506",
+    "reference": "ESF-dossier-test-1-202506",
     "objectUrl": "https://mijn-services.accp.nijmegen.nl/objects/api/v2/objects/714eb3e8-2db1-4da2-bacd-c2c08187ceaf",
     "taak": {
       "soort": "formtaak",
@@ -156,13 +159,13 @@ sequenceDiagram
     }
   },
   "filePaths": [
-    "s3://bucketnaam/EFS-dossier-test-1-202506/EFS-dossier-test-1-202506.pdf"
+    "s3://bucketnaam/ESF-dossier-test-1-202506/ESF-dossier-test-1-202506.pdf"
   ],
   "fileObjects": [
     {
       "bucket": "bucketnaam",
-      "objectKey": "EFS-dossier-test-1-202506/EFS-dossier-test-1-202506.pdf",
-      "fileName": "EFS-dossier-test-1-202506.pdf"
+      "objectKey": "ESF-dossier-test-1-202506/ESF-dossier-test-1-202506.pdf",
+      "fileName": "ESF-dossier-test-1-202506.pdf"
     }
   ]
 }

@@ -1,7 +1,10 @@
 import { z } from 'zod';
+import { PaymentSchema } from './Payment';
 
-
-export const KeyValuePairSchema = z.tuple([z.string(), z.union([z.string(), z.number()])]);
+export const KeyValuePairSchema = z.tuple([
+  z.string(),
+  z.union([z.string(), z.number()]),
+]);
 export type KeyValuePair = z.infer<typeof KeyValuePairSchema>;
 
 /**
@@ -23,8 +26,10 @@ export const SubmissionSchema = z.object({
     .union([
       z.array(KeyValuePairSchema).optional(), // This ensures an array of key-value tuples.
       z.null(),
-    ]).optional(),
+    ])
+    .optional(),
   bsnOrKvkToFile: z.boolean().optional().nullable(),
+  payment: PaymentSchema.optional(), // Also optional in schema itself, double-ensuring backwards compatibility
 });
 
 export type Submission = z.infer<typeof SubmissionSchema>;

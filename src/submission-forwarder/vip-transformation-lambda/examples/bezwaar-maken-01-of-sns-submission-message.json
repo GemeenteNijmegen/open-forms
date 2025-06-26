@@ -1,0 +1,39 @@
+{
+    "formId": "f712e83a-6ea8-4d1c-9a72-9e36e67d5e1b",
+    "formTypeId": "bezwaarmaken",
+    "appId": "JUR",
+    "reference": "OF-123ABC",
+    "fileObjects": [
+        {
+            "bucket": "bucketnaam",
+            "objectKey": "OF-123ABC/overzicht_aanvraag.pdf",
+            "fileName": "overzicht-aanvraag.pdf",
+            "objectType": "submission"
+        },
+        {
+            "bucket": "bucketnaam",
+            "objectKey": "OF-123ABC/overzicht_aanvraag.pdf",
+            "fileName": "overzicht-aanvraag.pdf",
+            "objectType": "attachment"
+        }
+    ],
+    "data": {
+        "vipZaaktype": "7562e893-3d95-4114-bceb-b3407346e4ff",
+        "isgemachtigde": "",
+        "isgemachtigde1": "",
+        "wiltUBezwaarMakenTegenBelastingen": "nee",
+        "kenmerk": "OF-123ABC",
+        "naamIngelogdeGebruiker": "H. de Jong",
+        "inlogmiddel": "digid",
+        "bsn": "900026236",
+        "opWelkeDatumHeeftDeGemeenteHetBesluitBekendGemaaktOfDeBeschikkingGegeven": "20-06-2025",
+        "welkKenmerkOfReferentienummerHeeftHetBesluitOfDeBeschikkingWaartegenUBezwaarMaakt": "jkebwfhjerw",
+        "eMailadres": "testexample@nijmegen.nl",
+        "telefoonnummer": "061234567890"
+    },
+    "metadata": {},
+    "employeeData": {},
+    "pdf": {},
+    "brpData": {},
+    "bsn": "900026236"
+}

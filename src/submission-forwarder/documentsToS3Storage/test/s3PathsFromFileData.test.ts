@@ -1,3 +1,4 @@
+import { addTypeReferencesToFileData } from '../addTypeReferencesToFileData';
 import { s3PathsFromFileData, s3StructuredObjectsFromFileData } from '../s3PathsFromFileData';
 
 const singleFile = [
@@ -48,4 +49,20 @@ describe('Structured objects from filedata', () => {
     expect(s3Objects.find(value => value.bucket == 'mybucket')).toBeTruthy();
     expect(s3Objects.find(value => value.objectKey == 'TDL123.01/attachments/test.png')).toBeTruthy();
   });
+});
+
+
+describe('Structured objects from filedata with enrichment', () => {
+  test('Enriching single object results in submission type', async () => {
+    const enriched = addTypeReferencesToFileData(singleFile, 'myreference');
+    expect(enriched[0].filename).toContain('myreference');
+    expect(enriched[0].type).toBe('submission');
+  });
+  test('Enriching multiple objects results in submission type for first, attachment after', async () => {
+    const enriched = addTypeReferencesToFileData(multipleFiles, 'myreference');
+    expect(enriched[0].filename).toContain('myreference');
+    expect(enriched[0].type).toBe('submission');
+    expect(enriched[1].type).toBe('attachment');
+  });
+
 });

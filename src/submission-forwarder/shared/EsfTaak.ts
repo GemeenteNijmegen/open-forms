@@ -3,7 +3,7 @@ import z from 'zod';
 export const EsfTaakSchema = z.object({
   soort: z.literal('formtaak'),
   titel: z.string(),
-  status: z.string(),
+  status: z.enum(['open', 'afgerond', 'verwerkt', 'gesloten']),
   eigenaar: z.string(),
   formtaak: z.object({
     formulier: z.object({

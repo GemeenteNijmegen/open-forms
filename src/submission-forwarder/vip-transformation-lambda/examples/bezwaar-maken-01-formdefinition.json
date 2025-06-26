@@ -1,0 +1,3643 @@
+{
+    "_id": "6627cd11c5dd61999060f0b8",
+    "title": "Bezwaar maken",
+    "name": "bezwaarMaken",
+    "path": "bezwaarmaken",
+    "type": "form",
+    "display": "wizard",
+    "tags": [
+        "JUR"
+    ],
+    "access": [
+        {
+            "type": "create_own",
+            "roles": []
+        },
+        {
+            "type": "create_all",
+            "roles": []
+        },
+        {
+            "type": "read_own",
+            "roles": []
+        },
+        {
+            "type": "read_all",
+            "roles": [
+                "6627ccfcc5dd61999060ef16"
+            ]
+        },
+        {
+            "type": "update_own",
+            "roles": []
+        },
+        {
+            "type": "update_all",
+            "roles": []
+        },
+        {
+            "type": "delete_own",
+            "roles": []
+        },
+        {
+            "type": "delete_all",
+            "roles": []
+        },
+        {
+            "type": "team_read",
+            "roles": []
+        },
+        {
+            "type": "team_write",
+            "roles": []
+        },
+        {
+            "type": "team_admin",
+            "roles": []
+        }
+    ],
+    "submissionAccess": [
+        {
+            "type": "create_own",
+            "roles": [
+                "6627ccfcc5dd61999060ef16"
+            ]
+        },
+        {
+            "type": "create_all",
+            "roles": []
+        },
+        {
+            "type": "read_own",
+            "roles": []
+        },
+        {
+            "type": "read_all",
+            "roles": []
+        },
+        {
+            "type": "update_own",
+            "roles": []
+        },
+        {
+            "type": "update_all",
+            "roles": []
+        },
+        {
+            "type": "delete_own",
+            "roles": []
+        },
+        {
+            "type": "delete_all",
+            "roles": []
+        },
+        {
+            "type": "team_read",
+            "roles": []
+        },
+        {
+            "type": "team_write",
+            "roles": []
+        },
+        {
+            "type": "team_admin",
+            "roles": []
+        }
+    ],
+    "owner": "67c59e2d2e53a880e594e6f1",
+    "components": [
+        {
+            "title": "Algemeen",
+            "breadcrumbClickable": false,
+            "buttonSettings": {
+                "previous": false,
+                "cancel": false,
+                "next": false
+            },
+            "navigateOnEnter": false,
+            "saveOnEnter": false,
+            "scrollToTop": false,
+            "collapsible": false,
+            "key": "page1",
+            "type": "panel",
+            "label": "Algemeen",
+            "allowPrevious": true,
+            "input": false,
+            "tableView": false,
+            "components": [
+                {
+                    "label": "Bezwaar maken",
+                    "attrs": [
+                        {
+                            "attr": "",
+                            "value": ""
+                        }
+                    ],
+                    "content": "<h1>Bezwaar maken</h1>",
+                    "refreshOnChange": false,
+                    "key": "bezwaarMaken",
+                    "type": "htmlelement",
+                    "input": false,
+                    "tableView": false
+                },
+                {
+                    "label": "isgemachtigde",
+                    "customClass": "vipzaaktypefield hiddenfield",
+                    "tableView": true,
+                    "clearOnHide": false,
+                    "calculateValue": "value = '';\nif(data.geenBelasting && data.geenBelasting.digiD && data.geenBelasting.digiD.voorWie) {\n  if(data.geenBelasting.digiD.voorWie == 'mijzelf') {\n    value = 'nee';\n  } else if(data.geenBelasting.digiD.voorWie == 'iemandAnders') {\n    value = 'ja'\n  } else if(data.geenBelasting.digiD.voorWie == 'org') {\n    value = 'ja'\n  }\n} else if(data.geenBelasting && data.geenBelasting.eHerkenning && data.geenBelasting.eHerkenning.voorWie1) {\n    if(data.geenBelasting.eHerkenning.voorWie1 == 'mijnBedrijfOfOrganisatie') {\n    value = 'nee';\n  } else if(data.geenBelasting.eHerkenning.voorWie1 == 'iemandAndersOrg') {\n    value = 'ja'\n  } else if(data.geenBelasting.eHerkenning.voorWie1 == 'andereOrg') {\n    value = 'ja'\n  }\n}",
+                    "key": "isgemachtigde",
+                    "properties": {
+                        "jz4all_key": "is_authorized_person"
+                    },
+                    "type": "textfield_nijmegen",
+                    "input": true,
+                    "lockKey": true,
+                    "source": "6278fe716900ba91cfce8eb6",
+                    "isNew": true
+                },
+                {
+                    "label": "webforminitiator",
+                    "customClass": "vipzaaktypefield hiddenfield",
+                    "tableView": true,
+                    "calculateValue": "value = '';\nif(data.geenBelasting && data.geenBelasting.digiD && data.geenBelasting.digiD.voorWie) {\n  if(data.geenBelasting.digiD.voorWie == 'mijzelf') {\n    value = 'loggedin_person';\n  } else if(data.geenBelasting.digiD.voorWie == 'iemandAnders') {\n    value = 'person'\n  } else if(data.geenBelasting.digiD.voorWie == 'org') {\n    value = 'business'\n  }\n} else if(data.geenBelasting && data.geenBelasting.eHerkenning && data.geenBelasting.eHerkenning.voorWie1) {\n    if(data.geenBelasting.eHerkenning.voorWie1 == 'mijnBedrijfOfOrganisatie') {\n    value = 'loggedin_business';\n  } else if(data.geenBelasting.eHerkenning.voorWie1 == 'iemandAndersOrg') {\n    value = 'person'\n  } else if(data.geenBelasting.eHerkenning.voorWie1 == 'andereOrg') {\n    value = 'business'\n  }\n}",
+                    "key": "isgemachtigde1",
+                    "properties": {
+                        "jz4all_key": "webform_initiator.type"
+                    },
+                    "type": "textfield_nijmegen",
+                    "input": true,
+                    "lockKey": true,
+                    "source": "6278fe716900ba91cfce8eb6",
+                    "isNew": true
+                },
+                {
+                    "label": "Wilt u bezwaar maken tegen belastingen?",
+                    "optionsLabelPosition": "right",
+                    "inline": false,
+                    "tableView": false,
+                    "values": [
+                        {
+                            "label": "ja",
+                            "value": "ja",
+                            "shortcut": ""
+                        },
+                        {
+                            "label": "nee",
+                            "value": "nee",
+                            "shortcut": ""
+                        }
+                    ],
+                    "validate": {
+                        "required": true
+                    },
+                    "key": "wiltUBezwaarMakenTegenBelastingen",
+                    "type": "radio_nijmegen",
+                    "input": true
+                },
+                {
+                    "label": "belastingen portaal",
+                    "attrs": [
+                        {
+                            "attr": "",
+                            "value": ""
+                        }
+                    ],
+                    "content": "U kunt met dit formulier geen bezwaar maken tegen belastingen. U kunt dit doen bij het <a href=\"https://belastingen.nijmegen.nl\" target=\"_blank\">belastingen portaal</a>",
+                    "refreshOnChange": false,
+                    "key": "belastingenPortaal",
+                    "conditional": {
+                        "show": true,
+                        "conjunction": "all",
+                        "conditions": [
+                            {
+                                "component": "wiltUBezwaarMakenTegenBelastingen",
+                                "operator": "isEqual",
+                                "value": "ja"
+                            }
+                        ]
+                    },
+                    "type": "htmlelement",
+                    "input": false,
+                    "tableView": false
+                },
+                {
+                    "label": "Kenmerk",
+                    "customClass": "kenmerkfield hiddenfield",
+                    "tableView": true,
+                    "persistent": false,
+                    "key": "kenmerk",
+                    "type": "textfield_nijmegen",
+                    "input": true,
+                    "lockKey": true,
+                    "source": "60dc49b735e1524b3f603103",
+                    "isNew": true
+                },
+                {
+                    "label": "Naam ingelogde gebruiker",
+                    "customClass": "naamingelogdegebruikerfield hiddenfield",
+                    "tableView": true,
+                    "persistent": false,
+                    "key": "naamIngelogdeGebruiker",
+                    "type": "textfield_nijmegen",
+                    "input": true,
+                    "lockKey": true,
+                    "source": "60dc49b735e1524b3f603103",
+                    "isNew": true
+                },
+                {
+                    "label": "Uuid",
+                    "customClass": "uuidfield hiddenfield",
+                    "tableView": true,
+                    "persistent": false,
+                    "key": "uuid",
+                    "type": "textfield_nijmegen",
+                    "input": true,
+                    "lockKey": true,
+                    "source": "61b1dd28f4ef2c4b5133e0cd",
+                    "isNew": true
+                },
+                {
+                    "label": "Inlogmiddel",
+                    "customClass": "inlogmiddelfield hiddenfield",
+                    "tableView": true,
+                    "persistent": false,
+                    "key": "inlogmiddel",
+                    "properties": {
+                        "jz4all_key": "inlogmiddel"
+                    },
+                    "type": "textfield_nijmegen",
+                    "input": true,
+                    "lockKey": true,
+                    "source": "60dc49b735e1524b3f603103",
+                    "isNew": true
+                },
+                {
+                    "label": "BSN",
+                    "customClass": "bsnfield hiddenfield",
+                    "tableView": true,
+                    "persistent": false,
+                    "key": "bsn",
+                    "type": "textfield_nijmegen",
+                    "input": true,
+                    "lockKey": true,
+                    "source": "6278fe716900ba91cfce8eb6",
+                    "isNew": true
+                },
+                {
+                    "label": "vipZaaktype",
+                    "customClass": "vipzaaktypefield hiddenfield",
+                    "tableView": true,
+                    "key": "vipZaaktype",
+                    "type": "textfield_nijmegen",
+                    "input": true,
+                    "lockKey": true,
+                    "source": "6278fe716900ba91cfce8eb6",
+                    "isNew": true,
+                    "defaultValue": "7562e893-3d95-4114-bceb-b3407346e4ff"
+                },
+                {
+                    "label": "Columns",
+                    "columns": [
+                        {
+                            "components": [
+                                {
+                                    "label": "Volgende",
+                                    "action": "event",
+                                    "showValidations": false,
+                                    "size": "sm",
+                                    "tableView": false,
+                                    "key": "volgende",
+                                    "conditional": {
+                                        "show": false,
+                                        "conjunction": "all",
+                                        "conditions": [
+                                            {
+                                                "component": "wiltUBezwaarMakenTegenBelastingen",
+                                                "operator": "isEqual",
+                                                "value": "ja"
+                                            }
+                                        ]
+                                    },
+                                    "type": "button",
+                                    "event": "navigateToNextPage",
+                                    "input": true,
+                                    "hideOnChildrenHidden": false
+                                }
+                            ],
+                            "width": 3,
+                            "offset": 0,
+                            "push": 0,
+                            "pull": 0,
+                            "size": "sm",
+                            "currentWidth": 3
+                        },
+                        {
+                            "components": [],
+                            "width": 6,
+                            "offset": 0,
+                            "push": 0,
+                            "pull": 0,
+                            "size": "md",
+                            "currentWidth": 6
+                        }
+                    ],
+                    "key": "columns",
+                    "type": "columns",
+                    "input": false,
+                    "tableView": false,
+                    "hideOnChildrenHidden": false
+                }
+            ]
+        },
+        {
+            "title": "Gegevens besluit of beschikking",
+            "breadcrumbClickable": false,
+            "buttonSettings": {
+                "previous": false,
+                "cancel": false,
+                "next": false
+            },
+            "scrollToTop": false,
+            "collapsible": false,
+            "key": "page2",
+            "type": "panel",
+            "label": "Gegevens terras",
+            "input": false,
+            "tableView": false,
+            "components": [
+                {
+                    "label": "Bezwaar maken",
+                    "attrs": [
+                        {
+                            "attr": "",
+                            "value": ""
+                        }
+                    ],
+                    "content": "<h1>Bezwaar maken</h1>",
+                    "refreshOnChange": false,
+                    "key": "bezwaarMaken1",
+                    "type": "htmlelement",
+                    "input": false,
+                    "tableView": false
+                },
+                {
+                    "label": "Op welke datum heeft de gemeente het besluit bekend gemaakt of de beschikking gegeven?",
+                    "placeholder": "dag-maand-jaar",
+                    "description": "Heeft u een brief van de gemeente ontvangen (met daarin het besluit waartegen u bezwaar maakt) dan ziet u de datum bovenaan in deze brief. Maakt u bezwaar tegen een openbare bekendmaking op <a href=\"https://www.overheid.nl\" target=\"_blank\">overheid.nl</a>, vul dan de verzenddatum in die bij de bekendmaking staat.",
+                    "tableView": false,
+                    "enableMinDateInput": false,
+                    "datePicker": {
+                        "disableWeekends": false,
+                        "disableWeekdays": false
+                    },
+                    "enableMaxDateInput": false,
+                    "timePicker": {
+                        "hourStep": "",
+                        "minuteStep": "",
+                        "showMeridian": false
+                    },
+                    "validate": {
+                        "required": true
+                    },
+                    "validateOn": "blur",
+                    "key": "opWelkeDatumHeeftDeGemeenteHetBesluitBekendGemaaktOfDeBeschikkingGegeven",
+                    "properties": {
+                        "jz4all_key": "datum_primair_besluit"
+                    },
+                    "type": "datetime_nijmegen",
+                    "input": true,
+                    "widget": {
+                        "type": "calendar",
+                        "displayInTimezone": "viewer",
+                        "locale": "nl",
+                        "useLocaleSettings": false,
+                        "allowInput": true,
+                        "mode": "single",
+                        "enableTime": false,
+                        "noCalendar": false,
+                        "format": "dd-MM-yyyy",
+                        "time_24hr": true,
+                        "minDate": null,
+                        "disableWeekends": false,
+                        "disableWeekdays": false,
+                        "maxDate": null
+                    }
+                },
+                {
+                    "label": "Welk kenmerk of referentienummer heeft het besluit of de beschikking waartegen u bezwaar maakt?",
+                    "description": "Als u bezwaar maakt tegen een besluit van de gemeente dat in een brief aan u is gestuurd, dan ziet u het kenmerk bij 'ons kenmerk'. Maakt u bezwaar tegen een openbare bekendmaking op <a href=\"https://www.overheid.nl\" target=\"_blank\">overheid.nl</a>, vul dan het referentienummer in dat bij de bekendmaking staat.",
+                    "tableView": true,
+                    "validate": {
+                        "required": true
+                    },
+                    "key": "welkKenmerkOfReferentienummerHeeftHetBesluitOfDeBeschikkingWaartegenUBezwaarMaakt",
+                    "properties": {
+                        "jz4all_key": "primair_dossier"
+                    },
+                    "type": "textfield_nijmegen",
+                    "input": true
+                },
+                {
+                    "label": "Waarom bent u het niet eens met het besluit of de beschikking?",
+                    "tableView": true,
+                    "inputFormat": "plain",
+                    "validate": {
+                        "required": true
+                    },
+                    "key": "waaromBentUHetNietEensMetHetBesluitOfDeBeschikking",
+                    "type": "textarea_nijmegen",
+                    "input": true,
+                    "autoExpand": false
+                },
+                {
+                    "label": "Columns",
+                    "columns": [
+                        {
+                            "components": [
+                                {
+                                    "label": "Vorige",
+                                    "action": "event",
+                                    "showValidations": false,
+                                    "theme": "secondary",
+                                    "size": "sm",
+                                    "tableView": false,
+                                    "key": "vorige1",
+                                    "type": "button",
+                                    "input": true,
+                                    "hideOnChildrenHidden": false,
+                                    "event": "navigateToPrevPage"
+                                }
+                            ],
+                            "width": 3,
+                            "offset": 0,
+                            "push": 0,
+                            "pull": 0,
+                            "size": "sm",
+                            "currentWidth": 3
+                        },
+                        {
+                            "components": [
+                                {
+                                    "label": "Volgende",
+                                    "action": "event",
+                                    "showValidations": false,
+                                    "size": "sm",
+                                    "tableView": false,
+                                    "key": "volgende1",
+                                    "type": "button",
+                                    "event": "navigateToNextPage",
+                                    "input": true,
+                                    "hideOnChildrenHidden": false
+                                }
+                            ],
+                            "size": "sm",
+                            "width": 3,
+                            "offset": 0,
+                            "push": 0,
+                            "pull": 0,
+                            "currentWidth": 3
+                        }
+                    ],
+                    "key": "columns1",
+                    "type": "columns",
+                    "input": false,
+                    "tableView": false,
+                    "hideOnChildrenHidden": false
+                }
+            ],
+            "allowPrevious": true
+        },
+        {
+            "title": "Contactgegevens",
+            "breadcrumbClickable": true,
+            "buttonSettings": {
+                "previous": false,
+                "cancel": false,
+                "next": false
+            },
+            "navigateOnEnter": false,
+            "saveOnEnter": false,
+            "scrollToTop": false,
+            "collapsible": false,
+            "key": "page5",
+            "type": "panel",
+            "label": "Page 5",
+            "input": false,
+            "tableView": false,
+            "components": [
+                {
+                    "label": "Bezwaar maken",
+                    "attrs": [
+                        {
+                            "attr": "",
+                            "value": ""
+                        }
+                    ],
+                    "content": "<h1>Bezwaar maken</h1>",
+                    "refreshOnChange": false,
+                    "key": "bezwaarMaken4",
+                    "type": "htmlelement",
+                    "input": false,
+                    "tableView": false,
+                    "id": "et98qe2",
+                    "placeholder": "",
+                    "prefix": "",
+                    "customClass": "",
+                    "suffix": "",
+                    "multiple": false,
+                    "defaultValue": null,
+                    "protected": false,
+                    "unique": false,
+                    "persistent": false,
+                    "hidden": false,
+                    "clearOnHide": true,
+                    "refreshOn": "",
+                    "redrawOn": "",
+                    "modalEdit": false,
+                    "dataGridLabel": false,
+                    "labelPosition": "top",
+                    "description": "",
+                    "errorLabel": "",
+                    "tooltip": "",
+                    "hideLabel": false,
+                    "tabindex": "",
+                    "disabled": false,
+                    "autofocus": false,
+                    "dbIndex": false,
+                    "customDefaultValue": "",
+                    "calculateValue": "",
+                    "calculateServer": false,
+                    "widget": null,
+                    "attributes": {},
+                    "validateOn": "change",
+                    "validate": {
+                        "required": false,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false
+                    },
+                    "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                    },
+                    "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                    },
+                    "allowCalculateOverride": false,
+                    "encrypted": false,
+                    "showCharCount": false,
+                    "showWordCount": false,
+                    "properties": {},
+                    "allowMultipleMasks": false,
+                    "addons": [],
+                    "tag": "p"
+                },
+                {
+                    "label": "Uw gegevens",
+                    "attrs": [
+                        {
+                            "attr": "",
+                            "value": ""
+                        }
+                    ],
+                    "content": "<h2>Uw gegevens</h2>",
+                    "refreshOnChange": false,
+                    "key": "uwGegevens",
+                    "type": "htmlelement",
+                    "input": false,
+                    "tableView": false,
+                    "id": "e35l4m1",
+                    "placeholder": "",
+                    "prefix": "",
+                    "customClass": "",
+                    "suffix": "",
+                    "multiple": false,
+                    "defaultValue": null,
+                    "protected": false,
+                    "unique": false,
+                    "persistent": false,
+                    "hidden": false,
+                    "clearOnHide": true,
+                    "refreshOn": "",
+                    "redrawOn": "",
+                    "modalEdit": false,
+                    "dataGridLabel": false,
+                    "labelPosition": "top",
+                    "description": "",
+                    "errorLabel": "",
+                    "tooltip": "",
+                    "hideLabel": false,
+                    "tabindex": "",
+                    "disabled": false,
+                    "autofocus": false,
+                    "dbIndex": false,
+                    "customDefaultValue": "",
+                    "calculateValue": "",
+                    "calculateServer": false,
+                    "widget": null,
+                    "attributes": {},
+                    "validateOn": "change",
+                    "validate": {
+                        "required": false,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false
+                    },
+                    "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                    },
+                    "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                    },
+                    "allowCalculateOverride": false,
+                    "encrypted": false,
+                    "showCharCount": false,
+                    "showWordCount": false,
+                    "properties": {},
+                    "allowMultipleMasks": false,
+                    "addons": [],
+                    "tag": "p"
+                },
+                {
+                    "label": "Form",
+                    "tableView": true,
+                    "form": "6627cd18c5dd61999060f2fd",
+                    "useOriginalRevision": false,
+                    "reference": false,
+                    "key": "nonhiddenfieldsform",
+                    "type": "form",
+                    "input": true,
+                    "lazyLoad": true,
+                    "id": "ewyn1c5",
+                    "placeholder": "",
+                    "prefix": "",
+                    "customClass": "",
+                    "suffix": "",
+                    "multiple": false,
+                    "defaultValue": null,
+                    "protected": false,
+                    "unique": false,
+                    "persistent": true,
+                    "hidden": false,
+                    "clearOnHide": true,
+                    "refreshOn": "",
+                    "redrawOn": "",
+                    "modalEdit": false,
+                    "dataGridLabel": false,
+                    "labelPosition": "top",
+                    "description": "",
+                    "errorLabel": "",
+                    "tooltip": "",
+                    "hideLabel": false,
+                    "tabindex": "",
+                    "disabled": false,
+                    "autofocus": false,
+                    "dbIndex": false,
+                    "customDefaultValue": "",
+                    "calculateValue": "",
+                    "calculateServer": false,
+                    "widget": null,
+                    "attributes": {},
+                    "validateOn": "change",
+                    "validate": {
+                        "required": false,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false
+                    },
+                    "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                    },
+                    "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                    },
+                    "allowCalculateOverride": false,
+                    "encrypted": false,
+                    "showCharCount": false,
+                    "showWordCount": false,
+                    "properties": {},
+                    "allowMultipleMasks": false,
+                    "addons": [],
+                    "src": "",
+                    "path": ""
+                },
+                {
+                    "label": "DigiD",
+                    "tableView": false,
+                    "key": "digiD",
+                    "conditional": {
+                        "show": true,
+                        "conjunction": "all",
+                        "conditions": [
+                            {
+                                "component": "inlogmiddel",
+                                "operator": "isEqual",
+                                "value": "digid"
+                            }
+                        ],
+                        "when": null,
+                        "eq": ""
+                    },
+                    "customConditional": "show = data.bsn && data.bsn.length > 0;",
+                    "type": "container",
+                    "input": true,
+                    "components": [
+                        {
+                            "html": "<p>digid &amp; bsn</p>",
+                            "label": "Content",
+                            "refreshOnChange": false,
+                            "key": "content",
+                            "type": "content",
+                            "input": false,
+                            "tableView": false,
+                            "id": "e7r66bd",
+                            "placeholder": "",
+                            "prefix": "",
+                            "customClass": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": null,
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true,
+                            "refreshOn": "",
+                            "redrawOn": "",
+                            "modalEdit": false,
+                            "dataGridLabel": false,
+                            "labelPosition": "top",
+                            "description": "",
+                            "errorLabel": "",
+                            "tooltip": "",
+                            "hideLabel": false,
+                            "tabindex": "",
+                            "disabled": false,
+                            "autofocus": false,
+                            "dbIndex": false,
+                            "customDefaultValue": "",
+                            "calculateValue": "",
+                            "calculateServer": false,
+                            "widget": null,
+                            "attributes": {},
+                            "validateOn": "change",
+                            "validate": {
+                                "required": false,
+                                "custom": "",
+                                "customPrivate": false,
+                                "strictDateValidation": false,
+                                "multiple": false,
+                                "unique": false
+                            },
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": ""
+                            },
+                            "overlay": {
+                                "style": "",
+                                "left": "",
+                                "top": "",
+                                "width": "",
+                                "height": ""
+                            },
+                            "allowCalculateOverride": false,
+                            "encrypted": false,
+                            "showCharCount": false,
+                            "showWordCount": false,
+                            "properties": {},
+                            "allowMultipleMasks": false,
+                            "addons": []
+                        },
+                        {
+                            "label": "Namens wie maakt u bezwaar?",
+                            "optionsLabelPosition": "right",
+                            "inline": false,
+                            "tableView": false,
+                            "values": [
+                                {
+                                    "label": "mijzelf",
+                                    "value": "mijzelf",
+                                    "shortcut": ""
+                                },
+                                {
+                                    "label": "iemand anders (u bent gemachtigd)",
+                                    "value": "iemandAnders",
+                                    "shortcut": ""
+                                },
+                                {
+                                    "label": "een bedrijf of organisatie (u bent gemachtigd)",
+                                    "value": "org",
+                                    "shortcut": ""
+                                }
+                            ],
+                            "validate": {
+                                "required": true,
+                                "custom": "",
+                                "customPrivate": false,
+                                "strictDateValidation": false,
+                                "multiple": false,
+                                "unique": false,
+                                "onlyAvailableItems": false
+                            },
+                            "key": "voorWie",
+                            "type": "radio_nijmegen",
+                            "input": true,
+                            "id": "enx8om",
+                            "placeholder": "",
+                            "prefix": "",
+                            "customClass": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": null,
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true,
+                            "refreshOn": "",
+                            "redrawOn": "",
+                            "modalEdit": false,
+                            "dataGridLabel": false,
+                            "labelPosition": "top",
+                            "description": "",
+                            "errorLabel": "",
+                            "tooltip": "",
+                            "hideLabel": false,
+                            "tabindex": "",
+                            "disabled": false,
+                            "autofocus": false,
+                            "dbIndex": false,
+                            "customDefaultValue": "",
+                            "calculateValue": "",
+                            "calculateServer": false,
+                            "widget": null,
+                            "attributes": {},
+                            "validateOn": "change",
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": ""
+                            },
+                            "overlay": {
+                                "style": "",
+                                "left": "",
+                                "top": "",
+                                "width": "",
+                                "height": ""
+                            },
+                            "allowCalculateOverride": false,
+                            "encrypted": false,
+                            "showCharCount": false,
+                            "showWordCount": false,
+                            "properties": {},
+                            "allowMultipleMasks": false,
+                            "addons": [],
+                            "dataSrc": "values",
+                            "authenticate": false,
+                            "ignoreCache": false,
+                            "template": "<span>{{ item.label }}</span>",
+                            "inputType": "radio",
+                            "data": {
+                                "url": ""
+                            },
+                            "fieldSet": false
+                        }
+                    ],
+                    "id": "egkbvr9",
+                    "placeholder": "",
+                    "prefix": "",
+                    "customClass": "",
+                    "suffix": "",
+                    "multiple": false,
+                    "defaultValue": null,
+                    "protected": false,
+                    "unique": false,
+                    "persistent": true,
+                    "hidden": false,
+                    "clearOnHide": true,
+                    "refreshOn": "",
+                    "redrawOn": "",
+                    "modalEdit": false,
+                    "dataGridLabel": false,
+                    "labelPosition": "top",
+                    "description": "",
+                    "errorLabel": "",
+                    "tooltip": "",
+                    "hideLabel": true,
+                    "tabindex": "",
+                    "disabled": false,
+                    "autofocus": false,
+                    "dbIndex": false,
+                    "customDefaultValue": "",
+                    "calculateValue": "",
+                    "calculateServer": false,
+                    "widget": null,
+                    "attributes": {},
+                    "validateOn": "change",
+                    "validate": {
+                        "required": false,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false
+                    },
+                    "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                    },
+                    "allowCalculateOverride": false,
+                    "encrypted": false,
+                    "showCharCount": false,
+                    "showWordCount": false,
+                    "properties": {},
+                    "allowMultipleMasks": false,
+                    "addons": [],
+                    "tree": true,
+                    "lazyLoad": false
+                },
+                {
+                    "label": "eHerkenning",
+                    "tableView": false,
+                    "key": "eHerkenning",
+                    "conditional": {
+                        "show": true,
+                        "conjunction": "all",
+                        "conditions": [
+                            {
+                                "component": "inlogmiddel",
+                                "operator": "isEqual",
+                                "value": "eherkenning"
+                            }
+                        ],
+                        "when": null,
+                        "eq": ""
+                    },
+                    "type": "container",
+                    "input": true,
+                    "components": [
+                        {
+                            "html": "<p>eherkenning</p>",
+                            "label": "Content",
+                            "refreshOnChange": false,
+                            "key": "content",
+                            "type": "content",
+                            "input": false,
+                            "tableView": false,
+                            "id": "ehf0nc4",
+                            "placeholder": "",
+                            "prefix": "",
+                            "customClass": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": null,
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true,
+                            "refreshOn": "",
+                            "redrawOn": "",
+                            "modalEdit": false,
+                            "dataGridLabel": false,
+                            "labelPosition": "top",
+                            "description": "",
+                            "errorLabel": "",
+                            "tooltip": "",
+                            "hideLabel": false,
+                            "tabindex": "",
+                            "disabled": false,
+                            "autofocus": false,
+                            "dbIndex": false,
+                            "customDefaultValue": "",
+                            "calculateValue": "",
+                            "calculateServer": false,
+                            "widget": null,
+                            "attributes": {},
+                            "validateOn": "change",
+                            "validate": {
+                                "required": false,
+                                "custom": "",
+                                "customPrivate": false,
+                                "strictDateValidation": false,
+                                "multiple": false,
+                                "unique": false
+                            },
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": ""
+                            },
+                            "overlay": {
+                                "style": "",
+                                "left": "",
+                                "top": "",
+                                "width": "",
+                                "height": ""
+                            },
+                            "allowCalculateOverride": false,
+                            "encrypted": false,
+                            "showCharCount": false,
+                            "showWordCount": false,
+                            "properties": {},
+                            "allowMultipleMasks": false,
+                            "addons": []
+                        },
+                        {
+                            "label": "Namens wie maakt u bezwaar?",
+                            "optionsLabelPosition": "right",
+                            "inline": false,
+                            "tableView": false,
+                            "values": [
+                                {
+                                    "label": "mijn bedrijf of organisatie",
+                                    "value": "mijnBedrijfOfOrganisatie",
+                                    "shortcut": ""
+                                },
+                                {
+                                    "label": "iemand anders (uw bedrijf of organisatie is gemachtigd)",
+                                    "value": "iemandAndersOrg",
+                                    "shortcut": ""
+                                },
+                                {
+                                    "label": "een ander bedrijf of organisatie (uw bedrijf of organisatie is gemachtigd)",
+                                    "value": "andereOrg",
+                                    "shortcut": ""
+                                }
+                            ],
+                            "validate": {
+                                "required": true,
+                                "custom": "",
+                                "customPrivate": false,
+                                "strictDateValidation": false,
+                                "multiple": false,
+                                "unique": false,
+                                "onlyAvailableItems": false
+                            },
+                            "key": "voorWie1",
+                            "type": "radio_nijmegen",
+                            "input": true,
+                            "id": "ezsm1t8",
+                            "placeholder": "",
+                            "prefix": "",
+                            "customClass": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": null,
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true,
+                            "refreshOn": "",
+                            "redrawOn": "",
+                            "modalEdit": false,
+                            "dataGridLabel": false,
+                            "labelPosition": "top",
+                            "description": "",
+                            "errorLabel": "",
+                            "tooltip": "",
+                            "hideLabel": false,
+                            "tabindex": "",
+                            "disabled": false,
+                            "autofocus": false,
+                            "dbIndex": false,
+                            "customDefaultValue": "",
+                            "calculateValue": "",
+                            "calculateServer": false,
+                            "widget": null,
+                            "attributes": {},
+                            "validateOn": "change",
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": ""
+                            },
+                            "overlay": {
+                                "style": "",
+                                "left": "",
+                                "top": "",
+                                "width": "",
+                                "height": ""
+                            },
+                            "allowCalculateOverride": false,
+                            "encrypted": false,
+                            "showCharCount": false,
+                            "showWordCount": false,
+                            "properties": {},
+                            "allowMultipleMasks": false,
+                            "addons": [],
+                            "dataSrc": "values",
+                            "authenticate": false,
+                            "ignoreCache": false,
+                            "template": "<span>{{ item.label }}</span>",
+                            "inputType": "radio",
+                            "data": {
+                                "url": ""
+                            },
+                            "fieldSet": false
+                        }
+                    ],
+                    "id": "e9zlrpb",
+                    "placeholder": "",
+                    "prefix": "",
+                    "customClass": "",
+                    "suffix": "",
+                    "multiple": false,
+                    "defaultValue": null,
+                    "protected": false,
+                    "unique": false,
+                    "persistent": true,
+                    "hidden": false,
+                    "clearOnHide": true,
+                    "refreshOn": "",
+                    "redrawOn": "",
+                    "modalEdit": false,
+                    "dataGridLabel": false,
+                    "labelPosition": "top",
+                    "description": "",
+                    "errorLabel": "",
+                    "tooltip": "",
+                    "hideLabel": true,
+                    "tabindex": "",
+                    "disabled": false,
+                    "autofocus": false,
+                    "dbIndex": false,
+                    "customDefaultValue": "",
+                    "calculateValue": "",
+                    "calculateServer": false,
+                    "widget": null,
+                    "attributes": {},
+                    "validateOn": "change",
+                    "validate": {
+                        "required": false,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false
+                    },
+                    "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                    },
+                    "allowCalculateOverride": false,
+                    "encrypted": false,
+                    "showCharCount": false,
+                    "showWordCount": false,
+                    "properties": {},
+                    "allowMultipleMasks": false,
+                    "addons": [],
+                    "tree": true,
+                    "lazyLoad": false
+                },
+                {
+                    "label": "Aanvraag namens iemand anders ",
+                    "tableView": false,
+                    "key": "aanvraagNamensIemandAnders",
+                    "customConditional": "show = false;\n\nvar isDigidIemandAnders = data.digiD && data.digiD.voorWie && data.digiD.voorWie == 'iemandAnders' ? true:false;\nvar isEherkenningIemandAnders = data.eHerkenning && data.eHerkenning.voorWie1 && data.eHerkenning.voorWie1 == 'iemandAndersOrg' ? true:false;\n\nif (isDigidIemandAnders || isEherkenningIemandAnders){\n  show = true;\n} else{\n  show = false;\n}\n\n",
+                    "type": "container",
+                    "input": true,
+                    "components": [
+                        {
+                            "html": "<p><strong>Gegevens van de persoon voor wie u bezwaar maakt:</strong></p>",
+                            "label": "Content",
+                            "refreshOnChange": false,
+                            "key": "content",
+                            "type": "content",
+                            "input": false,
+                            "tableView": false,
+                            "id": "e4di81r",
+                            "placeholder": "",
+                            "prefix": "",
+                            "customClass": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": null,
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true,
+                            "refreshOn": "",
+                            "redrawOn": "",
+                            "modalEdit": false,
+                            "dataGridLabel": false,
+                            "labelPosition": "top",
+                            "description": "",
+                            "errorLabel": "",
+                            "tooltip": "",
+                            "hideLabel": false,
+                            "tabindex": "",
+                            "disabled": false,
+                            "autofocus": false,
+                            "dbIndex": false,
+                            "customDefaultValue": "",
+                            "calculateValue": "",
+                            "calculateServer": false,
+                            "widget": null,
+                            "attributes": {},
+                            "validateOn": "change",
+                            "validate": {
+                                "required": false,
+                                "custom": "",
+                                "customPrivate": false,
+                                "strictDateValidation": false,
+                                "multiple": false,
+                                "unique": false
+                            },
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": ""
+                            },
+                            "overlay": {
+                                "style": "",
+                                "left": "",
+                                "top": "",
+                                "width": "",
+                                "height": ""
+                            },
+                            "allowCalculateOverride": false,
+                            "encrypted": false,
+                            "showCharCount": false,
+                            "showWordCount": false,
+                            "properties": {},
+                            "allowMultipleMasks": false,
+                            "addons": []
+                        },
+                        {
+                            "label": "Naam",
+                            "tableView": true,
+                            "validate": {
+                                "required": true,
+                                "custom": "",
+                                "customPrivate": false,
+                                "strictDateValidation": false,
+                                "multiple": false,
+                                "unique": false,
+                                "minLength": "",
+                                "maxLength": "",
+                                "pattern": ""
+                            },
+                            "key": "naam",
+                            "properties": {
+                                "jz4all_key": "webform_initiator.naam"
+                            },
+                            "type": "textfield_nijmegen",
+                            "input": true,
+                            "id": "er73i68",
+                            "placeholder": "",
+                            "prefix": "",
+                            "customClass": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": null,
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true,
+                            "refreshOn": "",
+                            "redrawOn": "",
+                            "modalEdit": false,
+                            "dataGridLabel": false,
+                            "labelPosition": "top",
+                            "description": "",
+                            "errorLabel": "",
+                            "tooltip": "",
+                            "hideLabel": false,
+                            "tabindex": "",
+                            "disabled": false,
+                            "autofocus": false,
+                            "dbIndex": false,
+                            "customDefaultValue": "",
+                            "calculateValue": "",
+                            "calculateServer": false,
+                            "widget": {
+                                "type": "input"
+                            },
+                            "attributes": {},
+                            "validateOn": "change",
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": ""
+                            },
+                            "overlay": {
+                                "style": "",
+                                "left": "",
+                                "top": "",
+                                "width": "",
+                                "height": ""
+                            },
+                            "allowCalculateOverride": false,
+                            "encrypted": false,
+                            "showCharCount": false,
+                            "showWordCount": false,
+                            "allowMultipleMasks": false,
+                            "addons": [],
+                            "mask": false,
+                            "inputType": "text",
+                            "inputFormat": "plain",
+                            "inputMask": "",
+                            "displayMask": "",
+                            "spellcheck": true,
+                            "truncateMultipleSpaces": false
+                        },
+                        {
+                            "label": "Adres",
+                            "disablestreetcity": false,
+                            "validate": {
+                                "required": true,
+                                "custom": "",
+                                "customPrivate": false,
+                                "strictDateValidation": false,
+                                "multiple": false,
+                                "unique": false,
+                                "minLength": "",
+                                "maxLength": "",
+                                "pattern": ""
+                            },
+                            "tableView": true,
+                            "key": "adres",
+                            "properties": {
+                                "jz4all_key": "webform_initiator.adres"
+                            },
+                            "type": "adres_nijmegen",
+                            "input": true,
+                            "id": "e3puhp",
+                            "placeholder": "",
+                            "prefix": "",
+                            "customClass": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": null,
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true,
+                            "refreshOn": "",
+                            "redrawOn": "",
+                            "modalEdit": false,
+                            "dataGridLabel": false,
+                            "labelPosition": "top",
+                            "description": "",
+                            "errorLabel": "",
+                            "tooltip": "",
+                            "hideLabel": false,
+                            "tabindex": "",
+                            "disabled": false,
+                            "autofocus": false,
+                            "dbIndex": false,
+                            "customDefaultValue": "",
+                            "calculateValue": "",
+                            "calculateServer": false,
+                            "widget": {
+                                "type": "input"
+                            },
+                            "attributes": {},
+                            "validateOn": "change",
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": ""
+                            },
+                            "overlay": {
+                                "style": "",
+                                "left": "",
+                                "top": "",
+                                "width": "",
+                                "height": ""
+                            },
+                            "allowCalculateOverride": false,
+                            "encrypted": false,
+                            "showCharCount": false,
+                            "showWordCount": false,
+                            "allowMultipleMasks": false,
+                            "addons": [],
+                            "mask": false,
+                            "inputType": "text",
+                            "inputFormat": "plain",
+                            "inputMask": "",
+                            "spellcheck": true,
+                            "lang": "nl"
+                        }
+                    ],
+                    "id": "eoezkws",
+                    "placeholder": "",
+                    "prefix": "",
+                    "customClass": "",
+                    "suffix": "",
+                    "multiple": false,
+                    "defaultValue": null,
+                    "protected": false,
+                    "unique": false,
+                    "persistent": true,
+                    "hidden": false,
+                    "clearOnHide": true,
+                    "refreshOn": "",
+                    "redrawOn": "",
+                    "modalEdit": false,
+                    "dataGridLabel": false,
+                    "labelPosition": "top",
+                    "description": "",
+                    "errorLabel": "",
+                    "tooltip": "",
+                    "hideLabel": true,
+                    "tabindex": "",
+                    "disabled": false,
+                    "autofocus": false,
+                    "dbIndex": false,
+                    "customDefaultValue": "",
+                    "calculateValue": "",
+                    "calculateServer": false,
+                    "widget": null,
+                    "attributes": {},
+                    "validateOn": "change",
+                    "validate": {
+                        "required": false,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false
+                    },
+                    "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                    },
+                    "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                    },
+                    "allowCalculateOverride": false,
+                    "encrypted": false,
+                    "showCharCount": false,
+                    "showWordCount": false,
+                    "properties": {},
+                    "allowMultipleMasks": false,
+                    "addons": [],
+                    "tree": true,
+                    "lazyLoad": false
+                },
+                {
+                    "label": "Aanvraag namens een ander bedrijf",
+                    "tableView": false,
+                    "key": "aanvraagNamensAnderOrg",
+                    "customConditional": "show = false;\n\nif ((data.digiD && data.digiD.voorWie && data.digiD.voorWie == 'org') || (data.eHerkenning && data.eHerkenning.voorWie1 && data.eHerkenning.voorWie1 == 'andereOrg')){\n  show = true;\n} else{\n  show = false;\n}",
+                    "type": "container",
+                    "input": true,
+                    "components": [
+                        {
+                            "html": "<p><strong>Gegevens van het bedrijf voor wie u bezwaar maakt:</strong></p>",
+                            "label": "Content",
+                            "refreshOnChange": false,
+                            "key": "content",
+                            "type": "content",
+                            "input": false,
+                            "tableView": false,
+                            "id": "ezn85ko",
+                            "placeholder": "",
+                            "prefix": "",
+                            "customClass": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": null,
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true,
+                            "refreshOn": "",
+                            "redrawOn": "",
+                            "modalEdit": false,
+                            "dataGridLabel": false,
+                            "labelPosition": "top",
+                            "description": "",
+                            "errorLabel": "",
+                            "tooltip": "",
+                            "hideLabel": false,
+                            "tabindex": "",
+                            "disabled": false,
+                            "autofocus": false,
+                            "dbIndex": false,
+                            "customDefaultValue": "",
+                            "calculateValue": "",
+                            "calculateServer": false,
+                            "widget": null,
+                            "attributes": {},
+                            "validateOn": "change",
+                            "validate": {
+                                "required": false,
+                                "custom": "",
+                                "customPrivate": false,
+                                "strictDateValidation": false,
+                                "multiple": false,
+                                "unique": false
+                            },
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": ""
+                            },
+                            "overlay": {
+                                "style": "",
+                                "left": "",
+                                "top": "",
+                                "width": "",
+                                "height": ""
+                            },
+                            "allowCalculateOverride": false,
+                            "encrypted": false,
+                            "showCharCount": false,
+                            "showWordCount": false,
+                            "properties": {},
+                            "allowMultipleMasks": false,
+                            "addons": []
+                        },
+                        {
+                            "label": "Naam organisatie / bedrijf",
+                            "tableView": true,
+                            "validate": {
+                                "required": true,
+                                "custom": "",
+                                "customPrivate": false,
+                                "strictDateValidation": false,
+                                "multiple": false,
+                                "unique": false,
+                                "minLength": "",
+                                "maxLength": "",
+                                "pattern": ""
+                            },
+                            "key": "naam",
+                            "properties": {
+                                "jz4all_key": "webform_initiator.naam"
+                            },
+                            "type": "textfield_nijmegen",
+                            "input": true,
+                            "id": "ekeww5",
+                            "placeholder": "",
+                            "prefix": "",
+                            "customClass": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": null,
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true,
+                            "refreshOn": "",
+                            "redrawOn": "",
+                            "modalEdit": false,
+                            "dataGridLabel": false,
+                            "labelPosition": "top",
+                            "description": "",
+                            "errorLabel": "",
+                            "tooltip": "",
+                            "hideLabel": false,
+                            "tabindex": "",
+                            "disabled": false,
+                            "autofocus": false,
+                            "dbIndex": false,
+                            "customDefaultValue": "",
+                            "calculateValue": "",
+                            "calculateServer": false,
+                            "widget": {
+                                "type": "input"
+                            },
+                            "attributes": {},
+                            "validateOn": "change",
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": ""
+                            },
+                            "overlay": {
+                                "style": "",
+                                "left": "",
+                                "top": "",
+                                "width": "",
+                                "height": ""
+                            },
+                            "allowCalculateOverride": false,
+                            "encrypted": false,
+                            "showCharCount": false,
+                            "showWordCount": false,
+                            "allowMultipleMasks": false,
+                            "addons": [],
+                            "mask": false,
+                            "inputType": "text",
+                            "inputFormat": "plain",
+                            "inputMask": "",
+                            "displayMask": "",
+                            "spellcheck": true,
+                            "truncateMultipleSpaces": false
+                        },
+                        {
+                            "label": "Inschrijfnummer Kamer van Koophandel",
+                            "tableView": true,
+                            "validate": {
+                                "required": true,
+                                "maxLength": 8,
+                                "pattern": "^[0-9]*$",
+                                "customMessage": "Vul een KvK nummer in",
+                                "custom": "",
+                                "customPrivate": false,
+                                "strictDateValidation": false,
+                                "multiple": false,
+                                "unique": false,
+                                "minLength": ""
+                            },
+                            "key": "kvKNummer",
+                            "properties": {
+                                "jz4all_key": "webform_initiator.kvk"
+                            },
+                            "type": "textfield_nijmegen",
+                            "input": true,
+                            "id": "e2q7djs",
+                            "placeholder": "",
+                            "prefix": "",
+                            "customClass": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": null,
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true,
+                            "refreshOn": "",
+                            "redrawOn": "",
+                            "modalEdit": false,
+                            "dataGridLabel": false,
+                            "labelPosition": "top",
+                            "description": "",
+                            "errorLabel": "",
+                            "tooltip": "",
+                            "hideLabel": false,
+                            "tabindex": "",
+                            "disabled": false,
+                            "autofocus": false,
+                            "dbIndex": false,
+                            "customDefaultValue": "",
+                            "calculateValue": "",
+                            "calculateServer": false,
+                            "widget": {
+                                "type": "input"
+                            },
+                            "attributes": {},
+                            "validateOn": "change",
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": ""
+                            },
+                            "overlay": {
+                                "style": "",
+                                "left": "",
+                                "top": "",
+                                "width": "",
+                                "height": ""
+                            },
+                            "allowCalculateOverride": false,
+                            "encrypted": false,
+                            "showCharCount": false,
+                            "showWordCount": false,
+                            "allowMultipleMasks": false,
+                            "addons": [],
+                            "mask": false,
+                            "inputType": "text",
+                            "inputFormat": "plain",
+                            "inputMask": "",
+                            "displayMask": "",
+                            "spellcheck": true,
+                            "truncateMultipleSpaces": false
+                        }
+                    ],
+                    "id": "ev4a585",
+                    "placeholder": "",
+                    "prefix": "",
+                    "customClass": "",
+                    "suffix": "",
+                    "multiple": false,
+                    "defaultValue": null,
+                    "protected": false,
+                    "unique": false,
+                    "persistent": true,
+                    "hidden": false,
+                    "clearOnHide": true,
+                    "refreshOn": "",
+                    "redrawOn": "",
+                    "modalEdit": false,
+                    "dataGridLabel": false,
+                    "labelPosition": "top",
+                    "description": "",
+                    "errorLabel": "",
+                    "tooltip": "",
+                    "hideLabel": true,
+                    "tabindex": "",
+                    "disabled": false,
+                    "autofocus": false,
+                    "dbIndex": false,
+                    "customDefaultValue": "",
+                    "calculateValue": "",
+                    "calculateServer": false,
+                    "widget": null,
+                    "attributes": {},
+                    "validateOn": "change",
+                    "validate": {
+                        "required": false,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false
+                    },
+                    "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                    },
+                    "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                    },
+                    "allowCalculateOverride": false,
+                    "encrypted": false,
+                    "showCharCount": false,
+                    "showWordCount": false,
+                    "properties": {},
+                    "allowMultipleMasks": false,
+                    "addons": [],
+                    "tree": true,
+                    "lazyLoad": false
+                },
+                {
+                    "label": "DigiD (contactpersoon)",
+                    "tableView": false,
+                    "key": "digiDContactpersoon",
+                    "type": "container",
+                    "input": true,
+                    "components": [
+                        {
+                            "label": "Bent u zelf de contactpersoon?",
+                            "optionsLabelPosition": "right",
+                            "inline": false,
+                            "tableView": false,
+                            "values": [
+                                {
+                                    "label": "ja",
+                                    "value": "ja",
+                                    "shortcut": ""
+                                },
+                                {
+                                    "label": "nee",
+                                    "value": "nee",
+                                    "shortcut": ""
+                                }
+                            ],
+                            "validate": {
+                                "required": true,
+                                "custom": "",
+                                "customPrivate": false,
+                                "strictDateValidation": false,
+                                "multiple": false,
+                                "unique": false,
+                                "onlyAvailableItems": false
+                            },
+                            "key": "contactpersoon",
+                            "properties": {
+                                "jz4all_key": "initiator_is_contact"
+                            },
+                            "customConditional": "show = data.digiD && data.digiD.voorWie == 'org';",
+                            "type": "radio_nijmegen",
+                            "input": true,
+                            "id": "egwgaf",
+                            "placeholder": "",
+                            "prefix": "",
+                            "customClass": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": null,
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true,
+                            "refreshOn": "",
+                            "redrawOn": "",
+                            "modalEdit": false,
+                            "dataGridLabel": false,
+                            "labelPosition": "top",
+                            "description": "",
+                            "errorLabel": "",
+                            "tooltip": "",
+                            "hideLabel": false,
+                            "tabindex": "",
+                            "disabled": false,
+                            "autofocus": false,
+                            "dbIndex": false,
+                            "customDefaultValue": "",
+                            "calculateValue": "",
+                            "calculateServer": false,
+                            "widget": null,
+                            "attributes": {},
+                            "validateOn": "change",
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": ""
+                            },
+                            "overlay": {
+                                "style": "",
+                                "left": "",
+                                "top": "",
+                                "width": "",
+                                "height": ""
+                            },
+                            "allowCalculateOverride": false,
+                            "encrypted": false,
+                            "showCharCount": false,
+                            "showWordCount": false,
+                            "allowMultipleMasks": false,
+                            "addons": [],
+                            "dataSrc": "values",
+                            "authenticate": false,
+                            "ignoreCache": false,
+                            "template": "<span>{{ item.label }}</span>",
+                            "inputType": "radio",
+                            "data": {
+                                "url": ""
+                            },
+                            "fieldSet": false
+                        }
+                    ],
+                    "id": "e2wx9ln",
+                    "placeholder": "",
+                    "prefix": "",
+                    "customClass": "",
+                    "suffix": "",
+                    "multiple": false,
+                    "defaultValue": null,
+                    "protected": false,
+                    "unique": false,
+                    "persistent": true,
+                    "hidden": false,
+                    "clearOnHide": true,
+                    "refreshOn": "",
+                    "redrawOn": "",
+                    "modalEdit": false,
+                    "dataGridLabel": false,
+                    "labelPosition": "top",
+                    "description": "",
+                    "errorLabel": "",
+                    "tooltip": "",
+                    "hideLabel": true,
+                    "tabindex": "",
+                    "disabled": false,
+                    "autofocus": false,
+                    "dbIndex": false,
+                    "customDefaultValue": "",
+                    "calculateValue": "",
+                    "calculateServer": false,
+                    "widget": null,
+                    "attributes": {},
+                    "validateOn": "change",
+                    "validate": {
+                        "required": false,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false
+                    },
+                    "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                    },
+                    "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                    },
+                    "allowCalculateOverride": false,
+                    "encrypted": false,
+                    "showCharCount": false,
+                    "showWordCount": false,
+                    "properties": {},
+                    "allowMultipleMasks": false,
+                    "addons": [],
+                    "tree": true,
+                    "lazyLoad": false
+                },
+                {
+                    "label": "Naam contactpersoon",
+                    "applyMaskOn": "change",
+                    "tableView": true,
+                    "validate": {
+                        "required": true,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false,
+                        "minLength": "",
+                        "maxLength": "",
+                        "pattern": ""
+                    },
+                    "key": "naamContactpersoon",
+                    "properties": {
+                        "jz4all_key": "contact.naam"
+                    },
+                    "customConditional": "show = (data.digiDContactpersoon && data.digiDContactpersoon.contactpersoon == 'nee') || (data.inlogmiddel == 'eherkenning');",
+                    "type": "textfield_nijmegen",
+                    "input": true,
+                    "id": "eelm79i",
+                    "placeholder": "",
+                    "prefix": "",
+                    "customClass": "",
+                    "suffix": "",
+                    "multiple": false,
+                    "defaultValue": null,
+                    "protected": false,
+                    "unique": false,
+                    "persistent": true,
+                    "hidden": false,
+                    "clearOnHide": true,
+                    "refreshOn": "",
+                    "redrawOn": "",
+                    "modalEdit": false,
+                    "dataGridLabel": false,
+                    "labelPosition": "top",
+                    "description": "",
+                    "errorLabel": "",
+                    "tooltip": "",
+                    "hideLabel": false,
+                    "tabindex": "",
+                    "disabled": false,
+                    "autofocus": false,
+                    "dbIndex": false,
+                    "customDefaultValue": "",
+                    "calculateValue": "",
+                    "calculateServer": false,
+                    "widget": {
+                        "type": "input"
+                    },
+                    "attributes": {},
+                    "validateOn": "change",
+                    "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                    },
+                    "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                    },
+                    "allowCalculateOverride": false,
+                    "encrypted": false,
+                    "showCharCount": false,
+                    "showWordCount": false,
+                    "allowMultipleMasks": false,
+                    "addons": [],
+                    "mask": false,
+                    "inputType": "text",
+                    "inputFormat": "plain",
+                    "inputMask": "",
+                    "displayMask": "",
+                    "spellcheck": true,
+                    "truncateMultipleSpaces": false
+                },
+                {
+                    "html": "<p><span style=\"background-color:rgb(255,255,255);color:rgb(0,0,0);\">U moet een kopie van de machtiging, waarop staat dat u voor die persoon bezwaar mag maken, bij uw bezwaar doen. U leest aan het einde van dit formulier hoe u dit kunt doen.</span></p>",
+                    "label": "Content",
+                    "refreshOnChange": false,
+                    "key": "content5",
+                    "conditional": {
+                        "show": true,
+                        "conjunction": "any",
+                        "conditions": [
+                            {
+                                "component": "digiD.voorWie",
+                                "operator": "isEqual",
+                                "value": "iemandAnders"
+                            },
+                            {
+                                "component": "eHerkenning.voorWie1",
+                                "operator": "isEqual",
+                                "value": "iemandAndersOrg"
+                            }
+                        ],
+                        "when": null,
+                        "eq": ""
+                    },
+                    "type": "content",
+                    "input": false,
+                    "tableView": false,
+                    "id": "eilz2b6q",
+                    "placeholder": "",
+                    "prefix": "",
+                    "customClass": "",
+                    "suffix": "",
+                    "multiple": false,
+                    "defaultValue": null,
+                    "protected": false,
+                    "unique": false,
+                    "persistent": true,
+                    "hidden": false,
+                    "clearOnHide": true,
+                    "refreshOn": "",
+                    "redrawOn": "",
+                    "modalEdit": false,
+                    "dataGridLabel": false,
+                    "labelPosition": "top",
+                    "description": "",
+                    "errorLabel": "",
+                    "tooltip": "",
+                    "hideLabel": false,
+                    "tabindex": "",
+                    "disabled": false,
+                    "autofocus": false,
+                    "dbIndex": false,
+                    "customDefaultValue": "",
+                    "calculateValue": "",
+                    "calculateServer": false,
+                    "widget": null,
+                    "attributes": {},
+                    "validateOn": "change",
+                    "validate": {
+                        "required": false,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false
+                    },
+                    "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                    },
+                    "allowCalculateOverride": false,
+                    "encrypted": false,
+                    "showCharCount": false,
+                    "showWordCount": false,
+                    "properties": {},
+                    "allowMultipleMasks": false,
+                    "addons": []
+                },
+                {
+                    "html": "<p><span style=\"background-color:rgb(255,255,255);color:rgb(36,41,47);\">U moet een bewijs waarop staat dat u gemachtigd bent om voor het bedrijf of organisatie bezwaar te maken, bij uw bezwaar doen. U leest aan het einde van dit formulier hoe u dit kunt doen.</span></p>",
+                    "label": "Content",
+                    "refreshOnChange": false,
+                    "key": "content4",
+                    "conditional": {
+                        "show": true,
+                        "conjunction": "any",
+                        "conditions": [
+                            {
+                                "component": "digiD.voorWie",
+                                "operator": "isEqual",
+                                "value": "org"
+                            },
+                            {
+                                "component": "eHerkenning.voorWie1",
+                                "operator": "isEqual",
+                                "value": "andereOrg"
+                            }
+                        ],
+                        "when": null,
+                        "eq": ""
+                    },
+                    "type": "content",
+                    "input": false,
+                    "tableView": false,
+                    "id": "elmxbei",
+                    "placeholder": "",
+                    "prefix": "",
+                    "customClass": "",
+                    "suffix": "",
+                    "multiple": false,
+                    "defaultValue": null,
+                    "protected": false,
+                    "unique": false,
+                    "persistent": true,
+                    "hidden": false,
+                    "clearOnHide": true,
+                    "refreshOn": "",
+                    "redrawOn": "",
+                    "modalEdit": false,
+                    "dataGridLabel": false,
+                    "labelPosition": "top",
+                    "description": "",
+                    "errorLabel": "",
+                    "tooltip": "",
+                    "hideLabel": false,
+                    "tabindex": "",
+                    "disabled": false,
+                    "autofocus": false,
+                    "dbIndex": false,
+                    "customDefaultValue": "",
+                    "calculateValue": "",
+                    "calculateServer": false,
+                    "widget": null,
+                    "attributes": {},
+                    "validateOn": "change",
+                    "validate": {
+                        "required": false,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false
+                    },
+                    "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                    },
+                    "allowCalculateOverride": false,
+                    "encrypted": false,
+                    "showCharCount": false,
+                    "showWordCount": false,
+                    "properties": {},
+                    "allowMultipleMasks": false,
+                    "addons": []
+                },
+                {
+                    "label": "Hoe wilt u dat de gemeente contact met u opneemt over uw bezwaar als dat nodig is?",
+                    "optionsLabelPosition": "right",
+                    "description": "Soms is de gemeente verplicht om via post contact met u op te nemen. Dan kan er geen rekening gehouden worden met hoe u het liefste contact wilt hebben.",
+                    "inline": false,
+                    "tableView": false,
+                    "values": [
+                        {
+                            "label": "via e-mail",
+                            "value": "viaEMail",
+                            "shortcut": ""
+                        },
+                        {
+                            "label": "via telefoon",
+                            "value": "viaTelefoon",
+                            "shortcut": ""
+                        }
+                    ],
+                    "validate": {
+                        "required": true,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false,
+                        "onlyAvailableItems": false
+                    },
+                    "key": "hoeWiltUDatDeGemeenteContactMetUOpneemtOverUwBezwaarAlsDatNodigIs",
+                    "type": "radio_nijmegen",
+                    "input": true,
+                    "lang": "nl",
+                    "id": "ecuc6o",
+                    "placeholder": "",
+                    "prefix": "",
+                    "customClass": "",
+                    "suffix": "",
+                    "multiple": false,
+                    "defaultValue": null,
+                    "protected": false,
+                    "unique": false,
+                    "persistent": true,
+                    "hidden": false,
+                    "clearOnHide": true,
+                    "refreshOn": "",
+                    "redrawOn": "",
+                    "modalEdit": false,
+                    "dataGridLabel": false,
+                    "labelPosition": "top",
+                    "errorLabel": "",
+                    "tooltip": "",
+                    "hideLabel": false,
+                    "tabindex": "",
+                    "disabled": false,
+                    "autofocus": false,
+                    "dbIndex": false,
+                    "customDefaultValue": "",
+                    "calculateValue": "",
+                    "calculateServer": false,
+                    "widget": null,
+                    "attributes": {},
+                    "validateOn": "change",
+                    "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                    },
+                    "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                    },
+                    "allowCalculateOverride": false,
+                    "encrypted": false,
+                    "showCharCount": false,
+                    "showWordCount": false,
+                    "properties": {},
+                    "allowMultipleMasks": false,
+                    "addons": [],
+                    "dataSrc": "values",
+                    "authenticate": false,
+                    "ignoreCache": false,
+                    "template": "<span>{{ item.label }}</span>",
+                    "inputType": "radio",
+                    "data": {
+                        "url": ""
+                    },
+                    "fieldSet": false
+                },
+                {
+                    "label": "email",
+                    "tableView": false,
+                    "key": "email",
+                    "conditional": {
+                        "show": true,
+                        "conjunction": "all",
+                        "conditions": [
+                            {
+                                "component": "hoeWiltUDatDeGemeenteContactMetUOpneemtOverUwBezwaarAlsDatNodigIs",
+                                "operator": "isEqual",
+                                "value": "viaEMail"
+                            }
+                        ],
+                        "when": null,
+                        "eq": ""
+                    },
+                    "type": "container",
+                    "input": true,
+                    "components": [
+                        {
+                            "label": "E-mailadres",
+                            "tableView": true,
+                            "validateOn": "blur",
+                            "validate": {
+                                "required": true,
+                                "custom": "",
+                                "customPrivate": false,
+                                "strictDateValidation": false,
+                                "multiple": false,
+                                "unique": false,
+                                "minLength": "",
+                                "maxLength": "",
+                                "pattern": ""
+                            },
+                            "key": "eMailadres",
+                            "properties": {
+                                "jz4all_key": "email"
+                            },
+                            "type": "email_nijmegen",
+                            "input": true,
+                            "id": "e2h0nd",
+                            "placeholder": "",
+                            "prefix": "",
+                            "customClass": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": null,
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true,
+                            "refreshOn": "",
+                            "redrawOn": "",
+                            "modalEdit": false,
+                            "dataGridLabel": false,
+                            "labelPosition": "top",
+                            "description": "",
+                            "errorLabel": "",
+                            "tooltip": "",
+                            "hideLabel": false,
+                            "tabindex": "",
+                            "disabled": false,
+                            "autofocus": false,
+                            "dbIndex": false,
+                            "customDefaultValue": "",
+                            "calculateValue": "",
+                            "calculateServer": false,
+                            "widget": {
+                                "type": "input"
+                            },
+                            "attributes": {},
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": ""
+                            },
+                            "overlay": {
+                                "style": "",
+                                "left": "",
+                                "top": "",
+                                "width": "",
+                                "height": ""
+                            },
+                            "allowCalculateOverride": false,
+                            "encrypted": false,
+                            "showCharCount": false,
+                            "showWordCount": false,
+                            "allowMultipleMasks": false,
+                            "addons": [],
+                            "mask": false,
+                            "inputType": "email",
+                            "inputFormat": "plain",
+                            "inputMask": "",
+                            "displayMask": "",
+                            "spellcheck": true,
+                            "truncateMultipleSpaces": false,
+                            "lang": "nl",
+                            "kickbox": {
+                                "enabled": false
+                            }
+                        },
+                        {
+                            "label": "Telefoonnummer",
+                            "applyMaskOn": "change",
+                            "tableView": true,
+                            "key": "telefoonnummer",
+                            "properties": {
+                                "jz4all_key": "phone"
+                            },
+                            "type": "textfield_nijmegen",
+                            "input": true,
+                            "id": "e1ct3pm",
+                            "placeholder": "",
+                            "prefix": "",
+                            "customClass": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": null,
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true,
+                            "refreshOn": "",
+                            "redrawOn": "",
+                            "modalEdit": false,
+                            "dataGridLabel": false,
+                            "labelPosition": "top",
+                            "description": "",
+                            "errorLabel": "",
+                            "tooltip": "",
+                            "hideLabel": false,
+                            "tabindex": "",
+                            "disabled": false,
+                            "autofocus": false,
+                            "dbIndex": false,
+                            "customDefaultValue": "",
+                            "calculateValue": "",
+                            "calculateServer": false,
+                            "widget": {
+                                "type": "input"
+                            },
+                            "attributes": {},
+                            "validateOn": "change",
+                            "validate": {
+                                "required": false,
+                                "custom": "",
+                                "customPrivate": false,
+                                "strictDateValidation": false,
+                                "multiple": false,
+                                "unique": false,
+                                "minLength": "",
+                                "maxLength": "",
+                                "pattern": ""
+                            },
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": ""
+                            },
+                            "overlay": {
+                                "style": "",
+                                "left": "",
+                                "top": "",
+                                "width": "",
+                                "height": ""
+                            },
+                            "allowCalculateOverride": false,
+                            "encrypted": false,
+                            "showCharCount": false,
+                            "showWordCount": false,
+                            "allowMultipleMasks": false,
+                            "addons": [],
+                            "mask": false,
+                            "inputType": "text",
+                            "inputFormat": "plain",
+                            "inputMask": "",
+                            "displayMask": "",
+                            "spellcheck": true,
+                            "truncateMultipleSpaces": false
+                        },
+                        {
+                            "html": "<p>Als u ook uw telefoonnummer invult kunnen wij sneller met u contact opnemen als dit nodig is.</p>",
+                            "label": "Content",
+                            "refreshOnChange": false,
+                            "key": "content",
+                            "type": "content",
+                            "input": false,
+                            "tableView": false,
+                            "id": "ef433ix",
+                            "placeholder": "",
+                            "prefix": "",
+                            "customClass": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": null,
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true,
+                            "refreshOn": "",
+                            "redrawOn": "",
+                            "modalEdit": false,
+                            "dataGridLabel": false,
+                            "labelPosition": "top",
+                            "description": "",
+                            "errorLabel": "",
+                            "tooltip": "",
+                            "hideLabel": false,
+                            "tabindex": "",
+                            "disabled": false,
+                            "autofocus": false,
+                            "dbIndex": false,
+                            "customDefaultValue": "",
+                            "calculateValue": "",
+                            "calculateServer": false,
+                            "widget": null,
+                            "attributes": {},
+                            "validateOn": "change",
+                            "validate": {
+                                "required": false,
+                                "custom": "",
+                                "customPrivate": false,
+                                "strictDateValidation": false,
+                                "multiple": false,
+                                "unique": false
+                            },
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": ""
+                            },
+                            "overlay": {
+                                "style": "",
+                                "left": "",
+                                "top": "",
+                                "width": "",
+                                "height": ""
+                            },
+                            "allowCalculateOverride": false,
+                            "encrypted": false,
+                            "showCharCount": false,
+                            "showWordCount": false,
+                            "properties": {},
+                            "allowMultipleMasks": false,
+                            "addons": []
+                        }
+                    ],
+                    "id": "eh7dim",
+                    "placeholder": "",
+                    "prefix": "",
+                    "customClass": "",
+                    "suffix": "",
+                    "multiple": false,
+                    "defaultValue": null,
+                    "protected": false,
+                    "unique": false,
+                    "persistent": true,
+                    "hidden": false,
+                    "clearOnHide": true,
+                    "refreshOn": "",
+                    "redrawOn": "",
+                    "modalEdit": false,
+                    "dataGridLabel": false,
+                    "labelPosition": "top",
+                    "description": "",
+                    "errorLabel": "",
+                    "tooltip": "",
+                    "hideLabel": true,
+                    "tabindex": "",
+                    "disabled": false,
+                    "autofocus": false,
+                    "dbIndex": false,
+                    "customDefaultValue": "",
+                    "calculateValue": "",
+                    "calculateServer": false,
+                    "widget": null,
+                    "attributes": {},
+                    "validateOn": "change",
+                    "validate": {
+                        "required": false,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false
+                    },
+                    "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                    },
+                    "allowCalculateOverride": false,
+                    "encrypted": false,
+                    "showCharCount": false,
+                    "showWordCount": false,
+                    "properties": {},
+                    "allowMultipleMasks": false,
+                    "addons": [],
+                    "tree": true,
+                    "lazyLoad": false
+                },
+                {
+                    "label": "email",
+                    "tableView": false,
+                    "key": "email1",
+                    "conditional": {
+                        "show": true,
+                        "conjunction": "all",
+                        "conditions": [
+                            {
+                                "component": "hoeWiltUDatDeGemeenteContactMetUOpneemtOverUwBezwaarAlsDatNodigIs",
+                                "operator": "isEqual",
+                                "value": "viaTelefoon"
+                            }
+                        ],
+                        "when": null,
+                        "eq": ""
+                    },
+                    "type": "container",
+                    "input": true,
+                    "components": [
+                        {
+                            "label": "Telefoonnummer",
+                            "applyMaskOn": "change",
+                            "tableView": true,
+                            "validate": {
+                                "required": true,
+                                "custom": "",
+                                "customPrivate": false,
+                                "strictDateValidation": false,
+                                "multiple": false,
+                                "unique": false,
+                                "minLength": "",
+                                "maxLength": "",
+                                "pattern": ""
+                            },
+                            "key": "telefoonnummer",
+                            "properties": {
+                                "jz4all_key": "phone"
+                            },
+                            "type": "textfield_nijmegen",
+                            "input": true,
+                            "id": "elkxod7",
+                            "placeholder": "",
+                            "prefix": "",
+                            "customClass": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": null,
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true,
+                            "refreshOn": "",
+                            "redrawOn": "",
+                            "modalEdit": false,
+                            "dataGridLabel": false,
+                            "labelPosition": "top",
+                            "description": "",
+                            "errorLabel": "",
+                            "tooltip": "",
+                            "hideLabel": false,
+                            "tabindex": "",
+                            "disabled": false,
+                            "autofocus": false,
+                            "dbIndex": false,
+                            "customDefaultValue": "",
+                            "calculateValue": "",
+                            "calculateServer": false,
+                            "widget": {
+                                "type": "input"
+                            },
+                            "attributes": {},
+                            "validateOn": "change",
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": ""
+                            },
+                            "overlay": {
+                                "style": "",
+                                "left": "",
+                                "top": "",
+                                "width": "",
+                                "height": ""
+                            },
+                            "allowCalculateOverride": false,
+                            "encrypted": false,
+                            "showCharCount": false,
+                            "showWordCount": false,
+                            "allowMultipleMasks": false,
+                            "addons": [],
+                            "mask": false,
+                            "inputType": "text",
+                            "inputFormat": "plain",
+                            "inputMask": "",
+                            "displayMask": "",
+                            "spellcheck": true,
+                            "truncateMultipleSpaces": false
+                        },
+                        {
+                            "label": "E-mailadres",
+                            "applyMaskOn": "change",
+                            "tableView": true,
+                            "validateOn": "blur",
+                            "key": "eMailadres1",
+                            "properties": {
+                                "jz4all_key": "email"
+                            },
+                            "type": "email_nijmegen",
+                            "input": true,
+                            "id": "eqzemeg",
+                            "placeholder": "",
+                            "prefix": "",
+                            "customClass": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": null,
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true,
+                            "refreshOn": "",
+                            "redrawOn": "",
+                            "modalEdit": false,
+                            "dataGridLabel": false,
+                            "labelPosition": "top",
+                            "description": "",
+                            "errorLabel": "",
+                            "tooltip": "",
+                            "hideLabel": false,
+                            "tabindex": "",
+                            "disabled": false,
+                            "autofocus": false,
+                            "dbIndex": false,
+                            "customDefaultValue": "",
+                            "calculateValue": "",
+                            "calculateServer": false,
+                            "widget": {
+                                "type": "input"
+                            },
+                            "attributes": {},
+                            "validate": {
+                                "required": false,
+                                "custom": "",
+                                "customPrivate": false,
+                                "strictDateValidation": false,
+                                "multiple": false,
+                                "unique": false,
+                                "minLength": "",
+                                "maxLength": "",
+                                "pattern": ""
+                            },
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": ""
+                            },
+                            "overlay": {
+                                "style": "",
+                                "left": "",
+                                "top": "",
+                                "width": "",
+                                "height": ""
+                            },
+                            "allowCalculateOverride": false,
+                            "encrypted": false,
+                            "showCharCount": false,
+                            "showWordCount": false,
+                            "allowMultipleMasks": false,
+                            "addons": [],
+                            "mask": false,
+                            "inputType": "email",
+                            "inputFormat": "plain",
+                            "inputMask": "",
+                            "displayMask": "",
+                            "spellcheck": true,
+                            "truncateMultipleSpaces": false,
+                            "lang": "nl",
+                            "kickbox": {
+                                "enabled": false
+                            }
+                        },
+                        {
+                            "html": "<ul><li>Als wij u niet kunnen bereiken via de telefoon dan sturen wij u een brief of een e-mail&nbsp;&nbsp;</li><li>Als u een bericht wilt ontvangen via e-mail dat uw bezwaar goed bij ons is aangekomen, vul dan uw e-mailadres in. U heeft dan een bewijs dat u een bezwaar heeft gedaan&nbsp;</li></ul>",
+                            "label": "Content",
+                            "refreshOnChange": false,
+                            "key": "content",
+                            "type": "content",
+                            "input": false,
+                            "tableView": false,
+                            "id": "efw8xt",
+                            "placeholder": "",
+                            "prefix": "",
+                            "customClass": "",
+                            "suffix": "",
+                            "multiple": false,
+                            "defaultValue": null,
+                            "protected": false,
+                            "unique": false,
+                            "persistent": true,
+                            "hidden": false,
+                            "clearOnHide": true,
+                            "refreshOn": "",
+                            "redrawOn": "",
+                            "modalEdit": false,
+                            "dataGridLabel": false,
+                            "labelPosition": "top",
+                            "description": "",
+                            "errorLabel": "",
+                            "tooltip": "",
+                            "hideLabel": false,
+                            "tabindex": "",
+                            "disabled": false,
+                            "autofocus": false,
+                            "dbIndex": false,
+                            "customDefaultValue": "",
+                            "calculateValue": "",
+                            "calculateServer": false,
+                            "widget": null,
+                            "attributes": {},
+                            "validateOn": "change",
+                            "validate": {
+                                "required": false,
+                                "custom": "",
+                                "customPrivate": false,
+                                "strictDateValidation": false,
+                                "multiple": false,
+                                "unique": false
+                            },
+                            "conditional": {
+                                "show": null,
+                                "when": null,
+                                "eq": ""
+                            },
+                            "overlay": {
+                                "style": "",
+                                "left": "",
+                                "top": "",
+                                "width": "",
+                                "height": ""
+                            },
+                            "allowCalculateOverride": false,
+                            "encrypted": false,
+                            "showCharCount": false,
+                            "showWordCount": false,
+                            "properties": {},
+                            "allowMultipleMasks": false,
+                            "addons": []
+                        }
+                    ],
+                    "id": "edi5j1",
+                    "placeholder": "",
+                    "prefix": "",
+                    "customClass": "",
+                    "suffix": "",
+                    "multiple": false,
+                    "defaultValue": null,
+                    "protected": false,
+                    "unique": false,
+                    "persistent": true,
+                    "hidden": false,
+                    "clearOnHide": true,
+                    "refreshOn": "",
+                    "redrawOn": "",
+                    "modalEdit": false,
+                    "dataGridLabel": false,
+                    "labelPosition": "top",
+                    "description": "",
+                    "errorLabel": "",
+                    "tooltip": "",
+                    "hideLabel": true,
+                    "tabindex": "",
+                    "disabled": false,
+                    "autofocus": false,
+                    "dbIndex": false,
+                    "customDefaultValue": "",
+                    "calculateValue": "",
+                    "calculateServer": false,
+                    "widget": null,
+                    "attributes": {},
+                    "validateOn": "change",
+                    "validate": {
+                        "required": false,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false
+                    },
+                    "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                    },
+                    "allowCalculateOverride": false,
+                    "encrypted": false,
+                    "showCharCount": false,
+                    "showWordCount": false,
+                    "properties": {},
+                    "allowMultipleMasks": false,
+                    "addons": [],
+                    "tree": true,
+                    "lazyLoad": false
+                },
+                {
+                    "label": "Columns",
+                    "columns": [
+                        {
+                            "components": [
+                                {
+                                    "label": "Vorige",
+                                    "action": "event",
+                                    "showValidations": false,
+                                    "theme": "secondary",
+                                    "size": "sm",
+                                    "tableView": false,
+                                    "key": "vorige4",
+                                    "type": "button",
+                                    "input": true,
+                                    "hideOnChildrenHidden": false,
+                                    "event": "navigateToPrevPage",
+                                    "id": "e0vuy3",
+                                    "placeholder": "",
+                                    "prefix": "",
+                                    "customClass": "",
+                                    "suffix": "",
+                                    "multiple": false,
+                                    "defaultValue": null,
+                                    "protected": false,
+                                    "unique": false,
+                                    "persistent": false,
+                                    "hidden": false,
+                                    "clearOnHide": true,
+                                    "refreshOn": "",
+                                    "redrawOn": "",
+                                    "modalEdit": false,
+                                    "dataGridLabel": true,
+                                    "labelPosition": "top",
+                                    "description": "",
+                                    "errorLabel": "",
+                                    "tooltip": "",
+                                    "hideLabel": false,
+                                    "tabindex": "",
+                                    "disabled": false,
+                                    "autofocus": false,
+                                    "dbIndex": false,
+                                    "customDefaultValue": "",
+                                    "calculateValue": "",
+                                    "calculateServer": false,
+                                    "widget": {
+                                        "type": "input"
+                                    },
+                                    "attributes": {},
+                                    "validateOn": "change",
+                                    "validate": {
+                                        "required": false,
+                                        "custom": "",
+                                        "customPrivate": false,
+                                        "strictDateValidation": false,
+                                        "multiple": false,
+                                        "unique": false
+                                    },
+                                    "conditional": {
+                                        "show": null,
+                                        "when": null,
+                                        "eq": ""
+                                    },
+                                    "overlay": {
+                                        "style": "",
+                                        "left": "",
+                                        "top": "",
+                                        "width": "",
+                                        "height": ""
+                                    },
+                                    "allowCalculateOverride": false,
+                                    "encrypted": false,
+                                    "showCharCount": false,
+                                    "showWordCount": false,
+                                    "properties": {},
+                                    "allowMultipleMasks": false,
+                                    "addons": [],
+                                    "leftIcon": "",
+                                    "rightIcon": "",
+                                    "block": false,
+                                    "disableOnInvalid": false
+                                }
+                            ],
+                            "width": 3,
+                            "offset": 0,
+                            "push": 0,
+                            "pull": 0,
+                            "size": "sm",
+                            "currentWidth": 3
+                        },
+                        {
+                            "components": [
+                                {
+                                    "label": "Volgende",
+                                    "action": "event",
+                                    "showValidations": false,
+                                    "size": "sm",
+                                    "tableView": false,
+                                    "key": "volgende3",
+                                    "type": "button",
+                                    "event": "navigateToNextPage",
+                                    "input": true,
+                                    "hideOnChildrenHidden": false,
+                                    "id": "eupku9j",
+                                    "placeholder": "",
+                                    "prefix": "",
+                                    "customClass": "",
+                                    "suffix": "",
+                                    "multiple": false,
+                                    "defaultValue": null,
+                                    "protected": false,
+                                    "unique": false,
+                                    "persistent": false,
+                                    "hidden": false,
+                                    "clearOnHide": true,
+                                    "refreshOn": "",
+                                    "redrawOn": "",
+                                    "modalEdit": false,
+                                    "dataGridLabel": true,
+                                    "labelPosition": "top",
+                                    "description": "",
+                                    "errorLabel": "",
+                                    "tooltip": "",
+                                    "hideLabel": false,
+                                    "tabindex": "",
+                                    "disabled": false,
+                                    "autofocus": false,
+                                    "dbIndex": false,
+                                    "customDefaultValue": "",
+                                    "calculateValue": "",
+                                    "calculateServer": false,
+                                    "widget": {
+                                        "type": "input"
+                                    },
+                                    "attributes": {},
+                                    "validateOn": "change",
+                                    "validate": {
+                                        "required": false,
+                                        "custom": "",
+                                        "customPrivate": false,
+                                        "strictDateValidation": false,
+                                        "multiple": false,
+                                        "unique": false
+                                    },
+                                    "conditional": {
+                                        "show": null,
+                                        "when": null,
+                                        "eq": ""
+                                    },
+                                    "overlay": {
+                                        "style": "",
+                                        "left": "",
+                                        "top": "",
+                                        "width": "",
+                                        "height": ""
+                                    },
+                                    "allowCalculateOverride": false,
+                                    "encrypted": false,
+                                    "showCharCount": false,
+                                    "showWordCount": false,
+                                    "properties": {},
+                                    "allowMultipleMasks": false,
+                                    "addons": [],
+                                    "leftIcon": "",
+                                    "rightIcon": "",
+                                    "block": false,
+                                    "disableOnInvalid": false,
+                                    "theme": "primary"
+                                }
+                            ],
+                            "size": "sm",
+                            "width": 3,
+                            "offset": 0,
+                            "push": 0,
+                            "pull": 0,
+                            "currentWidth": 3
+                        }
+                    ],
+                    "key": "columns4",
+                    "type": "columns",
+                    "input": false,
+                    "tableView": false,
+                    "hideOnChildrenHidden": false,
+                    "id": "eu3zwr9",
+                    "placeholder": "",
+                    "prefix": "",
+                    "customClass": "",
+                    "suffix": "",
+                    "multiple": false,
+                    "defaultValue": null,
+                    "protected": false,
+                    "unique": false,
+                    "persistent": false,
+                    "hidden": false,
+                    "clearOnHide": false,
+                    "refreshOn": "",
+                    "redrawOn": "",
+                    "modalEdit": false,
+                    "dataGridLabel": false,
+                    "labelPosition": "top",
+                    "description": "",
+                    "errorLabel": "",
+                    "tooltip": "",
+                    "hideLabel": false,
+                    "tabindex": "",
+                    "disabled": false,
+                    "autofocus": false,
+                    "dbIndex": false,
+                    "customDefaultValue": "",
+                    "calculateValue": "",
+                    "calculateServer": false,
+                    "widget": null,
+                    "attributes": {},
+                    "validateOn": "change",
+                    "validate": {
+                        "required": false,
+                        "custom": "",
+                        "customPrivate": false,
+                        "strictDateValidation": false,
+                        "multiple": false,
+                        "unique": false
+                    },
+                    "conditional": {
+                        "show": null,
+                        "when": null,
+                        "eq": ""
+                    },
+                    "overlay": {
+                        "style": "",
+                        "left": "",
+                        "top": "",
+                        "width": "",
+                        "height": ""
+                    },
+                    "allowCalculateOverride": false,
+                    "encrypted": false,
+                    "showCharCount": false,
+                    "showWordCount": false,
+                    "properties": {},
+                    "allowMultipleMasks": false,
+                    "addons": [],
+                    "tree": false,
+                    "lazyLoad": false,
+                    "autoAdjust": false
+                }
+            ],
+            "id": "en66qu",
+            "placeholder": "",
+            "prefix": "",
+            "customClass": "",
+            "suffix": "",
+            "multiple": false,
+            "defaultValue": null,
+            "protected": false,
+            "unique": false,
+            "persistent": false,
+            "hidden": false,
+            "clearOnHide": false,
+            "refreshOn": "",
+            "redrawOn": "",
+            "modalEdit": false,
+            "dataGridLabel": false,
+            "labelPosition": "top",
+            "description": "",
+            "errorLabel": "",
+            "tooltip": "",
+            "hideLabel": false,
+            "tabindex": "",
+            "disabled": false,
+            "autofocus": false,
+            "dbIndex": false,
+            "customDefaultValue": "",
+            "calculateValue": "",
+            "calculateServer": false,
+            "widget": null,
+            "attributes": {},
+            "validateOn": "change",
+            "validate": {
+                "required": false,
+                "custom": "",
+                "customPrivate": false,
+                "strictDateValidation": false,
+                "multiple": false,
+                "unique": false
+            },
+            "conditional": {
+                "show": null,
+                "when": null,
+                "eq": ""
+            },
+            "overlay": {
+                "style": "",
+                "left": "",
+                "top": "",
+                "width": "",
+                "height": ""
+            },
+            "allowCalculateOverride": false,
+            "encrypted": false,
+            "showCharCount": false,
+            "showWordCount": false,
+            "properties": {},
+            "allowMultipleMasks": false,
+            "addons": [],
+            "tree": false,
+            "lazyLoad": false,
+            "theme": "default",
+            "breadcrumb": "default"
+        },
+        {
+            "title": "Bijlagen",
+            "breadcrumbClickable": false,
+            "buttonSettings": {
+                "previous": false,
+                "cancel": false,
+                "next": false
+            },
+            "scrollToTop": false,
+            "collapsible": false,
+            "key": "page3",
+            "type": "panel",
+            "label": "Bijlagen",
+            "input": false,
+            "tableView": false,
+            "components": [
+                {
+                    "label": "Bezwaar maken",
+                    "attrs": [
+                        {
+                            "attr": "",
+                            "value": ""
+                        }
+                    ],
+                    "content": "<h1>Bezwaar maken</h1>",
+                    "refreshOnChange": false,
+                    "key": "bezwaarMaken2",
+                    "type": "htmlelement",
+                    "input": false,
+                    "tableView": false
+                },
+                {
+                    "html": "<p>U moet een kopie van de machtiging, waarop staat dat u namens iemand anders bezwaar mag maken, bij uw bezwaar doen.</p>",
+                    "label": "Content",
+                    "refreshOnChange": false,
+                    "key": "content3",
+                    "conditional": {
+                        "show": false,
+                        "conjunction": "any",
+                        "conditions": [
+                            {
+                                "component": "digiD.voorWie",
+                                "operator": "isEqual",
+                                "value": "mijzelf"
+                            },
+                            {
+                                "component": "eHerkenning.voorWie1",
+                                "operator": "isEqual",
+                                "value": "mijnBedrijfOfOrganisatie"
+                            }
+                        ]
+                    },
+                    "type": "content",
+                    "input": false,
+                    "tableView": false
+                },
+                {
+                    "html": "<p>U kunt bijlagen meesturen die het nog duidelijker maken waarom u het niet eens bent met het besluit of de beschikking.</p>",
+                    "label": "Content",
+                    "refreshOnChange": false,
+                    "key": "content2",
+                    "type": "content",
+                    "input": false,
+                    "tableView": false
+                },
+                {
+                    "label": "Hoe stuurt u de bijlagen mee?",
+                    "optionsLabelPosition": "right",
+                    "inline": false,
+                    "tableView": false,
+                    "values": [
+                        {
+                            "label": "per post",
+                            "value": "post",
+                            "shortcut": ""
+                        },
+                        {
+                            "label": "digitaal bij dit formulier (uploaden)",
+                            "value": "digitaal",
+                            "shortcut": ""
+                        }
+                    ],
+                    "validate": {
+                        "required": true
+                    },
+                    "key": "hoeBijlagen",
+                    "conditional": {
+                        "conjunction": "all",
+                        "conditions": [
+                            {
+                                "component": "digiD.voorWie",
+                                "operator": "isEqual",
+                                "value": ""
+                            }
+                        ]
+                    },
+                    "customConditional": "show = (data.digiD && data.digiD.voorWie != 'mijzelf') || (data.eHerkenning && data.eHerkenning.voorWie1 != 'mijnBedrijfOfOrganisatie');",
+                    "type": "radio_nijmegen",
+                    "input": true
+                },
+                {
+                    "label": "Wilt u bijlagen meesturen?",
+                    "optionsLabelPosition": "right",
+                    "inline": false,
+                    "tableView": false,
+                    "values": [
+                        {
+                            "label": "ja, ik stuur de bijlagen per post",
+                            "value": "jaPerPost",
+                            "shortcut": ""
+                        },
+                        {
+                            "label": "ja, ik upload de bijlagen bij dit formulier",
+                            "value": "jaUpload",
+                            "shortcut": ""
+                        },
+                        {
+                            "label": "nee, ik wil geen bijlagen meesturen",
+                            "value": "neeIkWilGeenBijlagenMeesturen",
+                            "shortcut": ""
+                        }
+                    ],
+                    "validate": {
+                        "required": true
+                    },
+                    "key": "bijlagenMeesturen",
+                    "customConditional": "show = (data.digiD && data.digiD.voorWie == 'mijzelf') || (data.eHerkenning && data.eHerkenning.voorWie1 == 'mijnBedrijfOfOrganisatie');",
+                    "type": "radio_nijmegen",
+                    "input": true
+                },
+                {
+                    "html": "<p><span style=\"background-color:rgb(255,255,255);color:rgb(0,0,0);\">Stuur de bijlagen naar:</span><br><span style=\"background-color:rgb(255,255,255);color:rgb(0,0,0);\">College&nbsp;van Burgemeester en Wethouders&nbsp;</span><br><span style=\"background-color:rgb(255,255,255);color:rgb(0,0,0);\">Gemeente Nijmegen&nbsp;</span><br><span style=\"background-color:rgb(255,255,255);color:rgb(0,0,0);\">Postbus 9105&nbsp;</span><br><span style=\"background-color:rgb(255,255,255);color:rgb(0,0,0);\">6500 HG  Nijmegen&nbsp;</span><br><span style=\"background-color:rgb(255,255,255);color:rgb(0,0,0);\">&nbsp;</span><br><span style=\"background-color:rgb(255,255,255);color:rgb(0,0,0);\">Doe een brief bij de bijlage(n). Zet in de brief:&nbsp;</span><br><span style=\"background-color:rgb(255,255,255);color:rgb(0,0,0);\">- uw naam en adres&nbsp;</span><br><span style=\"background-color:rgb(255,255,255);color:rgb(0,0,0);\">- het kenmerk uit de brief van de gemeente die u over 2 tot 3 dagen via de post krijgt&nbsp;</span></p>",
+                    "label": "Content",
+                    "refreshOnChange": false,
+                    "key": "content",
+                    "customConditional": "show = false;\n\nif((data.hoeBijlagen && data.hoeBijlagen == 'post') || data.bijlagenMeesturen && data.bijlagenMeesturen == 'jaPerPost'){\n  show = true;\n} else{\n  show = false;\n}",
+                    "type": "content",
+                    "input": false,
+                    "tableView": false
+                },
+                {
+                    "label": "Digitaal - geen advocaat",
+                    "tableView": false,
+                    "key": "digitaalGeenAdvocaat",
+                    "conditional": {
+                        "show": true,
+                        "conjunction": "all",
+                        "conditions": [
+                            {
+                                "component": "hoeBijlagen",
+                                "operator": "isEqual",
+                                "value": "digitaal"
+                            }
+                        ]
+                    },
+                    "type": "container",
+                    "input": true,
+                    "components": [
+                        {
+                            "label": "Toevoegen",
+                            "description": "Toegestaan zijn .jpg, .png, .jpeg of .pdf documenten die niet groter zijn dan 20MB.",
+                            "tableView": false,
+                            "storage": "url",
+                            "webcam": false,
+                            "fileTypes": [
+                                {
+                                    "label": "",
+                                    "value": ""
+                                }
+                            ],
+                            "filePattern": ".jpg,.png,.jpeg,.pdf",
+                            "fileMinSize": "1KB",
+                            "fileMaxSize": "20MB",
+                            "multiple": true,
+                            "validate": {
+                                "required": true
+                            },
+                            "key": "toevoegen",
+                            "type": "file_nijmegen",
+                            "url": "/cloud/s3",
+                            "input": true
+                        },
+                        {
+                            "label": "Kopie van de machtiging, waarop staat dat u namens iemand anders bezwaar mag maken",
+                            "tableView": false,
+                            "validate": {
+                                "required": true
+                            },
+                            "key": "kopieVanDeMachtigingWaaropStaatDatUNamensIemandAndersBezwaarMagMaken",
+                            "type": "checkboxnijmegen",
+                            "input": true,
+                            "defaultValue": false
+                        }
+                    ]
+                },
+                {
+                    "label": "Digitaal - namens mijzelf of advocaat",
+                    "tableView": false,
+                    "key": "digitaalNamensMijzelfOfAdvocaat",
+                    "conditional": {
+                        "show": true,
+                        "conjunction": "all",
+                        "conditions": [
+                            {
+                                "component": "bijlagenMeesturen",
+                                "operator": "isEqual",
+                                "value": "jaUpload"
+                            }
+                        ]
+                    },
+                    "type": "container",
+                    "input": true,
+                    "components": [
+                        {
+                            "label": "Toevoegen",
+                            "description": "Toegestaan zijn .jpg, .png, .jpeg of .pdf documenten die niet groter zijn dan 20MB.",
+                            "tableView": false,
+                            "storage": "url",
+                            "webcam": false,
+                            "fileTypes": [
+                                {
+                                    "label": "",
+                                    "value": ""
+                                }
+                            ],
+                            "filePattern": ".jpg,.png,.jpeg,.pdf",
+                            "fileMinSize": "1KB",
+                            "fileMaxSize": "20MB",
+                            "multiple": true,
+                            "key": "toevoegen",
+                            "type": "file_nijmegen",
+                            "input": true,
+                            "url": "/cloud/s3"
+                        }
+                    ]
+                },
+                {
+                    "label": "Columns",
+                    "columns": [
+                        {
+                            "components": [
+                                {
+                                    "label": "Vorige",
+                                    "action": "event",
+                                    "showValidations": false,
+                                    "theme": "secondary",
+                                    "size": "sm",
+                                    "tableView": false,
+                                    "key": "vorige3",
+                                    "type": "button",
+                                    "event": "navigateToPrevPage",
+                                    "input": true,
+                                    "hideOnChildrenHidden": false
+                                }
+                            ],
+                            "width": 3,
+                            "offset": 0,
+                            "push": 0,
+                            "pull": 0,
+                            "size": "sm",
+                            "currentWidth": 3
+                        },
+                        {
+                            "components": [
+                                {
+                                    "label": "Volgende",
+                                    "action": "event",
+                                    "showValidations": false,
+                                    "size": "sm",
+                                    "tableView": false,
+                                    "key": "volgende2",
+                                    "type": "button",
+                                    "event": "navigateToNextPage",
+                                    "input": true,
+                                    "hideOnChildrenHidden": false
+                                }
+                            ],
+                            "size": "sm",
+                            "width": 3,
+                            "offset": 0,
+                            "push": 0,
+                            "pull": 0,
+                            "currentWidth": 3
+                        }
+                    ],
+                    "key": "columns3",
+                    "type": "columns",
+                    "input": false,
+                    "tableView": false,
+                    "hideOnChildrenHidden": false
+                }
+            ],
+            "allowPrevious": true
+        },
+        {
+            "title": "Overzicht",
+            "breadcrumbClickable": false,
+            "buttonSettings": {
+                "previous": false,
+                "cancel": false,
+                "next": false
+            },
+            "scrollToTop": false,
+            "collapsible": false,
+            "key": "page4",
+            "type": "panel",
+            "label": "Samenvatting",
+            "input": false,
+            "tableView": false,
+            "components": [
+                {
+                    "label": "Bezwaar maken",
+                    "attrs": [
+                        {
+                            "attr": "",
+                            "value": ""
+                        }
+                    ],
+                    "content": "<h1>Bezwaar maken</h1>",
+                    "refreshOnChange": false,
+                    "key": "bezwaarMaken3",
+                    "type": "htmlelement",
+                    "input": false,
+                    "tableView": false
+                },
+                {
+                    "label": "Samenvatting",
+                    "tableView": false,
+                    "key": "summary",
+                    "type": "summary",
+                    "input": true
+                },
+                {
+                    "label": "Ik heb alle vragen naar waarheid beantwoord.",
+                    "tableView": false,
+                    "defaultValue": false,
+                    "validate": {
+                        "required": true
+                    },
+                    "key": "ikHebAlleVragenNaarWaarheidBeantwoord",
+                    "type": "checkboxnijmegen",
+                    "input": true
+                },
+                {
+                    "label": "Columns",
+                    "columns": [
+                        {
+                            "components": [
+                                {
+                                    "label": "Vorige",
+                                    "action": "event",
+                                    "showValidations": false,
+                                    "theme": "secondary",
+                                    "size": "sm",
+                                    "tableView": false,
+                                    "key": "vorige2",
+                                    "type": "button",
+                                    "event": "navigateToPrevPage",
+                                    "input": true,
+                                    "hideOnChildrenHidden": false
+                                }
+                            ],
+                            "width": 3,
+                            "offset": 0,
+                            "push": 0,
+                            "pull": 0,
+                            "size": "sm",
+                            "currentWidth": 3
+                        },
+                        {
+                            "components": [
+                                {
+                                    "label": "Verzenden",
+                                    "showValidations": false,
+                                    "size": "sm",
+                                    "tableView": false,
+                                    "key": "verzenden1",
+                                    "type": "button",
+                                    "input": true,
+                                    "hideOnChildrenHidden": false,
+                                    "saveOnEnter": false
+                                }
+                            ],
+                            "size": "sm",
+                            "width": 3,
+                            "offset": 0,
+                            "push": 0,
+                            "pull": 0,
+                            "currentWidth": 3
+                        }
+                    ],
+                    "key": "columns2",
+                    "type": "columns",
+                    "input": false,
+                    "tableView": false,
+                    "hideOnChildrenHidden": false
+                }
+            ],
+            "allowPrevious": true
+        }
+    ],
+    "settings": {},
+    "properties": {},
+    "machineName": "ontwikkel:bezwaarMaken",
+    "project": "6627ccfbc5dd61999060ef07",
+    "controller": "",
+    "revisions": "",
+    "submissionRevisions": "",
+    "_vid": 0,
+    "created": "2024-04-23T15:00:33.077Z",
+    "modified": "2025-03-11T16:42:33.216Z"
+}

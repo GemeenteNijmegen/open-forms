@@ -1,9 +1,19 @@
+import { z } from 'zod';
 
 export interface FileData {
   data: Buffer<ArrayBuffer>;
   filename: string;
   format: string | undefined;
+  type?: 'submission' | 'attachment';
 }
+
+export const s3ObjectReferenceSchema = z.object({
+  bucket: z.string(),
+  objectKey: z.string(),
+  fileName: z.string(),
+  objectType: z.enum(['submission', 'attachment']).optional(),
+});
+type s3ObjectReference = z.infer<typeof s3ObjectReferenceSchema>;
 /**
  * This function creates s3 url paths from the filedata.
  *
@@ -25,7 +35,7 @@ export function s3PathsFromFileData(
 export function s3StructuredObjectsFromFileData(
   fileData: FileData[],
   bucketName: string,
-  reference: string) {
+  reference: string): s3ObjectReference[] {
   const files = fileData.map(data => {
     return {
       bucket: bucketName,
