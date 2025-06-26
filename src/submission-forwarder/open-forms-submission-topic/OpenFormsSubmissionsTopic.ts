@@ -1,6 +1,5 @@
 import { Criticality, DeadLetterQueue } from '@gemeentenijmegen/aws-constructs';
-import { Stack } from 'aws-cdk-lib';
-import { Role, ServicePrincipal, PolicyStatement, PrincipalWithConditions, Conditions } from 'aws-cdk-lib/aws-iam';
+import { Role, ServicePrincipal, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { IKey, Key } from 'aws-cdk-lib/aws-kms';
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import {
@@ -8,11 +7,9 @@ import {
   LoggingConfig,
   LoggingProtocol,
   SubscriptionProtocol,
-  CfnSubscription,
-  CfnTopic,
 } from 'aws-cdk-lib/aws-sns';
 import { UrlSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
-import { CfnQueue, Queue } from 'aws-cdk-lib/aws-sqs';
+import { Queue } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
 
 export interface OpenFormsTopicProps {
@@ -39,8 +36,8 @@ export class OpenFormsSubmissionsTopic extends Construct {
       displayName: 'OpenForms Submissions Topic',
       masterKey: props.kmsKey,
     });
-    const loggingConfigs = this.createLoggingConfig();
-    this.topic.addLoggingConfig(loggingConfigs);
+    const loggingConfig = this.createLoggingConfig();
+    this.topic.addLoggingConfig(loggingConfig as LoggingConfig);
 
     const dlqSetup = new DeadLetterQueue(
       this,
@@ -87,8 +84,9 @@ export class OpenFormsSubmissionsTopic extends Construct {
       },
     );
 
+
     const loggingRole = new Role(this, 'sns-submission-delivery-status-role', {
-      assumedBy: new PrincipalWithConditions(new ServicePrincipal('sns.amazonaws.com'), { StringEquals: { 'aws:SourceAccount': Stack.of(this).account } } as Conditions),
+      assumedBy: new ServicePrincipal('sns.amazonaws.com'),
     });
     loggingRole.addToPolicy(
       new PolicyStatement({
