@@ -504,15 +504,12 @@ export class SubmissionForwarder extends Construct {
 
   private setupWowebUser() {
     const wowebAccess = new IamUserWithRoleAccess(
-      this,
-      'woweb-user-role-access',
-      {
+      this, 'woweb-user-role-access', {
         userIdentifier: 'woweb',
         description: 'Access role for woweb system user for vip and jz4all',
       },
     );
     const wowebRole = wowebAccess.role;
-    this.submissionTopic.grantSubscribe(wowebRole);
     this.options.key.grantDecrypt(wowebRole);
     // grant GetObject on both submissions/* and archive/*
     // and a ListBucket on the bucket itself (needed for GetObject)

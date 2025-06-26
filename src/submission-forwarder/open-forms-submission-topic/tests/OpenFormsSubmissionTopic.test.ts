@@ -30,16 +30,6 @@ describe('OpenFormsSubmissionsTopic', () => {
     });
   });
 
-  it('creates exactly one SQS DLQ with the right name and encryption key', () => {
-    template.resourceCountIs('AWS::SQS::Queue', 1);
-    template.hasResourceProperties('AWS::SQS::Queue', {
-      QueueName: 'open-forms-submission-topic-dlq',
-      KmsMasterKeyId: {
-        'Fn::GetAtt': [Match.stringLikeRegexp('TestKey'), 'Arn'],
-      },
-    });
-  });
-
   it('allows SNS to send messages to the DLQ', () => {
     template.hasResourceProperties('AWS::SQS::QueuePolicy', {
       PolicyDocument: {

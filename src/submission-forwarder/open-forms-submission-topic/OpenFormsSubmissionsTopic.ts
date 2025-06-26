@@ -1,5 +1,6 @@
 import { Criticality, DeadLetterQueue } from '@gemeentenijmegen/aws-constructs';
-import { Role, ServicePrincipal, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { Stack } from 'aws-cdk-lib';
+import { Role, ServicePrincipal, PolicyStatement, PrincipalWithConditions, Conditions } from 'aws-cdk-lib/aws-iam';
 import { IKey, Key } from 'aws-cdk-lib/aws-kms';
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import {
@@ -11,7 +12,7 @@ import {
   CfnTopic,
 } from 'aws-cdk-lib/aws-sns';
 import { UrlSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
-import { CfnQueue, Queue, QueueProps } from 'aws-cdk-lib/aws-sqs';
+import { CfnQueue, Queue } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
 
 export interface OpenFormsTopicProps {
@@ -35,7 +36,6 @@ export class OpenFormsSubmissionsTopic extends Construct {
     super(scope, id);
 
     this.topic = new Topic(this, 'Topic', {
-      topicName: 'openforms-submissions-topic',
       displayName: 'OpenForms Submissions Topic',
       masterKey: props.kmsKey,
     });
@@ -49,13 +49,10 @@ export class OpenFormsSubmissionsTopic extends Construct {
         alarmDescription: 'Open Forms Submission Topic DLQ not empty',
         alarmCriticality: props.criticality,
         kmsKey: props.kmsKey,
-        queueOptions: {
-          queueName: 'open-forms-submission-topic-dlq',
-        } as QueueProps,
       },
     );
     this.dlq = dlqSetup.dlq;
-    this.dlq.grantSendMessages(new ServicePrincipal('sns.amazonaws.com'));
+
 
     // Cloudformation seems to have issues with this setup for now
     props.endpointUrls.forEach((url) => {
@@ -66,13 +63,17 @@ export class OpenFormsSubmissionsTopic extends Construct {
           // No filterpolicy set right now, only one subscription and one type pushed to topic
         }),
       );
+
+      subscription.node.addDependency(this.dlq);
+      // subscription.node.addDependency(this.topic);
+
       // get the L1 CloudFormation objects and setup the dependency to make sure the deployment succeeds
       // standard node.addDepedency creates a circular dependency
-      const cfnSub = subscription.node.defaultChild as CfnSubscription;
-      const cfnDlq = this.dlq.node.findChild('Resource') as CfnQueue;
-      const cfnTopic = this.topic.node.defaultChild as CfnTopic;
-      cfnSub.addDependency(cfnDlq);
-      cfnSub.addDependency(cfnTopic);
+      // const cfnSub = subscription.node.defaultChild as CfnSubscription;
+      // const cfnDlq = this.dlq.node.findChild('Resource') as CfnQueue;
+      // const cfnTopic = this.topic.node.defaultChild as CfnTopic;
+      // cfnSub.addDependency(cfnDlq);
+      // cfnSub.addDependency(cfnTopic);
     });
   }
 
@@ -87,7 +88,7 @@ export class OpenFormsSubmissionsTopic extends Construct {
     );
 
     const loggingRole = new Role(this, 'sns-submission-delivery-status-role', {
-      assumedBy: new ServicePrincipal('sns.amazonaws.com'),
+      assumedBy: new PrincipalWithConditions(new ServicePrincipal('sns.amazonaws.com'), { StringEquals: { 'aws:SourceAccount': Stack.of(this).account } } as Conditions),
     });
     loggingRole.addToPolicy(
       new PolicyStatement({
