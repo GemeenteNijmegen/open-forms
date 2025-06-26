@@ -1,5 +1,4 @@
 import { Criticality, DeadLetterQueue } from '@gemeentenijmegen/aws-constructs';
-import { Aws } from 'aws-cdk-lib';
 import { Role, ServicePrincipal, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { IKey, Key } from 'aws-cdk-lib/aws-kms';
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
@@ -8,9 +7,11 @@ import {
   LoggingConfig,
   LoggingProtocol,
   SubscriptionProtocol,
+  CfnSubscription,
+  CfnTopic,
 } from 'aws-cdk-lib/aws-sns';
 import { UrlSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
-import { Queue, QueueProps } from 'aws-cdk-lib/aws-sqs';
+import { CfnQueue, Queue, QueueProps } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
 
 export interface OpenFormsTopicProps {
@@ -57,15 +58,21 @@ export class OpenFormsSubmissionsTopic extends Construct {
     this.dlq.grantSendMessages(new ServicePrincipal('sns.amazonaws.com'));
 
     // Cloudformation seems to have issues with this setup for now
-
     props.endpointUrls.forEach((url) => {
-      this.topic.addSubscription(
+      const subscription = this.topic.addSubscription(
         new UrlSubscription(url, {
           deadLetterQueue: this.dlq,
           protocol: SubscriptionProtocol.HTTPS,
           // No filterpolicy set right now, only one subscription and one type pushed to topic
         }),
       );
+      // get the L1 CloudFormation objects and setup the dependency to make sure the deployment succeeds
+      // standard node.addDepedency creates a circular dependency
+      const cfnSub = subscription.node.defaultChild as CfnSubscription;
+      const cfnDlq = this.dlq.node.findChild('Resource') as CfnQueue;
+      const cfnTopic = this.topic.node.defaultChild as CfnTopic;
+      cfnSub.addDependency(cfnDlq);
+      cfnSub.addDependency(cfnTopic);
     });
   }
 
