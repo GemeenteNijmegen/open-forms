@@ -635,7 +635,8 @@ curl --location 'https://api.notifynl.nl/v2/notifications/email' \
     "klant.voornaam": "Amala",
     "klant.voorvoegselAchternaam": "van de",
     "klant.achternaam": "Putten",
-    "taak.heeft_verloopdatum": "21 februari 2026"
+    "taak.verloopdatum": "21 februari 2026",
+    "taak.periode": "juni 2026",
     }
 }
 '
