@@ -30,10 +30,4 @@ export class Statics {
   // SNS Topic Subscription URLs
   static readonly ssmSNSSubscriptionUrlVIP = '/sns/subscriptionurl/vip';
   static readonly ssmSNSSubscriptionUrlJZ4ALL = '/sns/subscriptionurl/jz4all';
-
-  // SNS Topic Subscription URLs
-  // static readonly wowebSnsSubscriptionUrlAccp: string = 'https://vip.woweb.app/api/sns-receiver';
-  // static readonly wowebSnsSubscriptionUrlProd: string = 'https://vip.nijmegen.cloud/api/sns-receiver';
-  // static readonly wowebSnsSubscriptionUrlJz4allAccp: string = 'https://jz4all.woweb.app/api/sns-receiver';
-  // static readonly wowebSnsSubscriptionUrlJz4allProd: string = 'https://jz4all.nijmegen.cloud/api/sns-receiver';
 }
