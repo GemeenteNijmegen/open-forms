@@ -576,9 +576,10 @@ export class SubmissionForwarder extends Construct {
     this.submissionTopic.grantPublish(vipTransformationLambda);
     // Remove when mocks are removed
     vipTransformationLambda.grantInvoke(this.wowebRole);
-    vipTransformationLambda.addFunctionUrl({
+    const url = vipTransformationLambda.addFunctionUrl({
       authType: FunctionUrlAuthType.AWS_IAM,
     });
+    url.grantInvokeUrl(this.wowebRole);
   }
 
   private setupNotificationMailLambda() {
