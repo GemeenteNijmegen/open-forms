@@ -20,6 +20,7 @@ export async function handler(rawEvent: any) {
   const mockVIPHandler = new MockVIPHandler();
   const mockedMessageToPublish = mockVIPHandler.handle(event);
   const message = JSON.stringify(mockedMessageToPublish);
+  logger.info('Sending mock sns message', choice, attribute, message);
 
   const messageAttributes = {
     AppId: {
