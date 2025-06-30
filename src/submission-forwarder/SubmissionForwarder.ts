@@ -75,6 +75,8 @@ export class SubmissionForwarder extends Construct {
   private submissionTopic: Topic;
   private readonly bucket: Bucket;
   private readonly backupBucket: Bucket;
+  // Remove after mocks are removed. This provides access to lambda for sns publishing
+  private wowebRole: Role;
 
   private readonly parameters?: {
     apikey: Secret;
@@ -515,6 +517,9 @@ export class SubmissionForwarder extends Construct {
     // and a ListBucket on the bucket itself (needed for GetObject)
     this.bucket.grantRead(wowebRole, 'vip/*');
     this.bucket.grantRead(wowebRole, 'jz4all/*');
+
+    // Remove when mocks are removed
+    this.wowebRole = wowebRole;
   }
 
   private setupBackupBucket() {
@@ -569,6 +574,8 @@ export class SubmissionForwarder extends Construct {
       },
     });
     this.submissionTopic.grantPublish(vipTransformationLambda);
+    // Remove when mocks are removed
+    vipTransformationLambda.grantInvoke(this.wowebRole);
   }
 
   private setupNotificationMailLambda() {

@@ -1,0 +1,32 @@
+{
+  "reference": "OF-CQDDBH",
+  "fileObjects": [
+    {
+      "bucket": "open-forms-main-stack-submissionforwardersubmissio-zwnxg2nji9fu",
+      "objectKey": "vip/OF-CQDDBH/OF-CQDDBH.pdf",
+      "fileName": "OF-CQDDBH.pdf",
+      "objectType": "submission"
+    },
+    {
+      "bucket": "open-forms-main-stack-submissionforwardersubmissio-zwnxg2nji9fu",
+      "objectKey": "vip/OF-CQDDBH/bijlage_een.jpg",
+      "fileName": "bijlage_een.jpg",
+      "objectType": "attachment"
+    }
+  ],
+  "data": {
+    "vipZaaktype": "7562e893-3d95-4114-bceb-b3407346e4ff",
+    "isgemachtigde": "",
+    "isgemachtigde1": "",
+    "wiltUBezwaarMakenTegenBelastingen": "nee",
+    "kenmerk": "OF-CQDDBH",
+    "naamIngelogdeGebruiker": "S. van 't Hul",
+    "inlogmiddel": "digid",
+    "bsn": "999971785",
+    "opWelkeDatumHeeftDeGemeenteHetBesluitBekendGemaaktOfDeBeschikkingGegeven": "20-06-2025",
+    "welkKenmerkOfReferentienummerHeeftHetBesluitOfDeBeschikkingWaartegenUBezwaarMaakt": "jkebwfhjerw",
+    "eMailadres": "testexample@nijmegen.nl",
+    "telefoonnummer": "061234567890"
+  },
+  "bsn": "999971785"
+}

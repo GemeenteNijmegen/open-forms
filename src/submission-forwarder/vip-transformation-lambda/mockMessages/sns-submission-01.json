@@ -1,16 +1,16 @@
 {
-  "reference": "OF-KVK123",
+  "reference": "OF-D4CRFR",
   "fileObjects": [
     {
-      "bucket": "bucketnaam",
-      "objectKey": "OF-123ABC//pdf/open-forms Bezwaar Maken.pdf",
-      "fileName": "open-forms Bezwaar Maken.pdf",
+      "bucket": "open-forms-main-stack-submissionforwardersubmissio-zwnxg2nji9fu",
+      "objectKey": "jz4all/OF-D4CRFR/OF-D4CRFR.pdf",
+      "fileName": "OF-D4CRFR.pdf",
       "objectType": "submission"
     },
     {
-      "bucket": "webforms-eformgenericserv-eformattuploads951db329-lm1p2s2mgzv3",
-      "objectKey": "OF-123ABC/files/GN304_copy_11.jpeg",
-      "fileName": "GN304_copy_11.jpeg",
+      "bucket": "open-forms-main-stack-submissionforwardersubmissio-zwnxg2nji9fu",
+      "objectKey": "jz4all/OF-D4CRFR/bijlage_een.jpg",
+      "fileName": "bijlage_een.jpg",
       "objectType": "attachment"
     }
   ],
