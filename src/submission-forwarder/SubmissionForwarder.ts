@@ -77,6 +77,7 @@ export class SubmissionForwarder extends Construct {
   private readonly backupBucket: Bucket;
   // Remove after mocks are removed. This provides access to lambda for sns publishing
   private wowebRole: Role;
+  private wowebUser: User;
 
   private readonly parameters?: {
     apikey: Secret;
@@ -520,6 +521,7 @@ export class SubmissionForwarder extends Construct {
 
     // Remove when mocks are removed
     this.wowebRole = wowebRole;
+    this.wowebUser = wowebAccess.user;
   }
 
   private setupBackupBucket() {
@@ -580,6 +582,7 @@ export class SubmissionForwarder extends Construct {
       authType: FunctionUrlAuthType.AWS_IAM,
     });
     url.grantInvokeUrl(this.wowebRole);
+    url.grantInvokeUrl(this.wowebUser);
   }
 
   private setupNotificationMailLambda() {
