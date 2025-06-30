@@ -13,7 +13,7 @@ export async function handler(rawEvent: any) {
     typeof rawEvent.body === 'string' ? JSON.parse(rawEvent.body) : rawEvent;
 
   const choice = event.mockChoice ?? '01';
-  const attribute = event.attribute ?? 'APV';
+  const attribute = event.attribute ?? 'JUR';
 
   logger.info('Using mock choice and attribute', { choice, attribute });
 
@@ -25,10 +25,6 @@ export async function handler(rawEvent: any) {
     AppId: {
       DataType: 'String',
       StringValue: attribute,
-    },
-    MockChoice: {
-      DataType: 'String',
-      StringValue: choice,
     },
   };
 

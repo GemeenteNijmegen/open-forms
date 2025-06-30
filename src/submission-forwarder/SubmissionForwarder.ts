@@ -18,7 +18,7 @@ import {
   User,
 } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
-import { Function } from 'aws-cdk-lib/aws-lambda';
+import { Function, FunctionUrlAuthType } from 'aws-cdk-lib/aws-lambda';
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { BlockPublicAccess, Bucket } from 'aws-cdk-lib/aws-s3';
 import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
@@ -576,6 +576,9 @@ export class SubmissionForwarder extends Construct {
     this.submissionTopic.grantPublish(vipTransformationLambda);
     // Remove when mocks are removed
     vipTransformationLambda.grantInvoke(this.wowebRole);
+    vipTransformationLambda.addFunctionUrl({
+      authType: FunctionUrlAuthType.AWS_IAM,
+    });
   }
 
   private setupNotificationMailLambda() {

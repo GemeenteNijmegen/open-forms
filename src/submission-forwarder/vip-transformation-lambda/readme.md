@@ -58,3 +58,11 @@ Als alle velden gefilterd worden op vip_key of jz4all_key dan levert het dit lij
   "eMailadres1": ""
 }
 ```
+
+### Attributes
+
+APV
+APV-Taak
+APV-Betaling
+JUR
+JUR-Betaling
