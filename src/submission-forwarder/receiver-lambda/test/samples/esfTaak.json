@@ -17,6 +17,7 @@
         "data": {
           "dossiernummer": "dossier-test-1",
           "periodenummer": "202506",
+          "regelingnummer": "01",
           "email": "test@example.com",
           "telefoon": "1234567890",
           "clientnummer": "1234",
@@ -34,7 +35,8 @@
           "vermogengewijzigd": "nee",
           "inkomstengewijzigd": "nee",
           "woonsituatiegewijzigd": "nee",
-          "vrijwilligerswerkgewijzigd": "nee"
+          "vrijwilligerswerkgewijzigd": "nee",
+          "toelichtingingevuld": "nee"
       }
       },
       "koppeling": {

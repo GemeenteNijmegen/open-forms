@@ -248,7 +248,10 @@ In `formtaak.verzonden_data` zit na het indienen door inwoner (Proces B stap 9) 
                         },
                         "data": {
                             "dossiernummer": "dossier-test-1",
+                            "regelingnummer": "6",
                             "periodenummer": "202506",
+                            "clientnummer" "1234",
+                            "inkhef": "NEE",
                             "email": "test@example.com",
                             "telefoon": "1234567890"
                         }
@@ -355,6 +358,9 @@ In `formtaak.verzonden_data` zit na het indienen door inwoner (Proces B stap 9) 
       "required": [
         "dossiernummer",
         "periodenummer",
+        "clientnummer",
+        "termijnvanordedatum",
+        "inkhef",
         "email"
       ],
       "properties": {
@@ -368,6 +374,15 @@ In `formtaak.verzonden_data` zit na het indienen door inwoner (Proces B stap 9) 
           "type": "string"
         },
         "periodenummer": {
+          "type": "string"
+        },
+        "clientnummer": {
+          "type": "string"
+        },
+        "termijnvanordedatum": {
+          "type": "string"
+        },
+        "inkhef": {
           "type": "string"
         }
       },
@@ -406,14 +421,25 @@ In `formtaak.verzonden_data` zit na het indienen door inwoner (Proces B stap 9) 
         "vakantiegewijzigd",
         "studiegewijzigd",
         "vrijwilligerswerkgewijzigd",
-        "vermogengewijzigd"
+        "vermogengewijzigd",
+        "toelichtingingevuld",
+        "pdf"
       ],
       "properties": {
+        "pdf": {
+          "type": "string"
+        },
         "email": {
           "type": "string"
         },
         "telefoon": {
           "type": "string"
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "studiegewijzigd": {
           "enum": [
@@ -457,6 +483,9 @@ In `formtaak.verzonden_data` zit na het indienen door inwoner (Proces B stap 9) 
             "jaGestoptMetVrijwilligerswerk",
             "nee"
           ],
+          "type": "string"
+        },
+        "toelichtingingevuld": {
           "type": "string"
         }
       },
