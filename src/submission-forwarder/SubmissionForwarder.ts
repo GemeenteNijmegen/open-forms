@@ -498,6 +498,12 @@ export class SubmissionForwarder extends Construct {
       description: 'Role to assume for ESB user',
     });
 
+    new StringParameter(this, 'ssm-shared-submission-esb-role-arn', {
+      parameterName: Statics. ssmSharedSubmissionEsbRoleArn,
+      stringValue: role.roleArn,
+      description: 'Shared ESB Role Arn to be used in the same aws account with different code repositories',
+    });
+
     this.esbDeadLetterQueue?.grantSendMessages(role); // ESB publishes messages on DLQ on failure
     this.esbQueue.grantConsumeMessages(role);
     this.bucket.grantRead(role);

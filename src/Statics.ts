@@ -27,6 +27,20 @@ export class Statics {
     region: 'eu-central-1',
   };
 
+  /**
+ * KMS account key alias
+ */
+  static readonly ALIAS_ACCOUNT_KMS_KEY = 'alias/open-forms-account-kms-key';
+
+  /**
+   * Shared ARN SSM parameter names
+   * These params point to shared resources in the Open Forms account
+   * The role and sqs are used in two different Github repo's, but are present in the same gn-account
+   * This repo sets the params, which will be retrieved by aanvragen-sociaal-domein github repo
+   */
+  static readonly ssmSharedSubmissionEsbRoleArn = '/shared/submission/esbrole/arn'; // Do not change or remove
+  static readonly ssmSharedSubmissionSQSSociaalArn = '/shared/submission/sqs/sociaal/arn'; // Do not change or remove
+
   // SNS Topic Subscription URLs
   static readonly ssmSNSSubscriptionUrlVIP = '/sns/subscriptionurl/vip';
   static readonly ssmSNSSubscriptionUrlJZ4ALL = '/sns/subscriptionurl/jz4all';
