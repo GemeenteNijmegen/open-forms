@@ -16,7 +16,7 @@ export async function handler(rawEvent: any) {
 
   logger.info('Using mock choice and attribute', { choice });
 
-  const { body, attribute } = new MockVIPHandler().handle(event.mockChoice);
+  const { body, attribute } = new MockVIPHandler().handle(choice);
   const message = JSON.stringify(body);
   logger.info('Sns message', message);
   logger.info('Sending mock sns message', { choice, attribute, body });

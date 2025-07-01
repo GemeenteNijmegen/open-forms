@@ -48,6 +48,7 @@ export class MockVIPHandler {
     const key = (choice ?? '').toLowerCase();
 
     const found = MockVIPHandler.registry.find((d) => key.startsWith(d.prefix));
+    this.logger.info('Found with prefix?', {found});
     const def = found ?? MockVIPHandler.registry[MockVIPHandler.registry.length - 1]!;
 
     this.logger.debug('Selected mock', {
