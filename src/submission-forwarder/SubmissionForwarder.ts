@@ -18,7 +18,7 @@ import {
   User,
 } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
-import { Function } from 'aws-cdk-lib/aws-lambda';
+import { Function, FunctionUrlAuthType } from 'aws-cdk-lib/aws-lambda';
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { BlockPublicAccess, Bucket } from 'aws-cdk-lib/aws-s3';
 import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
@@ -75,6 +75,9 @@ export class SubmissionForwarder extends Construct {
   private submissionTopic: Topic;
   private readonly bucket: Bucket;
   private readonly backupBucket: Bucket;
+  // Remove after mocks are removed. This provides access to lambda for sns publishing
+  private wowebRole: Role;
+  private wowebUser: User;
 
   private readonly parameters?: {
     apikey: Secret;
@@ -515,6 +518,10 @@ export class SubmissionForwarder extends Construct {
     // and a ListBucket on the bucket itself (needed for GetObject)
     this.bucket.grantRead(wowebRole, 'vip/*');
     this.bucket.grantRead(wowebRole, 'jz4all/*');
+
+    // Remove when mocks are removed
+    this.wowebRole = wowebRole;
+    this.wowebUser = wowebAccess.user;
   }
 
   private setupBackupBucket() {
@@ -569,6 +576,13 @@ export class SubmissionForwarder extends Construct {
       },
     });
     this.submissionTopic.grantPublish(vipTransformationLambda);
+    // Remove when mocks are removed
+    vipTransformationLambda.grantInvoke(this.wowebRole);
+    const url = vipTransformationLambda.addFunctionUrl({
+      authType: FunctionUrlAuthType.AWS_IAM,
+    });
+    url.grantInvokeUrl(this.wowebRole);
+    url.grantInvokeUrl(this.wowebUser);
   }
 
   private setupNotificationMailLambda() {

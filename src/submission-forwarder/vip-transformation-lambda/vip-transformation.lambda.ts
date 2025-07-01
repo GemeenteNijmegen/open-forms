@@ -6,19 +6,27 @@ import { MockVIPHandler } from './MockVIPHandler';
 const logger = new Logger();
 const env = environmentVariables(['TOPIC_ARN']);
 const sns = new SNSClient({});
-export async function handler(event: any) {
-  logger.debug('event', { event });
+export async function handler(rawEvent: any) {
+  logger.debug('event', { rawEvent });
 
-  const mockVIPHandler = new MockVIPHandler();
-  const mockedMessageToPublish = mockVIPHandler.handle(event);
-  const message = JSON.stringify(mockedMessageToPublish);
+  const event =
+    typeof rawEvent.body === 'string' ? JSON.parse(rawEvent.body) : rawEvent;
+
+  const choice = event.mockChoice ?? 'vip01';
+
+  logger.info('Using mock choice and attribute', { choice });
+
+  const { body, attribute } = new MockVIPHandler().handle(choice);
+  const message = JSON.stringify(body);
+  logger.info('Sns message', message);
+  logger.info('Sending mock sns message', { choice, attribute, body });
 
   const cmd = new PublishCommand({
     TopicArn: env.TOPIC_ARN,
     Message: message,
-    // MessageAttributes here...
-    // Does it still need AppId or BRP_data or KVK_data messageattributes
-    // Check payment attributes as well
+    MessageAttributes: {
+      AppId: { DataType: 'String', StringValue: attribute },
+    },
   });
   try {
     logger.debug('Try publish SNS message');
@@ -26,7 +34,10 @@ export async function handler(event: any) {
     logger.info('Published message to SNS topic', {
       messageId: publishSnsMessage.MessageId,
     });
-    return { statusCode: 200, body: JSON.stringify({ messageId: publishSnsMessage.MessageId }) };
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ messageId: publishSnsMessage.MessageId }),
+    };
   } catch (err) {
     logger.error('Failed to publish to SNS topic', { error: err });
     throw err;
