@@ -47,13 +47,13 @@
       "description": "Prepare assets",
       "steps": [
         {
+          "spawn": "bundle:prefill-demo/handler.lambda"
+        },
+        {
           "spawn": "bundle:nl-wallet/prefill/prefill.lambda"
         },
         {
           "spawn": "bundle:nl-wallet/token/token.lambda"
-        },
-        {
-          "spawn": "bundle:prefill-demo/handler.lambda"
         },
         {
           "spawn": "bundle:submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda"
