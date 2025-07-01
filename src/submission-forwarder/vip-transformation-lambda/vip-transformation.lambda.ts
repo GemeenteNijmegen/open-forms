@@ -12,31 +12,21 @@ export async function handler(rawEvent: any) {
   const event =
     typeof rawEvent.body === 'string' ? JSON.parse(rawEvent.body) : rawEvent;
 
-  const choice = event.mockChoice ?? '01';
-  const attribute = event.attribute ?? 'JUR';
+  const choice = event.mockChoice ?? 'vip01';
 
-  logger.info('Using mock choice and attribute', { choice, attribute });
+  logger.info('Using mock choice and attribute', { choice });
 
-  const mockVIPHandler = new MockVIPHandler();
-  const mockedMessageToPublish = mockVIPHandler.handle(event);
-  logger.info(mockedMessageToPublish);
-  const message = JSON.stringify(mockedMessageToPublish);
-  logger.info('Sending mock sns message', choice, attribute, message);
-
-  const messageAttributes = {
-    AppId: {
-      DataType: 'String',
-      StringValue: attribute,
-    },
-  };
+  const { body, attribute } = new MockVIPHandler().handle(event.mockChoice);
+  const message = JSON.stringify(body);
+  logger.info('Sns message', message);
+  logger.info('Sending mock sns message', { choice, attribute, body });
 
   const cmd = new PublishCommand({
     TopicArn: env.TOPIC_ARN,
     Message: message,
-    MessageAttributes: messageAttributes,
-    // MessageAttributes here...
-    // Does it still need AppId or BRP_data or KVK_data messageattributes
-    // Check payment attributes as well
+    MessageAttributes: {
+      AppId: { DataType: 'String', StringValue: attribute },
+    },
   });
   try {
     logger.debug('Try publish SNS message');
