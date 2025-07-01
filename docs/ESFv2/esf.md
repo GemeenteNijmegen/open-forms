@@ -248,6 +248,7 @@ In `formtaak.verzonden_data` zit na het indienen door inwoner (Proces B stap 9) 
                         },
                         "data": {
                             "dossiernummer": "dossier-test-1",
+                            "regelingnummer": "6",
                             "periodenummer": "202506",
                             "email": "test@example.com",
                             "telefoon": "1234567890"
