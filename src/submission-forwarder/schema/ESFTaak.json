@@ -137,6 +137,7 @@
         "studiegewijzigd",
         "vrijwilligerswerkgewijzigd",
         "vermogengewijzigd",
+        "toelichtingingevuld",
         "pdf"
       ],
       "properties": {
@@ -197,6 +198,9 @@
             "jaGestoptMetVrijwilligerswerk",
             "nee"
           ],
+          "type": "string"
+        },
+        "toelichtingingevuld": {
           "type": "string"
         }
       },

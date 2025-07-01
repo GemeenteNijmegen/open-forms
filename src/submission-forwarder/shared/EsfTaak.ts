@@ -30,6 +30,7 @@ export const EsfTaakSchema = z.object({
       studiegewijzigd: z.string(),
       vrijwilligerswerkgewijzigd: z.string(),
       vermogengewijzigd: z.string(),
+      toelichtingingevuld: z.string(),
       pdf: z.string(),
       attachments: z.array(z.string()),
     }),
