@@ -31,6 +31,8 @@ jspm_packages/
 .yarn-integrity
 .cache
 test.pdf
+**/excludedformdefinitions/
+**/output/
 test-reports/junit.xml
 test/__snapshots__/*
 .env

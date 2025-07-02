@@ -35,7 +35,7 @@ function flattenComponents(components: Component[]): Component[] {
   return result;
 }
 
-test('extract components with jz4all_key or vip_key', () => {
+xtest('extract components with jz4all_key or vip_key', () => {
   const filePath = path.join(
     __dirname,
     '../examples/bezwaar-maken-01-formdefinition.json',

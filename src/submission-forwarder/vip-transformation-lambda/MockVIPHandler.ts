@@ -49,7 +49,8 @@ export class MockVIPHandler {
 
     const found = MockVIPHandler.registry.find((d) => key.startsWith(d.prefix));
     this.logger.info('Found with prefix?', { found });
-    const def = found ?? MockVIPHandler.registry[MockVIPHandler.registry.length - 1]!;
+    const def =
+      found ?? MockVIPHandler.registry[MockVIPHandler.registry.length - 1]!;
 
     this.logger.debug('Selected mock', {
       prefix: def.prefix,
@@ -63,6 +64,7 @@ export class MockVIPHandler {
 
 export const jz01 = {
   reference: 'OF-D4CRFR',
+  appId: 'JUR',
   fileObjects: [
     {
       bucket: 'open-forms-main-stack-submissionforwardersubmissio-zwnxg2nji9fu',
@@ -93,6 +95,7 @@ export const jz01 = {
 };
 
 export const vip01 = {
+  appId: 'APV',
   reference: 'OF-CQDDBH',
   fileObjects: [
     {
@@ -109,18 +112,17 @@ export const vip01 = {
     },
   ],
   data: {
-    vipZaaktype: '7562e893-3d95-4114-bceb-b3407346e4ff',
-    isgemachtigde: '',
-    isgemachtigde1: '',
-    wiltUBezwaarMakenTegenBelastingen: 'nee',
+    vipZaaktype: '4953995e-c108-428b-b9ea-9e2c7012d796',
+    totaalbedrag: '20.90',
+    naamOrganisatieOfBedrijf: 'bedrijfsnaam-dmskey',
+    inschrijfnummerKamerVanKoophandel: '69599084',
+    contactpersoon: 'ja',
     kenmerk: 'OF-CQDDBH',
     naamIngelogdeGebruiker: "S. van 't Hul",
     inlogmiddel: 'digid',
     bsn: '999971785',
-    opWelkeDatumHeeftDeGemeenteHetBesluitBekendGemaaktOfDeBeschikkingGegeven:
-      '20-06-2025',
-    welkKenmerkOfReferentienummerHeeftHetBesluitOfDeBeschikkingWaartegenUBezwaarMaakt:
-      'jkebwfhjerw',
+    naamContactpersoon: 'naamVandeCOntactpersoon Ingevuld',
+    extraveldVoordeVorm: 'Ik moet de boel niet kapot maken',
     eMailadres: 'testexample@nijmegen.nl',
     telefoonnummer: '061234567890',
   },
