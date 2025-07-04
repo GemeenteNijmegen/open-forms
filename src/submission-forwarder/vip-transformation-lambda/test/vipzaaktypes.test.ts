@@ -4,7 +4,6 @@ jest.setTimeout(30000);
 import * as fs from 'fs';
 import * as path from 'path';
 
-type AnyObj = Record<string, any>;
 
 interface Component {
   key?: string;
@@ -49,7 +48,7 @@ function extractLiterals(script: string): string[] {
 
 // Jest test to collect all vipZaakTypes (including scripts and defaults) from every form
 xtest('extract all vipZaakTypes (including scripts and defaults) from all forms', () => {
-  const BESTANDSNAAM = '2025-06-16-nijmegen';
+  const BESTANDSNAAM = '2025-07-04-ontwikkel';
   const filePath = path.join(
     __dirname,
     `./excludedformdefinitions/${BESTANDSNAAM}.json`,

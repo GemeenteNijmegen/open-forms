@@ -1,0 +1,234 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema#",
+  "$id": "VIPJZVerzoek",
+  "type": "object",
+  "title": "VIPJZVerzoek",
+  "required": [
+    "pdf",
+    "reference"
+  ],
+  "properties": {
+    "bsn": {
+      "type": "string",
+      "examples": ["999999333"],
+      "description": "BSN wanneer het formulier ingevuld is met Digid of Yivi met BSN. Ook me vipkeys bij apvBlok1A, apvBlok2A, apvblok1New, beheerderExploitatievergunningHorecaZonderAlcoholAanpassen, leidinggevendeAlcoholvergunningAanpassen, terrasvergunningAanvragenOfAanpassen, objectvergunningAanvragenNew, alcoholvergunningAanvragen, toestemmingVragenTijdelijkAlcoholSchenken, kansspelautomaatAanwezigheidsvergunningAanvragen; metadata: vip_key=bsn"
+    },
+    "kvk": {
+      "type": "string",
+      "examples": ["69599084"],
+      "description": "KvK-nummer wanneer het formulier ingevuld is met Eherkenning of Yivi met KvK. Ook met vipkeys apvblok1New; metadata: vip_key=kvk"
+    },
+    "pdf": {
+      "type": "string",
+      "examples": [
+        "https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/93853c62-70b9-482a-b433-1733b98d163c"
+      ],
+      "description": "pdf url"
+    },
+    "formName": {
+      "type": "string",
+      "examples": ["Contactformulier"],
+      "description": "productaanvraag type"
+    },
+    "reference": {
+      "type": "string",
+      "examples": ["OF-AB7634HJ", "Z02-39849384"],
+      "description": "submission public reference."
+    },
+    "attachments": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "examples": [
+        [
+          "https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/93853c62-70b9-482a-b433-1733b98d163c",
+          "https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/93853c62-70b9-482a-b433-1733b98d163c"
+        ]
+      ],
+      "description": "Bijlage urls"
+    },
+    "internalNotificationEmails": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "email"
+      },
+      "default": [],
+      "examples": [["ops-team@example.com", "support@example.com"]],
+      "description": "Email addresses of internal employees or departments to notify when a new submission arrives."
+    },
+    "appId": {
+      "type": "string",
+      "examples": [
+        "APV",
+        "APV-Taak",
+        "APV-Betaling",
+        "JUR",
+        "JUR-Taak",
+        "JUR-Betaling"
+      ],
+      "description": "VIP en JZ4All hebben nog steeds het appId nodig in de submission en als message attribute"
+    },
+    "vipZaakTypeVariable": {
+      "type": "string",
+      "enum": [
+        "beheerderHorecaZonderAlcoholAanpassenSeks",
+        "beheerderHorecaZonderAlcoholAanpassenDefault",
+        "terrasVergunningDefault",
+        "toestemmingTijdelijkAlcoholSchenken",
+        "leidingAlcoholVergunningAanpassen",
+        "exploitatieVergunningAanvragen",
+        "objectVergunningAanvragen",
+        "alcoholVergunningAanvragen",
+        "kansspelAutomaatAanwezigheid",
+        "bezwaarMaken",
+        "evenementMeldenVoetbal",
+        "evenementMeldenNeeRegels",
+        "evenementMeldenDefault",
+        "klachtGemeenteDoorgeven",
+        "klachtIetsAnders",
+        "standplaatsGemeentegrond",
+        "standplaatsPriveterrein",
+        "standplaatsWinter",
+        "standplaatsKoningsdag",
+        "standplaatsConcerten",
+        "standplaatsVervanger",
+        "standplaatsAanpassen",
+        "openingstijdenOntheffing",
+        "marktplaatsAanpassen",
+        "marktplaatsVervanger",
+        "marktplaatsDefault",
+        "informatiekraamMelden",
+        "datumReserverenEvenement",
+        "bingoBingoKienen",
+        "bingoDefault",
+        "kraamPodiumVierdaagse",
+        "toestemmingVervoerGevaarlijk",
+        "themamarktVergunning",
+        "customUUID"
+      ],
+      "description": "Must be one of the zaaktypeVariable values from configuration. If customUUID is chosen, the code will try to extract the uuid from "
+    },
+    "customZaakTypeUUID": {
+      "type": "string",
+      "description": "Only works when customUUID is chosen in vipZaakTypeVariable. This gives the option to quickly add uuid settings without changing the objecttype schema. So for testing puproses."
+    },
+    "inlogmiddel": {
+      "type": "string",
+      "description": "apvBlok1A, apvBlok2A, apvblok1New, beheerderExploitatievergunningHorecaZonderAlcoholAanpassen, leidinggevendeAlcoholvergunningAanpassen, terrasvergunningAanvragenOfAanpassen, objectvergunningAanvragenNew, standplaatsAanvragenOfAanpassen, alcoholvergunningAanvragen, toestemmingVragenTijdelijkAlcoholSchenken, bezwaarMakenNieuw, rxmissiontestr01, kansspelautomaatAanwezigheidsvergunningAanvragen, klachtOverIetsAndersNieuw; metadata: vip_key=inlogmiddel, jz4all_key=inlogmiddel"
+    },
+    "naamOrganisatieOfBedrijf": {
+      "type": "string",
+      "description": "apvBlok1A, apvBlok2A, apvblok1New, beheerderExploitatievergunningHorecaZonderAlcoholAanpassen, leidinggevendeAlcoholvergunningAanpassen, terrasvergunningAanvragenOfAanpassen, objectvergunningAanvragenNew; metadata: vip_key=business_name, dms_key=initiator.niet_natuurlijk_persoon.statutaireNaam"
+    },
+    "inschrijfnummerKamerVanKoophandel": {
+      "type": "string",
+      "description": "apvBlok1A, apvBlok2A, apvblok1New, beheerderExploitatievergunningHorecaZonderAlcoholAanpassen, leidinggevendeAlcoholvergunningAanpassen, terrasvergunningAanvragenOfAanpassen, objectvergunningAanvragenNew, kansspelautomaatAanwezigheidsvergunningAanvragen; metadata: vip_key=kvk"
+    },
+    "contactpersoon": {
+      "type": "string",
+      "description": "apvBlok1A, apvBlok2A, apvblok1New, bezwaarMakenNieuw; metadata: vip_key=initiator_is_contact, jz4all_key=initiator_is_contact"
+    },
+    "naamContactpersoon": {
+      "type": "string",
+      "description": "apvBlok1A, apvBlok2A, apvblok1New, beheerderExploitatievergunningHorecaZonderAlcoholAanpassen, leidinggevendeAlcoholvergunningAanpassen, terrasvergunningAanvragenOfAanpassen, objectvergunningAanvragenNew, bezwaarMakenNieuw, kansspelautomaatAanwezigheidsvergunningAanvragen; metadata: vip_key=name, jz4all_key=contact.naam"
+    },
+    "eMailadres": {
+      "type": "string",
+      "description": "apvBlok1A, apvBlok2A, apvblok1New, beheerderExploitatievergunningHorecaZonderAlcoholAanpassen, leidinggevendeAlcoholvergunningAanpassen, terrasvergunningAanvragenOfAanpassen, objectvergunningAanvragenNew, bezwaarMakenNieuw, klachtOverDeGemeenteDoorgevenNieuw, rxmissiontestr01, kansspelautomaatAanwezigheidsvergunningAanvragen, klachtOverIetsAndersNieuw; metadata: vip_key=email, jz4all_key=email"
+    },
+    "telefoonnummer": {
+      "type": "string",
+      "description": "apvBlok1A, apvBlok2A, apvblok1New, beheerderExploitatievergunningHorecaZonderAlcoholAanpassen, leidinggevendeAlcoholvergunningAanpassen, terrasvergunningAanvragenOfAanpassen, objectvergunningAanvragenNew, bezwaarMakenNieuw, klachtOverDeGemeenteDoorgevenNieuw, kansspelautomaatAanwezigheidsvergunningAanvragen, klachtOverIetsAndersNieuw; metadata: vip_key=phone, jz4all_key=phone"
+    },
+    "telefoonnummer1": {
+      "type": "string",
+      "description": "apvblok1New, terrasvergunningAanvragenOfAanpassen; metadata: vip_key=phone"
+    },
+    "eMailadres1": {
+      "type": "string",
+      "description": "apvblok1New, beheerderExploitatievergunningHorecaZonderAlcoholAanpassen, leidinggevendeAlcoholvergunningAanpassen, terrasvergunningAanvragenOfAanpassen, bezwaarMakenNieuw, rxmissiontestr01, kansspelautomaatAanwezigheidsvergunningAanvragen; metadata: vip_key=email, jz4all_key=email"
+    },
+    "naamIngelogdeGebruiker": {
+      "type": "string",
+      "description": "beheerderExploitatievergunningHorecaZonderAlcoholAanpassen, terrasvergunningAanvragenOfAanpassen, objectvergunningAanvragenNew, vergunningAanvragenKraamPodiumLangsRouteVierdaagse, themamarktVergunningAanvragen, toestemmingVervoerGevaarlijkeStoffenAanvragen, bingoMeldenOfLoterijvergunningAanvragen, datumReserverenEvenementNew1, evenementenMeldenOfVergunningAanvragen, ontheffingOpeningstijdenWinkelAanvragen, marktplaatsvergunningAanvragenOfAanpassen, standplaatsAanvragenOfAanpassen, alcoholvergunningAanvragen, toestemmingVragenTijdelijkAlcoholSchenken, apvOntheffingVervoerGevaarlijkeStoffenAanvragen, kansspelautomaatAanwezigheidsvergunningAanvragen; metadata: vip_key=name"
+    },
+    "totaalbedrag": {
+      "type": "string",
+      "description": "beheerderExploitatievergunningHorecaZonderAlcoholAanpassen, leidinggevendeAlcoholvergunningAanpassen, terrasvergunningAanvragenOfAanpassen, themamarktVergunningAanvragen, toestemmingVervoerGevaarlijkeStoffenAanvragen, informatiekraamMeldenOfVergunningAanvragen, bingoMeldenOfLoterijvergunningAanvragen, ontheffingOpeningstijdenWinkelAanvragen, marktplaatsvergunningAanvragenOfAanpassen, standplaatsAanvragenOfAanpassen, toestemmingVragenTijdelijkAlcoholSchenken, apvOntheffingVervoerGevaarlijkeStoffenAanvragen; metadata: vip_key=payment"
+    },
+    "naamIngelogdeGebruiker1": {
+      "type": "string",
+      "description": "leidinggevendeAlcoholvergunningAanpassen, exploitatievergunningAanvragen; metadata: vip_key=name"
+    },
+    "isgemachtigde": {
+      "type": "string",
+      "description": "bezwaarMakenNieuw, rxmissiontestr01; metadata: jz4all_key=is_authorized_person"
+    },
+    "isgemachtigde1": {
+      "type": "string",
+      "description": "bezwaarMakenNieuw; metadata: jz4all_key=webform_initiator.type"
+    },
+    "opWelkeDatumHeeftDeGemeenteHetBesluitBekendGemaaktOfDeBeschikkingGegeven": {
+      "type": "string",
+      "description": "bezwaarMakenNieuw; metadata: jz4all_key=datum_primair_besluit"
+    },
+    "welkKenmerkOfReferentienummerHeeftHetBesluitOfDeBeschikkingWaartegenUBezwaarMaakt": {
+      "type": "string",
+      "description": "bezwaarMakenNieuw; metadata: jz4all_key=primair_dossier"
+    },
+    "naam": {
+      "type": "string",
+      "description": "bezwaarMakenNieuw, klachtOverDeGemeenteDoorgevenNieuw, bezwaarMakenNew; metadata: jz4all_key=webform_initiator.naam, jz4all_key=naam"
+    },
+    "adres": {
+      "type": "string",
+      "description": "bezwaarMakenNieuw; metadata: jz4all_key=webform_initiator.adres"
+    },
+    "kvKNummer": {
+      "type": "string",
+      "description": "bezwaarMakenNieuw; metadata: jz4all_key=webform_initiator.kvk"
+    },
+    "initiatorTypeJz4All1": {
+      "type": "string",
+      "description": "klachtOverDeGemeenteDoorgevenNieuw; metadata: jz4all_key=initiator_type"
+    },
+    "naamBedrijfWaarvoorUEenVergunningAanvraagt": {
+      "type": "string",
+      "description": "kansspelautomaatAanwezigheidsvergunningAanvragen; metadata: dms_key=initiator.niet_natuurlijk_persoon.statutaireNaam"
+    },
+    "payment": {
+      "type": "object",
+      "description": "Optionele betalingsgegevens",
+      "properties": {
+        "payment_completed": {
+          "type": "boolean",
+          "description": "Geeft aan of de betaling is voltooid"
+        },
+        "payment_amount": {
+          "type": "number",
+          "description": "Het bedrag dat is betaald"
+        },
+        "payment_public_order_ids": {
+          "type": "array",
+          "description": "Publieke order-ID’s gerelateerd aan de betaling",
+          "items": {
+            "type": "string",
+            "description": "Een enkele publieke order-ID"
+          }
+        },
+        "provider_payment_ids": {
+          "type": "array",
+          "description": "Door de provider gegenereerde betaal-ID’s",
+          "items": {
+            "type": "string",
+            "description": "Een enkele provider betaal-ID"
+          }
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

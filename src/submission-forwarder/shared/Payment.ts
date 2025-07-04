@@ -14,4 +14,4 @@ export const PaymentSchema = z
   .nullable();
 
 
-export type Submission = z.infer<typeof PaymentSchema>;
+export type Payment = z.infer<typeof PaymentSchema>;

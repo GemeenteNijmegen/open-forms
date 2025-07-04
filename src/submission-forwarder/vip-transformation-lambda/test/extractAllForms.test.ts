@@ -3,6 +3,7 @@ jest.setTimeout(30000);
 
 import * as fs from 'fs';
 import * as path from 'path';
+import { zaaktypeConfig } from '../VipZaakTypeConfig';
 
 type AnyObj = Record<string, any>;
 
@@ -45,7 +46,9 @@ interface FormResult {
 function flattenComponents(components: Component[]): Component[] {
   const result: Component[] = [];
   for (const component of components) {
-    if (component.components) {result.push(...flattenComponents(component.components));}
+    if (component.components) {
+      result.push(...flattenComponents(component.components));
+    }
     result.push(component);
   }
   return result;
@@ -71,7 +74,9 @@ xtest('extract components with vipZaaktype or vip/jz4all/dms keys (and subform) 
     let vipZaakType: string | null = null;
     const vipComp = flat.find((c) => c.key === 'vipZaaktype');
     if (vipComp) {
-      if (typeof vipComp.defaultValue === 'string') {vipZaakType = vipComp.defaultValue;} else if (typeof vipComp.calculateValue === 'string') {
+      if (typeof vipComp.defaultValue === 'string') {
+        vipZaakType = vipComp.defaultValue;
+      } else if (typeof vipComp.calculateValue === 'string') {
         const m = /value\s*=\s*['"]([^'"]+)['"]/i.exec(vipComp.calculateValue);
         vipZaakType = m ? m[1] : vipComp.calculateValue;
       }
@@ -125,4 +130,91 @@ xtest('extract components with vipZaaktype or vip/jz4all/dms keys (and subform) 
 
   // Output only non-empty results
   console.log(JSON.stringify(results, null, 2));
+}, 30000);
+
+xtest('generate JSON schema for unique field keys (filtered)', () => {
+  const BESTANDSNAAM = '2025-07-04-nijmegen';
+  const filePath = path.join(
+    __dirname,
+    `./excludedformdefinitions/${BESTANDSNAAM}.json`,
+  );
+  const raw = fs.readFileSync(filePath, 'utf-8');
+  const json = JSON.parse(raw) as { forms: Record<string, FormDefinition> };
+
+  // Build field key -> forms and key-metadata map only from components with vip/jz4all/dms
+  const fieldForms: Record<string, Set<string>> = {};
+  const fieldMeta: Record<string, Set<string>> = {};
+  for (const [formName, formDef] of Object.entries(json.forms)) {
+    const flat = flattenComponents(formDef.components || []);
+    const filtered = flat.filter(
+      (c) =>
+        c.vip_key !== undefined ||
+        c.jz4all_key !== undefined ||
+        c.dms_key !== undefined ||
+        c.properties?.vip_key !== undefined ||
+        c.properties?.jz4all_key !== undefined ||
+        c.properties?.dms_key !== undefined,
+    );
+    for (const comp of filtered) {
+      const key = comp.key!;
+      if (!fieldForms[key]) fieldForms[key] = new Set();
+      fieldForms[key].add(formName);
+      if (!fieldMeta[key]) fieldMeta[key] = new Set();
+      const directVip = comp.vip_key;
+      const propVip = comp.properties?.vip_key as string | undefined;
+      if (directVip) fieldMeta[key].add(`vip_key=${directVip}`);
+      else if (propVip) fieldMeta[key].add(`vip_key=${propVip}`);
+      const directJz = comp.jz4all_key;
+      const propJz = comp.properties?.jz4all_key as string | undefined;
+      if (directJz) fieldMeta[key].add(`jz4all_key=${directJz}`);
+      else if (propJz) fieldMeta[key].add(`jz4all_key=${propJz}`);
+      const directDms = comp.dms_key;
+      const propDms = comp.properties?.dms_key as string | undefined;
+      if (directDms) fieldMeta[key].add(`dms_key=${directDms}`);
+      else if (propDms) fieldMeta[key].add(`dms_key=${propDms}`);
+    }
+  }
+
+  // Generate JSON Schema
+  const schema: any = {
+    $schema: 'https://json-schema.org/draft/2020-12/schema',
+    type: 'object',
+    properties: {},
+    additionalProperties: true,
+  };
+
+  // Add vipZaakTypeVariable property with enum of all zaaktypeVariable values
+  const zaakVars = zaaktypeConfig.map(c => c.zaaktypeVariable);
+  schema.properties.vipZaakTypeVariable = {
+    type: 'string',
+    enum: zaakVars,
+    description: 'Must be one of the zaaktypeVariable values from configuration',
+  };
+
+  for (const key of Object.keys(fieldForms)) {
+    const formsList = Array.from(fieldForms[key]).join(', ');
+    const metasList = Array.from(fieldMeta[key] || []);
+    let description = formsList;
+    if (metasList.length > 0) {
+      description += `; metadata: ${metasList.join(', ')}`;
+    }
+    schema.properties[key] = {
+      type: 'string',
+      description,
+    };
+  }
+
+  // Write schema to file
+  const outputDir = path.join(__dirname, 'output');
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
+  const timestamp2 = new Date().toISOString().replace(/[:.]/g, '-');
+  const schemaFilename = `fields-schema-${BESTANDSNAAM}-madeat${timestamp2}.json`;
+  fs.writeFileSync(path.join(outputDir, schemaFilename), JSON.stringify(schema, null, 2));
+  console.log(`Schema written to ${schemaFilename}`);
+
+  // Log the number of properties
+  const propCount = Object.keys(schema.properties).length;
+  console.log(`Total properties in schema: ${propCount}`);
 }, 30000);
