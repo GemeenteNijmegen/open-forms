@@ -27,7 +27,6 @@ export const VIPJZSubmissionSchema = z
       .describe('submission public reference.'),
     attachments: z
       .array(z.string())
-      .optional()
       .describe('Bijlage urls'),
     internalNotificationEmails: z
       .array(z.string().email())

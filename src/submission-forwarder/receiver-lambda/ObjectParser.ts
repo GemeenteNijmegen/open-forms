@@ -2,6 +2,7 @@ import { InvalidStateError, UnknownObjectError } from './ErrorTypes';
 import { EnrichedZgwObjectData } from '../shared/EnrichedZgwObjectData';
 import { EsfTaak, EsfTaakSchema } from '../shared/EsfTaak';
 import { Submission, SubmissionSchema } from '../shared/Submission';
+import { VIPJZSubmission, VIPJZSubmissionSchema } from '../shared/VIPJZSubmission';
 import { ZgwObject } from '../shared/ZgwObject';
 
 interface objectType {
@@ -22,6 +23,7 @@ export class ObjectParser {
   private supportedObjectTypes = {
     esfTaak: EsfTaakSchema,
     submission: SubmissionSchema,
+    vipJzSubmission: VIPJZSubmissionSchema,
   };
 
   constructor(objectTypes: objectType[] | string) {
@@ -55,6 +57,15 @@ export class ObjectParser {
         objectUrl: object.url,
         objectUUID: object.uuid,
         taak,
+      };
+    } else if (type.parser == VIPJZSubmissionSchema) {
+      let vipJzSubmission = parsed as VIPJZSubmission;
+      const s3SubFolder = vipJzSubmission.appId && vipJzSubmission.appId?.startsWith('JUR') ? 'jz4all' : 'vip';
+      return {
+        objectUrl: object.url,
+        objectUUID: object.uuid,
+        s3SubFolder,
+        ...vipJzSubmission,
       };
     }
     throw new UnknownObjectError('Unexpectedly reached end of parser');

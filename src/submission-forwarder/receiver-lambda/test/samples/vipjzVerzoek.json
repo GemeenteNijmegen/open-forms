@@ -1,0 +1,46 @@
+{
+  "url": "https://example.com/objects/api/v2/objects/38a60a90-383d-463a-bd11-135d36787b6a",
+  "uuid": "38a60a90-383d-463a-bd11-135d36787b6a",
+  "type": "https://example.com/objecttypes/api/v2/objecttypes/167e0aec-e416-46fa-9868-e35f11f3f151",
+  "record": {
+    "index": 1,
+    "typeVersion": 2,
+    "data": {
+      "bsn": "999971797",
+      "kvk": "",
+      "pdf": "https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/921c511d-c7f6-489b-8319-eee4a140fb17",
+      "naam": "Organisatienaam",
+      "adres": " ",
+      "appId": "JUR",
+      "payment": {
+        "payment_amount": null,
+        "payment_completed": false,
+        "provider_payment_ids": [],
+        "payment_public_order_ids": []
+      },
+      "formName": "Bezwaar maken",
+      "kvKNummer": "69599084",
+      "reference": "OF-KCNKEF",
+      "eMailadres": "exampletest@nijmegen.nl",
+      "attachments": [
+        "https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/f00dd4db-d8b3-49ef-8893-b47c86a14b0f"
+      ],
+      "inlogmiddel": "bsn",
+      "isgemachtigde": "ja",
+      "contactpersoon": "nee",
+      "isgemachtigde1": "business",
+      "telefoonnummer": "0612345678",
+      "naamContactpersoon": "COntactpersoon",
+      "vipZaakTypeVariable": "bezwaarMaken",
+      "internalNotificationEmails": [],
+      "opWelkeDatumHeeftDeGemeenteHetBesluitBekendGemaaktOfDeBeschikkingGegeven": "2025-07-01",
+      "welkKenmerkOfReferentienummerHeeftHetBesluitOfDeBeschikkingWaartegenUBezwaarMaakt": "wqrewqer"
+    },
+    "geometry": null,
+    "startAt": "2025-06-02",
+    "endAt": null,
+    "registrationAt": "2025-06-02",
+    "correctionFor": null,
+    "correctedBy": null
+  }
+}
