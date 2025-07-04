@@ -207,7 +207,7 @@
           "description": "Geeft aan of de betaling is voltooid"
         },
         "payment_amount": {
-          "type": "number",
+          "type": ["number","null"],
           "description": "Het bedrag dat is betaald"
         },
         "payment_public_order_ids": {
