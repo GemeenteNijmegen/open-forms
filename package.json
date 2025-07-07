@@ -84,7 +84,7 @@
     "@gemeentenijmegen/utils": "^0.0.33",
     "@types/aws-lambda": "^8.10.150",
     "@types/jsonwebtoken": "^9.0.10",
-    "aws-cdk-lib": "^2.1.0",
+    "aws-cdk-lib": "2.203.1",
     "constructs": "^10.0.5",
     "dotenv": "^16.6.1",
     "jose": "^5.10.0",
