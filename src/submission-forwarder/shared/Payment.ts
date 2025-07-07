@@ -6,7 +6,7 @@ import z from 'zod';
 export const PaymentSchema = z
   .object({
     payment_completed: z.boolean().optional(),
-    payment_amount: z.number().optional(),
+    payment_amount: z.number().optional().nullable(),
     payment_public_order_ids: z.array(z.string()).optional(),
     provider_payment_ids: z.array(z.string()).optional(),
   })
@@ -14,4 +14,4 @@ export const PaymentSchema = z
   .nullable();
 
 
-export type Submission = z.infer<typeof PaymentSchema>;
+export type Payment = z.infer<typeof PaymentSchema>;

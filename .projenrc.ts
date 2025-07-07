@@ -1,6 +1,7 @@
 import { GemeenteNijmegenCdkApp } from '@gemeentenijmegen/projen-project-type';
 const project = new GemeenteNijmegenCdkApp({
-  cdkVersion: '2.1.0',
+  cdkVersion: '2.203.1',
+  cdkVersionPinning: true,
   defaultReleaseBranch: 'main',
   devDeps: ['@gemeentenijmegen/projen-project-type', 'aws-sdk-client-mock'],
   name: 'open-forms',
@@ -34,6 +35,8 @@ const project = new GemeenteNijmegenCdkApp({
   },
   gitignore: [
     'test.pdf', // Data from live test
+    '**/excludedformdefinitions/',
+    '**/output/',
   ],
 });
 

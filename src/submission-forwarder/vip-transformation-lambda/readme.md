@@ -66,3 +66,12 @@ APV-Taak
 APV-Betaling
 JUR
 JUR-Betaling
+
+
+### VIP keys en zaaktypen ophalen met testen
+In de testmap staan een aantal testen die werken met bestanden die niet meegecommit zijn.
+- Haal alle formdefinitions uit de formdefinitions backup bucket
+- Zet in de map src/submission-forwarder/vip-transformation-lambda/test/excludedformdefinitions
+- Pas de BESTANDSNAAM aan in de test naar keuze
+- Check of de test niet disabled is: `xtest`. Haal de x weg. // TODO: misschien describe integration
+- Draai de test
