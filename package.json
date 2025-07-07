@@ -78,18 +78,18 @@
     "@aws-sdk/client-sqs": "^3.840.0",
     "@aws-sdk/lib-storage": "^3.842.0",
     "@gemeentenijmegen/apigateway-http": "^0.0.27",
-    "@gemeentenijmegen/aws-constructs": "^0.0.38",
+    "@gemeentenijmegen/aws-constructs": "^0.0.39",
     "@gemeentenijmegen/design-tokens": "^0.0.2-alpha.29",
     "@gemeentenijmegen/modules-zgw-client": "^0.0.7",
     "@gemeentenijmegen/utils": "^0.0.33",
     "@types/aws-lambda": "^8.10.150",
     "@types/jsonwebtoken": "^9.0.10",
-    "aws-cdk-lib": "^2.1.0",
+    "aws-cdk-lib": "^2.203.1",
     "constructs": "^10.0.5",
     "dotenv": "^16.6.1",
     "jose": "^5.10.0",
     "jsonwebtoken": "^9.0.2",
-    "zod": "^3.25.74"
+    "zod": "^3.25.75"
   },
   "license": "EUPL-1.2",
   "publishConfig": {

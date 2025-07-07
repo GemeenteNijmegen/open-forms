@@ -1548,10 +1548,10 @@
   dependencies:
     "@types/aws-lambda" "^8.10.150"
 
-"@gemeentenijmegen/aws-constructs@^0.0.38":
-  version "0.0.38"
-  resolved "https://registry.yarnpkg.com/@gemeentenijmegen/aws-constructs/-/aws-constructs-0.0.38.tgz#8a0fab63a3616fa56dce1b630b732bce35a64df4"
-  integrity sha512-9oGJVdZKjgARMpq6BpcMl7/5FHIjAQei6ePFzIfc+bUbrhU+7Q3Thk5knOTmBstAUY9ntjbwT99wT3CjkrQNXA==
+"@gemeentenijmegen/aws-constructs@^0.0.39":
+  version "0.0.39"
+  resolved "https://registry.yarnpkg.com/@gemeentenijmegen/aws-constructs/-/aws-constructs-0.0.39.tgz#9af8a27ec0b5cc2fe03820b02e1b0bc131d79f12"
+  integrity sha512-/kAeKtpD4Y67EqXWo+NQ+VQL998n38bFgB12yErKvkIRgvPp8AAj8FZFZ7/o0V/DuDLvruQN5GDbXlMnnykNlg==
 
 "@gemeentenijmegen/design-tokens@^0.0.2-alpha.29":
   version "0.0.2-alpha.29"
@@ -3082,7 +3082,7 @@ available-typed-arrays@^1.0.7:
   dependencies:
     possible-typed-array-names "^1.0.0"
 
-aws-cdk-lib@^2.1.0:
+aws-cdk-lib@^2.203.1:
   version "2.204.0"
   resolved "https://registry.yarnpkg.com/aws-cdk-lib/-/aws-cdk-lib-2.204.0.tgz#312240c4f21d3fb7a42d420890afe2563e4fad74"
   integrity sha512-mY3nYu+QvPhO+fz+LCFKbc0PFhTHbHzDLnbcA2fPcQBKciYnTixpBd2ccRlKYWbG4y6NTc6ju6DudZ3HIS4OlA==
@@ -7659,7 +7659,7 @@ yocto-queue@^0.1.0:
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
 
-zod@^3.25.74:
-  version "3.25.74"
-  resolved "https://registry.yarnpkg.com/zod/-/zod-3.25.74.tgz#9368a3986fe756bd94b9a5baad9919660ff3f250"
-  integrity sha512-J8poo92VuhKjNknViHRAIuuN6li/EwFbAC8OedzI8uxpEPGiXHGQu9wemIAioIpqgfB4SySaJhdk0mH5Y4ICBg==
+zod@^3.25.75:
+  version "3.25.75"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.25.75.tgz#8ff9be2fbbcb381a9236f9f74a8879ca29dcc504"
+  integrity sha512-OhpzAmVzabPOL6C3A3gpAifqr9MqihV/Msx3gor2b2kviCgcb+HM9SEOpMWwwNp9MRunWnhtAKUoo0AHhjyPPg==
