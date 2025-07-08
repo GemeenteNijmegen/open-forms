@@ -1,6 +1,6 @@
 import { GemeenteNijmegenCdkApp } from '@gemeentenijmegen/projen-project-type';
 const project = new GemeenteNijmegenCdkApp({
-  cdkVersion: '2.203.1',
+  cdkVersion: '2.1.0',
   cdkVersionPinning: true,
   defaultReleaseBranch: 'main',
   devDeps: ['@gemeentenijmegen/projen-project-type', 'aws-sdk-client-mock'],
