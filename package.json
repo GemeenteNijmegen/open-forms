@@ -51,7 +51,7 @@
     "@gemeentenijmegen/projen-project-type": "^1.11.0",
     "@stylistic/eslint-plugin": "^2",
     "@types/jest": "^29.5.14",
-    "@types/node": "^22.16.0",
+    "@types/node": "^22.16.1",
     "@typescript-eslint/eslint-plugin": "^8",
     "@typescript-eslint/parser": "^8",
     "aws-cdk": "^2",
@@ -89,7 +89,7 @@
     "dotenv": "^16.6.1",
     "jose": "^5.10.0",
     "jsonwebtoken": "^9.0.2",
-    "zod": "^3.25.75"
+    "zod": "^3.25.76"
   },
   "license": "EUPL-1.2",
   "publishConfig": {
