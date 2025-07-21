@@ -1,10 +1,11 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import { S3Client } from '@aws-sdk/client-s3';
+import { EnrichedZgwObjectData } from '../shared/EnrichedZgwObjectData';
+import { addSubdirctoriesToFileData } from './addSubdirectoriesToFileData';
 import { addTypeReferencesToFileData } from './addTypeReferencesToFileData';
 import { FileDownloader } from './FileDownloader';
 import { s3PathsFromFileData, s3StructuredObjectsFromFileData } from './s3PathsFromFileData';
 import { S3Uploader } from './S3Uploader';
-import { EnrichedZgwObjectData } from '../shared/EnrichedZgwObjectData';
 
 
 export interface DocumentsToS3StorageHandlerOptions {
@@ -30,7 +31,13 @@ export class DocumentsToS3StorageHandler {
     ];
     let fileData = await Promise.all(promises);
 
+    // Enrich with types (submission vs attachment and deduplicate)
     fileData = addTypeReferencesToFileData(fileData, objectData.reference);
+
+    // Change paths to the requested subdirectory
+    if (objectData.s3SubFolder) {
+      fileData = addSubdirctoriesToFileData(fileData, objectData.s3SubFolder);
+    }
 
     await this.options.s3Uploader.storeBulk(objectData.reference, fileData);
     // We add both filePaths and fileObjects for backwards compatibility reasons. We only have one client, after it's been
