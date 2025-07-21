@@ -34,6 +34,22 @@ describe('Paths from filedata', () => {
     expect(paths.find(value => value == 's3://mybucket/TDL123.01/TDL123.01.pdf')).toBeTruthy();
     expect(paths.find(value => value == 's3://mybucket/TDL123.01/attachments/test.png')).toBeTruthy();
   });
+
+});
+
+describe('Paths from filedata with subdir', () => {
+  test('Filedata results in array of s3 strings', async () => {
+    const paths = s3PathsFromFileData(singleFile, 'mybucket', 'TDL123.01', 'subdir');
+    expect(paths.length).toBe(1);
+    expect(paths[0]).toContain('subdir');
+  });
+
+  test('Paths from filedata handles multiple files', async () => {
+    const paths = s3PathsFromFileData(multipleFiles, 'mybucket', 'TDL123.01', 'subdir');
+    expect(paths.length).toBe(2);
+    expect(paths.find(value => value == 's3://mybucket/subdir/TDL123.01/TDL123.01.pdf')).toBeTruthy();
+    expect(paths.find(value => value == 's3://mybucket/subdir/TDL123.01/attachments/test.png')).toBeTruthy();
+  });
 });
 
 describe('Structured objects from filedata', () => {
@@ -48,6 +64,22 @@ describe('Structured objects from filedata', () => {
     expect(s3Objects.find(value => value.fileName == 'TDL123.01.pdf')).toBeTruthy();
     expect(s3Objects.find(value => value.bucket == 'mybucket')).toBeTruthy();
     expect(s3Objects.find(value => value.objectKey == 'TDL123.01/attachments/test.png')).toBeTruthy();
+  });
+});
+
+describe('Structured objects from filedata with subdir', () => {
+  test('Filedata results in array of objects', async () => {
+    const s3Objects = s3StructuredObjectsFromFileData(singleFile, 'mybucket', 'TDL123.01', 'subdir');
+    expect(s3Objects.length).toBe(1);
+    expect(s3Objects[0].objectKey).toContain('subdir');
+  });
+
+  test('Paths from filedata handles multiple files', async () => {
+    const s3Objects = s3StructuredObjectsFromFileData(multipleFiles, 'mybucket', 'TDL123.01', 'subdir');
+    expect(s3Objects.length).toBe(2);
+    expect(s3Objects.find(value => value.fileName == 'TDL123.01.pdf')).toBeTruthy();
+    expect(s3Objects.find(value => value.bucket == 'mybucket')).toBeTruthy();
+    expect(s3Objects.find(value => value.objectKey == 'subdir/TDL123.01/attachments/test.png')).toBeTruthy();
   });
 });
 
