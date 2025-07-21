@@ -1,6 +1,7 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
 import { environmentVariables } from '@gemeentenijmegen/utils';
+import { VIPJZSubmissionSchema } from '../shared/VIPJZSubmission';
 import { MockVIPHandler } from './MockVIPHandler';
 
 const logger = new Logger();
@@ -21,8 +22,9 @@ export async function handler(rawEvent: any) {
 }
 
 
-async function handelRealEvents(_rawEvent: any) {
+async function handelRealEvents(stepfunctionInput: any) {
   logger.debug('Not implemented yet...');
+  VIPJZSubmissionSchema.parse(stepfunctionInput.enrichedObject);
 }
 
 

@@ -1,10 +1,10 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import { S3Client } from '@aws-sdk/client-s3';
-import { EnrichedZgwObjectData } from '../shared/EnrichedZgwObjectData';
 import { addTypeReferencesToFileData } from './addTypeReferencesToFileData';
 import { FileDownloader } from './FileDownloader';
 import { s3PathsFromFileData, s3StructuredObjectsFromFileData } from './s3PathsFromFileData';
 import { S3Uploader } from './S3Uploader';
+import { EnrichedZgwObjectData } from '../shared/EnrichedZgwObjectData';
 
 
 export interface DocumentsToS3StorageHandlerOptions {

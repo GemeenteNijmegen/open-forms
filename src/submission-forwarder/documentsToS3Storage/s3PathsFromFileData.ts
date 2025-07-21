@@ -30,7 +30,12 @@ export function s3PathsFromFileData(fileData: FileData[], bucketName: string, re
 /**
  * This function creates s3 url paths from the filedata.
  */
-export function s3StructuredObjectsFromFileData(fileData: FileData[], bucketName: string, reference: string, subdirectory?: string): s3ObjectReference[] {
+export function s3StructuredObjectsFromFileData(
+  fileData: FileData[],
+  bucketName: string,
+  reference: string,
+  subdirectory?: string): s3ObjectReference[] {
+
   const files = fileData.map(data => {
 
     // Add subdirectory when provided
