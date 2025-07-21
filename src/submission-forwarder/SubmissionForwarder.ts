@@ -32,6 +32,7 @@ import {
   StateMachine,
 } from 'aws-cdk-lib/aws-stepfunctions';
 import { Construct } from 'constructs';
+import { IamUserWithRoleAccess } from '../shared/IAMUserWithRoleAccess';
 import { Statics } from '../Statics';
 import { DeliveryQueue } from './DeliveryQueue';
 import { DocumentsToS3StorageFunction } from './documentsToS3Storage/documentsToS3Storage-function';
@@ -40,9 +41,8 @@ import { InternalNotificationMailFunction } from './internal-notification-mail-l
 import { OpenFormsSubmissionsTopic } from './open-forms-submission-topic/OpenFormsSubmissionsTopic';
 import { ReceiverFunction } from './receiver-lambda/receiver-function';
 import { ResubmitFunction } from './resubmit-lambda/resubmit-function';
-import { ZgwRegistrationFunction } from './zgw-registration-lambda/zgw-registration-function';
-import { IamUserWithRoleAccess } from '../shared/IAMUserWithRoleAccess';
 import { VipTransformationFunction } from './vip-transformation-lambda/vip-transformation-function';
+import { ZgwRegistrationFunction } from './zgw-registration-lambda/zgw-registration-function';
 
 interface SubmissionForwarderOptions {
   /**
@@ -113,13 +113,14 @@ export class SubmissionForwarder extends Construct {
     const forwarder = this.setupEsbForwarderLambda();
     const notification = this.setupNotificationMailLambda();
     const zgw = this.setupZgwRegistrationLambda();
-    this.setupVipTransformationLambda();
+    const vipTranslation = this.setupVipTransformationLambda();
 
     const orchestrator = this.setupOrchestrationStepFunction(
       documentStorage,
       forwarder,
       notification,
       zgw,
+      vipTranslation,
       esfQueue.queue,
     );
     this.setupReceiverLambda(orchestrator);
@@ -357,6 +358,7 @@ export class SubmissionForwarder extends Construct {
     forwarderLambda: Function,
     notificationEmailLambda: Function,
     zgwLambda: Function,
+    vipTransformation: Function,
     esfQueue: Queue,
   ) {
     const logGroup = new LogGroup(this, 'orchestrator-logs', {
@@ -375,6 +377,7 @@ export class SubmissionForwarder extends Construct {
         FORWARDER_LAMBDA_ARN: forwarderLambda.functionArn,
         NOTIFICATION_EMAIL_LAMBDA_ARN: notificationEmailLambda.functionArn,
         ZGW_REGISTRATION_LAMBDA_ARN: zgwLambda.functionArn,
+        VIP_TRANSFORMATION_LAMBDA_ARN: vipTransformation.functionArn,
         ESF_QUEUE_URL: esfQueue.queueUrl,
       },
       encryptionConfiguration: new CustomerManagedEncryptionConfiguration(
@@ -499,7 +502,7 @@ export class SubmissionForwarder extends Construct {
     });
 
     new StringParameter(this, 'ssm-shared-submission-esb-role-arn', {
-      parameterName: Statics. ssmSharedSubmissionEsbRoleArn,
+      parameterName: Statics.ssmSharedSubmissionEsbRoleArn,
       stringValue: role.roleArn,
       description: 'Shared ESB Role Arn to be used in the same aws account with different code repositories',
     });
@@ -582,13 +585,18 @@ export class SubmissionForwarder extends Construct {
       },
     });
     this.submissionTopic.grantPublish(vipTransformationLambda);
-    // Remove when mocks are removed
+
+
+    // TODO Remove when mocks are removed (for testing/manual triggering purposes)
     vipTransformationLambda.grantInvoke(this.wowebRole);
     const url = vipTransformationLambda.addFunctionUrl({
       authType: FunctionUrlAuthType.AWS_IAM,
     });
     url.grantInvokeUrl(this.wowebRole);
     url.grantInvokeUrl(this.wowebUser);
+
+
+    return vipTransformationLambda;
   }
 
   private setupNotificationMailLambda() {

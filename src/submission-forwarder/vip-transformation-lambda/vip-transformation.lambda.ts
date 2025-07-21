@@ -6,8 +6,27 @@ import { MockVIPHandler } from './MockVIPHandler';
 const logger = new Logger();
 const env = environmentVariables(['TOPIC_ARN']);
 const sns = new SNSClient({});
+
+
 export async function handler(rawEvent: any) {
   logger.debug('event', { rawEvent });
+
+  // Check if the event is from the step function or a manual incovation...
+  if (!rawEvent.enrichedObject) {
+    await handleMock(rawEvent);
+  }
+
+  // Handle real events
+  await handelRealEvents(rawEvent);
+}
+
+
+async function handelRealEvents(_rawEvent: any) {
+  logger.debug('Not implemented yet...');
+}
+
+
+async function handleMock(rawEvent: any) {
 
   const event =
     typeof rawEvent.body === 'string' ? JSON.parse(rawEvent.body) : rawEvent;
