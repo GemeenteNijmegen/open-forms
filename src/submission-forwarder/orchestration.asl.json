@@ -103,7 +103,7 @@
         },
         {
           "Next": "VIP/JZ4ALL forward",
-          "Condition": "{% (($contains($states.input.enrichedObject.appId.value, \"JUR\") or $contains($states.input.enrichedObject.appId.value, \"APV\")) and $exists($states.input.enrichedObject.appId.value)) %}",
+          "Condition": "{% ($contains($states.input.enrichedObject.appId, \"JUR\") or $contains($states.input.enrichedObject.appId, \"APV\")) %}",
           "Comment": "VIP/JZ4ALL"
         }
       ],

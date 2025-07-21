@@ -24,7 +24,30 @@ export async function handler(rawEvent: any) {
 
 async function handelRealEvents(stepfunctionInput: any) {
   logger.debug('Not implemented yet...');
-  VIPJZSubmissionSchema.parse(stepfunctionInput.enrichedObject);
+  const event = VIPJZSubmissionSchema.parse(stepfunctionInput.enrichedObject);
+
+  const submissionSnsMessage = {
+    // All file info is moved to this field
+    fileObjects: stepfunctionInput.fileObjects,
+    // Move these field to the root level of the submission.
+    bsn: event.bsn,
+    kvknummer: event.kvk ?? event.kvKNummer,
+    reference: event.reference,
+    appId: event.appId,
+    // Move all otherfields to the submission's data field
+    data: event,
+  };
+
+  logger.debug('Sending submission to woweb sns topic', { submissionSnsMessage });
+
+  if (event.payment) {
+    // extract payment event and send that to the topic as well
+    const paymentSnsMessage = event.payment;
+
+    logger.debug('Sending payment message to woweb sns topic', { paymentSnsMessage });
+
+  }
+
 }
 
 
