@@ -43,6 +43,7 @@ export class MainStack extends Stack {
       key: this.key,
       resource: forwarderResource,
       criticality: props.configuration.criticality,
+      useVipJzProductionMapping: props.configuration.branch == 'main', // TODO remove when we can use ZGW to register submisisons in VIP/JZ4ALL
     });
 
   }
