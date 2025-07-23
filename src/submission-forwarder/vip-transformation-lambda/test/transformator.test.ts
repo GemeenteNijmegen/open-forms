@@ -1,52 +1,52 @@
-import { VIPJZSubmissionSchema } from "../../shared/VIPJZSubmission";
-import { Transformator } from "../Transformator";
+import { VIPJZSubmissionSchema } from '../../shared/VIPJZSubmission';
+import { Transformator } from '../Transformator';
 
 const example = {
-  "enrichedObject": {
-    "pdf": "https://example.com/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/xxx-xxx-xxx-xxx",
-    "attachments": [],
-    "reference": "OF-CSJ56G",
-    "objectUrl": "https://example.com/objects/api/v2/objects/xxx-xxx-xxx-xxx",
-    "s3SubFolder": "jz4all",
-    "objectUUID": "xxx-xxx-xxx-xxx",
-    "bsn": "999999333",
-    "kvk": "",
-    "formName": "Bezwaar maken",
-    "internalNotificationEmails": [
-      "devops@nijmegen.nl"
+  enrichedObject: {
+    pdf: 'https://example.com/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/xxx-xxx-xxx-xxx',
+    attachments: [],
+    reference: 'OF-CSJ56G',
+    objectUrl: 'https://example.com/objects/api/v2/objects/xxx-xxx-xxx-xxx',
+    s3SubFolder: 'jz4all',
+    objectUUID: 'xxx-xxx-xxx-xxx',
+    bsn: '999999333',
+    kvk: '',
+    formName: 'Bezwaar maken',
+    internalNotificationEmails: [
+      'devops@nijmegen.nl',
     ],
-    "appId": "JUR",
-    "vipZaakTypeVariable": "bezwaarMaken",
-    "inlogmiddel": "bsn",
-    "contactpersoon": "",
-    "naamContactpersoon": "",
-    "eMailadres": "test@example.com",
-    "telefoonnummer": "",
-    "isgemachtigde": "nee",
-    "isgemachtigde1": "loggedin_person",
-    "opWelkeDatumHeeftDeGemeenteHetBesluitBekendGemaaktOfDeBeschikkingGegeven": "2025-07-01",
-    "welkKenmerkOfReferentienummerHeeftHetBesluitOfDeBeschikkingWaartegenUBezwaarMaakt": "123",
-    "naam": "",
-    "adres": "   ",
-    "kvKNummer": "",
-    "payment": {
-      "payment_completed": true,
-      "payment_amount": 201.1,
-      "payment_public_order_ids": [],
-      "provider_payment_ids": []
-    }
+    appId: 'JUR',
+    vipZaakTypeVariable: 'bezwaarMaken',
+    inlogmiddel: 'bsn',
+    contactpersoon: '',
+    naamContactpersoon: '',
+    eMailadres: 'test@example.com',
+    telefoonnummer: '',
+    isgemachtigde: 'nee',
+    isgemachtigde1: 'loggedin_person',
+    opWelkeDatumHeeftDeGemeenteHetBesluitBekendGemaaktOfDeBeschikkingGegeven: '2025-07-01',
+    welkKenmerkOfReferentienummerHeeftHetBesluitOfDeBeschikkingWaartegenUBezwaarMaakt: '123',
+    naam: '',
+    adres: '   ',
+    kvKNummer: '',
+    payment: {
+      payment_completed: true,
+      payment_amount: 201.1,
+      payment_public_order_ids: [],
+      provider_payment_ids: [],
+    },
   },
-  "filePaths": [
-    "s3://bucket-name/jz4all/OF-CSJ56G/OF-CSJ56G.pdf"
+  filePaths: [
+    's3://bucket-name/jz4all/OF-CSJ56G/OF-CSJ56G.pdf',
   ],
-  "fileObjects": [
+  fileObjects: [
     {
-      "bucket": "bucket-name",
-      "objectKey": "jz4all/OF-CSJ56G/OF-CSJ56G.pdf",
-      "fileName": "OF-CSJ56G.pdf"
-    }
-  ]
-}
+      bucket: 'bucket-name',
+      objectKey: 'jz4all/OF-CSJ56G/OF-CSJ56G.pdf',
+      fileName: 'OF-CSJ56G.pdf',
+    },
+  ],
+};
 
 describe('Submission transformation', () => {
 
@@ -96,7 +96,7 @@ describe('Payment transformation', () => {
         payment_completed: false,
         payment_public_order_ids: [],
         provider_payment_ids: [],
-      }
+      },
     });
 
     expect(snsmessage).toBeUndefined();

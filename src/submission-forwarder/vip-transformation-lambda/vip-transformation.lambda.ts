@@ -1,9 +1,9 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
 import { environmentVariables } from '@gemeentenijmegen/utils';
-import { VIPJZSubmissionSchema } from '../shared/VIPJZSubmission';
 import { MockVIPHandler } from './MockVIPHandler';
 import { Transformator } from './Transformator';
+import { VIPJZSubmissionSchema } from '../shared/VIPJZSubmission';
 
 const logger = new Logger();
 const env = environmentVariables(['TOPIC_ARN', 'IS_PRODUCTION']);
@@ -27,13 +27,13 @@ async function handelRealEvents(stepfunctionInput: any) {
 
   const transformator = new Transformator(isProduction);
 
-  const fileObjects = stepfunctionInput.fileObjects
+  const fileObjects = stepfunctionInput.fileObjects;
   const formData = VIPJZSubmissionSchema.parse(stepfunctionInput.enrichedObject);
 
   // Submission transformation
-  const submissionSnsMessage = transformator.convertObjectToSnsSubmission(formData, fileObjects)
+  const submissionSnsMessage = transformator.convertObjectToSnsSubmission(formData, fileObjects);
   logger.debug('Sending submission to woweb sns topic', { submissionSnsMessage });
-  publishOnSnsTopic(submissionSnsMessage);
+  await publishOnSnsTopic(submissionSnsMessage);
 
   // extract payment event and send that to the topic as well (note payment fields are in object but are empty when no payment was present)
   const paymentSnsMessage = transformator.convertObjectToSnsPayment(formData);
@@ -42,7 +42,7 @@ async function handelRealEvents(stepfunctionInput: any) {
     return;
   }
   logger.debug('Sending payment message to woweb sns topic', { paymentSnsMessage });
-  publishOnSnsTopic(paymentSnsMessage);
+  await publishOnSnsTopic(paymentSnsMessage);
 
 }
 

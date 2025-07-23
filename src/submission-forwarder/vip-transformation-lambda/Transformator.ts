@@ -1,13 +1,13 @@
 import { randomUUID } from 'crypto';
-import { VIPJZSubmission } from '../shared/VIPJZSubmission';
 import { PaymentSnsMessage } from './PaymentMessage';
-import { zaaktypeConfig } from "./VipZaakTypeConfig";
+import { zaaktypeConfig } from './VipZaakTypeConfig';
+import { VIPJZSubmission } from '../shared/VIPJZSubmission';
 
 
 export class Transformator {
 
   constructor(
-    private readonly isProduction: boolean
+    private readonly isProduction: boolean,
   ) {
     // Nothing to do here
   }
