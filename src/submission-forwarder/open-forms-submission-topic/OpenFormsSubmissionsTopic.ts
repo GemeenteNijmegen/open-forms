@@ -1,13 +1,8 @@
 import { Criticality, DeadLetterQueue } from '@gemeentenijmegen/aws-constructs';
 import { Role, ServicePrincipal, PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import { IKey, Key } from 'aws-cdk-lib/aws-kms';
+import { IKey } from 'aws-cdk-lib/aws-kms';
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
-import {
-  Topic,
-  LoggingConfig,
-  LoggingProtocol,
-  SubscriptionProtocol,
-} from 'aws-cdk-lib/aws-sns';
+import { Topic, LoggingConfig, LoggingProtocol, SubscriptionProtocol } from 'aws-cdk-lib/aws-sns';
 import { UrlSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
