@@ -1,11 +1,9 @@
-import { randomUUID } from 'crypto';
 import { Logger } from '@aws-lambda-powertools/logger';
 import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
 import { environmentVariables } from '@gemeentenijmegen/utils';
-import { MockVIPHandler } from './MockVIPHandler';
-import { PaymentSnsMessage } from './PaymentMessage';
-import { zaaktypeConfig } from './VipZaakTypeConfig';
 import { VIPJZSubmissionSchema } from '../shared/VIPJZSubmission';
+import { MockVIPHandler } from './MockVIPHandler';
+import { Transformator } from './Transformator';
 
 const logger = new Logger();
 const env = environmentVariables(['TOPIC_ARN', 'IS_PRODUCTION']);
@@ -26,50 +24,37 @@ export async function handler(rawEvent: any) {
 
 
 async function handelRealEvents(stepfunctionInput: any) {
-  logger.debug('Not implemented yet...');
-  const event = VIPJZSubmissionSchema.parse(stepfunctionInput.enrichedObject);
 
-  // Obtain zaaktype config
-  const thisZaaktypeConfig = zaaktypeConfig.find(config => config.zaaktypeVariable == event.vipZaakTypeVariable);
-  if (!thisZaaktypeConfig) {
-    throw Error('Could not find zaaktype configuration for: ' + event.vipZaakTypeVariable);
-  }
+  const transformator = new Transformator(isProduction);
 
-  const submissionSnsMessage = {
-    // Move these field to the root level of the submission.
-    bsn: event.bsn,
-    kvknummer: event.kvk,
-    reference: event.reference,
-    appId: thisZaaktypeConfig.appId,
-    // Move all otherfields to the submission's data field
-    data: {
-      ...event,
-      payment: undefined, // Send in separate message
-      internalNotificationEmails: undefined, // No need to pass this to vip/jz4all
-      vipZaaktype: isProduction ? thisZaaktypeConfig.prodUUID : thisZaaktypeConfig.accUUID,
-      // Other fields are all part of the event and depdend on the form
-    },
-    // All file info is moved to this field
-    fileObjects: stepfunctionInput.fileObjects,
-  };
+  const fileObjects = stepfunctionInput.fileObjects
+  const formData = VIPJZSubmissionSchema.parse(stepfunctionInput.enrichedObject);
 
+  // Submission transformation
+  const submissionSnsMessage = transformator.convertObjectToSnsSubmission(formData, fileObjects)
   logger.debug('Sending submission to woweb sns topic', { submissionSnsMessage });
+  publishOnSnsTopic(submissionSnsMessage);
 
-  // extract payment event and send that to the topic as well
-  if (event.payment) {
-    if (!event.payment.payment_amount) {
-      throw Error('Cannot handle incomplete payments: missing amount.');
-    }
-    const message: PaymentSnsMessage = {
-      amount: event.payment.payment_amount,
-      appId: `${thisZaaktypeConfig.appId}-Betaling`,
-      formTitle: thisZaaktypeConfig.formName,
-      reference: event.reference,
-      uuid: randomUUID(), // Just use a random uuid we have the reference to correlate.
-    };
-    logger.debug('Sending payment message to woweb sns topic', { message });
+  // extract payment event and send that to the topic as well (note payment fields are in object but are empty when no payment was present)
+  const paymentSnsMessage = transformator.convertObjectToSnsPayment(formData);
+  if (!paymentSnsMessage) {
+    logger.debug('No payment found in submission, not sending payment confirmation message.');
+    return;
   }
+  logger.debug('Sending payment message to woweb sns topic', { paymentSnsMessage });
+  publishOnSnsTopic(paymentSnsMessage);
 
+}
+
+async function publishOnSnsTopic(message: any) {
+  const command = new PublishCommand({
+    TopicArn: env.TOPIC_ARN,
+    Message: JSON.stringify(message),
+    MessageAttributes: {
+      AppId: { DataType: 'String', StringValue: message.appId },
+    },
+  });
+  await sns.send(command);
 }
 
 
