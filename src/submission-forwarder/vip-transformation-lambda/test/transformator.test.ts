@@ -64,6 +64,7 @@ describe('Submission transformation', () => {
     expect(snsmessage.data.inlogmiddel).toBeDefined();
     expect(snsmessage.data.payment).toBeUndefined(); // Should be filtered out
     expect(snsmessage.data.vipZaaktype).toBeDefined();
+    expect(snsmessage.data.inlogmiddel).toBe('digid'); // mapping bsn -> digid
 
   });
 
