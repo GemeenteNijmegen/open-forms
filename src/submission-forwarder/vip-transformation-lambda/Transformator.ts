@@ -20,6 +20,15 @@ export class Transformator {
       throw Error('Could not find zaaktype configuration for: ' + formData.vipZaakTypeVariable);
     }
 
+    // map inlogmiddel veld from bsn/kvk to digid/eherkenning
+    // OpenForms uses bsn/kvk values and woweb expects digid/eherkenning
+    const inlogmiddelMap: Record<string, string | undefined> = {
+      bsn: 'digid',
+      kvk: 'eherkenning',
+      unknown: undefined,
+    };
+    const mappedInlogmiddel = inlogmiddelMap[formData.inlogmiddel ?? 'unknown'];
+
     const submissionSnsMessage = {
       // Move these field to the root level of the submission.
       bsn: formData.bsn || undefined,
@@ -29,6 +38,7 @@ export class Transformator {
       // Move all otherfields to the submission's data field
       data: {
         ...formData,
+        inlogmiddel: mappedInlogmiddel, // Converted above
         payment: undefined, // Send in separate message
         internalNotificationEmails: undefined, // No need to pass this to vip/jz4all
         vipZaaktype: this.isProduction ? thisZaaktypeConfig.prodUUID : thisZaaktypeConfig.accUUID,
