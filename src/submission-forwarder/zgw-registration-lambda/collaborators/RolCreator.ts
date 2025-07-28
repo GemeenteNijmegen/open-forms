@@ -59,7 +59,14 @@ export class RolCreator {
       logger.error(errorMessage);
       throw Error(errorMessage);
     }
+
     const rolApi = new zaken.Rollen(this.zakenClient);
+    const rolExists = await rolApi.rolList({ zaak: zaakUrl, roltype: roltype.url });
+    if (rolExists.data.count != 0) {
+      logger.info('Rol was already set. Do not set again ', { results: rolExists.data.results?.[0] });
+      return;
+    }
+
     const baseRol = {
       zaak: zaakUrl,
       roltype: roltype.url,
@@ -81,9 +88,12 @@ export class RolCreator {
         const retryBodyRol = structuredClone(bodyRol);
         retryBodyRol.betrokkeneIdentificatie.kvkNummer = bodyRol.betrokkeneIdentificatie.innNnpId;
         retryBodyRol.betrokkeneIdentificatie.innNnpId = undefined;
+        logger.debug('Before retry rolCreate with kvkNummer', { bodyRol });
         const createdRol = await rolApi.rolCreate(retryBodyRol as Partial<zaken.Rol>);
         logger.debug(`Created the Rol: ${JSON.stringify(createdRol.data)}`);
-      } else {throw Error(err);};
+      } else {
+        throw Error(err);
+      };
     }
 
 

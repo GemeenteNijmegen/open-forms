@@ -36,6 +36,7 @@ describe('RolCreator', () => {
     (mockCatalogiTypes.getRolTypeByOmschrijvingGeneriek as jest.Mock).mockResolvedValue(mockRolType);
 
     const mockRolApi = {
+      rolList: jest.fn().mockResolvedValue({ data: { count: 0 } }),
       rolCreate: jest.fn().mockResolvedValue({ data: { foo: 'bar' } }),
     };
     (zaken.Rollen as jest.Mock).mockImplementation(() => mockRolApi);
@@ -48,6 +49,7 @@ describe('RolCreator', () => {
     await Promise.all(submissions.map(s => creator.setInitiatorRol(s, 'http://zaak/1')));
 
     expect(mockCatalogiTypes.getRolTypeByOmschrijvingGeneriek).toHaveBeenCalledTimes(2);
+    expect(mockRolApi.rolList).toHaveBeenCalledTimes(2);
     expect(mockRolApi.rolCreate).toHaveBeenCalledTimes(2);
     expect(mockLogger.debug).toHaveBeenCalledWith(expect.stringContaining('Submission ref1 has a BSN'));
     expect(mockLogger.debug).toHaveBeenCalledWith(expect.stringContaining('Submission ref2 has a KVK'));
@@ -71,6 +73,35 @@ describe('RolCreator', () => {
       expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining('RolType could not be retrieved'));
     });
 
+    it('should not create rol if one already exists', async () => {
+      const mockRolType = { url: 'rol-url' } as catalogi.RolType;
+      (mockCatalogiTypes.getRolTypeByOmschrijvingGeneriek as jest.Mock).mockResolvedValue(mockRolType);
+
+      const mockRolApi = {
+        rolList: jest.fn().mockResolvedValue({ data: { count: 1, results: [{ id: 'existing-rol' }] } }),
+        rolCreate: jest.fn(),
+      };
+      (zaken.Rollen as jest.Mock).mockImplementation(() => mockRolApi);
+
+      const submission = {
+        reference: 'refExist',
+        zaaktypeIdentificatie: 'ZEX',
+        bsn: '000111222',
+      } as any;
+
+      await creator.setInitiatorRol(submission, 'http://zaak/exists');
+
+      expect(mockRolApi.rolList).toHaveBeenCalledWith({
+        zaak: 'http://zaak/exists',
+        roltype: 'rol-url',
+      });
+      expect(mockRolApi.rolCreate).not.toHaveBeenCalled();
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Rol was already set. Do not set again ',
+        expect.anything(),
+      );
+    });
+
     it('should retry with kvkNummer if first rolCreate fails when using KVK', async () => {
       const mockRolType = { url: 'rol-url' } as catalogi.RolType;
       (mockCatalogiTypes.getRolTypeByOmschrijvingGeneriek as jest.Mock).mockResolvedValue(mockRolType);
@@ -79,9 +110,11 @@ describe('RolCreator', () => {
         .mockRejectedValueOnce(new Error('validation'))
         .mockResolvedValueOnce({ data: { okay: true } });
 
-      (zaken.Rollen as jest.Mock).mockImplementation(() => ({
+      const mockRolApi = {
+        rolList: jest.fn().mockResolvedValue({ data: { count: 0 } }),
         rolCreate: failOnce,
-      }));
+      };
+      (zaken.Rollen as jest.Mock).mockImplementation(() => mockRolApi);
 
       const submission = {
         reference: 'refKVK',
@@ -105,9 +138,12 @@ describe('RolCreator', () => {
         .mockResolvedValue(mockRolType);
 
       const alwaysFail = jest.fn().mockRejectedValue(new Error('still bad'));
-      (zaken.Rollen as jest.Mock).mockImplementation(() => ({
+
+      const mockRolApi = {
+        rolList: jest.fn().mockResolvedValue({ data: { count: 0 } }),
         rolCreate: alwaysFail,
-      }));
+      };
+      (zaken.Rollen as jest.Mock).mockImplementation(() => mockRolApi);
 
       const submission = {
         reference: 'refKVK2',
@@ -118,7 +154,7 @@ describe('RolCreator', () => {
       await expect(creator.setInitiatorRol(submission, 'http://zaak/retry2'))
         .rejects.toThrow();
 
-      expect(alwaysFail).toHaveBeenCalledTimes(2); // both attempts with innNnpId then kvkNummer
+      expect(alwaysFail).toHaveBeenCalledTimes(2);
     });
   });
 });
