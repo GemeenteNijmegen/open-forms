@@ -32,8 +32,9 @@ export class DocumentLinker {
       logger.error(`Adding (some) documents failed for ${submission.reference} ${submission.zaaktypeIdentificatie}. They will be listed below.`);
       this.errors.forEach((err, index) => logger.error(`${index} fail: ${err.fileUrl} with error ${err.error}`));
       throw Error(`Adding ${this.errors.length} documents failed for ${submission.reference} ${submission.zaaktypeIdentificatie}`);
+    } else {
+      logger.info(`SUCCESS Documentlinker: all files were linked to ${submission.reference}`);
     }
-    logger.info(`SUCCESS Documentlinker: all files were linked to ${submission.reference}`);
   }
 
 

@@ -23,7 +23,7 @@ export class ZGWHandler {
     logger.appendKeys({ reference: submission.reference, zaaktype: submission.zaaktypeIdentificatie });
     logger.debug('Start ZGWHandler', { submission }); // Only debug shows entire submission
 
-    // CatalogusTypes instance
+    // CatalogiTypes instance
     const catalogiTypes = new CatalogiTypes({ catalogiClient: this.options.catalogiClient, logger });
 
     // Create Zaak and return url
@@ -49,7 +49,6 @@ export class ZGWHandler {
     }).setInitiatorRol(submission, zaakUrl);
 
     // Link documents
-
     await new DocumentLinker({
       zakenClient: this.options.zakenClient,
       logger,
