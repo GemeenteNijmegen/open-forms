@@ -5,7 +5,8 @@ import { HttpClient as ZakenHttpClient, BetrokkeneTypeEnum } from '@gemeentenijm
 import * as zaken from '@gemeentenijmegen/modules-zgw-client/lib/zaken-generated-client';
 import { Submission } from '../../shared/Submission';
 import { ZgwClientFactory } from '../../shared/ZgwClientFactory';
-import { CatalogusTypes } from '../CatalogusTypes';
+import { CatalogiTypes } from '../CatalogiTypes';
+import { ZGWRegistrationSubmission } from '../ZGWRegistrationSubmission';
 
 /**
  * A folder submission Zaak is a submission - aanvraag - in open forms
@@ -70,7 +71,7 @@ export class ESBFolderSubmissionZaak {
   }
 
 
-  public async createEsbFolderZaak(submission: Submission) {
+  public async createEsbFolderZaak(submission: ZGWRegistrationSubmission) {
     // In kleine stukjes/classes hakken
     this.logger.appendKeys({ reference: submission.reference });
     this.logger.debug('createEsbFolderZaak');
@@ -159,7 +160,7 @@ export class ESBFolderSubmissionZaak {
 
 
   private async getCatalogusTypes() {
-    const catalogusType = new CatalogusTypes({ catalogiClient: this.catalogiClient, logger: this.logger });
+    const catalogusType = new CatalogiTypes({ catalogiClient: this.catalogiClient, logger: this.logger });
     this.logger.debug('getCatalogusTypes');
     const zaaktype: catalogi.ZaakType = (await catalogusType.getLatestZaaktypeWithVersionData(this.ZAAKTYPE_IDENTIFICATIE)).latestZaaktype;
     const statustype: catalogi.StatusType | undefined = await catalogusType.getFirstStatusType(this.ZAAKTYPE_IDENTIFICATIE);

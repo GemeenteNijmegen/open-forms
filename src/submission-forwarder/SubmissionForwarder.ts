@@ -1,4 +1,4 @@
-import { Criticality, DeadLetterQueue, ErrorMonitoringAlarm } from '@gemeentenijmegen/aws-constructs';
+import { Criticality, DeadLetterQueue, ErrorMonitoringAlarm, QueueWithDlq, QueueWithDlqProps } from '@gemeentenijmegen/aws-constructs';
 import { Duration } from 'aws-cdk-lib';
 import { LambdaIntegration, Resource } from 'aws-cdk-lib/aws-apigateway';
 import { ComparisonOperator, Stats, TreatMissingData } from 'aws-cdk-lib/aws-cloudwatch';
@@ -94,6 +94,7 @@ export class SubmissionForwarder extends Construct {
     this.setupWowebUser();
 
     const esfQueue = this.setupESF(esbRole);
+    const sociaalQueue = this.setupSociaalQueue();
 
     const documentStorage = this.setupDocumentStorageLambda();
     const forwarder = this.setupEsbForwarderLambda();
@@ -108,6 +109,7 @@ export class SubmissionForwarder extends Construct {
       zgw,
       vipTranslation,
       esfQueue.queue,
+      sociaalQueue.queue,
     );
     this.setupReceiverLambda(orchestrator);
     this.setupResubmitLambda(orchestrator);
@@ -121,6 +123,18 @@ export class SubmissionForwarder extends Construct {
         retentionPeriod: Duration.days(14),
       },
     });
+  }
+
+  private setupSociaalQueue() {
+    const sociaalQueueWithDlq = new QueueWithDlq(this, 'sociaal-aanvraag-queue-with-dlq', {
+      identifier: 'sociaal-aanvraag',
+      kmsKey: this.options.key,
+      ssmQueueArnParamName: Statics.ssmSharedSubmissionSQSSociaalArn,
+      ssmQueueArnParamDescription: 'Sociaal aanvraag SQS Arn for shared internal account use of sociaal submissions',
+      ssmDlqArnParamName: Statics.ssmSharedSubmissionSQSDLQSociaalArn,
+      ssmDlqArnParamDescription: 'DLQ Sociaal aanvraag SQS Arn for shared internal account use of sociaal submissions',
+    } as QueueWithDlqProps);
+    return sociaalQueueWithDlq; // contains the queue and dlq
   }
 
   private setupParameters() {
@@ -346,6 +360,7 @@ export class SubmissionForwarder extends Construct {
     zgwLambda: Function,
     vipTransformation: Function,
     esfQueue: Queue,
+    sociaalQueue: Queue,
   ) {
     const logGroup = new LogGroup(this, 'orchestrator-logs', {
       encryptionKey: this.options.key,

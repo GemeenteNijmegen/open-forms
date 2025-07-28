@@ -3,6 +3,7 @@ import { Submission } from '../shared/Submission';
 import { trace } from '../shared/trace';
 import { ZgwClientFactory } from '../shared/ZgwClientFactory';
 import { ESBFolderSubmissionZaak } from './ESBFolderSubmissionZaak/ESBFolderSubmissionZaak';
+import { ZGWRegistrationSubmission } from './ZGWRegistrationSubmission';
 
 const HANDLER_ID = 'ZGW_REGISTRATION';
 const logger = new Logger();
@@ -21,7 +22,7 @@ export class SubmissionForwarderHandler {
    */
   constructor(private readonly options: SubmissionForwarderHandlerOptions) { }
 
-  async handle(submission: Submission) {
+  async handle(submission: ZGWRegistrationSubmission) {
 
     logger.debug('Retreived submisison', { submission });
 
@@ -32,9 +33,6 @@ export class SubmissionForwarderHandler {
       catalogiApiBaseUrl: this.options.catalogiBaseUrl,
     });
     await esbFolderSubmissionZaak.createEsbFolderZaak(submission);
-
-
     await trace(submission.reference, HANDLER_ID, 'OK');
   }
-
 }

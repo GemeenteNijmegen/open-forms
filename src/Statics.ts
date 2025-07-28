@@ -8,8 +8,8 @@ export class Statics {
   static readonly accountRootHostedZoneId: string = '/gemeente-nijmegen/account/hostedzone/id';
   static readonly accountRootHostedZoneName: string = '/gemeente-nijmegen/account/hostedzone/name';
 
-  // MARK: SSM Parameters
-  static readonly ssmDummyParameter = `/${Statics.projectName}/dummy/parameter`;
+  // Static RSIN for all environments
+  static readonly GN_RSIN = '001479179';
 
   // MARK: Environments
   static readonly gnBuildEnvironment = {
@@ -40,6 +40,7 @@ export class Statics {
    */
   static readonly ssmSharedSubmissionEsbRoleArn = '/shared/submission/esbrole/arn'; // Do not change or remove
   static readonly ssmSharedSubmissionSQSSociaalArn = '/shared/submission/sqs/sociaal/arn'; // Do not change or remove
+  static readonly ssmSharedSubmissionSQSDLQSociaalArn = '/shared/submission/sqsdlq/sociaal/arn'; // Do not change or remove
 
   // SNS Topic Subscription URLs
   static readonly ssmSNSSubscriptionUrlVIP = '/sns/subscriptionurl/vip';

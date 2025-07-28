@@ -13,7 +13,7 @@ export interface CatalogusTypesConfig {
  * Get catalogus types such as zaaktype, roltype and statustype
  * Structure the class so it can preload
  */
-export class CatalogusTypes {
+export class CatalogiTypes {
   private client: HttpClient;
   private logger: Logger;
   constructor(config: CatalogusTypesConfig) {
