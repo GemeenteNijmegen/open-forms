@@ -24,11 +24,12 @@ export class RolCreator {
 
   /**
    * Set initiator rol if submission has bsn or kvk
-   * The Rol can have iniator or Initiator, case insensitive in open-zaak
+   * The Rol can have should have initiator with small caps when creating, even though open-zaak has a capital letter Initiator
      * @param submission: ZGWRegistationSubmission
      * @param zaakUrl: string
      */
   async setInitiatorRol(submission: ZGWRegistrationSubmission, zaakUrl: string): Promise<void> {
+    const INITIATOR_ROL_OMSCHRIJVING_GENERIEK = 'initiator';
     if (submission.bsn || submission.kvk) {
       logger.debug(`Submission ${submission.reference} has a ${submission.bsn ? 'BSN' : 'KVK'} create Initiator Rol.`);
       const rolProperties = submission.bsn ?
@@ -40,7 +41,7 @@ export class RolCreator {
           betrokkeneType: zaken.BetrokkeneTypeEnum.NietNatuurlijkPersoon,
           betrokkeneIdentificatie: { innNnpId: submission.kvk },
         };
-      await this.setRol(submission, zaakUrl, 'Initiator', rolProperties);
+      await this.setRol(submission, zaakUrl, INITIATOR_ROL_OMSCHRIJVING_GENERIEK, rolProperties);
     } else {
       logger.info(`No rol set due to no bsn or kvk present for ${submission.reference} ${submission.zaaktypeIdentificatie}`);
     }
