@@ -2,7 +2,6 @@ import { Logger } from '@aws-lambda-powertools/logger';
 import { HttpClient as CatalogiHttpClient } from '@gemeentenijmegen/modules-zgw-client/lib/catalogi-generated-client';
 import { HttpClient as ZakenHttpClient } from '@gemeentenijmegen/modules-zgw-client/lib/zaken-generated-client';
 import { environmentVariables } from '@gemeentenijmegen/utils';
-import { SubmissionForwarderHandler } from './Handler';
 import { ZGWHandler } from './ZGWHandler';
 import { ZGWRegistrationSubmissionSchema } from './ZGWRegistrationSubmission';
 import { ZgwClientFactory } from '../shared/ZgwClientFactory';

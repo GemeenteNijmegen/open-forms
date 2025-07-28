@@ -45,17 +45,16 @@ export class DocumentLinker {
   }
 
   async linkFileToZaak(zaakUrl: string, fileUrl: string) {
-
-    let added: any;
     try {
       const zaakInformatieObjectApi = new zaken.Zaakinformatieobjecten(this.zakenClient);
-      added = await zaakInformatieObjectApi.zaakinformatieobjectCreate({
+      const added = await zaakInformatieObjectApi.zaakinformatieobjectCreate({
         zaak: zaakUrl,
         informatieobject: fileUrl,
       });
+      logger.debug(`Added attachment to zaak ${added.data.uuid}`);
     } catch (err) {
       this.errors.push({ fileUrl, error: err });
     }
-    logger.debug(`Added attachment to zaak ${added.data.uuid}`);
+
   }
 }

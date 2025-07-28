@@ -65,7 +65,7 @@ export class RolCreator {
       roltype: roltype.url,
       roltoelichting: submission.zaaktypeIdentificatie,
     };
-    const bodyRol = { ...baseRol, rolProperties };
+    const bodyRol = { ...baseRol, ...rolProperties };
 
     logger.debug('Before rolCreate', { bodyRol });
     const createdRol = await rolApi.rolCreate(bodyRol as Partial<zaken.Rol>);
