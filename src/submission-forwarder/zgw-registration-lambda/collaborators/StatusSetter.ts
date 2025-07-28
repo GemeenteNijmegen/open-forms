@@ -32,6 +32,11 @@ export class StatusSetter {
 
     if (firstStatusType) {
       const statusApi = new zaken.Statussen(this.zakenClient);
+      const getStatus = await statusApi.statusList({ statustype: firstStatusType.url, zaak: zaakUrl });
+      if (getStatus.data.count) {
+        logger.info('Status was already set. Do not set again ', { results: getStatus.data.results?.[0] });
+        return;
+      }
       logger.debug('Before statusCreate');
       const createdStatus = await statusApi.statusCreate({
         zaak: zaakUrl,

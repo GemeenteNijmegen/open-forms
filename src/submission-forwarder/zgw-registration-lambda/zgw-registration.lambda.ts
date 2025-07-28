@@ -43,9 +43,9 @@ export async function handler(event: any) {
       catalogiClient: mijnServicesCatalogiClient,
     });
     await zgwHandler.handle(submission);
-  } catch (error) {
+  } catch (error: any) {
     logger.error('Failed to ZGW register a form submision', { data: submission?.reference, error });
-    throw Error(`Failed to ZGW register a form submision of type ${submission.zaaktypeIdentificatie}`);
+    throw Error(`Failed to ZGW register a form submision of type ${submission.zaaktypeIdentificatie} ${error.message ?? ''}`);
   }
 
 
