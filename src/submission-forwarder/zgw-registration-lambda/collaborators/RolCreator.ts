@@ -88,7 +88,7 @@ export class RolCreator {
         const retryBodyRol = structuredClone(bodyRol);
         retryBodyRol.betrokkeneIdentificatie.kvkNummer = bodyRol.betrokkeneIdentificatie.innNnpId;
         retryBodyRol.betrokkeneIdentificatie.innNnpId = undefined;
-        logger.debug('Before retry rolCreate with kvkNummer', { bodyRol });
+        logger.debug('Before retry rolCreate with kvkNummer', { retryBodyRol });
         const createdRol = await rolApi.rolCreate(retryBodyRol as Partial<zaken.Rol>);
         logger.debug(`Created the Rol: ${JSON.stringify(createdRol.data)}`);
       } else {
