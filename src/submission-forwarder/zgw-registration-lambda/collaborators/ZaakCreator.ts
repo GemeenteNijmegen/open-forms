@@ -26,10 +26,10 @@ export class ZaakCreator {
   }
 
   /**
-     *
-     * @param submission ZGWRegistationSubmission
-     * @returns zaakurl of created zaak
-     */
+   * creates a zaak if it does not exist right now
+   * @param submission ZGWRegistationSubmission
+   * @returns zaakurl of created zaak
+  */
   async createZaak(submission: ZGWRegistrationSubmission): Promise<string> {
     const zaakApi = new zaken.Zaken(this.zakenClient);
     const zaakExists = await getAllPaginatedResults(zaakApi.zaakList, { identificatie: submission.reference });

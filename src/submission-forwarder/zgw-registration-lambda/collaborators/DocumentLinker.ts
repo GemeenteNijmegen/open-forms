@@ -12,7 +12,9 @@ export interface DocumentLinkerConfig {
 
 export class DocumentLinker {
   private zakenClient: ZakenHttpClient;
+  private alreadyLinkedFiles: string[] = [];
   errors: { fileUrl: string; error: any }[] = [];
+
   constructor(config: DocumentLinkerConfig) {
     this.zakenClient = config.zakenClient;
     logger = config.logger ?? new Logger();
@@ -23,6 +25,7 @@ export class DocumentLinker {
      * @param zaakUrl: string
      */
   async linkAllDocuments(submission: ZGWRegistrationSubmission, zaakUrl: string): Promise<void> {
+    this.alreadyLinkedFiles = await this.getAlreadyLinkedInformatieObjecten(zaakUrl);
     await this.linkPDF(submission, zaakUrl);
     await this.linkAttachments(submission, zaakUrl);
     if (this.errors.length > 0) {
@@ -45,6 +48,10 @@ export class DocumentLinker {
   }
 
   async linkFileToZaak(zaakUrl: string, fileUrl: string) {
+    if (this.alreadyLinkedFiles.includes(fileUrl)) {
+      logger.debug(`Skipping ${fileUrl} – already linked to ${zaakUrl}`);
+      return;
+    }
     try {
       const zaakInformatieObjectApi = new zaken.Zaakinformatieobjecten(this.zakenClient);
       const added = await zaakInformatieObjectApi.zaakinformatieobjectCreate({
@@ -56,5 +63,16 @@ export class DocumentLinker {
       this.errors.push({ fileUrl, error: err });
     }
 
+  }
+  async getAlreadyLinkedInformatieObjecten(zaakUrl: string): Promise<string[]> {
+    try {
+      const api = new zaken.Zaakinformatieobjecten(this.zakenClient);
+      const response = await api.zaakinformatieobjectList({ zaak: zaakUrl });
+      return response.data.map(item => item.informatieobject);
+    } catch (err: any) {
+    // Do not make the zgw methods fail due to this call
+      logger.warn(`Retrieving already linked files for ${zaakUrl} failed.`);
+      return [];
+    }
   }
 }

@@ -68,8 +68,24 @@ export class RolCreator {
     const bodyRol = { ...baseRol, ...rolProperties };
 
     logger.debug('Before rolCreate', { bodyRol });
-    const createdRol = await rolApi.rolCreate(bodyRol as Partial<zaken.Rol>);
-    logger.debug(`Created the Rol: ${JSON.stringify(createdRol.data)}`);
+    try {
+      const createdRol = await rolApi.rolCreate(bodyRol as Partial<zaken.Rol>);
+      logger.debug(`Created the Rol: ${JSON.stringify(createdRol.data)}`);
+    } catch (err: any) {
+      // in Open-Zaak kvkNummer is experimenteel and should be used instead of innNnpId, because it results in a validation error
+      // https://github.com/open-zaak/open-zaak/blame/025076f89405110d0f7e3c56d052a257099b5fdb/src/openzaak/components/zaken/models/zaken.py#L1154
+      // The RSIN validation expects at least 9 chars and kvkNummer is 8 chars
+
+      if (bodyRol.betrokkeneIdentificatie.innNnpId) {
+        logger.debug('Use experimental kvkNummer in betrokkeneIdentificatie instead of RSIN');
+        const retryBodyRol = structuredClone(bodyRol);
+        retryBodyRol.betrokkeneIdentificatie.kvkNummer = bodyRol.betrokkeneIdentificatie.innNnpId;
+        retryBodyRol.betrokkeneIdentificatie.innNnpId = undefined;
+        const createdRol = await rolApi.rolCreate(retryBodyRol as Partial<zaken.Rol>);
+        logger.debug(`Created the Rol: ${JSON.stringify(createdRol.data)}`);
+      } else {throw Error(err);};
+    }
+
 
   }
 }

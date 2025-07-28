@@ -24,9 +24,9 @@ export class StatusSetter {
   }
 
   /**
-     * @param submission: ZGWRegistationSubmission
-     * @param zaakUrl: string
-     */
+  * @param submission: ZGWRegistationSubmission
+  * @param zaakUrl: string
+  */
   async setFirstStatus(submission: ZGWRegistrationSubmission, zaakUrl: string): Promise<void> {
     const firstStatusType: catalogi.StatusType | undefined = await this.catalogiTypes.getFirstStatusType(submission.zaaktypeIdentificatie);
 
