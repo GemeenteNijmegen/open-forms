@@ -83,7 +83,7 @@ export const AanvraagSociaalDomeinSchema = z.object({
     geboorteDatumNietStandaard: z.boolean().optional(),
     bewindvoering: z.boolean().optional(),
   }).optional(),
-  client: ClientSchema,
-}).strict();
+  client: ClientSchema.optional(),
+}).passthrough();
 
 export type AanvraagSociaalDomein = z.infer<typeof AanvraagSociaalDomeinSchema>;
