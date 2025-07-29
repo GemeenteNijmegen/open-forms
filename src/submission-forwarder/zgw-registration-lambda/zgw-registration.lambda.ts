@@ -23,7 +23,7 @@ const env = environmentVariables([
 ]);
 
 export async function handler(event: any) {
-  logger.debug('event', { event });
+  logger.debug('Lambda handler raw event', { event });
   if (!mijnServicesZakenClient) {
     mijnServicesZakenClient = await getMijnServicesZgwClientFactory().getZakenClient(
       env.ZAKEN_BASE_URL,
@@ -47,23 +47,6 @@ export async function handler(event: any) {
     logger.error('Failed to ZGW register a form submision', { data: submission?.reference, error });
     throw Error(`Failed to ZGW register a form submision of type ${submission.zaaktypeIdentificatie} ${error.message ?? ''}`);
   }
-
-
-  // deprecated will delete after new implementation
-  // const submissionForwarderHandler = new SubmissionForwarderHandler({
-  //   zgwClientFactory: getMijnServicesZgwClientFactory(),
-  //   documentenBaseUrl: env.DOCUMENTEN_BASE_URL,
-  //   zakenBaseUrl: env.ZAKEN_BASE_URL,
-  //   catalogiBaseUrl: env.CATALOGI_BASE_URL,
-  // });
-  // try {
-  //   await submissionForwarderHandler.handle(submission);
-  // } catch (error) {
-  //   logger.error('Failed to forward a submission', { data: submission?.reference, error });
-  //   throw Error('Failed register submission in ZGW');
-  // }
-  // end deprecation
-
   return submission;
 }
 
