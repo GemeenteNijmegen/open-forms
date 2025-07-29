@@ -1,3 +1,4 @@
+import { AanvraagSociaalDomeinSchema } from '../../shared/AanvraagSociaalDomein';
 import { EsfTaakSchema } from '../../shared/EsfTaak';
 import { SubmissionSchema } from '../../shared/Submission';
 import { VIPJZSubmissionSchema } from '../../shared/VIPJZSubmission';
@@ -10,6 +11,7 @@ import * as vipjzVerzoek from './samples/vipjzVerzoek.json';
 const esfTaakUrl = 'https://example.com/objecttypes/api/v2/objecttypes/6df21057-e07c-4909-8933-d70b79cfd15e';
 const submissionTaakUrl = 'https://example.com/objecttypes/api/v2/objecttypes/d3713c2b-307c-4c07-8eaa-c2c6d75869cf';
 const vipJzSubmissionUrl = 'https://example.com/objecttypes/api/v2/objecttypes/167e0aec-e416-46fa-9868-e35f11f3f151';
+const aanvraagSociaalDomeinUrl = 'https://example.com/objecttypes/api/v2/objecttypes/167e0aec-e416-46fa-9868-e35f11f3f151';
 
 let objectParser: ObjectParser;
 beforeAll(() => {
@@ -25,6 +27,10 @@ beforeAll(() => {
     {
       objectTypeUrl: `${vipJzSubmissionUrl}`,
       parser: VIPJZSubmissionSchema,
+    },
+    {
+      objectTypeUrl: `${aanvraagSociaalDomeinUrl}`,
+      parser: AanvraagSociaalDomeinSchema,
     },
   ];
   objectParser = new ObjectParser(objectTypes);
@@ -50,7 +56,8 @@ describe('Parsing urls from env var', () => {
   const envStringEsfTaak = `esfTaak##${esfTaakUrl}`;
   const envStringSubmission = `submission##${submissionTaakUrl}`;
   const envStringVipJzSubmission = `vipJzSubmission##${vipJzSubmissionUrl}`;
-  const envStringAll = `${envStringEsfTaak};${envStringSubmission};${envStringVipJzSubmission}`;
+  const envStringAanvraagSociaalDomein = `aanvraagSociaalDomein##${aanvraagSociaalDomeinUrl}`;
+  const envStringAll = `${envStringEsfTaak};${envStringSubmission};${envStringVipJzSubmission};${envStringAanvraagSociaalDomein}`;
 
   test('Parsing the string (single)', async() => {
     const parsed = objectParser.parseObjectTypestring(envStringEsfTaak);
@@ -60,12 +67,14 @@ describe('Parsing urls from env var', () => {
 
   test('Parsing the string (multiple)', async() => {
     const parsed = objectParser.parseObjectTypestring(envStringAll);
-    expect(parsed.length).toBe(3);
+    expect(parsed.length).toBe(4);
     expect(parsed[0].objectTypeUrl).toBe(`${esfTaakUrl}`);
     expect(parsed[1].objectTypeUrl).toBe(`${submissionTaakUrl}`);
     expect(parsed[2].objectTypeUrl).toBe(`${vipJzSubmissionUrl}`);
+    expect(parsed[3].objectTypeUrl).toBe(`${aanvraagSociaalDomeinUrl}`);
     expect(parsed[1].parser).toBe(SubmissionSchema);
     expect(parsed[2].parser).toBe(VIPJZSubmissionSchema);
+    expect(parsed[3].parser).toBe(AanvraagSociaalDomeinSchema);
   });
 });
 describe('Adding optional s3SubFolderObject to enrichedZGWObject', () => {
