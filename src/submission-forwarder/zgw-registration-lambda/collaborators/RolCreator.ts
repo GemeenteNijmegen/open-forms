@@ -39,7 +39,7 @@ export class RolCreator {
         }:
         {
           betrokkeneType: zaken.BetrokkeneTypeEnum.NietNatuurlijkPersoon,
-          betrokkeneIdentificatie: { innNnpId: submission.kvk },
+          betrokkeneIdentificatie: { innNnpId: submission.kvk, annIdentificatie: submission.kvk },
         };
       await this.setRol(submission, zaakUrl, INITIATOR_ROL_OMSCHRIJVING_GENERIEK, rolProperties);
     } else {
