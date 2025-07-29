@@ -34,8 +34,18 @@ export async function handler(event: any) {
       env.CATALOGI_BASE_URL,
     );
   }
-  const submission = ZGWRegistrationSubmissionSchema.parse(event);
-  logger.info('ZGWRegistration start for', `${submission.reference} with type ${submission.zaaktypeIdentificatie}`);
+
+  const parsed = ZGWRegistrationSubmissionSchema.safeParse(
+    event.enrichedObject ?? event,
+  );
+  if (!parsed.success) {
+    const message = 'ZGW Registration failed to parse input object. Does not comply with zod ZGWRegistrationSubmissionSchema.';
+    logger.error(message, { zodIssues: parsed.error.issues });
+    throw new Error(message);
+  }
+  const submission = parsed.data;
+  logger.info(
+    `ZGWRegistration start for ${event.enrichedObject ? 'enrichedObject' : 'plain submission'} ${submission.reference} type ${submission.zaaktypeIdentificatie}` );
 
   try {
     const zgwHandler = new ZGWHandler({

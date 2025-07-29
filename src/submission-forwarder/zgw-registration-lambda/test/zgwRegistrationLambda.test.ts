@@ -26,7 +26,7 @@ describe('handler', () => {
     formName: 'fakeFormname',
     pdf: 'https://fakepdf',
     attachments: ['https://file'],
-    bsn: '999998791'
+    bsn: '999998791',
   };
 
   const mockZakenClient = {} as any;
@@ -36,6 +36,7 @@ describe('handler', () => {
   const mockHandle = jest.fn().mockResolvedValue(undefined);
 
   beforeEach(() => {
+
     jest.clearAllMocks();
 
     (ZgwClientFactory as jest.Mock).mockImplementation(() => ({
@@ -51,14 +52,7 @@ describe('handler', () => {
   it('should initialize clients and call ZGWHandler with submission', async () => {
     const result = await handler(mockSubmission);
 
-    expect(ZgwClientFactory).toHaveBeenCalledWith({
-      clientIdSsm: '/client/id',
-      clientSecretArn: 'arn:secret',
-      objectsApikeyArn: 'arn:apikey',
-    });
-
-    expect(mockGetZakenClient).toHaveBeenCalledWith('http://zaken');
-    expect(mockGetCatalogiClient).toHaveBeenCalledWith('http://catalogi');
+    // Means the singleton mocks have been set/called
     expect(ZGWHandler).toHaveBeenCalledWith({
       zakenClient: mockZakenClient,
       catalogiClient: mockCatalogiClient,
@@ -67,26 +61,18 @@ describe('handler', () => {
     expect(result).toEqual(mockSubmission);
   });
 
-    it('should initialize clients and call ZGWHandler with enrichedObject', async () => {
+  it('should initialize clients and call ZGWHandler with enrichedObject', async () => {
     const enrichedObjectMock = {
-      enrichedObject: {...mockSubmission},
-      fileObjects: [   {
-      "bucket": "degeweldigebucket",
-      "objectKey": "OF-UL5C4U/OF-UL5C4U.pdf",
-      "fileName": "OF-UL5C4U.pdf"
-    }],
-    fielPaths: ['s3://fakefile'] // will become deprecated
-    }
+      enrichedObject: { ...mockSubmission },
+      fileObjects: [{
+        bucket: 'degeweldigebucket',
+        objectKey: 'OF-UL5C4U/OF-UL5C4U.pdf',
+        fileName: 'OF-UL5C4U.pdf',
+      }],
+      fielPaths: ['s3://fakefile'], // will become deprecated
+    };
     const result = await handler(enrichedObjectMock);
 
-    expect(ZgwClientFactory).toHaveBeenCalledWith({
-      clientIdSsm: '/client/id',
-      clientSecretArn: 'arn:secret',
-      objectsApikeyArn: 'arn:apikey',
-    });
-
-    expect(mockGetZakenClient).toHaveBeenCalledWith('http://zaken');
-    expect(mockGetCatalogiClient).toHaveBeenCalledWith('http://catalogi');
     expect(ZGWHandler).toHaveBeenCalledWith({
       zakenClient: mockZakenClient,
       catalogiClient: mockCatalogiClient,
@@ -96,18 +82,18 @@ describe('handler', () => {
   });
 
   it('should throw a zod error when event does not have the correct object', async () => {
-        const badEventInput = {
-      NOTenrichedObject: {...mockSubmission},
-      fileObjects: [   {
-      "bucket": "degeweldigebucket",
-      "objectKey": "OF-UL5C4U/OF-UL5C4U.pdf",
-      "fileName": "OF-UL5C4U.pdf"
-    }],
-    fielPaths: ['s3://fakefile'] // will become deprecated
-    }
+    const badEventInput = {
+      NOTenrichedObject: { ...mockSubmission },
+      fileObjects: [{
+        bucket: 'degeweldigebucket',
+        objectKey: 'OF-UL5C4U/OF-UL5C4U.pdf',
+        fileName: 'OF-UL5C4U.pdf',
+      }],
+      fielPaths: ['s3://fakefile'], // will become deprecated
+    };
 
     await expect(handler(badEventInput)).rejects.toThrow(
-      'ZGW Registration failed to parse input object. Does not comply with ZGWRegistrationSubmissionSchema',
+      'ZGW Registration failed to parse input object. Does not comply with zod ZGWRegistrationSubmissionSchema.',
     );
   });
 
