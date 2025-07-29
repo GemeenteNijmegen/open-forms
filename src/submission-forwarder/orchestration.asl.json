@@ -143,9 +143,7 @@
             "Resource": "arn:aws:states:::sqs:sendMessage",
             "Arguments": {
                 "MessageBody": "{% $states.input %}",
-                "QueueUrl": "${SOCIAAL_QUEUE_URL}",
-                "MessageGroupId.$": "$$.Execution.Name",
-                "MessageDeduplicationId.$": "States.Format('{}-{}',$$.Execution.Name, $$.State.EnteredTime)"
+                "QueueUrl": "${SOCIAAL_QUEUE_URL}"
             },
             "Comment": "Sociaal SQS",
             "Next": "Success"

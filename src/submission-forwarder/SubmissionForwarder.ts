@@ -129,6 +129,7 @@ export class SubmissionForwarder extends Construct {
     const sociaalQueueWithDlq = new QueueWithDlq(this, 'sociaal-aanvraag-queue-with-dlq', {
       identifier: 'sociaal-aanvraag',
       kmsKey: this.options.key,
+      fifo: false,
       ssmQueueArnParamName: Statics.ssmSharedSubmissionSQSSociaalArn,
       ssmQueueArnParamDescription: 'Sociaal aanvraag SQS Arn for shared internal account use of sociaal submissions',
       ssmDlqArnParamName: Statics.ssmSharedSubmissionSQSDLQSociaalArn,
