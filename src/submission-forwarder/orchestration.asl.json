@@ -100,6 +100,11 @@
           "Comment": "contains networkshare / monitoring",
           "Next": "ESB Forwarder",
           "Condition": "{% ($exists($states.input.enrichedObject.networkShare) or $exists($states.input.enrichedObject.monitoringNetworkShare)) %}"
+        },
+        {
+          "Next": "VIP/JZ4ALL forward",
+          "Condition": "{% ($contains($states.input.enrichedObject.appId, \"JUR\") or $contains($states.input.enrichedObject.appId, \"APV\")) %}",
+          "Comment": "VIP/JZ4ALL"
         }
       ],
       "Default": "ZGW registration?"
@@ -170,6 +175,31 @@
     },
     "Success": {
       "Type": "Succeed"
+    },
+    "VIP/JZ4ALL forward": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Output": "{% $states.result.Payload %}",
+      "Arguments": {
+        "FunctionName": "${VIP_TRANSFORMATION_LAMBDA_ARN}",
+        "Payload": "{% $states.input %}"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2,
+          "JitterStrategy": "FULL"
+        }
+      ],
+      "End": true,
+      "Comment": "VIP/JZ4ALL translation"
     }
   },
   "QueryLanguage": "JSONata"

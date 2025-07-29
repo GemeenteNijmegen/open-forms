@@ -2,12 +2,63 @@ import { Logger } from '@aws-lambda-powertools/logger';
 import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
 import { environmentVariables } from '@gemeentenijmegen/utils';
 import { MockVIPHandler } from './MockVIPHandler';
+import { Transformator } from './Transformator';
+import { VIPJZSubmissionSchema } from '../shared/VIPJZSubmission';
 
 const logger = new Logger();
-const env = environmentVariables(['TOPIC_ARN']);
+const env = environmentVariables(['TOPIC_ARN', 'IS_PRODUCTION']);
 const sns = new SNSClient({});
+const isProduction = env.IS_PRODUCTION === 'true';
+
 export async function handler(rawEvent: any) {
   logger.debug('event', { rawEvent });
+
+  // Check if the event is from the step function or a manual incovation...
+  if (!rawEvent.enrichedObject) {
+    await handleMock(rawEvent);
+  }
+
+  // Handle real events
+  await handelRealEvents(rawEvent);
+}
+
+
+async function handelRealEvents(stepfunctionInput: any) {
+
+  const transformator = new Transformator(isProduction);
+
+  const fileObjects = stepfunctionInput.fileObjects;
+  const formData = VIPJZSubmissionSchema.parse(stepfunctionInput.enrichedObject);
+
+  // Submission transformation
+  const submissionSnsMessage = transformator.convertObjectToSnsSubmission(formData, fileObjects);
+  logger.debug('Sending submission to woweb sns topic', { submissionSnsMessage });
+  await publishOnSnsTopic(submissionSnsMessage);
+
+  // extract payment event and send that to the topic as well (note payment fields are in object but are empty when no payment was present)
+  const paymentSnsMessage = transformator.convertObjectToSnsPayment(formData);
+  if (!paymentSnsMessage) {
+    logger.debug('No payment found in submission, not sending payment confirmation message.');
+    return;
+  }
+  logger.debug('Sending payment message to woweb sns topic', { paymentSnsMessage });
+  await publishOnSnsTopic(paymentSnsMessage);
+
+}
+
+async function publishOnSnsTopic(message: any) {
+  const command = new PublishCommand({
+    TopicArn: env.TOPIC_ARN,
+    Message: JSON.stringify(message),
+    MessageAttributes: {
+      AppId: { DataType: 'String', StringValue: message.appId },
+    },
+  });
+  await sns.send(command);
+}
+
+
+async function handleMock(rawEvent: any) {
 
   const event =
     typeof rawEvent.body === 'string' ? JSON.parse(rawEvent.body) : rawEvent;

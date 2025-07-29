@@ -1,22 +1,8 @@
-import {
-  Criticality,
-  DeadLetterQueue,
-  ErrorMonitoringAlarm,
-} from '@gemeentenijmegen/aws-constructs';
+import { Criticality, DeadLetterQueue, ErrorMonitoringAlarm, QueueWithDlq, QueueWithDlqProps } from '@gemeentenijmegen/aws-constructs';
 import { Duration } from 'aws-cdk-lib';
 import { LambdaIntegration, Resource } from 'aws-cdk-lib/aws-apigateway';
-import {
-  ComparisonOperator,
-  Stats,
-  TreatMissingData,
-} from 'aws-cdk-lib/aws-cloudwatch';
-import {
-  AccessKey,
-  Effect,
-  PolicyStatement,
-  Role,
-  User,
-} from 'aws-cdk-lib/aws-iam';
+import { ComparisonOperator, Stats, TreatMissingData } from 'aws-cdk-lib/aws-cloudwatch';
+import { AccessKey, Effect, PolicyStatement, Role, User } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { Function, FunctionUrlAuthType } from 'aws-cdk-lib/aws-lambda';
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
@@ -25,13 +11,9 @@ import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
 import { Topic } from 'aws-cdk-lib/aws-sns';
 import { Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
-import {
-  CustomerManagedEncryptionConfiguration,
-  DefinitionBody,
-  LogLevel,
-  StateMachine,
-} from 'aws-cdk-lib/aws-stepfunctions';
+import { CustomerManagedEncryptionConfiguration, DefinitionBody, LogLevel, StateMachine } from 'aws-cdk-lib/aws-stepfunctions';
 import { Construct } from 'constructs';
+import { IamUserWithRoleAccess } from '../shared/IAMUserWithRoleAccess';
 import { Statics } from '../Statics';
 import { DeliveryQueue } from './DeliveryQueue';
 import { DocumentsToS3StorageFunction } from './documentsToS3Storage/documentsToS3Storage-function';
@@ -40,9 +22,8 @@ import { InternalNotificationMailFunction } from './internal-notification-mail-l
 import { OpenFormsSubmissionsTopic } from './open-forms-submission-topic/OpenFormsSubmissionsTopic';
 import { ReceiverFunction } from './receiver-lambda/receiver-function';
 import { ResubmitFunction } from './resubmit-lambda/resubmit-function';
-import { ZgwRegistrationFunction } from './zgw-registration-lambda/zgw-registration-function';
-import { IamUserWithRoleAccess } from '../shared/IAMUserWithRoleAccess';
 import { VipTransformationFunction } from './vip-transformation-lambda/vip-transformation-function';
+import { ZgwRegistrationFunction } from './zgw-registration-lambda/zgw-registration-function';
 
 interface SubmissionForwarderOptions {
   /**
@@ -63,6 +44,11 @@ interface SubmissionForwarderOptions {
    * Criticality
    */
   criticality: Criticality;
+  /**
+   * Use VIP and JZ4ALL production mapping or acceptance mapping
+   * Remove when no longer registering through objects API (MD 2025-07-22).
+   */
+  useVipJzProductionMapping: boolean;
 }
 
 /**
@@ -108,19 +94,22 @@ export class SubmissionForwarder extends Construct {
     this.setupWowebUser();
 
     const esfQueue = this.setupESF(esbRole);
+    const sociaalQueue = this.setupSociaalQueue();
 
     const documentStorage = this.setupDocumentStorageLambda();
     const forwarder = this.setupEsbForwarderLambda();
     const notification = this.setupNotificationMailLambda();
     const zgw = this.setupZgwRegistrationLambda();
-    this.setupVipTransformationLambda();
+    const vipTranslation = this.setupVipTransformationLambda();
 
     const orchestrator = this.setupOrchestrationStepFunction(
       documentStorage,
       forwarder,
       notification,
       zgw,
+      vipTranslation,
       esfQueue.queue,
+      sociaalQueue.queue,
     );
     this.setupReceiverLambda(orchestrator);
     this.setupResubmitLambda(orchestrator);
@@ -134,6 +123,18 @@ export class SubmissionForwarder extends Construct {
         retentionPeriod: Duration.days(14),
       },
     });
+  }
+
+  private setupSociaalQueue() {
+    const sociaalQueueWithDlq = new QueueWithDlq(this, 'sociaal-aanvraag-queue-with-dlq', {
+      identifier: 'sociaal-aanvraag',
+      kmsKey: this.options.key,
+      ssmQueueArnParamName: Statics.ssmSharedSubmissionSQSSociaalArn,
+      ssmQueueArnParamDescription: 'Sociaal aanvraag SQS Arn for shared internal account use of sociaal submissions',
+      ssmDlqArnParamName: Statics.ssmSharedSubmissionSQSDLQSociaalArn,
+      ssmDlqArnParamDescription: 'DLQ Sociaal aanvraag SQS Arn for shared internal account use of sociaal submissions',
+    } as QueueWithDlqProps);
+    return sociaalQueueWithDlq; // contains the queue and dlq
   }
 
   private setupParameters() {
@@ -357,7 +358,9 @@ export class SubmissionForwarder extends Construct {
     forwarderLambda: Function,
     notificationEmailLambda: Function,
     zgwLambda: Function,
+    vipTransformation: Function,
     esfQueue: Queue,
+    sociaalQueue: Queue,
   ) {
     const logGroup = new LogGroup(this, 'orchestrator-logs', {
       encryptionKey: this.options.key,
@@ -375,6 +378,7 @@ export class SubmissionForwarder extends Construct {
         FORWARDER_LAMBDA_ARN: forwarderLambda.functionArn,
         NOTIFICATION_EMAIL_LAMBDA_ARN: notificationEmailLambda.functionArn,
         ZGW_REGISTRATION_LAMBDA_ARN: zgwLambda.functionArn,
+        VIP_TRANSFORMATION_LAMBDA_ARN: vipTransformation.functionArn,
         ESF_QUEUE_URL: esfQueue.queueUrl,
       },
       encryptionConfiguration: new CustomerManagedEncryptionConfiguration(
@@ -391,6 +395,7 @@ export class SubmissionForwarder extends Construct {
     documentStorageLambda.grantInvoke(stepfunction);
     forwarderLambda.grantInvoke(stepfunction);
     notificationEmailLambda.grantInvoke(stepfunction);
+    vipTransformation.grantInvoke(stepfunction);
     esfQueue.grantSendMessages(stepfunction);
     this.backupBucket.grantWrite(stepfunction);
     stepfunction.addToRolePolicy(
@@ -499,7 +504,7 @@ export class SubmissionForwarder extends Construct {
     });
 
     new StringParameter(this, 'ssm-shared-submission-esb-role-arn', {
-      parameterName: Statics. ssmSharedSubmissionEsbRoleArn,
+      parameterName: Statics.ssmSharedSubmissionEsbRoleArn,
       stringValue: role.roleArn,
       description: 'Shared ESB Role Arn to be used in the same aws account with different code repositories',
     });
@@ -579,16 +584,22 @@ export class SubmissionForwarder extends Construct {
       environment: {
         POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'DEBUG',
         TOPIC_ARN: this.submissionTopic.topicArn,
+        IS_PRODUCTION: this.options.useVipJzProductionMapping ? 'true' : 'false',
       },
     });
     this.submissionTopic.grantPublish(vipTransformationLambda);
-    // Remove when mocks are removed
+
+
+    // TODO Remove when mocks are removed (for testing/manual triggering purposes)
     vipTransformationLambda.grantInvoke(this.wowebRole);
     const url = vipTransformationLambda.addFunctionUrl({
       authType: FunctionUrlAuthType.AWS_IAM,
     });
     url.grantInvokeUrl(this.wowebRole);
     url.grantInvokeUrl(this.wowebUser);
+
+
+    return vipTransformationLambda;
   }
 
   private setupNotificationMailLambda() {
@@ -646,11 +657,11 @@ class ForwarderParameters extends Construct {
   public supportedObjectTypes: StringParameter;
   constructor(scope: Construct, id: string) {
     super(scope, id);
-    this.addForwarderParameters();
+    this.supportedObjectTypes = this.addForwarderParameters();
   }
 
   addForwarderParameters() {
-    this.supportedObjectTypes = new StringParameter(this, 'objectTypes', {
+    return new StringParameter(this, 'objectTypes', {
       stringValue:
         'submission##https://example.com/objecttypes/api/v2/objecttypes/d3713c2b-307c-4c07-8eaa-c2c6d75869cf;esftaak##https://example.com/objecttypes/api/v2/objecttypes/6df21057-e07c-4909-8933-d70b79cfd15e',
       description:

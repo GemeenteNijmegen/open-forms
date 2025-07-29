@@ -2,7 +2,7 @@ import { Stack, StackProps } from 'aws-cdk-lib';
 import { RestApi, SecurityPolicy } from 'aws-cdk-lib/aws-apigateway';
 import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager';
 import { Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
-import { Alias, Key } from 'aws-cdk-lib/aws-kms';
+import { Key } from 'aws-cdk-lib/aws-kms';
 import { ARecord, HostedZone, IHostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { ApiGatewayDomain } from 'aws-cdk-lib/aws-route53-targets';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
@@ -43,6 +43,7 @@ export class MainStack extends Stack {
       key: this.key,
       resource: forwarderResource,
       criticality: props.configuration.criticality,
+      useVipJzProductionMapping: props.configuration.branch == 'main', // TODO remove when we can use ZGW to register submisisons in VIP/JZ4ALL
     });
 
   }

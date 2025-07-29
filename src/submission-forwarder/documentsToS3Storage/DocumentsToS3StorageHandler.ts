@@ -30,13 +30,14 @@ export class DocumentsToS3StorageHandler {
     ];
     let fileData = await Promise.all(promises);
 
+    // Enrich with types (submission vs attachment and deduplicate)
     fileData = addTypeReferencesToFileData(fileData, objectData.reference);
 
     await this.options.s3Uploader.storeBulk(objectData.reference, fileData);
     // We add both filePaths and fileObjects for backwards compatibility reasons. We only have one client, after it's been
     // modified filePaths can be removed. TODO (10-6-2025): Check with ESB if filePaths is still in use
-    const filePaths = s3PathsFromFileData(fileData, this.options.bucketName, objectData.reference);
-    const fileObjects = s3StructuredObjectsFromFileData(fileData, this.options.bucketName, objectData.reference);
+    const filePaths = s3PathsFromFileData(fileData, this.options.bucketName, objectData.reference, objectData.s3SubFolder);
+    const fileObjects = s3StructuredObjectsFromFileData(fileData, this.options.bucketName, objectData.reference, objectData.s3SubFolder);
 
     return {
       enrichedObject: objectData,
