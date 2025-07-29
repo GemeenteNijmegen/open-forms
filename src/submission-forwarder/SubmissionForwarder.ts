@@ -380,6 +380,7 @@ export class SubmissionForwarder extends Construct {
         ZGW_REGISTRATION_LAMBDA_ARN: zgwLambda.functionArn,
         VIP_TRANSFORMATION_LAMBDA_ARN: vipTransformation.functionArn,
         ESF_QUEUE_URL: esfQueue.queueUrl,
+        SOCIAAL_QUEUE_URL: sociaalQueue.queueUrl,
       },
       encryptionConfiguration: new CustomerManagedEncryptionConfiguration(
         this.options.key,
@@ -397,6 +398,7 @@ export class SubmissionForwarder extends Construct {
     notificationEmailLambda.grantInvoke(stepfunction);
     vipTransformation.grantInvoke(stepfunction);
     esfQueue.grantSendMessages(stepfunction);
+    sociaalQueue.grantSendMessages(stepfunction);
     this.backupBucket.grantWrite(stepfunction);
     stepfunction.addToRolePolicy(
       new PolicyStatement({
