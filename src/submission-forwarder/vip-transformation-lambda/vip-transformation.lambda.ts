@@ -19,11 +19,11 @@ export async function handler(rawEvent: any) {
   }
 
   // Handle real events
-  await handelRealEvents(rawEvent);
+  await handleRealEvents(rawEvent);
 }
 
 
-async function handelRealEvents(stepfunctionInput: any) {
+async function handleRealEvents(stepfunctionInput: any) {
 
   const transformator = new Transformator(isProduction);
 
