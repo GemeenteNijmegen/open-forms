@@ -129,6 +129,8 @@ describe('RolCreator', () => {
       const call2 = failOnce.mock.calls[1][0];
       expect(call1.betrokkeneIdentificatie.innNnpId).toBe('12345678');
       expect(call2.betrokkeneIdentificatie.kvkNummer).toBe('12345678');
+      expect(call1.betrokkeneIdentificatie.annIdentificatie).toBe('12345678');
+      expect(call2.betrokkeneIdentificatie.annIdentificatie).toBe('12345678');
       expect(mockLogger.debug).toHaveBeenCalledWith(expect.stringContaining('Use experimental kvkNummer'));
     });
 
