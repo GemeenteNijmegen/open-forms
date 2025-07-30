@@ -1,4 +1,5 @@
 import { InvalidStateError, UnknownObjectError } from './ErrorTypes';
+import { AanvraagSociaalDomein, AanvraagSociaalDomeinSchema } from '../shared/AanvraagSociaalDomein';
 import { EnrichedZgwObjectData } from '../shared/EnrichedZgwObjectData';
 import { EsfTaak, EsfTaakSchema } from '../shared/EsfTaak';
 import { Submission, SubmissionSchema } from '../shared/Submission';
@@ -24,6 +25,7 @@ export class ObjectParser {
     esfTaak: EsfTaakSchema,
     submission: SubmissionSchema,
     vipJzSubmission: VIPJZSubmissionSchema,
+    aanvraagSociaalDomein: AanvraagSociaalDomeinSchema,
   };
 
   constructor(objectTypes: objectType[] | string) {
@@ -67,6 +69,13 @@ export class ObjectParser {
         s3SubFolder,
         ...vipJzSubmission,
       };
+    } else if (type.parser == AanvraagSociaalDomeinSchema) {
+      let submission = parsed as AanvraagSociaalDomein;
+      return {
+        objectUrl: object.url,
+        objectUUID: object.uuid,
+        ...submission,
+      };
     }
     throw new UnknownObjectError('Unexpectedly reached end of parser');
   }
@@ -87,9 +96,9 @@ export class ObjectParser {
    *  Parses string to objecttypes (for passing in .env)
    *
    *  String are expected to be of format: <name>##<objecttypeurl> and ; separated
-   *  Names can only be those specified in `this.supportedParsers`
+   *  Names can only be those specified in `this.supportedObjectTypes`
    *
-   *  example: `esftaak##https://example.com/someuuid;submission##https://example.com/somethingelse`
+   *  example: `esfTaak##https://example.com/someuuid;submission##https://example.com/somethingelse`
    */
   parseObjectTypestring(objectTypes: string) {
     const types = Object.keys(this.supportedObjectTypes);

@@ -57,7 +57,7 @@ export async function handler(event: any) {
     logger.error('Failed to ZGW register a form submision', { data: submission?.reference, error });
     throw Error(`Failed to ZGW register a form submision of type ${submission.zaaktypeIdentificatie} ${error.message ?? ''}`);
   }
-  return submission;
+  return event;
 }
 
 function getMijnServicesZgwClientFactory() {
