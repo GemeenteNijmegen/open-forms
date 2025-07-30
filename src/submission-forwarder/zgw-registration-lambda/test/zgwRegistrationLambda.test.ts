@@ -77,8 +77,9 @@ describe('handler', () => {
       zakenClient: mockZakenClient,
       catalogiClient: mockCatalogiClient,
     });
+    // Use the enrichedObject for zgw registering, but return the entire object with s3files
     expect(mockHandle).toHaveBeenCalledWith(mockSubmission);
-    expect(result).toEqual(mockSubmission);
+    expect(result).toEqual(enrichedObjectMock);
   });
 
   it('should throw a zod error when event does not have the correct object', async () => {
