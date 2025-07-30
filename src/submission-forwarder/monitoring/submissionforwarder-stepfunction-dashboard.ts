@@ -1,4 +1,4 @@
-import { Stack, Duration } from 'aws-cdk-lib';
+import { Duration } from 'aws-cdk-lib';
 import { Dashboard, GraphWidget } from 'aws-cdk-lib/aws-cloudwatch';
 import { StateMachine } from 'aws-cdk-lib/aws-stepfunctions';
 import { Construct } from 'constructs';
@@ -10,7 +10,7 @@ interface SubmissionForwarderStepFunctionDashboardOptions {
    */
   stateMachineArn: string;
 }
-export class SubmissionForwarderStepFunctionDashboard extends Stack {
+export class SubmissionForwarderStepFunctionDashboard extends Construct {
   constructor(scope: Construct, id: string, private readonly options: SubmissionForwarderStepFunctionDashboardOptions) {
     super(scope, id);
 
