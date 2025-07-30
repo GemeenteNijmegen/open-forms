@@ -19,6 +19,7 @@ import { DeliveryQueue } from './DeliveryQueue';
 import { DocumentsToS3StorageFunction } from './documentsToS3Storage/documentsToS3Storage-function';
 import { ForwarderFunction } from './forwarder-lambda/forwarder-function';
 import { InternalNotificationMailFunction } from './internal-notification-mail-lambda/internalNotificationMail-function';
+import { SubmissionForwarderStepFunctionDashboard } from './monitoring/submissionforwarder-stepfunction-dashboard';
 import { OpenFormsSubmissionsTopic } from './open-forms-submission-topic/OpenFormsSubmissionsTopic';
 import { ReceiverFunction } from './receiver-lambda/receiver-function';
 import { ResubmitFunction } from './resubmit-lambda/resubmit-function';
@@ -431,6 +432,8 @@ export class SubmissionForwarder extends Construct {
           this.options.criticality.alarmSuffix(),
       });
 
+    // Experiment to add dashboard with step function metrics
+    new SubmissionForwarderStepFunctionDashboard(this, 'dashboard-step-function-sf', { stateMachineArn: stepfunction.stateMachineArn });
     // TODO add alarms for timeout and maybe aborted? https://docs.aws.amazon.com/step-functions/latest/dg/procedure-cw-metrics.html
 
     return stepfunction;
