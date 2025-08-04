@@ -236,7 +236,7 @@ export class SubmissionForwarder extends Construct {
       timeout: Duration.seconds(6),
       description: 'Submission-forwarder receiver endpoint',
       environment: {
-        POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'DEBUG',
+        POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'INFO',
         API_KEY_ARN: this.parameters.apikey.secretArn,
         MIJN_SERVICES_OPEN_ZAAK_CLIENT_ID_SSM:
           this.parameters.mijnServicesOpenZaakApiClientId.parameterName,
@@ -274,7 +274,7 @@ export class SubmissionForwarder extends Construct {
         description: 'Submission documents to S3 lambda',
         timeout: Duration.minutes(5), // Allow to run for a long time as we need to download/upload multiple documents
         environment: {
-          POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'DEBUG',
+          POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'INFO',
 
           // Provided directly trough env.
           SUBMISSION_BUCKET_NAME: this.bucket.bucketName,
@@ -322,7 +322,7 @@ export class SubmissionForwarder extends Construct {
       description: 'Submission-forwarder forwaring to ESB lambda',
       timeout: Duration.minutes(5), // Allow to run for a long time as we need to download/upload multiple documents
       environment: {
-        POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'DEBUG',
+        POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'INFO',
 
         // Provided directly trough env.
         SUBMISSION_BUCKET_NAME: this.bucket.bucketName,
@@ -389,7 +389,7 @@ export class SubmissionForwarder extends Construct {
       ),
       logs: {
         destination: logGroup,
-        level: LogLevel.ALL,
+        level: LogLevel.ALL, // protected by ep
       },
     });
 
@@ -565,7 +565,7 @@ export class SubmissionForwarder extends Construct {
     const zgwLambda = new ZgwRegistrationFunction(this, 'zgw-function', {
       description: 'Registers submissions in ZGW',
       environment: {
-        POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'DEBUG',
+        POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'INFO',
         DOCUMENTEN_BASE_URL: this.parameters.documentenApiBaseUrl.stringValue,
         ZAKEN_BASE_URL: this.parameters.zakenApiBaseUrl.stringValue,
         CATALOGI_BASE_URL: this.parameters.catalogiApiBaseUrl.stringValue,
@@ -588,7 +588,7 @@ export class SubmissionForwarder extends Construct {
     const vipTransformationLambda = new VipTransformationFunction(this, 'vip-transformation-function', {
       description: 'VIP JZ4ALL output from transformed open forms submissions',
       environment: {
-        POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'DEBUG',
+        POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'INFO',
         TOPIC_ARN: this.submissionTopic.topicArn,
         IS_PRODUCTION: this.options.useVipJzProductionMapping ? 'true' : 'false',
       },
@@ -619,7 +619,7 @@ export class SubmissionForwarder extends Construct {
       {
         description: 'Sends internal notification emails',
         environment: {
-          POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'DEBUG',
+          POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'INFO',
           MAIL_FROM_DOMAIN: accountHostedZoneName,
         },
       },
