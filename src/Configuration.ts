@@ -38,6 +38,11 @@ export interface Configuration {
    * Criticality for the branch
    */
   criticality: Criticality;
+
+  /**
+   * Loglevel default INFO (prod)
+   */
+  logLevel?: string;
 }
 
 
@@ -47,12 +52,14 @@ const EnvironmentConfigurations: { [key: string]: Configuration } = {
     buildEnvironment: Statics.gnBuildEnvironment,
     deploymentEnvironment: Statics.gnOpenFormsAccp,
     criticality: new Criticality('medium'),
+    logLevel: 'DEBUG',
   },
   main: {
     branch: 'main',
     buildEnvironment: Statics.gnBuildEnvironment,
     deploymentEnvironment: Statics.gnOpenFormsProd,
     criticality: new Criticality('high'),
+    logLevel: 'INFO',
   },
 };
 

@@ -13,7 +13,6 @@ jest.mock('@aws-lambda-powertools/logger', () => ({
     appendKeys: jest.fn(),
   })),
 }));
-import { Logger } from '@aws-lambda-powertools/logger';
 
 // Set required env var
 process.env.MAIL_FROM_DOMAIN = 'example.com';

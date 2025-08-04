@@ -3,12 +3,12 @@ import { deduplicateFileNames } from '../deduplicateFileNames';
 test('Deduplicate filenames', async() => {
   const filedata = [
     {
-      data: null as unknown as Buffer,
+      data: null as unknown as Buffer<ArrayBuffer>,
       filename: 'TDL123.01.pdf',
       format: 'application/pdf',
     },
     {
-      data: null as unknown as Buffer,
+      data: null as unknown as Buffer<ArrayBuffer>,
       filename: 'TDL123.01.pdf',
       format: 'image/png',
     },
@@ -21,17 +21,17 @@ test('Deduplicate filenames', async() => {
 test('Deduplicate filenames with multiple duplicates', async() => {
   const filedata = [
     {
-      data: null as unknown as Buffer,
+      data: null as unknown as Buffer<ArrayBuffer>,
       filename: 'TDL123.01.pdf',
       format: 'application/pdf',
     },
     {
-      data: null as unknown as Buffer,
+      data: null as unknown as Buffer<ArrayBuffer>,
       filename: 'TDL123.01.pdf',
       format: 'image/png',
     },
     {
-      data: null as unknown as Buffer,
+      data: null as unknown as Buffer<ArrayBuffer>,
       filename: 'TDL123.01.pdf',
       format: 'image/png',
     },
@@ -44,12 +44,12 @@ test('Deduplicate filenames with multiple duplicates', async() => {
 test('Deduplicate filenames without duplicates should return identical set', async() => {
   const filedata = [
     {
-      data: null as unknown as Buffer,
+      data: null as unknown as Buffer<ArrayBuffer>,
       filename: 'TDL123.01.pdf',
       format: 'application/pdf',
     },
     {
-      data: null as unknown as Buffer,
+      data: null as unknown as Buffer<ArrayBuffer>,
       filename: 'somefile.pdf',
       format: 'image/png',
     },
