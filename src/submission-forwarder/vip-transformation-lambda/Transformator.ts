@@ -1,7 +1,6 @@
-import { randomUUID } from 'crypto';
+import { VIPJZSubmission } from '../shared/VIPJZSubmission';
 import { PaymentSnsMessage } from './PaymentMessage';
 import { zaaktypeConfig } from './VipZaakTypeConfig';
-import { VIPJZSubmission } from '../shared/VIPJZSubmission';
 
 
 export class Transformator {
@@ -12,7 +11,7 @@ export class Transformator {
     // Nothing to do here
   }
 
-  convertObjectToSnsSubmission(formData: VIPJZSubmission, fileObjects: any) {
+  convertObjectToSnsSubmission(formData: VIPJZSubmission, fileObjects: any, uuid: string) {
 
     // Obtain zaaktype config
     const thisZaaktypeConfig = zaaktypeConfig.find(config => config.zaaktypeVariable == formData.vipZaakTypeVariable);
@@ -35,6 +34,7 @@ export class Transformator {
       kvknummer: formData.kvk || undefined,
       reference: formData.reference,
       appId: thisZaaktypeConfig.appId,
+      formId: uuid,
       // Move all otherfields to the submission's data field
       data: {
         ...formData,
@@ -53,7 +53,7 @@ export class Transformator {
   }
 
 
-  convertObjectToSnsPayment(formData: VIPJZSubmission) {
+  convertObjectToSnsPayment(formData: VIPJZSubmission, uuid: string) {
 
     // Obtain zaaktype config
     const thisZaaktypeConfig = zaaktypeConfig.find(config => config.zaaktypeVariable == formData.vipZaakTypeVariable);
@@ -67,7 +67,7 @@ export class Transformator {
         appId: `${thisZaaktypeConfig.appId}-Betaling`,
         formTitle: thisZaaktypeConfig.formName,
         reference: formData.reference,
-        uuid: randomUUID(), // Just use a random uuid we have the reference to correlate.
+        uuid: uuid,
       };
       return message;
     }
