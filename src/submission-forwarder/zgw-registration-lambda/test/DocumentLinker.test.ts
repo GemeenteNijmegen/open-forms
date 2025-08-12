@@ -108,13 +108,13 @@ describe('DocumentLinker', () => {
         informatieobject: 'http://att/one',
       });
 
-      expect(mockLogger.debug).toHaveBeenCalledWith(
+      expect(mockLogger.info).toHaveBeenCalledWith(
         expect.stringContaining('Skipping http://pdf.already'),
       );
-      expect(mockLogger.debug).toHaveBeenCalledWith(
+      expect(mockLogger.info).toHaveBeenCalledWith(
         expect.stringContaining('Skipping http://att/skip'),
       );
-      expect(mockLogger.debug).toHaveBeenCalledWith(
+      expect(mockLogger.info).toHaveBeenCalledWith(
         expect.stringContaining('Added attachment'),
       );
     });

@@ -16,6 +16,7 @@ export interface CatalogusTypesConfig {
 export class CatalogiTypes {
   private client: HttpClient;
   private logger: Logger;
+  private latestZaakType: catalogi.ZaakType | undefined;
   constructor(config: CatalogusTypesConfig) {
     this.client = config.catalogiClient;
     this.logger = config.logger ?? new Logger();
@@ -75,6 +76,7 @@ export class CatalogiTypes {
     }));
 
     this.logger.debug(`CatalogusTypes getLatestZaaktypeWithVersionData for ${identificatie} latestZaaktype ${latestZaaktype.url}`, { versions });
+    this.latestZaakType = latestZaaktype;
     return {
       latestZaaktype,
       versions,
@@ -93,12 +95,16 @@ export class CatalogiTypes {
   public async getFirstStatusType(zaaktypeIdentificatie: string) {
     this.logger.debug(`getFirstStatusType for ${zaaktypeIdentificatie} first volgnummer`);
     const api = new catalogi.Statustypen(this.client);
-    // We pass the query param { identificatie } to filter by identificatie
+    // We pass the query param { zaaktype } to filter by zaaktype url
+    if (!this.latestZaakType) {
+      await this.getLatestZaaktypeWithVersionData(zaaktypeIdentificatie);
+    }
+    const latestZaakTypeUrl = this.latestZaakType?.url;
     const allStatustypen = await getAllPaginatedResults(api.statustypeList, {
-      zaaktypeIdentificatie: zaaktypeIdentificatie,
+      zaaktype: latestZaakTypeUrl,
     });
     if (!allStatustypen || allStatustypen.length === 0) {
-      this.logger.error(`getFirstStatusType ${zaaktypeIdentificatie} returned no statusTypen at all`);
+      this.logger.error(`getFirstStatusType ${zaaktypeIdentificatie} ${latestZaakTypeUrl} returned no statusTypen at all`);
       return undefined;
     }
     this.logger.debug('allStatustypen', { allStatustypen });
@@ -119,17 +125,21 @@ export class CatalogiTypes {
   public async getRolTypeByOmschrijvingGeneriek(zaaktypeIdentificatie: string, omschrijvingGeneriek: string = 'initiator') {
     this.logger.debug(`getRolTypeByOmschrijvingGeneriek for ${zaaktypeIdentificatie} with omschrijvingGeneriek ${omschrijvingGeneriek}`);
     const api = new catalogi.Roltypen(this.client);
-    // We pass the query param { identificatie } to filter by identificatie
+    // We pass the query param { zaaktype } to filter by zaaktype url
+    if (!this.latestZaakType) {
+      await this.getLatestZaaktypeWithVersionData(zaaktypeIdentificatie);
+    }
+    const latestZaakTypeUrl = this.latestZaakType?.url;
     const allRoltypen = await getAllPaginatedResults(api.roltypeList, {
-      zaaktypeIdentificatie: zaaktypeIdentificatie,
+      zaaktype: latestZaakTypeUrl,
       omschrijvingGeneriek: omschrijvingGeneriek,
     });
     if (!allRoltypen || allRoltypen.length === 0) {
-      this.logger.error(`getRolTypeByOmschrijvingGeneriek ${zaaktypeIdentificatie} ${omschrijvingGeneriek} returned no Roltypen at all`);
+      this.logger.error(`getRolTypeByOmschrijvingGeneriek ${zaaktypeIdentificatie} ${latestZaakTypeUrl} ${omschrijvingGeneriek} returned no Roltypen at all`);
       return undefined;
     }
     if (allRoltypen.length > 1) {
-      this.logger.warn(`More than one roltype returned getRolTypeByOmschrijvingGeneriek ${zaaktypeIdentificatie} ${omschrijvingGeneriek}`);
+      this.logger.info(`More than one roltype returned getRolTypeByOmschrijvingGeneriek ${zaaktypeIdentificatie} ${omschrijvingGeneriek}`);
       this.logger.debug('all results', { allRoltypen });
     }
     this.logger.debug(`roltype ${omschrijvingGeneriek} ${allRoltypen[0]}`);
