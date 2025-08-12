@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import { VIPJZSubmissionSchema } from '../../shared/VIPJZSubmission';
 import { Transformator } from '../Transformator';
 
@@ -53,7 +54,7 @@ describe('Submission transformation', () => {
   test('Mapping', () => {
     const formData = VIPJZSubmissionSchema.parse(example.enrichedObject);
     const transformator = new Transformator(false);
-    const snsmessage = transformator.convertObjectToSnsSubmission(formData, example.fileObjects);
+    const snsmessage = transformator.convertObjectToSnsSubmission(formData, example.fileObjects, randomUUID());
 
     console.log(snsmessage);
 
@@ -76,7 +77,7 @@ describe('Payment transformation', () => {
   test('Mapping', () => {
     const formData = VIPJZSubmissionSchema.parse(example.enrichedObject);
     const transformator = new Transformator(false);
-    const snsmessage = transformator.convertObjectToSnsPayment(formData);
+    const snsmessage = transformator.convertObjectToSnsPayment(formData, randomUUID());
 
     console.log(snsmessage);
 
@@ -98,7 +99,7 @@ describe('Payment transformation', () => {
         payment_public_order_ids: [],
         provider_payment_ids: [],
       },
-    });
+    }, randomUUID());
 
     expect(snsmessage).toBeUndefined();
 
