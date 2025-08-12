@@ -112,6 +112,11 @@ export class MainStack extends Stack {
      */
     key.addAlias(Statics.ALIAS_ACCOUNT_KMS_KEY);
 
+    new StringParameter(this, 'ssm-account-shared-kms-key-arn', {
+      parameterName: Statics.ssmAccountSharedKmsKeyArn,
+      stringValue: key.keyArn,
+      description: 'Account shared KMS key ARN',
+    });
     return key;
   }
 

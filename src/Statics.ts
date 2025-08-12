@@ -31,7 +31,10 @@ export class Statics {
  * KMS account key alias
  */
   static readonly ALIAS_ACCOUNT_KMS_KEY = 'alias/open-forms-account-kms-key';
-
+  /**
+   * KMS key arn in SSM param
+   */
+  static readonly ssmAccountSharedKmsKeyArn = '/shared/kmskey/arn'; // Do not change or remove
   /**
    * Shared ARN SSM parameter names
    * These params point to shared resources in the Open Forms account
