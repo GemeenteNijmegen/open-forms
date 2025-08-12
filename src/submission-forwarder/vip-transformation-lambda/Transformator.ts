@@ -1,6 +1,6 @@
-import { VIPJZSubmission } from '../shared/VIPJZSubmission';
 import { PaymentSnsMessage } from './PaymentMessage';
 import { zaaktypeConfig } from './VipZaakTypeConfig';
+import { VIPJZSubmission } from '../shared/VIPJZSubmission';
 
 
 export class Transformator {
