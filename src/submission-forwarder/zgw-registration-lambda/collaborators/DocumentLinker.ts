@@ -25,6 +25,7 @@ export class DocumentLinker {
      * @param zaakUrl: string
      */
   async linkAllDocuments(submission: ZGWRegistrationSubmission, zaakUrl: string): Promise<void> {
+    logger.info('Start documentlinker');
     this.alreadyLinkedFiles = await this.getAlreadyLinkedInformatieObjecten(zaakUrl);
     await this.linkPDF(submission, zaakUrl);
     await this.linkAttachments(submission, zaakUrl);
@@ -50,7 +51,7 @@ export class DocumentLinker {
 
   async linkFileToZaak(zaakUrl: string, fileUrl: string) {
     if (this.alreadyLinkedFiles.includes(fileUrl)) {
-      logger.debug(`Skipping ${fileUrl} – already linked to ${zaakUrl}`);
+      logger.info(`Skipping ${fileUrl} – already linked to ${zaakUrl}`);
       return;
     }
     try {
@@ -59,7 +60,7 @@ export class DocumentLinker {
         zaak: zaakUrl,
         informatieobject: fileUrl,
       });
-      logger.debug(`Added attachment to zaak ${added.data.uuid}`);
+      logger.info(`Added attachment to zaak ${added.data.uuid}`);
     } catch (err) {
       this.errors.push({ fileUrl, error: err });
     }
@@ -72,7 +73,7 @@ export class DocumentLinker {
       return response.data.map(item => item.informatieobject);
     } catch (err: any) {
     // Do not make the zgw methods fail due to this call
-      logger.warn(`Retrieving already linked files for ${zaakUrl} failed.`);
+      logger.info(`Retrieving already linked files for ${zaakUrl} failed.`);
       return [];
     }
   }

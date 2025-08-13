@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import { Logger } from '@aws-lambda-powertools/logger';
 import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
 import { environmentVariables } from '@gemeentenijmegen/utils';
@@ -29,14 +30,15 @@ async function handleRealEvents(stepfunctionInput: any) {
 
   const fileObjects = stepfunctionInput.fileObjects;
   const formData = VIPJZSubmissionSchema.parse(stepfunctionInput.enrichedObject);
+  const submissionUuid = randomUUID(); // Only used by vip/jz
 
   // Submission transformation
-  const submissionSnsMessage = transformator.convertObjectToSnsSubmission(formData, fileObjects);
+  const submissionSnsMessage = transformator.convertObjectToSnsSubmission(formData, fileObjects, submissionUuid);
   logger.debug('Sending submission to woweb sns topic', { submissionSnsMessage });
   await publishOnSnsTopic(submissionSnsMessage);
 
   // extract payment event and send that to the topic as well (note payment fields are in object but are empty when no payment was present)
-  const paymentSnsMessage = transformator.convertObjectToSnsPayment(formData);
+  const paymentSnsMessage = transformator.convertObjectToSnsPayment(formData, submissionUuid);
   if (!paymentSnsMessage) {
     logger.debug('No payment found in submission, not sending payment confirmation message.');
     return;
