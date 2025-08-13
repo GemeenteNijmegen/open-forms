@@ -19,7 +19,7 @@ const project = new GemeenteNijmegenCdkApp({
     '@aws-sdk/client-sns',
     '@aws-sdk/client-sfn',
     '@aws-sdk/client-ses',
-    '@aws-lambda-powertools/logger',
+    '@aws-lambda-powertools/logger@2.24.1',
     'zod',
     '@gemeentenijmegen/modules-zgw-client',
     'jsonwebtoken',
