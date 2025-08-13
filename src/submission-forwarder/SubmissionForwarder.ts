@@ -564,6 +564,7 @@ export class SubmissionForwarder extends Construct {
 
     const zgwLambda = new ZgwRegistrationFunction(this, 'zgw-function', {
       description: 'Registers submissions in ZGW',
+      timeout: Duration.seconds(30),
       environment: {
         POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'INFO',
         DOCUMENTEN_BASE_URL: this.parameters.documentenApiBaseUrl.stringValue,
