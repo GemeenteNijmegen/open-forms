@@ -48,6 +48,7 @@ export function s3StructuredObjectsFromFileData(
       bucket: bucketName,
       objectKey: path,
       fileName: data.filename,
+      objectType: data.type,
     };
   });
   return files;
