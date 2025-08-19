@@ -1,6 +1,6 @@
-import path from 'path';
 import { Logger } from '@aws-lambda-powertools/logger';
 import { Enkelvoudiginformatieobjecten } from '@gemeentenijmegen/modules-zgw-client/lib/documenten-generated-client';
+import path from 'path';
 import { FileData } from './s3PathsFromFileData';
 
 /**
