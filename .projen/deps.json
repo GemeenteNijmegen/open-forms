@@ -85,7 +85,6 @@
     },
     {
       "name": "@aws-lambda-powertools/logger",
-      "version": "2.24.1",
       "type": "runtime"
     },
     {
