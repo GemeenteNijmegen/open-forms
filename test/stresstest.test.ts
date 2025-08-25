@@ -1,6 +1,6 @@
+import { environmentVariables } from '@gemeentenijmegen/utils';
 import { createReadStream } from 'fs';
 import { createInterface } from 'readline/promises';
-import { environmentVariables } from '@gemeentenijmegen/utils';
 
 //Test expects an 'input.csv' on this level, with a csv of this form:
 /**
@@ -42,7 +42,7 @@ describe('Stresstesting ESF', () => {
     console.debug(preparedObjects);
   }, 60000);
 
-  xtest('Update objects', async () => {
+  test('Update objects', async () => {
     const sourceData = await bsnAndPeriodFromCsv();
     const preparedObjectsPromises: any[] = [];
     for (let bsnAndPeriod of sourceData) {
@@ -63,14 +63,15 @@ describe('Stresstesting ESF', () => {
     }
     const preparedObjects = (await Promise.all(preparedObjectsPromises)).filter(object => object.length).flat();
     console.log(`Processed ${sourceData.length} input records, retrieved ${preparedObjects.length} objects`);
-    console.debug(preparedObjects);
+    // console.debug(preparedObjects);
     let i = 0;
     for (let preparedObject of preparedObjects) { // We can also make this parallel
-      if (i < 3) { // TODO remove this when doing full bulk test
-        await patchEsfTaak(preparedObject);
-        i += 1;
-      }
+      // if (i < 3) { // TODO remove this when doing full bulk test
+      await patchEsfTaak(preparedObject);
+      i += 1;
+      // }
     }
+    console.log('Updated', i, 'objects');
 
   }, 60000);
 
@@ -100,11 +101,12 @@ xtest('Delete objects', async () => {
   console.debug(preparedObjects);
   let i = 0;
   for (let preparedObject of preparedObjects) {
-    if (i < 3) {
-      await deleteEsfTaak(preparedObject);
-      i += 1;
-    }
+    // if (i < 3) {
+    await deleteEsfTaak(preparedObject);
+    i += 1;
+    // }
   }
+  console.log('Deleted', i, 'objects');
 }, 60000);
 
 async function bsnAndPeriodFromCsv() {
@@ -167,8 +169,15 @@ async function fetchEsfTaak(bsn: string, periode: string) {
       Authorization: `Token ${env.OBJECTS_TOKEN}`,
     },
   });
-  const json = await result.json();
-  return json;
+  const text = await result.text();
+  try {
+    const json = JSON.parse(text);
+    return json;
+  } catch (error) {
+    // console.error(error);
+    console.error(text);
+    return undefined;
+  }
 }
 
 async function deleteEsfTaak(preparedObject: any) {
