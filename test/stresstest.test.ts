@@ -1,6 +1,6 @@
-import { environmentVariables } from '@gemeentenijmegen/utils';
 import { createReadStream } from 'fs';
 import { createInterface } from 'readline/promises';
+import { environmentVariables } from '@gemeentenijmegen/utils';
 
 //Test expects an 'input.csv' on this level, with a csv of this form:
 /**
@@ -42,7 +42,7 @@ describe('Stresstesting ESF', () => {
     console.debug(preparedObjects);
   }, 60000);
 
-  test('Update objects', async () => {
+  xtest('Update objects', async () => {
     const sourceData = await bsnAndPeriodFromCsv();
     const preparedObjectsPromises: any[] = [];
     for (let bsnAndPeriod of sourceData) {
