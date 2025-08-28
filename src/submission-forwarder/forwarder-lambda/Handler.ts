@@ -52,7 +52,7 @@ export class SubmissionForwarderHandler {
     // Build an EsbSubmission and send it to the queue
     const esb: EsbSubmission = {
       s3Files: s3Files,
-      folderName: submission.reference,
+      folderName: `${submission.formName}-${submission.reference}`,
       targetNetworkLocation: submission.networkShare,
     };
     await this.sendNotificationToQueue(this.options.queueUrl, esb);

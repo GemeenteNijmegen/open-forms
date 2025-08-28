@@ -125,6 +125,7 @@ describe('SubmissionForwarderHandler', () => {
 
     const payload = JSON.parse(sendMessageCalls[0].args[0].input.MessageBody!);
     expect(payload.targetNetworkLocation).toBe(emptyMonitoringSubmission.networkShare);
+    expect(payload.folderName).toBe('formuliernaam-ref123');
   });
 
   it('should not send any notification if networkShare is missing', async () => {
