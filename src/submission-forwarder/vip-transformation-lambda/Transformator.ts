@@ -1,6 +1,6 @@
+import { VIPJZSubmission } from '../shared/VIPJZSubmission';
 import { PaymentSnsMessage } from './PaymentMessage';
 import { zaaktypeConfig } from './VipZaakTypeConfig';
-import { VIPJZSubmission } from '../shared/VIPJZSubmission';
 
 
 export class Transformator {
@@ -28,6 +28,8 @@ export class Transformator {
     };
     const mappedInlogmiddel = inlogmiddelMap[formData.inlogmiddel ?? 'unknown'];
 
+    const santaizedData = this.sanatizeData(formData);
+
     const submissionSnsMessage = {
       // Move these field to the root level of the submission.
       bsn: formData.bsn || undefined,
@@ -37,7 +39,7 @@ export class Transformator {
       formId: uuid,
       // Move all otherfields to the submission's data field
       data: {
-        ...formData,
+        ...santaizedData, // Data without empty strings as values
         inlogmiddel: mappedInlogmiddel, // Converted above
         payment: undefined, // Send in separate message
         internalNotificationEmails: undefined, // No need to pass this to vip/jz4all
@@ -74,6 +76,15 @@ export class Transformator {
 
     return undefined;
   }
+
+  /**
+   * Filters out empty string values in the data object.
+   * @param data 
+   */
+  private sanatizeData(data: Record<string, any>): Record<string, any> {
+    return Object.fromEntries(Object.entries(data).filter(([_, value]) => value !== ""));
+  }
+
 
 }
 
