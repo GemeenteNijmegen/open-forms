@@ -10,12 +10,16 @@
   "properties": {
     "bsn": {
       "type": "string",
-      "examples": ["999999333"],
+      "examples": [
+        "999999333"
+      ],
       "description": "BSN wanneer het formulier ingevuld is met Digid of Yivi met BSN. Ook me vipkeys bij apvBlok1A, apvBlok2A, apvblok1New, beheerderExploitatievergunningHorecaZonderAlcoholAanpassen, leidinggevendeAlcoholvergunningAanpassen, terrasvergunningAanvragenOfAanpassen, objectvergunningAanvragenNew, alcoholvergunningAanvragen, toestemmingVragenTijdelijkAlcoholSchenken, kansspelautomaatAanwezigheidsvergunningAanvragen; metadata: vip_key=bsn"
     },
     "kvk": {
       "type": "string",
-      "examples": ["69599084"],
+      "examples": [
+        "69599084"
+      ],
       "description": "KvK-nummer wanneer het formulier ingevuld is met Eherkenning of Yivi met KvK. Ook met vipkeys apvblok1New; metadata: vip_key=kvk"
     },
     "pdf": {
@@ -27,12 +31,17 @@
     },
     "formName": {
       "type": "string",
-      "examples": ["Contactformulier"],
+      "examples": [
+        "Contactformulier"
+      ],
       "description": "productaanvraag type"
     },
     "reference": {
       "type": "string",
-      "examples": ["OF-AB7634HJ", "Z02-39849384"],
+      "examples": [
+        "OF-AB7634HJ",
+        "Z02-39849384"
+      ],
       "description": "submission public reference."
     },
     "attachments": {
@@ -55,7 +64,12 @@
         "format": "email"
       },
       "default": [],
-      "examples": [["ops-team@example.com", "support@example.com"]],
+      "examples": [
+        [
+          "ops-team@example.com",
+          "support@example.com"
+        ]
+      ],
       "description": "Email addresses of internal employees or departments to notify when a new submission arrives."
     },
     "appId": {
@@ -123,7 +137,7 @@
       "description": "apvBlok1A, apvBlok2A, apvblok1New, beheerderExploitatievergunningHorecaZonderAlcoholAanpassen, leidinggevendeAlcoholvergunningAanpassen, terrasvergunningAanvragenOfAanpassen, objectvergunningAanvragenNew; metadata: vip_key=business_name, dms_key=initiator.niet_natuurlijk_persoon.statutaireNaam"
     },
     "inschrijfnummerKamerVanKoophandel": {
-      "type": "string",
+      "type": "number",
       "description": "apvBlok1A, apvBlok2A, apvblok1New, beheerderExploitatievergunningHorecaZonderAlcoholAanpassen, leidinggevendeAlcoholvergunningAanpassen, terrasvergunningAanvragenOfAanpassen, objectvergunningAanvragenNew, kansspelautomaatAanwezigheidsvergunningAanvragen; metadata: vip_key=kvk"
     },
     "contactpersoon": {
@@ -207,7 +221,10 @@
           "description": "Geeft aan of de betaling is voltooid"
         },
         "payment_amount": {
-          "type": ["number","null"],
+          "type": [
+            "number",
+            "null"
+          ],
           "description": "Het bedrag dat is betaald"
         },
         "payment_public_order_ids": {
