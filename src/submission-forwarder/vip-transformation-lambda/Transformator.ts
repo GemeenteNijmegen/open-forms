@@ -1,6 +1,6 @@
-import { VIPJZSubmission } from '../shared/VIPJZSubmission';
 import { PaymentSnsMessage } from './PaymentMessage';
 import { zaaktypeConfig } from './VipZaakTypeConfig';
+import { VIPJZSubmission } from '../shared/VIPJZSubmission';
 
 
 export class Transformator {
@@ -79,10 +79,10 @@ export class Transformator {
 
   /**
    * Filters out empty string values in the data object.
-   * @param data 
+   * @param data
    */
   private sanatizeData(data: Record<string, any>): Record<string, any> {
-    return Object.fromEntries(Object.entries(data).filter(([_, value]) => value !== ""));
+    return Object.fromEntries(Object.entries(data).filter(([_, value]) => value !== ''));
   }
 
 
