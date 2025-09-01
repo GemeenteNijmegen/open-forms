@@ -145,4 +145,32 @@ describe('SubmissionForwarderHandler', () => {
     expect(sqsMock.commandCalls(SendMessageCommand).length).toBe(0);
   });
 
+    it('should include payment information in the notification payload', async () => {
+    await handler.handle(fakeSubmission, ['https://example.com']);
+
+    const sendMessageCalls = sqsMock.commandCalls(SendMessageCommand);
+    expect(sendMessageCalls.length).toBeGreaterThan(0);
+
+    const payload = JSON.parse(sendMessageCalls[0].args[0].input.MessageBody!);
+    // Check that payment info is included in the payload
+    expect(payload.s3Files).toContain('s3://test-bucket/ref123/payment.txt');
+    });
+
+  it('should not include payment information when not provided', async () => {
+    const submissionWithoutPayment = { ...fakeSubmission };
+    delete submissionWithoutPayment.payment;
+
+    sqsMock.reset();
+    sqsMock.on(SendMessageCommand).resolves({});
+
+    await handler.handle(submissionWithoutPayment, ['https://example.com']);
+
+    const sendMessageCalls = sqsMock.commandCalls(SendMessageCommand);
+    expect(sendMessageCalls.length).toBeGreaterThan(0);
+
+    const payload = JSON.parse(sendMessageCalls[0].args[0].input.MessageBody!);
+    // Check that payment info is NOT included in the payload
+    expect(payload.s3Files).not.toContain('s3://test-bucket/ref123/payment.txt');
+  });
+
 });
