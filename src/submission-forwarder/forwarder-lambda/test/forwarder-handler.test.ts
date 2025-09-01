@@ -45,12 +45,12 @@ describe('SubmissionForwarderHandler', () => {
         payment_completed: true,
         payment_amount: 0.01,
         payment_public_order_ids: [
-          "2025/ref123/01"
+          '2025/ref123/01',
         ],
         provider_payment_ids: [
-          "1234567890"
-        ]
-      }
+          '1234567890',
+        ],
+      },
     };
 
     // fakeEvent = {
