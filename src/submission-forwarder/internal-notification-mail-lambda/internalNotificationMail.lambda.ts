@@ -68,6 +68,9 @@ function constructNotificationEmail(submission: InternalNotificationMailSubmissi
     (submission.networkShare || submission.monitoringNetworkShare) && 'U kunt de aanvraag op de volgende locaties terugvinden:',
     replaceForwardSlashes(submission.networkShare),
     replaceForwardSlashes(submission.monitoringNetworkShare),
+    `Paden met spaties test:`,
+    `<${replaceForwardSlashes(submission.networkShare)}>`,
+    `<${replaceForwardSlashes(submission.monitoringNetworkShare)}>`,
   ].join('\n');
 }
 
