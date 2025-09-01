@@ -41,6 +41,16 @@ describe('SubmissionForwarderHandler', () => {
         'a@example.com',
         'b@example.com',
       ],
+      payment: {
+        payment_completed: true,
+        payment_amount: 0.01,
+        payment_public_order_ids: [
+          '2025/ref123/01',
+        ],
+        provider_payment_ids: [
+          '1234567890',
+        ],
+      },
     };
 
     // fakeEvent = {
@@ -133,6 +143,34 @@ describe('SubmissionForwarderHandler', () => {
     const event = { Sns: { Message: JSON.stringify(emptyNetworkShareSubmission) } };
     await handler.handle(event as any, ['https://example.com']);
     expect(sqsMock.commandCalls(SendMessageCommand).length).toBe(0);
+  });
+
+  it('should include payment information in the notification payload', async () => {
+    await handler.handle(fakeSubmission, ['https://example.com']);
+
+    const sendMessageCalls = sqsMock.commandCalls(SendMessageCommand);
+    expect(sendMessageCalls.length).toBeGreaterThan(0);
+
+    const payload = JSON.parse(sendMessageCalls[0].args[0].input.MessageBody!);
+    // Check that payment info is included in the payload
+    expect(payload.s3Files).toContain('s3://test-bucket/ref123/payment.txt');
+  });
+
+  it('should not include payment information when not provided', async () => {
+    const submissionWithoutPayment = { ...fakeSubmission };
+    delete submissionWithoutPayment.payment;
+
+    sqsMock.reset();
+    sqsMock.on(SendMessageCommand).resolves({});
+
+    await handler.handle(submissionWithoutPayment, ['https://example.com']);
+
+    const sendMessageCalls = sqsMock.commandCalls(SendMessageCommand);
+    expect(sendMessageCalls.length).toBeGreaterThan(0);
+
+    const payload = JSON.parse(sendMessageCalls[0].args[0].input.MessageBody!);
+    // Check that payment info is NOT included in the payload
+    expect(payload.s3Files).not.toContain('s3://test-bucket/ref123/payment.txt');
   });
 
 });

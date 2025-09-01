@@ -1,0 +1,753 @@
+[
+  {
+    "formName": "beheerderExploitatievergunningHorecaZonderAlcoholAanpassen",
+    "vipZaakType": "78c8112f-8ab9-4803-80ff-efa7391e930a",
+    "subFormName": null,
+    "fields": [
+      {
+        "key": "naamIngelogdeGebruiker",
+        "vip_key": "name"
+      },
+      {
+        "key": "bsn",
+        "vip_key": "bsn"
+      },
+      {
+        "key": "totaalbedrag",
+        "vip_key": "payment"
+      },
+      {
+        "key": "inlogmiddel",
+        "vip_key": "inlogmiddel"
+      },
+      {
+        "key": "naamOrganisatieOfBedrijf",
+        "vip_key": "business_name"
+      },
+      {
+        "key": "inschrijfnummerKamerVanKoophandel",
+        "vip_key": "kvk"
+      },
+      {
+        "key": "naamContactpersoon",
+        "vip_key": "name"
+      },
+      {
+        "key": "eMailadres",
+        "vip_key": "email"
+      },
+      {
+        "key": "telefoonnummer",
+        "vip_key": "phone"
+      },
+      {
+        "key": "telefoonnummer",
+        "vip_key": "phone"
+      },
+      {
+        "key": "eMailadres1",
+        "vip_key": "email"
+      }
+    ]
+  },
+  {
+    "formName": "toestemmingVragenTijdelijkAlcoholSchenken",
+    "vipZaakType": null,
+    "subFormName": "apvblok1New",
+    "fields": [
+      {
+        "key": "naamIngelogdeGebruiker",
+        "vip_key": "name"
+      },
+      {
+        "key": "bsn",
+        "vip_key": "bsn"
+      },
+      {
+        "key": "inlogmiddel",
+        "vip_key": "inlogmiddel"
+      },
+      {
+        "key": "totaalbedrag",
+        "vip_key": "payment"
+      }
+    ]
+  },
+  {
+    "formName": "alcoholvergunningAanvragen",
+    "vipZaakType": "77275f3c-18f8-4756-b478-2f4d4289edc5",
+    "subFormName": "apvblok1New",
+    "fields": [
+      {
+        "key": "naamIngelogdeGebruiker",
+        "vip_key": "name"
+      },
+      {
+        "key": "inlogmiddel",
+        "vip_key": "inlogmiddel"
+      },
+      {
+        "key": "bsn",
+        "vip_key": "bsn"
+      }
+    ]
+  },
+  {
+    "formName": "exploitatievergunningAanvragen",
+    "vipZaakType": "43d2464d-697c-44af-86cb-343ca2cb435b",
+    "subFormName": "apvblok1New",
+    "fields": [
+      {
+        "key": "naamIngelogdeGebruiker1",
+        "vip_key": "name"
+      }
+    ]
+  },
+  {
+    "formName": "leidinggevendeAlcoholvergunningAanpassen",
+    "vipZaakType": "5a7611c0-607b-4c4a-a1be-fcd9d7929be1",
+    "subFormName": null,
+    "fields": [
+      {
+        "key": "naamIngelogdeGebruiker1",
+        "vip_key": "name"
+      },
+      {
+        "key": "bsn",
+        "vip_key": "bsn"
+      },
+      {
+        "key": "inlogmiddel",
+        "vip_key": "inlogmiddel"
+      },
+      {
+        "key": "totaalbedrag",
+        "vip_key": "payment"
+      },
+      {
+        "key": "naamOrganisatieOfBedrijf",
+        "vip_key": "business_name"
+      },
+      {
+        "key": "inschrijfnummerKamerVanKoophandel",
+        "vip_key": "kvk"
+      },
+      {
+        "key": "naamContactpersoon",
+        "vip_key": "name"
+      },
+      {
+        "key": "eMailadres",
+        "vip_key": "email"
+      },
+      {
+        "key": "telefoonnummer",
+        "vip_key": "phone"
+      },
+      {
+        "key": "telefoonnummer",
+        "vip_key": "phone"
+      },
+      {
+        "key": "eMailadres1",
+        "vip_key": "email"
+      }
+    ]
+  },
+  {
+    "formName": "standplaatsAanvragenOfAanpassenKopie",
+    "vipZaakType": "86bcbd30-4578-4bd0-bf8b-1c4137929c43",
+    "subFormName": "apvBlok2A",
+    "fields": [
+      {
+        "key": "naamIngelogdeGebruiker",
+        "vip_key": "name"
+      },
+      {
+        "key": "inlogmiddel",
+        "vip_key": "inlogmiddel"
+      },
+      {
+        "key": "totaalbedrag",
+        "vip_key": "payment"
+      }
+    ]
+  },
+  {
+    "formName": "apvBlok1A",
+    "vipZaakType": null,
+    "subFormName": null,
+    "fields": [
+      {
+        "key": "inlogmiddel",
+        "vip_key": "inlogmiddel"
+      },
+      {
+        "key": "bsn",
+        "vip_key": "bsn"
+      },
+      {
+        "key": "naamOrganisatieOfBedrijf",
+        "vip_key": "business_name",
+        "dms_key": "initiator.niet_natuurlijk_persoon.statutaireNaam"
+      },
+      {
+        "key": "inschrijfnummerKamerVanKoophandel",
+        "vip_key": "kvk"
+      },
+      {
+        "key": "contactpersoon",
+        "vip_key": "initiator_is_contact"
+      },
+      {
+        "key": "naamContactpersoon",
+        "vip_key": "name"
+      },
+      {
+        "key": "eMailadres",
+        "vip_key": "email"
+      },
+      {
+        "key": "telefoonnummer",
+        "vip_key": "phone"
+      }
+    ]
+  },
+  {
+    "formName": "apvBlok2A",
+    "vipZaakType": null,
+    "subFormName": null,
+    "fields": [
+      {
+        "key": "inlogmiddel",
+        "vip_key": "inlogmiddel"
+      },
+      {
+        "key": "bsn",
+        "vip_key": "bsn"
+      },
+      {
+        "key": "naamOrganisatieOfBedrijf",
+        "vip_key": "business_name",
+        "dms_key": "initiator.niet_natuurlijk_persoon.statutaireNaam"
+      },
+      {
+        "key": "inschrijfnummerKamerVanKoophandel",
+        "vip_key": "kvk"
+      },
+      {
+        "key": "contactpersoon",
+        "vip_key": "initiator_is_contact"
+      },
+      {
+        "key": "naamContactpersoon",
+        "vip_key": "name"
+      },
+      {
+        "key": "eMailadres",
+        "vip_key": "email"
+      },
+      {
+        "key": "telefoonnummer",
+        "vip_key": "phone"
+      }
+    ]
+  },
+  {
+    "formName": "apvblok1New",
+    "vipZaakType": null,
+    "subFormName": null,
+    "fields": [
+      {
+        "key": "inlogmiddel",
+        "vip_key": "inlogmiddel"
+      },
+      {
+        "key": "bsn",
+        "vip_key": "bsn"
+      },
+      {
+        "key": "kvk",
+        "vip_key": "kvk"
+      },
+      {
+        "key": "naamOrganisatieOfBedrijf",
+        "vip_key": "business_name",
+        "dms_key": "initiator.niet_natuurlijk_persoon.statutaireNaam"
+      },
+      {
+        "key": "inschrijfnummerKamerVanKoophandel",
+        "vip_key": "kvk"
+      },
+      {
+        "key": "contactpersoon",
+        "vip_key": "initiator_is_contact"
+      },
+      {
+        "key": "naamContactpersoon",
+        "vip_key": "name"
+      },
+      {
+        "key": "eMailadres",
+        "vip_key": "email"
+      },
+      {
+        "key": "telefoonnummer1",
+        "vip_key": "phone"
+      },
+      {
+        "key": "telefoonnummer",
+        "vip_key": "phone"
+      },
+      {
+        "key": "eMailadres1",
+        "vip_key": "email"
+      }
+    ]
+  },
+  {
+    "formName": "terrasvergunningAanvragenOfAanpassen",
+    "vipZaakType": "ad3f54c1-23f9-4c75-a3ba-062177507775",
+    "subFormName": null,
+    "fields": [
+      {
+        "key": "naamIngelogdeGebruiker",
+        "vip_key": "name"
+      },
+      {
+        "key": "inlogmiddel",
+        "vip_key": "inlogmiddel"
+      },
+      {
+        "key": "bsn",
+        "vip_key": "bsn"
+      },
+      {
+        "key": "totaalbedrag",
+        "vip_key": "payment"
+      },
+      {
+        "key": "naamOrganisatieOfBedrijf",
+        "vip_key": "business_name"
+      },
+      {
+        "key": "inschrijfnummerKamerVanKoophandel",
+        "vip_key": "kvk"
+      },
+      {
+        "key": "naamContactpersoon",
+        "vip_key": "name"
+      },
+      {
+        "key": "eMailadres",
+        "vip_key": "email"
+      },
+      {
+        "key": "telefoonnummer",
+        "vip_key": "phone"
+      },
+      {
+        "key": "telefoonnummer1",
+        "vip_key": "phone"
+      },
+      {
+        "key": "eMailadres1",
+        "vip_key": "email"
+      }
+    ]
+  },
+  {
+    "formName": "objectvergunningAanvragenNew",
+    "vipZaakType": "443c6ca1-bb3e-45d3-8099-2415567579da",
+    "subFormName": null,
+    "fields": [
+      {
+        "key": "naamOrganisatieOfBedrijf",
+        "vip_key": "business_name"
+      },
+      {
+        "key": "inschrijfnummerKamerVanKoophandel",
+        "vip_key": "kvk"
+      },
+      {
+        "key": "naamContactpersoon",
+        "vip_key": "name"
+      },
+      {
+        "key": "eMailadres",
+        "vip_key": "email"
+      },
+      {
+        "key": "telefoonnummer",
+        "vip_key": "phone"
+      },
+      {
+        "key": "naamIngelogdeGebruiker",
+        "vip_key": "name"
+      },
+      {
+        "key": "bsn",
+        "vip_key": "bsn"
+      },
+      {
+        "key": "inlogmiddel",
+        "vip_key": "inlogmiddel"
+      }
+    ]
+  },
+  {
+    "formName": "vergunningAanvragenKraamPodiumLangsRouteVierdaagse",
+    "vipZaakType": null,
+    "subFormName": "apvBlok2A",
+    "fields": [
+      {
+        "key": "naamIngelogdeGebruiker",
+        "vip_key": "name"
+      }
+    ]
+  },
+  {
+    "formName": "themamarktVergunningAanvragen",
+    "vipZaakType": "4e16c53a-2650-4861-91ef-c9f005bc0235",
+    "subFormName": "apvBlok2A",
+    "fields": [
+      {
+        "key": "naamIngelogdeGebruiker",
+        "vip_key": "name"
+      },
+      {
+        "key": "totaalbedrag",
+        "vip_key": "payment"
+      }
+    ]
+  },
+  {
+    "formName": "toestemmingVervoerGevaarlijkeStoffenAanvragen",
+    "vipZaakType": "8ecf8631-4ff6-4c8e-8d95-65b83035e7b2",
+    "subFormName": "apvBlok2A",
+    "fields": [
+      {
+        "key": "naamIngelogdeGebruiker",
+        "vip_key": "name"
+      },
+      {
+        "key": "totaalbedrag",
+        "vip_key": "payment"
+      }
+    ]
+  },
+  {
+    "formName": "informatiekraamMeldenOfVergunningAanvragen",
+    "vipZaakType": "88405356-c2b2-4c8a-b00b-458ce41ea75d",
+    "subFormName": "apvBlok2A",
+    "fields": [
+      {
+        "key": "totaalbedrag",
+        "vip_key": "payment"
+      }
+    ]
+  },
+  {
+    "formName": "bingoMeldenOfLoterijvergunningAanvragen",
+    "vipZaakType": "4953995e-c108-428b-b9ea-9e2c7012d796",
+    "subFormName": "apvBlok2A",
+    "fields": [
+      {
+        "key": "naamIngelogdeGebruiker",
+        "vip_key": "name"
+      },
+      {
+        "key": "totaalbedrag",
+        "vip_key": "payment"
+      }
+    ]
+  },
+  {
+    "formName": "datumReserverenEvenementNew1",
+    "vipZaakType": "4b9e8c14-6054-40ad-b768-09c8e70c7268",
+    "subFormName": "apvBlok2A",
+    "fields": [
+      {
+        "key": "naamIngelogdeGebruiker",
+        "vip_key": "name"
+      }
+    ]
+  },
+  {
+    "formName": "evenementenMeldenOfVergunningAanvragen",
+    "vipZaakType": "fc669b32-7f54-49e7-a452-9b6340bd1524",
+    "subFormName": "apvBlok2A",
+    "fields": [
+      {
+        "key": "naamIngelogdeGebruiker",
+        "vip_key": "name"
+      }
+    ]
+  },
+  {
+    "formName": "ontheffingOpeningstijdenWinkelAanvragen",
+    "vipZaakType": "7c5edc47-f282-48c6-936b-882db2ec597b",
+    "subFormName": "apvBlok1A",
+    "fields": [
+      {
+        "key": "naamIngelogdeGebruiker",
+        "vip_key": "name"
+      },
+      {
+        "key": "totaalbedrag",
+        "vip_key": "payment"
+      }
+    ]
+  },
+  {
+    "formName": "marktplaatsvergunningAanvragenOfAanpassen",
+    "vipZaakType": "905ccaf0-a86e-4d39-9066-5e738f38e542",
+    "subFormName": "apvBlok1A",
+    "fields": [
+      {
+        "key": "naamIngelogdeGebruiker",
+        "vip_key": "name"
+      },
+      {
+        "key": "totaalbedrag",
+        "vip_key": "payment"
+      }
+    ]
+  },
+  {
+    "formName": "bezwaarMakenNieuw",
+    "vipZaakType": "7562e893-3d95-4114-bceb-b3407346e4ff",
+    "subFormName": null,
+    "fields": [
+      {
+        "key": "isgemachtigde",
+        "jz4all_key": "is_authorized_person"
+      },
+      {
+        "key": "isgemachtigde1",
+        "jz4all_key": "webform_initiator.type"
+      },
+      {
+        "key": "inlogmiddel",
+        "jz4all_key": "inlogmiddel"
+      },
+      {
+        "key": "opWelkeDatumHeeftDeGemeenteHetBesluitBekendGemaaktOfDeBeschikkingGegeven",
+        "jz4all_key": "datum_primair_besluit"
+      },
+      {
+        "key": "welkKenmerkOfReferentienummerHeeftHetBesluitOfDeBeschikkingWaartegenUBezwaarMaakt",
+        "jz4all_key": "primair_dossier"
+      },
+      {
+        "key": "naam",
+        "jz4all_key": "webform_initiator.naam"
+      },
+      {
+        "key": "adres",
+        "jz4all_key": "webform_initiator.adres"
+      },
+      {
+        "key": "naam",
+        "jz4all_key": "webform_initiator.naam"
+      },
+      {
+        "key": "kvKNummer",
+        "jz4all_key": "webform_initiator.kvk"
+      },
+      {
+        "key": "contactpersoon",
+        "jz4all_key": "initiator_is_contact"
+      },
+      {
+        "key": "naamContactpersoon",
+        "jz4all_key": "contact.naam"
+      },
+      {
+        "key": "eMailadres",
+        "jz4all_key": "email"
+      },
+      {
+        "key": "telefoonnummer",
+        "jz4all_key": "phone"
+      },
+      {
+        "key": "telefoonnummer",
+        "jz4all_key": "phone"
+      },
+      {
+        "key": "eMailadres1",
+        "jz4all_key": "email"
+      }
+    ]
+  },
+  {
+    "formName": "klachtOverDeGemeenteDoorgevenNieuw",
+    "vipZaakType": "d459c41b-0aa7-48cf-8d11-b1d78e17e803",
+    "subFormName": null,
+    "fields": [
+      {
+        "key": "naam",
+        "jz4all_key": "naam"
+      },
+      {
+        "key": "eMailadres",
+        "jz4all_key": "email"
+      },
+      {
+        "key": "telefoonnummer",
+        "jz4all_key": "phone"
+      },
+      {
+        "key": "naam",
+        "jz4all_key": "naam"
+      },
+      {
+        "key": "eMailadres",
+        "jz4all_key": "email"
+      },
+      {
+        "key": "telefoonnummer",
+        "jz4all_key": "phone"
+      },
+      {
+        "key": "initiatorTypeJz4All1",
+        "jz4all_key": "initiator_type"
+      }
+    ]
+  },
+  {
+    "formName": "rxmissiontestr01",
+    "vipZaakType": null,
+    "subFormName": null,
+    "fields": [
+      {
+        "key": "isgemachtigde",
+        "jz4all_key": "is_authorized_person"
+      },
+      {
+        "key": "eMailadres1",
+        "jz4all_key": "email"
+      },
+      {
+        "key": "eMailadres",
+        "jz4all_key": "email"
+      },
+      {
+        "key": "inlogmiddel",
+        "jz4all_key": "inlogmiddel"
+      }
+    ]
+  },
+  {
+    "formName": "standplaatsAanvragenOfAanpassen",
+    "vipZaakType": "86bcbd30-4578-4bd0-bf8b-1c4137929c43",
+    "subFormName": "apvBlok2A",
+    "fields": [
+      {
+        "key": "naamIngelogdeGebruiker",
+        "vip_key": "name"
+      },
+      {
+        "key": "inlogmiddel",
+        "vip_key": "inlogmiddel"
+      },
+      {
+        "key": "totaalbedrag",
+        "vip_key": "payment"
+      }
+    ]
+  },
+  {
+    "formName": "apvOntheffingVervoerGevaarlijkeStoffenAanvragen",
+    "vipZaakType": "8ecf8631-4ff6-4c8e-8d95-65b83035e7b2",
+    "subFormName": "apvBlok2A",
+    "fields": [
+      {
+        "key": "naamIngelogdeGebruiker",
+        "vip_key": "name"
+      },
+      {
+        "key": "totaalbedrag",
+        "vip_key": "payment"
+      }
+    ]
+  },
+  {
+    "formName": "kansspelautomaatAanwezigheidsvergunningAanvragen",
+    "vipZaakType": "37b6abd2-0f82-4ac2-b8c7-581488417729",
+    "subFormName": null,
+    "fields": [
+      {
+        "key": "naamBedrijfWaarvoorUEenVergunningAanvraagt",
+        "dms_key": "initiator.niet_natuurlijk_persoon.statutaireNaam"
+      },
+      {
+        "key": "naamIngelogdeGebruiker",
+        "vip_key": "name"
+      },
+      {
+        "key": "bsn",
+        "vip_key": "bsn"
+      },
+      {
+        "key": "inlogmiddel",
+        "vip_key": "inlogmiddel"
+      },
+      {
+        "key": "inschrijfnummerKamerVanKoophandel",
+        "vip_key": "kvk"
+      },
+      {
+        "key": "naamContactpersoon",
+        "vip_key": "name"
+      },
+      {
+        "key": "eMailadres",
+        "vip_key": "email"
+      },
+      {
+        "key": "telefoonnummer",
+        "vip_key": "phone"
+      },
+      {
+        "key": "telefoonnummer",
+        "vip_key": "phone"
+      },
+      {
+        "key": "eMailadres1",
+        "vip_key": "email"
+      }
+    ]
+  },
+  {
+    "formName": "klachtOverIetsAndersNieuw",
+    "vipZaakType": "d459c41b-0aa7-48cf-8d11-b1d78e17e803",
+    "subFormName": null,
+    "fields": [
+      {
+        "key": "eMailadres",
+        "jz4all_key": "email"
+      },
+      {
+        "key": "telefoonnummer",
+        "jz4all_key": "phone"
+      },
+      {
+        "key": "inlogmiddel",
+        "jz4all_key": "inlogmiddel"
+      }
+    ]
+  },
+  {
+    "formName": "bezwaarMakenNew",
+    "vipZaakType": null,
+    "subFormName": null,
+    "fields": [
+      {
+        "key": "naam",
+        "jz4all_key": "naam"
+      }
+    ]
+  }
+]
