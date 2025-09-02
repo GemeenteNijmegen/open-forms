@@ -66,11 +66,8 @@ function constructNotificationEmail(submission: InternalNotificationMailSubmissi
   return [
     `Er is een nieuwe aanvraag ${submission.formName} binnengekomen met kenmerk ${submission.reference}`,
     (submission.networkShare || submission.monitoringNetworkShare) && 'U kunt de aanvraag op de volgende locaties terugvinden:',
-    replaceForwardSlashes(submission.networkShare),
-    replaceForwardSlashes(submission.monitoringNetworkShare),
-    `Paden met spaties test:`,
-    `<${replaceForwardSlashes(submission.networkShare)}>`,
-    `<${replaceForwardSlashes(submission.monitoringNetworkShare)}>`,
+    submission.networkShare && `<${replaceForwardSlashes(submission.networkShare)}>`,
+    submission.monitoringNetworkShare && `<${replaceForwardSlashes(submission.monitoringNetworkShare)}>`,
   ].join('\n');
 }
 
