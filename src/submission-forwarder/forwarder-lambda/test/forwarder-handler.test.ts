@@ -185,7 +185,6 @@ describe('SubmissionForwarderHandler', () => {
 
     await handler.handle(normalizedMonitoringSubmission, ['https://example.com']);
 
-    // Er mag maar 1 SQS-send call plaatsvinden, geen monitoringlocatie
     const sendMessageCalls = sqsMock.commandCalls(SendMessageCommand);
     expect(sendMessageCalls.length).toBe(2);
 
