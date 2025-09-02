@@ -53,27 +53,6 @@ describe('SubmissionForwarderHandler', () => {
       },
     };
 
-    // fakeEvent = {
-    //   Records: [{
-    //     Sns: {
-    //       Message: JSON.stringify({
-    //         bsn: '',
-    //         kvk: '',
-    //         pdf: 'https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/657d12d8-4dd6-4b16-98b6-d8d08885c9ba',
-    //         formName: 'Voorbeeld Netwerkschijf Registratie met Object',
-    //         reference: 'OF-P5KAZF',
-    //         attachments: [],
-    //         networkShare: '//karelstad/webdata/Webformulieren/TESTA',
-    //         monitoringNetworkShare: '//karelstad/webdata/Webformulieren/TESTB',
-    //         submissionValuesToFiles: [],
-    //         internalNotificationEmails: [
-    //           'devops@nijmegen.nl',
-    //         ],
-    //       }),
-    //     },
-    //   }]
-    // } as SNSEvent;
-
     // Fake HttpClient (inhoud niet belangrijk)
     fakeHttpClient = {};
 
