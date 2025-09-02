@@ -93,6 +93,17 @@ export class SubmissionForwarderHandler {
       }
     }
 
+    // Payment save file
+    if (submission.payment) {
+      try {
+        await this.storeInS3(submission.reference, 'payment.txt', JSON.stringify(submission.payment));
+        const attachmentS3Path = `s3://${this.options.bucketName}/${submission.reference}/payment.txt`;
+        s3Files.push(attachmentS3Path);
+      } catch (error: any) {
+        console.log('Failed to create payment save file');
+      }
+    }
+
     // Other save files based on free data structure
     const submissionValues: KeyValuePair[] = submission.submissionValuesToFiles ?? [];
     for (const [name, value] of submissionValues) {
