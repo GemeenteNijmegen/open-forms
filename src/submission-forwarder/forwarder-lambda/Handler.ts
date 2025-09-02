@@ -53,13 +53,13 @@ export class SubmissionForwarderHandler {
     const esb: EsbSubmission = {
       s3Files: s3Files,
       folderName: `${submission.formName}-${submission.reference}`,
-      targetNetworkLocation: submission.networkShare,
+      targetNetworkLocation: normalizeKarelstad(submission.networkShare),
     };
     await this.sendNotificationToQueue(this.options.queueUrl, esb);
 
     // Also send files to monitoring location if provided in submission
     if (submission.monitoringNetworkShare) {
-      const monitoringEsbMessage: EsbSubmission = { ...esb, targetNetworkLocation: submission.monitoringNetworkShare };
+      const monitoringEsbMessage: EsbSubmission = { ...esb, targetNetworkLocation: normalizeKarelstad(submission.monitoringNetworkShare) };
       await this.sendNotificationToQueue(this.options.queueUrl, monitoringEsbMessage);
     }
 
@@ -165,9 +165,15 @@ export class SubmissionForwarderHandler {
     });
     await upload.done();
   }
-
-  private getUuidFromUrl(url: string) {
-    const parts = url.split('/');
-    return parts[parts.length - 1];
-  }
+}
+/**
+ * Makes sure word karelstad never has uppercase
+ * If the path contains anything other lowercase karelstad with // or \\
+ * it will add another karelstad to the path in the esb processing, which will result in unknown paths
+ * This makes sure accidental non-lowercase karelstads in the variables are dealt with
+ * @param path
+ * @returns
+ */
+export function normalizeKarelstad(path: string): string {
+  return path.replace(/^([\\/]{2})karelstad(?=[\\/]|$)/i, '$1karelstad');
 }

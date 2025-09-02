@@ -173,4 +173,25 @@ describe('SubmissionForwarderHandler', () => {
     expect(payload.s3Files).not.toContain('s3://test-bucket/ref123/payment.txt');
   });
 
+  it('should normalize karelstad', async () => {
+    const normalizedMonitoringSubmission = {
+      ...fakeSubmission,
+      networkShare: '//Karelstad/normalizeme',
+      monitoringNetworkShare: '//kARELSTAD/normalizemetoo',
+    }; // copy with spreader
+
+    sqsMock.reset(); // reset de SQS-mock om de tellers weer op nul te zetten
+    sqsMock.on(SendMessageCommand).resolves({});
+
+    await handler.handle(normalizedMonitoringSubmission, ['https://example.com']);
+
+    // Er mag maar 1 SQS-send call plaatsvinden, geen monitoringlocatie
+    const sendMessageCalls = sqsMock.commandCalls(SendMessageCommand);
+    expect(sendMessageCalls.length).toBe(2);
+
+    const payload = JSON.parse(sendMessageCalls[0].args[0].input.MessageBody!);
+    expect(payload.targetNetworkLocation).toBe('//karelstad/normalizeme');
+    const payloadtwo = JSON.parse(sendMessageCalls[1].args[0].input.MessageBody!);
+    expect(payloadtwo.targetNetworkLocation).toBe('//karelstad/normalizemetoo');
+  });
 });
