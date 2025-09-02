@@ -808,7 +808,7 @@ body {
   --utrecht-select-font-weight: 400;
   --utrecht-select-line-height: 150%;
   --utrecht-select-font-size: 1.125rem;
-  --utrecht-select-max-inline-size: 400px;
+  --utrecht-select-max-inline-size: 100%;
   --utrecht-separator-color: #A3A3A3;
   --utrecht-separator-block-size: 0.5rem;
   --utrecht-skip-link-font-family: "Source Sans Pro", Tahoma, Verdana, sans-serif;
@@ -1314,6 +1314,11 @@ a:hover,
   background-color: #3a3a3a;
 }
 
+/* fixes scrollbars in Edge, see https://github.com/GemeenteNijmegen/open-forms/issues/455 */
+.openforms-formio-content {
+  overflow: initial;
+}
+
 .openforms-formio-content p,
 .openforms-formio-content ol,
 .openforms-formio-content ul {
@@ -1366,11 +1371,12 @@ a:hover,
 
 .openforms-login-button>.utrecht-button-link[href*="digid_oidc"]+.openforms-login-button-logo>img {
   display: none;
-  /*
+  /* 
   Note: use display:none; as we cannot change the url to where this logo links (digid info page). So it's better to just hide it.
+
   content: url("https://mijn.nijmegen.nl/static/images/yivi.svg");
   height: 46px;
-  width: 46px;
+  width: 46px; 
   */
 }
 
