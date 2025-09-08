@@ -109,7 +109,7 @@ export const VIPJZSubmissionSchema = z
         'apvBlok1A, apvBlok2A, apvblok1New, beheerderExploitatievergunningHorecaZonderAlcoholAanpassen, leidinggevendeAlcoholvergunningAanpassen, terrasvergunningAanvragenOfAanpassen, objectvergunningAanvragenNew; metadata: vip_key=business_name, dms_key=initiator.niet_natuurlijk_persoon.statutaireNaam',
       ),
     inschrijfnummerKamerVanKoophandel: z
-      .string()
+      .number()
       .optional()
       .describe(
         'apvBlok1A, apvBlok2A, apvblok1New, beheerderExploitatievergunningHorecaZonderAlcoholAanpassen, leidinggevendeAlcoholvergunningAanpassen, terrasvergunningAanvragenOfAanpassen, objectvergunningAanvragenNew, kansspelautomaatAanwezigheidsvergunningAanvragen; metadata: vip_key=kvk',
