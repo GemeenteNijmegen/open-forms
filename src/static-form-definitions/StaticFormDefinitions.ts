@@ -27,7 +27,7 @@ export class StaticFormDefinitions extends Construct {
     bucket.grantRead(endpoint);
 
     const resource = this.props.api.root.addResource('static-form-definitions');
-    resource.addMethod('GET', new LambdaIntegration(endpoint));
+    resource.addProxy().addMethod('GET', new LambdaIntegration(endpoint));
 
   }
 }
