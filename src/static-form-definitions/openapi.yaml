@@ -1,0 +1,63 @@
+openapi: 3.0.3
+info:
+  title: Open Forms API
+  description: API for retrieving static form definitions.
+  version: 1.0.0
+
+servers:
+  - url: https://api.open-forms-accp.csp-nijmegen.nl
+
+paths:
+  /static-form-definitions/{stage}/{formName}:
+    get:
+      summary: Get form definition by name
+      description: Returns the definition of a static form based on its **name**.
+      parameters:
+        - in: path
+          name: stage
+          required: true
+          schema:
+            type: string
+          example: the stage ontwikkel / nijmegen (accp / prod)
+        - in: path
+          name: formName
+          required: true
+          schema:
+            type: string
+          example: requestcameraimagesofaforeignlicenseplate
+      responses:
+        '200':
+          description: Successful response with the form definition.
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Form not found.
+
+  /static-form-definitions/{stage}/form/{formId}:
+    get:
+      summary: Get form definition by ID
+      description: Returns the definition of a static form based on its **unique ID**.
+      parameters:
+        - in: path
+          name: stage
+          required: true
+          schema:
+            type: string
+          example: the stage ontwikkel / nijmegen (accp / prod)
+        - in: path
+          name: formId
+          required: true
+          schema:
+            type: string
+          example: eof12427412849j1243124
+      responses:
+        '200':
+          description: Successful response with the form definition.
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Form not found.
