@@ -10,12 +10,12 @@ export async function handler(event: ALBEvent): Promise<ALBResult> {
 
   // Parse event
   const pathParts = event.path.split('/');
-  const stage = pathParts[1];
-  const formDefUuid = pathParts[2];
+  const stage = pathParts[2];
+  const requestUsesId = pathParts[3] == 'form';
+  const formIdentifier = requestUsesId ? pathParts[4] : pathParts[3];
+  logger.info(`requesting Stage: ${stage} and form identifier: ${formIdentifier}`);
 
-  logger.info(`requesting Stage:${stage} formDefUuid${formDefUuid}`);
-
-  const key = `${stage}/${formDefUuid}`;
+  const key = `${stage}/${formIdentifier}`;
 
   try {
 
@@ -25,12 +25,13 @@ export async function handler(event: ALBEvent): Promise<ALBResult> {
     }));
 
     if (!definition || !definition.Body) {
-      throw Error('Not found!');
+      return response(JSON.stringify({ error: 'not found' }), 404);
     }
 
-    return response(await definition.Body.transformToString(), 404);
+    return response(await definition.Body.transformToString(), 200);
+
   } catch (error) {
-    return response(JSON.stringify({ error: 'not found' }), 404);
+    return response(JSON.stringify({ error: 'Something went wrong' }), 500);
   }
 
 
