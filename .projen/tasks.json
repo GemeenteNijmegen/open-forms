@@ -56,6 +56,9 @@
           "spawn": "bundle:nl-wallet/token/token.lambda"
         },
         {
+          "spawn": "bundle:static-form-definitions/lambda/StaticFormDefinitions.lambda"
+        },
+        {
           "spawn": "bundle:submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda"
         },
         {
@@ -129,6 +132,24 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/prefill-demo/handler.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"assets/prefill-demo/handler.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
+        }
+      ]
+    },
+    "bundle:static-form-definitions/lambda/StaticFormDefinitions.lambda": {
+      "name": "bundle:static-form-definitions/lambda/StaticFormDefinitions.lambda",
+      "description": "Create a JavaScript bundle from src/static-form-definitions/lambda/StaticFormDefinitions.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/static-form-definitions/lambda/StaticFormDefinitions.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"assets/static-form-definitions/lambda/StaticFormDefinitions.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
+        }
+      ]
+    },
+    "bundle:static-form-definitions/lambda/StaticFormDefinitions.lambda:watch": {
+      "name": "bundle:static-form-definitions/lambda/StaticFormDefinitions.lambda:watch",
+      "description": "Continuously update the JavaScript bundle from src/static-form-definitions/lambda/StaticFormDefinitions.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/static-form-definitions/lambda/StaticFormDefinitions.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"assets/static-form-definitions/lambda/StaticFormDefinitions.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
         }
       ]
     },

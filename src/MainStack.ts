@@ -9,6 +9,7 @@ import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 import { Configurable } from './Configuration';
 import { PrefillDemo } from './prefill-demo/PrefillDemoConstruct';
+import { StaticFormDefinitions } from './static-form-definitions/StaticFormDefinitions';
 import { Statics } from './Statics';
 import { SubmissionForwarder } from './submission-forwarder/SubmissionForwarder';
 
@@ -20,7 +21,7 @@ export class MainStack extends Stack {
   private readonly api: RestApi;
   private readonly key: Key | undefined;
 
-  constructor(scope: Construct, id: string, props: MainStackProps) {
+  constructor(scope: Construct, id: string, private props: MainStackProps) {
     super(scope, id, props);
 
     // Main encryption key for this project
@@ -47,6 +48,18 @@ export class MainStack extends Stack {
       logLevel: props.configuration.logLevel ?? 'INFO',
     });
 
+    this.setupStaticFromDefinitions();
+
+  }
+
+  /**
+   * Bucket and endpoin for serving static form definitions
+   */
+  private setupStaticFromDefinitions() {
+    new StaticFormDefinitions(this, 'static-form-definitions', {
+      api: this.api,
+      logLevel: this.props.configuration.logLevel ?? 'INFO',
+    });
   }
 
   private setupRestApi() {
