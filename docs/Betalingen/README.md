@@ -14,9 +14,13 @@ Deze Open-Forms applicatie zal vervolgens de inzending oppakken en de relevante 
 Een payment.txt zal vervolgens beschikbaar zijn voor de afdeling naast de inzending en eventuele andere bijlages. De locatie is voorlopig ongewijzigd, wat betekent dat de bestanden op de netwerkschijf worden opgeslagen.
 
 ## Informatie op netwerkschijf
-Welke informatie er over de betaling precies op de netwerkschijf zal belanden is nog nader te bepalen.
+De volgende informatie wordt gedeeld met financien. Dit is nodig voor financien om de betaling gerelateerd aan de inzending verder te verwerken.
 
-[Screenshot payment.txt]
+Informatie die financien ontvangt:
+![alt text](image003.png)
+
+Informatie beschikbaar op netwerkschijf (payments.txt):
+![alt text](image.png)
 
 ## Betalingen JZ/VIP
 Voor VIP (en later ook voor JZ) wordt een andere route gebruikt voor betalingen. Inzending van VIP hebben een appId VIP-betalen als er een betaling aanhangt. Het achterliggende VIP systeem (van WoWeb) die de inzending gaat verwerken weet hiermee dat er ook een betaling verwerkt moet worden.
