@@ -48,9 +48,19 @@
       "description": "BSN indien ingevuld",
       "examples": ["999999333"]
     },
+    "bsnNamens": {
+      "type": "string",
+      "description": "BSN indien handmatig gevuld namens iemand",
+      "examples": ["999999333"]
+    },
     "kvk": {
       "type": "string",
       "description": "KVK indien gevuld",
+      "examples": ["69599084"]
+    },
+    "kvkNamens": {
+      "type": "string",
+      "description": "KVK indien handmatig gevuld namens iemand",
       "examples": ["69599084"]
     },
     "inlogmiddel": {
