@@ -21,7 +21,7 @@
     "zaaktypeIdentificatie": {
       "type": "string",
       "description": "Identificatie van het zaaktype in open‑zaak",
-      "examples": ["BIJSTAND-AANVRAAG"]
+      "examples": ["BIJSTAND-AANVRAAG", "INDIVIDUELE-INKOMENSTOESLAG"]
     },
     "aardVerzoek": {
       "type": "string",
@@ -47,6 +47,16 @@
       "type": "string",
       "description": "BSN indien ingevuld",
       "examples": ["999999333"]
+    },
+    "kvk": {
+      "type": "string",
+      "description": "KVK indien gevuld",
+      "examples": ["69599084"]
+    },
+    "inlogmiddel": {
+      "type": "string",
+      "description": "erhekenning of digid",
+      "examples": ["digid"]
     },
     "pdf": {
       "type": "string",

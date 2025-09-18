@@ -70,6 +70,8 @@ export const AanvraagSociaalDomeinSchema = z.object({
   datumStartAanvraag: z.string().optional(),
   indBestaandeKlant: z.string().optional(),
   bsn: z.string().optional(),
+  kvk: z.string().optional(),
+  inlogmiddel: z.string().optional(),
   pdf: z.string(),
   formName: z.string(),
   reference: z.string(),
