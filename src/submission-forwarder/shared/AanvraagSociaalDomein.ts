@@ -83,6 +83,7 @@ export const AanvraagSociaalDomeinSchema = z.object({
     telefoonnummer: z.string().optional(),
     volledigeNaam: z.string().optional(),
     leeftijd: z.string().optional(),
+    geboorteDatum: z.string().optional(),
     rni: z.string().optional(),
     geboorteDatumNietStandaard: z.boolean().optional(),
     bewindvoering: z.boolean().optional(),

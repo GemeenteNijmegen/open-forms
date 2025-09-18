@@ -113,6 +113,11 @@
           "description": "leeftijd volgens haal centraal",
           "examples": ["27"]
         },
+        "geboorteDatum": {
+          "type": "string",
+          "description": "Optionele geboortedatum",
+          "examples": ["01-01-1980"]
+        },
         "rni": {
           "type": "string",
           "description": "extra data rni check om data compleet te maken. Voor nu even open gehouden",
