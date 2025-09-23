@@ -31,6 +31,13 @@
             ],
             "description": "pdf url"
         },
+        "csv": {
+            "type": "string",
+            "examples": [
+                "https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/93853c62-70b9-482a-b433-1dew34edfewe"
+            ],
+            "description": "csv url"
+        },
         "formName": {
             "type": "string",
             "examples": [

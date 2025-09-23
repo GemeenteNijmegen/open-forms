@@ -53,27 +53,6 @@ describe('SubmissionForwarderHandler', () => {
       },
     };
 
-    // fakeEvent = {
-    //   Records: [{
-    //     Sns: {
-    //       Message: JSON.stringify({
-    //         bsn: '',
-    //         kvk: '',
-    //         pdf: 'https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/657d12d8-4dd6-4b16-98b6-d8d08885c9ba',
-    //         formName: 'Voorbeeld Netwerkschijf Registratie met Object',
-    //         reference: 'OF-P5KAZF',
-    //         attachments: [],
-    //         networkShare: '//karelstad/webdata/Webformulieren/TESTA',
-    //         monitoringNetworkShare: '//karelstad/webdata/Webformulieren/TESTB',
-    //         submissionValuesToFiles: [],
-    //         internalNotificationEmails: [
-    //           'devops@nijmegen.nl',
-    //         ],
-    //       }),
-    //     },
-    //   }]
-    // } as SNSEvent;
-
     // Fake HttpClient (inhoud niet belangrijk)
     fakeHttpClient = {};
 
@@ -173,9 +152,10 @@ describe('SubmissionForwarderHandler', () => {
     expect(payload.s3Files).not.toContain('s3://test-bucket/ref123/payment.txt');
   });
 
-  it('should normalize karelstad', async () => {
+  it('should normalize karelstad and formname in folderpath', async () => {
     const normalizedMonitoringSubmission = {
       ...fakeSubmission,
+      formName: 'form, - name ',
       networkShare: '//Karelstad/normalizeme',
       monitoringNetworkShare: '//kARELSTAD/normalizemetoo',
     }; // copy with spreader
@@ -185,12 +165,12 @@ describe('SubmissionForwarderHandler', () => {
 
     await handler.handle(normalizedMonitoringSubmission, ['https://example.com']);
 
-    // Er mag maar 1 SQS-send call plaatsvinden, geen monitoringlocatie
     const sendMessageCalls = sqsMock.commandCalls(SendMessageCommand);
     expect(sendMessageCalls.length).toBe(2);
 
     const payload = JSON.parse(sendMessageCalls[0].args[0].input.MessageBody!);
     expect(payload.targetNetworkLocation).toBe('//karelstad/normalizeme');
+    expect(payload.folderName).toBe('formname-ref123');
     const payloadtwo = JSON.parse(sendMessageCalls[1].args[0].input.MessageBody!);
     expect(payloadtwo.targetNetworkLocation).toBe('//karelstad/normalizemetoo');
   });

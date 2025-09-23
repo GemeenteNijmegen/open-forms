@@ -52,7 +52,7 @@ export class SubmissionForwarderHandler {
     // Build an EsbSubmission and send it to the queue
     const esb: EsbSubmission = {
       s3Files: s3Files,
-      folderName: `${submission.formName}-${submission.reference}`,
+      folderName: `${normalizeString(submission.formName)}-${submission.reference}`,
       targetNetworkLocation: normalizeKarelstad(submission.networkShare),
     };
     await this.sendNotificationToQueue(this.options.queueUrl, esb);
@@ -177,3 +177,10 @@ export class SubmissionForwarderHandler {
 export function normalizeKarelstad(path: string): string {
   return path.replace(/^([\\/]{2})karelstad(?=[\\/]|$)/i, '$1karelstad');
 }
+/**
+ * Only return characters that are letters or numbers
+ * Removes unwanted characters
+ */
+
+export const normalizeString = (s: string): string =>
+  s.replace(/[^A-Za-z0-9]/g, '');

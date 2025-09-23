@@ -16,6 +16,7 @@ export const SubmissionSchema = z.object({
   bsn: z.string().optional().nullable(),
   kvk: z.string().optional().nullable(),
   pdf: z.string(),
+  csv: z.string().optional().nullable(),
   formName: z.string(),
   reference: z.string(),
   attachments: z.array(z.string()),
