@@ -152,9 +152,10 @@ describe('SubmissionForwarderHandler', () => {
     expect(payload.s3Files).not.toContain('s3://test-bucket/ref123/payment.txt');
   });
 
-  it('should normalize karelstad', async () => {
+  it('should normalize karelstad and formname in folderpath', async () => {
     const normalizedMonitoringSubmission = {
       ...fakeSubmission,
+      formName: 'form, - name ',
       networkShare: '//Karelstad/normalizeme',
       monitoringNetworkShare: '//kARELSTAD/normalizemetoo',
     }; // copy with spreader
@@ -169,6 +170,7 @@ describe('SubmissionForwarderHandler', () => {
 
     const payload = JSON.parse(sendMessageCalls[0].args[0].input.MessageBody!);
     expect(payload.targetNetworkLocation).toBe('//karelstad/normalizeme');
+    expect(payload.folderName).toBe('formname-ref123');
     const payloadtwo = JSON.parse(sendMessageCalls[1].args[0].input.MessageBody!);
     expect(payloadtwo.targetNetworkLocation).toBe('//karelstad/normalizemetoo');
   });
