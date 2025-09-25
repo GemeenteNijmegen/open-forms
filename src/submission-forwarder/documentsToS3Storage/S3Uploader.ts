@@ -21,7 +21,7 @@ export class S3Uploader {
 
     let key = `${kenmerk}/${filename}`;
     if (s3SubFolder) {
-      key = `${kenmerk}/${s3SubFolder}/${filename}`;
+      key = `${s3SubFolder}/${kenmerk}/${filename}`;
     }
 
     this.logger.debug('Uploading file...', {
