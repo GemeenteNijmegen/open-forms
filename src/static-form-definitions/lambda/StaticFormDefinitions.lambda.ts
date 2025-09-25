@@ -11,8 +11,18 @@ export async function handler(event: ALBEvent): Promise<ALBResult> {
   // Parse event
   const pathParts = event.path.split('/');
   const stage = pathParts[2];
+
+  // Find the identifier in the url
   const requestUsesId = pathParts[3] == 'form';
-  const formIdentifier = requestUsesId ? pathParts[4] : pathParts[3];
+  const requestIsNested = pathParts[4] == 'nested';
+  let formIdentifier = pathParts[3];
+  if (requestUsesId) {
+    formIdentifier = pathParts[4];
+  }
+  if (requestIsNested) {
+    formIdentifier = pathParts[5];
+  }
+
   logger.info(`requesting Stage: ${stage} and form identifier: ${formIdentifier}`);
 
   const key = `${stage}/${formIdentifier}`;

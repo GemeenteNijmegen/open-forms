@@ -61,3 +61,30 @@ paths:
                 type: object
         '404':
           description: Form not found.
+
+  /static-form-definitions/{stage}/form/nested/{formId}:
+    get:
+      summary: Get form definition by ID
+      description: Returns the definition of a static form based on its **unique ID**.
+      parameters:
+        - in: path
+          name: stage
+          required: true
+          schema:
+            type: string
+          example: the stage ontwikkel / nijmegen (accp / prod)
+        - in: path
+          name: formId
+          required: true
+          schema:
+            type: string
+          example: eof12427412849j1243124
+      responses:
+        '200':
+          description: Successful response with the form definition.
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Form not found.
