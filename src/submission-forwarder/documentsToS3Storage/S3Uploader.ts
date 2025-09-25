@@ -13,12 +13,17 @@ export class S3Uploader {
     this.logger = logger ?? new Logger();
   }
 
-  async storeBulk(kenmerk: string, fileData: { filename: string; data: Buffer | string; formaat?: string }[]) {
-    await Promise.all(fileData.map(file => this.store(kenmerk, file.filename, file.data, file.formaat)));
+  async storeBulk(kenmerk: string, fileData: { filename: string; data: Buffer | string; formaat?: string }[], s3SubFolder?: string) {
+    await Promise.all(fileData.map(file => this.store(kenmerk, file.filename, file.data, file.formaat, s3SubFolder)));
   }
 
-  async store(kenmerk: string, filename: string, data: Buffer | string, formaat?: string) {
-    const key = `${kenmerk}/${filename}`;
+  async store(kenmerk: string, filename: string, data: Buffer | string, formaat?: string, s3SubFolder?: string) {
+
+    let key = `${kenmerk}/${filename}`;
+    if (s3SubFolder) {
+      key = `${kenmerk}/${s3SubFolder}/${filename}`;
+    }
+
     this.logger.debug('Uploading file...', {
       filePath: key,
       fileSize: data instanceof Buffer ? data.byteLength : data.length,
