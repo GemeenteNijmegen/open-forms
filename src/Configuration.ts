@@ -76,6 +76,16 @@ const EnvironmentConfigurations: { [key: string]: Configuration } = {
     deploymentEnvironment: Statics.gnOpenFormsProd,
     criticality: new Criticality('high'),
     logLevel: 'INFO',
+    urlSubscriptions: [
+      {
+        appId: 'APV',
+        url: 'https://vip.nijmegen.cloud/api/sns-receiver',
+      },
+      {
+        appId: 'JUR',
+        url: 'https://jz4all.nijmegen.cloud/api/sns-receiver',
+      },
+    ],
   },
 };
 
