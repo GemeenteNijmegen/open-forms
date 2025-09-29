@@ -1,8 +1,8 @@
 import { Criticality, DeadLetterQueue } from '@gemeentenijmegen/aws-constructs';
-import { Role, ServicePrincipal, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
-import { Topic, LoggingConfig, LoggingProtocol, SubscriptionProtocol } from 'aws-cdk-lib/aws-sns';
+import { LoggingConfig, LoggingProtocol, SubscriptionFilter, SubscriptionProtocol, Topic } from 'aws-cdk-lib/aws-sns';
 import { UrlSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
@@ -17,7 +17,7 @@ export interface OpenFormsTopicProps {
    */
   criticality?: Criticality;
   /** External endpoint URLs for SNS deliveries */
-  endpointUrls: string[];
+  urlSubscriptions: { url: string; appId: string }[];
 }
 
 export class OpenFormsSubmissionsTopic extends Construct {
@@ -45,19 +45,19 @@ export class OpenFormsSubmissionsTopic extends Construct {
     );
     this.dlq = dlqSetup.dlq;
 
-
-    // Cloudformation seems to have issues with this setup for now
-    props.endpointUrls.forEach((url) => {
-      const subscription = this.topic.addSubscription(
-        new UrlSubscription(url, {
-          deadLetterQueue: this.dlq,
-          protocol: SubscriptionProtocol.HTTPS,
-          // No filterpolicy set right now, only one subscription and one type pushed to topic
-        }),
-      );
-
-      subscription.node.addDependency(this.dlq);
-    });
+    for (const urlSubscription of props.urlSubscriptions) {
+      const subscription = new UrlSubscription(urlSubscription.url, {
+        deadLetterQueue: this.dlq,
+        protocol: SubscriptionProtocol.HTTPS,
+        filterPolicy: {
+          AppId: SubscriptionFilter.stringFilter({
+            matchPrefixes: [urlSubscription.appId],
+          }),
+        },
+      });
+      const snsSubscription = this.topic.addSubscription(subscription);
+      snsSubscription.node.addDependency(this.dlq);
+    }
   }
 
   private createLoggingConfig(): LoggingConfig {

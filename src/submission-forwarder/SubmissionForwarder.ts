@@ -468,21 +468,23 @@ export class SubmissionForwarder extends Construct {
       'vip-url-subscription-param-value',
       Statics.ssmSNSSubscriptionUrlVIP,
     ).stringValue;
-    const jz4allSubscriptionUrl: string =
-      StringParameter.fromStringParameterName(
-        this,
-        'jz4all-url-subscription-param-value',
-        Statics.ssmSNSSubscriptionUrlJZ4ALL,
-      ).stringValue;
 
-    const OpenFormsSubmissionTopic = new OpenFormsSubmissionsTopic(
-      this,
-      'of-submission-construct',
-      {
-        kmsKey: this.options.key,
-        criticality: this.options.criticality,
-        endpointUrls: [jz4allSubscriptionUrl, vipSubscriptionUrl],
-      },
+    const jz4allSubscriptionUrl: string = StringParameter.fromStringParameterName(this, 'jz4all-url-subscription-param-value', Statics.ssmSNSSubscriptionUrlJZ4ALL).stringValue;
+
+    const OpenFormsSubmissionTopic = new OpenFormsSubmissionsTopic(this, 'of-submission-construct', {
+      kmsKey: this.options.key,
+      criticality: this.options.criticality,
+      urlSubscriptions: [
+        {
+          url: jz4allSubscriptionUrl,
+          appId: 'JUR',
+        },
+        {
+          url: vipSubscriptionUrl,
+          appId: 'APV',
+        },
+      ],
+    },
     );
     return OpenFormsSubmissionTopic.topic;
   }
