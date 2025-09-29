@@ -50,6 +50,8 @@ interface SubmissionForwarderOptions {
    * Remove when no longer registering through objects API (MD 2025-07-22).
    */
   useVipJzProductionMapping: boolean;
+
+  urlSubscriptions?: { url: string; appId: string }[];
 }
 
 /**
@@ -463,27 +465,11 @@ export class SubmissionForwarder extends Construct {
   }
 
   private setupSubmissionTopic() {
-    const vipSubscriptionUrl = StringParameter.fromStringParameterName(
-      this,
-      'vip-url-subscription-param-value',
-      Statics.ssmSNSSubscriptionUrlVIP,
-    ).stringValue;
-
-    const jz4allSubscriptionUrl: string = StringParameter.fromStringParameterName(this, 'jz4all-url-subscription-param-value', Statics.ssmSNSSubscriptionUrlJZ4ALL).stringValue;
 
     const OpenFormsSubmissionTopic = new OpenFormsSubmissionsTopic(this, 'of-submission-construct', {
       kmsKey: this.options.key,
       criticality: this.options.criticality,
-      urlSubscriptions: [
-        {
-          url: jz4allSubscriptionUrl,
-          appId: 'JUR',
-        },
-        {
-          url: vipSubscriptionUrl,
-          appId: 'APV',
-        },
-      ],
+      urlSubscriptions: this.options.urlSubscriptions ?? [],
     },
     );
     return OpenFormsSubmissionTopic.topic;

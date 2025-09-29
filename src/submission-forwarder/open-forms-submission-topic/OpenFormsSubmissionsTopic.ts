@@ -70,7 +70,6 @@ export class OpenFormsSubmissionsTopic extends Construct {
       },
     );
 
-
     const loggingRole = new Role(this, 'sns-submission-delivery-status-role', {
       assumedBy: new ServicePrincipal('sns.amazonaws.com'),
     });
