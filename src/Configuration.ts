@@ -61,7 +61,7 @@ const EnvironmentConfigurations: { [key: string]: Configuration } = {
     logLevel: 'DEBUG',
     urlSubscriptions: [
       {
-        appId: 'VIP',
+        appId: 'APV',
         url: 'https://vip.woweb.app/api/sns-receiver',
       },
       {
