@@ -519,9 +519,9 @@ export class SubmissionForwarder extends Construct {
   private setupWowebUser() {
     const wowebAccess = new IamUserWithRoleAccess(
       this, 'woweb-user-role-access', {
-      userIdentifier: 'woweb',
-      description: 'Access role for woweb system user for vip and jz4all',
-    },
+        userIdentifier: 'woweb',
+        description: 'Access role for woweb system user for vip and jz4all',
+      },
     );
     const wowebRole = wowebAccess.role;
     this.options.key.grantDecrypt(wowebRole);
