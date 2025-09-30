@@ -1,4 +1,5 @@
 import { Logger } from '@aws-lambda-powertools/logger';
+import { Response } from '@gemeentenijmegen/apigateway-http/lib/V1/Response';
 import { environmentVariables } from '@gemeentenijmegen/utils';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { authenticate } from './authenticate';
@@ -31,7 +32,12 @@ function getZgwClientFactory() {
 export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   logger.debug('event', { event });
 
-  await authenticate(event);
+  try {
+    await authenticate(event);
+  } catch (error) {
+    logger.error('Failed authentication', { error });
+    return Response.error(401, 'Unauthorized');
+  }
 
   const receiverHandler = new ReceiverHandler({
     zgwClientFactory: getZgwClientFactory(),

@@ -43,8 +43,14 @@ export interface Configuration {
    * Loglevel default INFO (prod)
    */
   logLevel?: string;
-}
 
+  /**
+   * SNS subscriptions (url and app id that is forwarded to this subscription)
+   * @default - no subscriptions are deployed
+   */
+  urlSubscriptions?: { url: string; appId: string }[];
+
+}
 
 const EnvironmentConfigurations: { [key: string]: Configuration } = {
   acceptance: {
@@ -53,6 +59,16 @@ const EnvironmentConfigurations: { [key: string]: Configuration } = {
     deploymentEnvironment: Statics.gnOpenFormsAccp,
     criticality: new Criticality('medium'),
     logLevel: 'DEBUG',
+    urlSubscriptions: [
+      {
+        appId: 'APV',
+        url: 'https://vip.woweb.app/api/sns-receiver',
+      },
+      {
+        appId: 'JUR',
+        url: 'https://jz4all.woweb.app/api/sns-receiver',
+      },
+    ],
   },
   main: {
     branch: 'main',
@@ -60,6 +76,16 @@ const EnvironmentConfigurations: { [key: string]: Configuration } = {
     deploymentEnvironment: Statics.gnOpenFormsProd,
     criticality: new Criticality('high'),
     logLevel: 'INFO',
+    urlSubscriptions: [
+      {
+        appId: 'APV',
+        url: 'https://vip.nijmegen.cloud/api/sns-receiver',
+      },
+      {
+        appId: 'JUR',
+        url: 'https://jz4all.nijmegen.cloud/api/sns-receiver',
+      },
+    ],
   },
 };
 

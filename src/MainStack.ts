@@ -46,6 +46,7 @@ export class MainStack extends Stack {
       criticality: props.configuration.criticality,
       useVipJzProductionMapping: props.configuration.branch == 'main', // TODO remove when we can use ZGW to register submisisons in VIP/JZ4ALL
       logLevel: props.configuration.logLevel ?? 'INFO',
+      urlSubscriptions: props.configuration.urlSubscriptions,
     });
 
     this.setupStaticFromDefinitions();

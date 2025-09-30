@@ -1,4 +1,3 @@
-import { Response } from '@gemeentenijmegen/apigateway-http';
 import { AWS, environmentVariables } from '@gemeentenijmegen/utils';
 import { APIGatewayProxyEvent } from 'aws-lambda';
 
@@ -18,36 +17,31 @@ export async function authenticate(event: APIGatewayProxyEvent) {
   }
 
   if (!API_KEY) {
-    console.error('API_KEY was not loaded, cannot authenticate request');
-    return Response.error(401);
+    throw new Error('API_KEY was not loaded, is API_KEY_ARN env variable set?');
   }
 
   if (!event.headers) {
-    return Response.error(401, 'No headers available to check for API key');
+    throw new Error('No headers avaialble to check for API key');
   }
 
   const usedHeader = ALLOWED_HEADERS.find(h => event.headers[h] != undefined);
   if (!usedHeader) {
-    return Response.error(401, 'No headers available to check for API key');
+    throw new Error('No headers available to check for API key');
   }
 
   const header = event.headers[usedHeader];
 
   if (!header) {
-    console.error('No Authorization header found in the request.');
-    return Response.error(401, 'No Authorization header found in the request.');
+    throw new Error('No Authorization header found in the request.');
   }
 
   if (!header.startsWith('Token ')) {
-    console.error('Header is missing the \'Token \' prefix');
-    return Response.error(401, 'Authorization header must be of type Token');
+    throw new Error('Authorization header must have a token prefix');
   }
 
   if (header.substring('Token '.length) === API_KEY) {
     return true;
   }
 
-  console.error('Invalid API key');
-  return Response.error(401, 'Invalid API key.');
-
+  throw new Error('Invalid API Key');
 }

@@ -7,15 +7,21 @@ describe('OpenFormsSubmissionsTopic', () => {
   let stack: Stack;
   let template: Template;
   const urls = [
-    'https://nepvip.com/subscriber',
-    'https://nepjz.com/subscriber',
+    {
+      appId: 'VIP',
+      url: 'https://nepvip.com/subscriber',
+    },
+    {
+      appId: 'JUR',
+      url: 'https://nepjz.com/subscriber',
+    },
   ];
 
   beforeAll(() => {
     stack = new Stack();
     new OpenFormsSubmissionsTopic(stack, 'TestTopic', {
       kmsKey: new Key(stack, 'TestKey'),
-      endpointUrls: urls,
+      urlSubscriptions: urls,
     });
     template = Template.fromStack(stack);
   });
@@ -25,7 +31,7 @@ describe('OpenFormsSubmissionsTopic', () => {
     urls.forEach((url) => {
       template.hasResourceProperties('AWS::SNS::Subscription', {
         Protocol: 'https',
-        Endpoint: url,
+        Endpoint: url.url,
       });
     });
   });
