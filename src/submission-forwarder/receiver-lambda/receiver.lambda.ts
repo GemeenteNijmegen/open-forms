@@ -1,10 +1,9 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import { Response } from '@gemeentenijmegen/apigateway-http/lib/V1/Response';
-import { environmentVariables } from '@gemeentenijmegen/utils';
+import { authenticate, environmentVariables } from '@gemeentenijmegen/utils';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { authenticate } from './authenticate';
-import { ReceiverHandler } from './Handler';
 import { ZgwClientFactory } from '../shared/ZgwClientFactory';
+import { ReceiverHandler } from './Handler';
 
 const logger = new Logger();
 
