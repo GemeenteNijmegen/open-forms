@@ -112,10 +112,10 @@
     "@aws-lambda-powertools/commons" "2.27.0"
     lodash.merge "^4.6.2"
 
-"@aws-sdk/client-dynamodb@^3.901.0":
-  version "3.901.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/client-dynamodb/-/client-dynamodb-3.901.0.tgz#b899efdb0d8540a083f24d502a09e5f8cb6f2b08"
-  integrity sha512-LZ7j0UwRnPh6NgioRqeAvbBLvlUUjolEA+vvmmSnWZSGvs8T/QZzytvKvDPKpr5sYTJKVDOYqOXE9eDuqHaqjw==
+"@aws-sdk/client-dynamodb@^3.902.0":
+  version "3.902.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/client-dynamodb/-/client-dynamodb-3.902.0.tgz#74e73074c79f967ae4e8d23a20d272eca217f6a9"
+  integrity sha512-WoBzn00MEvnhKFkrFPpqDjHxaqOriwJ2N00/GsoppHiMMPqinN53wB/phur7BsvhQCZZMbnIWrslcZcQxOzFLg==
   dependencies:
     "@aws-crypto/sha256-browser" "5.2.0"
     "@aws-crypto/sha256-js" "5.2.0"
@@ -3860,9 +3860,9 @@ ecdsa-sig-formatter@1.0.11:
     safe-buffer "^5.0.1"
 
 electron-to-chromium@^1.5.227:
-  version "1.5.228"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.228.tgz#38b849bc8714bd21fb64f5ad56bf8cfd8638e1e9"
-  integrity sha512-nxkiyuqAn4MJ1QbobwqJILiDtu/jk14hEAWaMiJmNPh1Z+jqoFlBFZjdXwLWGeVSeu9hGLg6+2G9yJaW8rBIFA==
+  version "1.5.229"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.229.tgz#ce32e345990b031ae5fec4d99e98188b90ba3731"
+  integrity sha512-cwhDcZKGcT/rEthLRJ9eBlMDkh1sorgsuk+6dpsehV0g9CABsIqBxU4rLRjG+d/U6pYU1s37A4lSKrVc5lSQYg==
 
 emittery@^0.13.1:
   version "0.13.1"
