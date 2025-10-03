@@ -1,11 +1,7 @@
-<<<<<<< HEAD
 import { Logger } from '@aws-lambda-powertools/logger';
-import { VIPJZSubmission } from '../shared/VIPJZSubmission';
-=======
-import { Logger } from '@aws-lambda-powertools/logger';
->>>>>>> 7727d622c90523c6da0b83b544d51440cbf2aa6d
 import { PaymentSnsMessage } from './PaymentMessage';
 import { zaaktypeConfig } from './VipZaakTypeConfig';
+import { VIPJZSubmission } from '../shared/VIPJZSubmission';
 
 
 const logger = new Logger();
@@ -64,9 +60,9 @@ export class Transformator {
       (submissionSnsMessage as any).brpData = {
         Persoon: {
           Persoonsgegevens: {
-            Naam: naam
-          }
-        }
+            Naam: naam,
+          },
+        },
       };
     }
 
