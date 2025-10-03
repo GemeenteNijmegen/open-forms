@@ -1,7 +1,14 @@
+<<<<<<< HEAD
+import { Logger } from '@aws-lambda-powertools/logger';
 import { VIPJZSubmission } from '../shared/VIPJZSubmission';
+=======
+import { Logger } from '@aws-lambda-powertools/logger';
+>>>>>>> 7727d622c90523c6da0b83b544d51440cbf2aa6d
 import { PaymentSnsMessage } from './PaymentMessage';
 import { zaaktypeConfig } from './VipZaakTypeConfig';
 
+
+const logger = new Logger();
 
 export class Transformator {
 
@@ -18,6 +25,7 @@ export class Transformator {
     if (!thisZaaktypeConfig) {
       throw Error('Could not find zaaktype configuration for: ' + formData.vipZaakTypeVariable);
     }
+    logger.info(`[convertObjectToSnsSubmission] vipZaaktypeVariabele: ${thisZaaktypeConfig.zaaktypeVariable} vipZaaktype: ${this.isProduction ? thisZaaktypeConfig.prodUUID : thisZaaktypeConfig.accUUID} for reference ${formData.reference}`);
 
     // map inlogmiddel veld from bsn/kvk to digid/eherkenning
     // OpenForms uses bsn/kvk values and woweb expects digid/eherkenning
@@ -61,6 +69,8 @@ export class Transformator {
         }
       };
     }
+
+    logger.debug(`snsMessage ${formData.reference}`, submissionSnsMessage);
 
     return submissionSnsMessage;
   }
