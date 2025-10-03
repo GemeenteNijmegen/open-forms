@@ -1,6 +1,6 @@
+import { VIPJZSubmission } from '../shared/VIPJZSubmission';
 import { PaymentSnsMessage } from './PaymentMessage';
 import { zaaktypeConfig } from './VipZaakTypeConfig';
-import { VIPJZSubmission } from '../shared/VIPJZSubmission';
 
 
 export class Transformator {
@@ -46,10 +46,21 @@ export class Transformator {
         vipZaaktype: this.isProduction ? thisZaaktypeConfig.prodUUID : thisZaaktypeConfig.accUUID,
         // Other fields are all part of the event and depdend on the form
       },
-
       // All file info is moved to this field
       fileObjects: fileObjects,
     };
+
+    /// If BSN we need the name to be in the BRP data... (fix after extensive testing)
+    if (formData.bsn) {
+      const naam = santaizedData.naam ?? santaizedData.name ?? santaizedData.naamIngelogdeGebruiker;
+      (submissionSnsMessage as any).brpData = {
+        Persoon: {
+          Persoonsgegevens: {
+            Naam: naam
+          }
+        }
+      };
+    }
 
     return submissionSnsMessage;
   }
