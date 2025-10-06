@@ -1,7 +1,7 @@
 import { Logger } from '@aws-lambda-powertools/logger';
-import { VIPJZSubmission } from '../shared/VIPJZSubmission';
 import { PaymentSnsMessage } from './PaymentMessage';
 import { zaaktypeConfig } from './VipZaakTypeConfig';
+import { VIPJZSubmission } from '../shared/VIPJZSubmission';
 
 
 const logger = new Logger();
