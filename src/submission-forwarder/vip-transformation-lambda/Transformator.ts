@@ -1,7 +1,7 @@
 import { Logger } from '@aws-lambda-powertools/logger';
+import { VIPJZSubmission } from '../shared/VIPJZSubmission';
 import { PaymentSnsMessage } from './PaymentMessage';
 import { zaaktypeConfig } from './VipZaakTypeConfig';
-import { VIPJZSubmission } from '../shared/VIPJZSubmission';
 
 
 const logger = new Logger();
@@ -56,7 +56,7 @@ export class Transformator {
 
     /// If BSN we need the name to be in the BRP data... (fix after extensive testing)
     if (formData.bsn) {
-      const naam = santaizedData.naam ?? santaizedData.name ?? santaizedData.naamIngelogdeGebruiker;
+      const naam = santaizedData.naamIngelogdeGebruiker;
       (submissionSnsMessage as any).brpData = {
         Persoon: {
           Persoonsgegevens: {
