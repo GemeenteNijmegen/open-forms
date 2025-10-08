@@ -78,7 +78,7 @@
     "@aws-sdk/client-sfn": "^3.901.0",
     "@aws-sdk/client-sns": "^3.901.0",
     "@aws-sdk/client-sqs": "^3.901.0",
-    "@aws-sdk/lib-storage": "^3.903.0",
+    "@aws-sdk/lib-storage": "^3.905.0",
     "@gemeentenijmegen/apigateway-http": "^0.0.31",
     "@gemeentenijmegen/aws-constructs": "^0.0.43",
     "@gemeentenijmegen/design-tokens": "^0.0.2-alpha.41",
