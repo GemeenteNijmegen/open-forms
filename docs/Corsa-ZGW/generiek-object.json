@@ -1,0 +1,19 @@
+{
+  "identifier": {
+    "type": "bsn of kvk (annoniem?)",
+    "value": ""
+  },
+  "inlogmiddel": "digid,yivi,eherkenning? Hebben we dit wel nodig? Als we het type identifier weten is dat toch al genoeg",
+  "scenario": "personal(bsn),professional(kvk),authorized(bsn voor bedrijf)",
+  "contactPersoon": {
+    "naam": "",
+    "eMailAdres": "",
+    "telefoonnummer": ""
+  },
+  "bezwaarMaken": {
+    "isgemachtigde": "",
+    "opWelkeDatumHeeftDeGemeenteHetBesluitBekendGemaaktOfDeBeschikkingGegeven": "",
+    "welkKenmerkOfReferentienummerHeeftHetBesluitOfDeBeschikkingWaartegenUBezwaarMaakt": "",
+    "adres": ""
+  }
+}

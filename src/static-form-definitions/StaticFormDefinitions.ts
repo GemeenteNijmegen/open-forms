@@ -1,6 +1,7 @@
 import { LambdaIntegration, RestApi } from 'aws-cdk-lib/aws-apigateway';
 import { BlockPublicAccess, Bucket } from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
+import { LoginMockFunction } from './formio-login/login-mock-function';
 import { StaticFormDefinitionsFunction } from './lambda/StaticFormDefinitions-function';
 
 export interface StaticFormDefinitionsProps {
@@ -28,6 +29,12 @@ export class StaticFormDefinitions extends Construct {
 
     const resource = this.props.api.root.addResource('static-form-definitions');
     resource.addProxy().addMethod('GET', new LambdaIntegration(endpoint));
+
+    const loginMock = new LoginMockFunction(this, 'formio-login-mock', {
+      description: 'Mock the login endpoint',
+    });
+    const resourceMockLogin = this.props.api.root.addResource('formio-login-mock');
+    resourceMockLogin.addProxy().addMethod('POST', new LambdaIntegration(loginMock));
 
   }
 }
