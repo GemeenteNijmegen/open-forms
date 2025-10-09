@@ -7,6 +7,7 @@ import { EsbSubmission } from '../shared/EsbSubmission';
 import { KeyValuePair, Submission } from '../shared/Submission';
 import { trace } from '../shared/trace';
 import { ZgwClientFactory } from '../shared/ZgwClientFactory';
+import { createNormalizedFolderName, normalizeKarelstad } from '../utils/normalizeInput';
 
 
 const HANDLER_ID = 'ESB_FORWARDER';
@@ -52,7 +53,7 @@ export class SubmissionForwarderHandler {
     // Build an EsbSubmission and send it to the queue
     const esb: EsbSubmission = {
       s3Files: s3Files,
-      folderName: `${normalizeString(submission.formName)}-${submission.reference}`,
+      folderName: createNormalizedFolderName(submission.formName, submission.reference),
       targetNetworkLocation: normalizeKarelstad(submission.networkShare),
     };
     await this.sendNotificationToQueue(this.options.queueUrl, esb);
@@ -166,21 +167,3 @@ export class SubmissionForwarderHandler {
     await upload.done();
   }
 }
-/**
- * Makes sure word karelstad never has uppercase
- * If the path contains anything other lowercase karelstad with // or \\
- * it will add another karelstad to the path in the esb processing, which will result in unknown paths
- * This makes sure accidental non-lowercase karelstads in the variables are dealt with
- * @param path
- * @returns
- */
-export function normalizeKarelstad(path: string): string {
-  return path.replace(/^([\\/]{2})karelstad(?=[\\/]|$)/i, '$1karelstad');
-}
-/**
- * Only return characters that are letters or numbers
- * Removes unwanted characters
- */
-
-export const normalizeString = (s: string): string =>
-  s.replace(/[^A-Za-z0-9]/g, '');
