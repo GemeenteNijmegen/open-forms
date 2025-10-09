@@ -2,6 +2,7 @@ import { Logger } from '@aws-lambda-powertools/logger';
 import { SendEmailCommand, SESClient } from '@aws-sdk/client-ses';
 import { InternalNotificationMailSubmission, InternalNotificationMailSubmissionSchema } from './InternalNotificationMailSubmission';
 import { trace } from '../shared/trace';
+import { createFullNetworkPath } from '../utils/buildPath';
 
 const HANDLER_ID = 'NOTIFICATION_MAIL';
 const logger = new Logger();
@@ -66,21 +67,7 @@ function constructNotificationEmail(submission: InternalNotificationMailSubmissi
   return [
     `Er is een nieuwe aanvraag ${submission.formName} binnengekomen met kenmerk ${submission.reference}`,
     (submission.networkShare || submission.monitoringNetworkShare) && 'U kunt de aanvraag op de volgende locaties terugvinden:',
-    submission.networkShare && `<${replaceForwardSlashes(submission.networkShare)}>`,
-    submission.monitoringNetworkShare && `<${replaceForwardSlashes(submission.monitoringNetworkShare)}>`,
+    submission.networkShare && createFullNetworkPath(submission.networkShare, submission.formName, submission.reference),
+    submission.monitoringNetworkShare && createFullNetworkPath(submission.monitoringNetworkShare, submission.formName, submission.reference),
   ].join('\n');
-}
-
-/**
- * @param stringToTransform
- * @returns string without forward slashes, only backslashes
- */
-export function replaceForwardSlashes(stringToTransform: string | undefined | null): string {
-  if (!stringToTransform) {
-    return '';
-  }
-  if (stringToTransform.includes('/')) {
-    return stringToTransform.replace(/\//g, '\\');
-  }
-  return stringToTransform;
 }

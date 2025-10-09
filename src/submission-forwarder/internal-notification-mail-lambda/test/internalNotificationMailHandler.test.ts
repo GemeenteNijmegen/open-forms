@@ -63,8 +63,8 @@ describe('handler', () => {
 
     expect(bodyToCheck).toContain('TestForm');
     expect(bodyToCheck).toContain('U kunt de aanvraag op de volgende locaties terugvinden');
-    expect(bodyToCheck).toContain('<\\\\server\\path\\to\\folder>'); // Double slashes because it escapes the slashes in the string
-    expect(bodyToCheck).toContain('<\\monitor\\path>'); // Double slashes because it escapes the slashes in the string
+    expect(bodyToCheck).toContain('<\\\\server\\path\\to\\folder\\TestForm-REF123>'); // Double slashes because it escapes the slashes in the string
+    expect(bodyToCheck).toContain('<\\monitor\\path\\TestForm-REF123>'); // Double slashes because it escapes the slashes in the string
   });
 
   it('should send an email with an enrichedObject without networkShare', async () => {
