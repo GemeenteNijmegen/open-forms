@@ -56,6 +56,9 @@
           "spawn": "bundle:nl-wallet/token/token.lambda"
         },
         {
+          "spawn": "bundle:static-form-definitions/formio-login/login-mock.lambda"
+        },
+        {
           "spawn": "bundle:static-form-definitions/lambda/StaticFormDefinitions.lambda"
         },
         {
@@ -132,6 +135,24 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/prefill-demo/handler.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"assets/prefill-demo/handler.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
+        }
+      ]
+    },
+    "bundle:static-form-definitions/formio-login/login-mock.lambda": {
+      "name": "bundle:static-form-definitions/formio-login/login-mock.lambda",
+      "description": "Create a JavaScript bundle from src/static-form-definitions/formio-login/login-mock.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/static-form-definitions/formio-login/login-mock.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"assets/static-form-definitions/formio-login/login-mock.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
+        }
+      ]
+    },
+    "bundle:static-form-definitions/formio-login/login-mock.lambda:watch": {
+      "name": "bundle:static-form-definitions/formio-login/login-mock.lambda:watch",
+      "description": "Continuously update the JavaScript bundle from src/static-form-definitions/formio-login/login-mock.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/static-form-definitions/formio-login/login-mock.lambda.ts --target=\"node22\" --platform=\"node\" --outfile=\"assets/static-form-definitions/formio-login/login-mock.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
         }
       ]
     },

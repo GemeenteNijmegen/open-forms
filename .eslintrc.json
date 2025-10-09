@@ -156,6 +156,7 @@
           "src/prefill-demo/handler.lambda.ts",
           "src/nl-wallet/prefill/prefill.lambda.ts",
           "src/nl-wallet/token/token.lambda.ts",
+          "src/static-form-definitions/formio-login/login-mock.lambda.ts",
           "src/static-form-definitions/lambda/StaticFormDefinitions.lambda.ts",
           "src/submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda.ts",
           "src/submission-forwarder/forwarder-lambda/forwarder.lambda.ts",
