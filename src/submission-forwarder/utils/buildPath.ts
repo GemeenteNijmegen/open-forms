@@ -1,14 +1,14 @@
-import { createNormalizedFolderName } from "./normalizeInput";
+import { createNormalizedFolderName } from './normalizeInput';
 /**
  * Returns a full network path of the (karelstad) folder
- * @param networkShare 
- * @param formName 
- * @param reference 
- * @returns 
+ * @param networkShare
+ * @param formName
+ * @param reference
+ * @returns
  */
 
-export function createFullNetworkPath(networkShare: string, formName: string, reference: string){
-  return `<${replaceForwardSlashes(networkShare)}\\${createNormalizedFolderName(formName, reference)}>`
+export function createFullNetworkPath(networkShare: string, formName: string, reference: string) {
+  return `<${replaceForwardSlashes(networkShare)}\\${createNormalizedFolderName(formName, reference)}>`;
 }
 
 /**

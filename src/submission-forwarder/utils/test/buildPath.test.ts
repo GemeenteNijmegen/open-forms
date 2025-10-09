@@ -1,4 +1,4 @@
-import { replaceForwardSlashes, createFullNetworkPath } from "../buildPath";
+import { replaceForwardSlashes, createFullNetworkPath } from '../buildPath';
 
 describe('replaceForwardSlashes', () => {
   test.each([
