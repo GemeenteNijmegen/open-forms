@@ -1501,6 +1501,9 @@ body {
   --utrecht-form-label-font-weight: bold;
   --of-utrecht-form-field-background-color: #ffffff;
   --of-utrecht-form-field-checkbox-background-color: #FFFFFF;
+  
+  --of-form-navigation-link-button-padding-inline-start: var(--utrecht-button-padding-inline-start);
+  --of-form-navigation-link-button-padding-inline-end: var(--utrecht-button-padding-inline-end);
 }
 
 /* Links not in a specified content block get default styling */
