@@ -1652,3 +1652,21 @@ a:hover,
   width: 46px;
 }
 */
+/*
+* Inloggen als medewerker
+*/
+.openforms-login-button>.utrecht-button-link[href*="org-oidc"]::after {
+  content: 'Inloggen als medewerker';
+  text-indent: 0;
+  display: block;
+  line-height: initial;
+}
+
+.openforms-login-button>.utrecht-button-link[href*="org-oidc"] {
+  text-indent: -9999px !important;
+  line-height: 0 !important;
+}
+
+.openforms-login-button>.utrecht-button-link[href*="org-oidc"]+.openforms-login-button-logo>img {
+  display: none;
+}
