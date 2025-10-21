@@ -83,7 +83,7 @@
     "@aws-sdk/lib-storage": "^3.913.0",
     "@gemeentenijmegen/apigateway-http": "^0.0.32",
     "@gemeentenijmegen/aws-constructs": "^0.0.44",
-    "@gemeentenijmegen/design-tokens": "^0.0.2-alpha.44",
+    "@gemeentenijmegen/design-tokens": "^0.0.2-alpha.47",
     "@gemeentenijmegen/modules-zgw-client": "^0.0.8",
     "@gemeentenijmegen/utils": "^0.0.38",
     "@types/aws-lambda": "^8.10.156",
