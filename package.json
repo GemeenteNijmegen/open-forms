@@ -52,7 +52,7 @@
     "projen": "npx projen"
   },
   "devDependencies": {
-    "@gemeentenijmegen/projen-project-type": "^1.11.6",
+    "@gemeentenijmegen/projen-project-type": "^1.11.7",
     "@stylistic/eslint-plugin": "^2",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.18.12",
@@ -78,7 +78,7 @@
     "@aws-sdk/client-s3": "^3.914.0",
     "@aws-sdk/client-ses": "^3.914.0",
     "@aws-sdk/client-sfn": "^3.914.0",
-    "@aws-sdk/client-sns": "^3.914.0",
+    "@aws-sdk/client-sns": "^3.915.0",
     "@aws-sdk/client-sqs": "^3.914.0",
     "@aws-sdk/lib-storage": "^3.914.0",
     "@gemeentenijmegen/apigateway-http": "^0.0.32",
