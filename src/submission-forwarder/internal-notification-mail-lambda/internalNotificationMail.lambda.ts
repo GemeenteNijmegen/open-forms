@@ -48,7 +48,7 @@ async function sendNotificationMail(submission: InternalNotificationMailSubmissi
   await ses.send(new SendEmailCommand({
     Message: {
       Subject: {
-        Data: `Aanvraag ${submission.formName} met kenmerk ${submission.reference}`,
+        Data: `${submission.formName} met kenmerk ${submission.reference}`,
       },
       Body: {
         Text: {
