@@ -73,7 +73,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@aws-lambda-powertools/logger": "2.28.1",
+    "@aws-lambda-powertools/logger": "2.29.0",
     "@aws-sdk/client-dynamodb": "^3.936.0",
     "@aws-sdk/client-s3": "^3.937.0",
     "@aws-sdk/client-ses": "^3.936.0",
