@@ -1520,6 +1520,11 @@ a:hover,
 }
 
 
+.openforms-formio-content img {
+  max-width: 100%;
+  height: auto;
+}
+
 @font-face {
   font-display: swap;
   font-family: 'Oranda BT';
