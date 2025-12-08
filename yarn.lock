@@ -1537,10 +1537,10 @@
   resolved "https://registry.yarnpkg.com/@gemeentenijmegen/aws-constructs/-/aws-constructs-0.0.46.tgz#1486a260ab919f45fbeeeca28f6a52865f68911c"
   integrity sha512-4964TlpreizKByd7F2c9bYHQc1VlTkzrQv4H40P0EDNoeR4mmf+GXW4D3Vn8A0ZZAHFpX3Lz7zpLNHT83S76qA==
 
-"@gemeentenijmegen/design-tokens@^0.0.2-alpha.81":
-  version "0.0.2-alpha.81"
-  resolved "https://registry.yarnpkg.com/@gemeentenijmegen/design-tokens/-/design-tokens-0.0.2-alpha.81.tgz#1f4d1a456d676abf77690c5b31daf9a06c8f91a6"
-  integrity sha512-f6sn1GyCHUcIBT+TUj4Zyj4CGIv/rZuYk5ukyTz7276vLSRmMjvcwrYovtL1ABKN3UlO+C56Fmwg1qCLYS9rtw==
+"@gemeentenijmegen/design-tokens@^0.0.2-alpha.84":
+  version "0.0.2-alpha.84"
+  resolved "https://registry.yarnpkg.com/@gemeentenijmegen/design-tokens/-/design-tokens-0.0.2-alpha.84.tgz#f67c524d9d5c22801de3f4504acd814a35afb564"
+  integrity sha512-n5XeiSb7O1ECGmSC5hzaOH+ACbLKg/9p3IZFZQNbtKHIlg9JuVoYLDKK4VpoMWSLiT73La0EDeMS25jQpJeisg==
 
 "@gemeentenijmegen/modules-zgw-client@^0.0.8":
   version "0.0.8"
@@ -3181,9 +3181,9 @@ base64-js@^1.0.2:
   integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
 
 baseline-browser-mapping@^2.9.0:
-  version "2.9.4"
-  resolved "https://registry.yarnpkg.com/baseline-browser-mapping/-/baseline-browser-mapping-2.9.4.tgz#a010e50ea6da48fba78179aef9b6e771d00fff42"
-  integrity sha512-ZCQ9GEWl73BVm8bu5Fts8nt7MHdbt5vY9bP6WGnUh+r3l8M7CgfyTlwsgCbMC66BNxPr6Xoce3j66Ms5YUQTNA==
+  version "2.9.5"
+  resolved "https://registry.yarnpkg.com/baseline-browser-mapping/-/baseline-browser-mapping-2.9.5.tgz#47f9549e0be1a84cd16651ac4c3b7d87a71408e6"
+  integrity sha512-D5vIoztZOq1XM54LUdttJVc96ggEsIfju2JBvht06pSzpckp3C7HReun67Bghzrtdsq9XdMGbSSB3v3GhMNmAA==
 
 bowser@^2.11.0:
   version "2.13.1"
