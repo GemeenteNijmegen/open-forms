@@ -1,303 +1,301 @@
 {
-    "Comment": "A description of my state machine",
-    "StartAt": "Log object",
-    "States": {
-        "Log object": {
-            "Type": "Pass",
-            "Next": "Backup",
-            "Comment": "Log the object we are processing"
-        },
-        "Backup": {
-            "Type": "Task",
-            "Arguments": {
-                "Body": "{% $states.input %}",
-                "Bucket": "${BACKUP_BUCKET_NAME}",
-                "Key": "{% $states.input.reference %}"
-            },
-            "Resource": "arn:aws:states:::aws-sdk:s3:putObject",
-            "Next": "Files to S3?",
-            "Output": "{% $states.input %}"
-        },
-        "Has notification email?": {
-            "Type": "Choice",
-            "Choices": [
-                {
-                    "Next": "Notification email",
-                    "Condition": "{% ($exists($states.input.internalNotificationEmails) and $exists($states.input.internalNotificationEmails[0])) %}",
-                    "Comment": "internalNotificationEmail(s) provided"
-                }
-            ],
-            "Default": "Success"
-        },
-        "Notification email": {
-            "Type": "Task",
-            "Resource": "arn:aws:states:::lambda:invoke",
-            "Output": "{% $states.result.Payload %}",
-            "Arguments": {
-                "FunctionName": "${NOTIFICATION_EMAIL_LAMBDA_ARN}",
-                "Payload": "{% $states.input %}"
-            },
-            "Retry": [
-                {
-                    "ErrorEquals": [
-                        "Lambda.ServiceException",
-                        "Lambda.AWSLambdaException",
-                        "Lambda.SdkClientException",
-                        "Lambda.TooManyRequestsException"
-                    ],
-                    "IntervalSeconds": 1,
-                    "MaxAttempts": 3,
-                    "BackoffRate": 2,
-                    "JitterStrategy": "FULL"
-                }
-            ],
-            "Next": "Success"
-        },
-        "Files to S3?": {
-            "Type": "Choice",
-            "Choices": [
-                {
-                    "Comment": "Has PDF key",
-                    "Next": "Store files in S3",
-                    "Condition": "{% ($exists($states.input.pdf)) %}"
-                }
-            ],
-            "Default": "ZGW registration?"
-        },
-        "Store files in S3": {
-            "Type": "Task",
-            "Resource": "arn:aws:states:::lambda:invoke",
-            "Arguments": {
-                "FunctionName": "${S3_STORAGE_LAMBDA_ARN}",
-                "Payload": "{% $states.input %}"
-            },
-            "Retry": [
-                {
-                    "ErrorEquals": [
-                        "Lambda.ServiceException",
-                        "Lambda.AWSLambdaException",
-                        "Lambda.SdkClientException",
-                        "Lambda.TooManyRequestsException"
-                    ],
-                    "IntervalSeconds": 1,
-                    "MaxAttempts": 3,
-                    "BackoffRate": 2,
-                    "JitterStrategy": "FULL"
-                }
-            ],
-            "Next": "Networkshare ESF VIP or Sociaal",
-            "Output": "{% $states.result.Payload %}"
-        },
-        "Networkshare ESF VIP or Sociaal": {
-            "Type": "Choice",
-            "Choices": [
-                {
-                    "Comment": "has statusformulier URL",
-                    "Next": "ESF ESB Queue",
-                    "Condition": "{% ($contains($states.input.enrichedObject.taak.formtaak.formulier.value, \"nijmegen.nl/statusformulier\") and $exists($states.input.enrichedObject.taak.formtaak.formulier.value)) %}"
-                },
-                {
-                    "Next": "VIP/JZ4ALL forward",
-                    "Condition": "{% ($contains($states.input.enrichedObject.appId, \"JUR\") or $contains($states.input.enrichedObject.appId, \"APV\")) %}",
-                    "Comment": "VIP/JZ4ALL"
-                },
-                {
-                    "Condition": "{% $exists($states.input.enrichedObject.sociaalDomeinRegeling) %}",
-                    "Comment": "Sociaal Domein Aanvraag",
-                    "Next": "Sociaal To ESB Folder?"
-                },
-                                {
-                    "Comment": "contains networkshare / monitoring",
-                    "Next": "ESB Forwarder",
-                    "Condition": "{% ($exists($states.input.enrichedObject.networkShare) or $exists($states.input.enrichedObject.monitoringNetworkShare)) %}"
-                }
-            ],
-            "Default": "ZGW registration?"
-        },
-        "Sociaal To ESB Folder?": {
-  "Type": "Choice",
-  "Choices": [
-    {
-      "Comment": "Sociaal: has monitoringNetworkShare on enrichedZGWObject",
-      "Condition": "{% $exists($states.input.enrichedObject.networkShare) %}",
-      "Next": "Sociaal ESB Forwarder"
-    }
-  ],
-  "Default": "Sociaal Register ZGW"
-},
-
-        "Sociaal ESB Forwarder": {
-        "Type": "Task",
-        "Resource": "arn:aws:states:::lambda:invoke",
-        "Arguments": {
-            "FunctionName": "${FORWARDER_LAMBDA_ARN}",
-            "Payload": "{% $states.input %}"
-        },
-        "Output": "{% $states.input %}",
-        "Retry": [
-            {
-            "ErrorEquals": [
-                "Lambda.ServiceException",
-                "Lambda.AWSLambdaException",
-                "Lambda.SdkClientException",
-                "Lambda.TooManyRequestsException"
-            ],
-            "IntervalSeconds": 1,
-            "MaxAttempts": 3,
-            "BackoffRate": 2,
-            "JitterStrategy": "FULL"
-            }
-        ],
-        "Next": "Sociaal Register ZGW"
-        },
-        "Sociaal Register ZGW": {
-            "Type": "Task",
-            "Resource": "arn:aws:states:::lambda:invoke",
-            "Output": "{% $states.result.Payload %}",
-            "Arguments": {
-                "FunctionName": "${ZGW_REGISTRATION_LAMBDA_ARN}",
-                "Payload": "{% $states.input %}"
-            },
-            "Retry": [
-                {
-                    "ErrorEquals": [
-                        "Lambda.ServiceException",
-                        "Lambda.AWSLambdaException",
-                        "Lambda.SdkClientException",
-                        "Lambda.TooManyRequestsException"
-                    ],
-                    "IntervalSeconds": 1,
-                    "MaxAttempts": 3,
-                    "BackoffRate": 2,
-                    "JitterStrategy": "FULL"
-                }
-            ],
-            "Next": "Sociaal notification email?"
-        },
-                "Sociaal notification email?": {
-        "Type": "Choice",
-        "Choices": [
-            {
-            "Comment": "Sociaal: internalNotificationEmail(s) on enrichedZGWObject",
-            "Condition": "{% $exists($states.input.enrichedObject.internalNotificationEmails[0]) %}",
-            "Next": "Sociaal Internal Notification Email"
-            }
-        ],
-        "Default": "Sociaal SQS SendMessage"
-        },
-
-        "Sociaal Internal Notification Email": {
-        "Type": "Task",
-        "Resource": "arn:aws:states:::lambda:invoke",
-        "Output": "{% $states.result.Payload %}",
-        "Arguments": {
-            "FunctionName": "${NOTIFICATION_EMAIL_LAMBDA_ARN}",
-            "Payload": "{% $states.input %}"
-        },
-        "Next": "Sociaal SQS SendMessage"
-        },
-        "Sociaal SQS SendMessage": {
-            "Type": "Task",
-            "Resource": "arn:aws:states:::sqs:sendMessage",
-            "Arguments": {
-                "MessageBody": "{% $states.input %}",
-                "QueueUrl": "${SOCIAAL_QUEUE_URL}"
-            },
-            "Comment": "Sociaal SQS",
-            "Next": "Success"
-        },
-        "ESF ESB Queue": {
-            "Type": "Task",
-            "Resource": "arn:aws:states:::sqs:sendMessage",
-            "Arguments": {
-                "MessageBody": "{% $states.input %}",
-                "QueueUrl": "${ESF_QUEUE_URL}"
-            },
-            "Next": "Success"
-        },
-        "ESB Forwarder": {
-            "Type": "Task",
-            "Resource": "arn:aws:states:::lambda:invoke",
-            "Output": "{% $states.input.enrichedObject %}",
-            "Arguments": {
-                "FunctionName": "${FORWARDER_LAMBDA_ARN}",
-                "Payload": "{% $states.input %}"
-            },
-            "Retry": [
-                {
-                    "ErrorEquals": [
-                        "Lambda.ServiceException",
-                        "Lambda.AWSLambdaException",
-                        "Lambda.SdkClientException",
-                        "Lambda.TooManyRequestsException"
-                    ],
-                    "IntervalSeconds": 1,
-                    "MaxAttempts": 3,
-                    "BackoffRate": 2,
-                    "JitterStrategy": "FULL"
-                }
-            ],
-            "Next": "ZGW registration?"
-        },
-        "ZGW registration?": {
-            "Type": "Choice",
-            "Choices": [
-                {
-                    "Next": "Register ZGW",
-                    "Condition": "{% ($exists($states.input.bsn) or $exists($states.input.kvk)) %}",
-                    "Comment": "Has bsn or kvk"
-                }
-            ],
-            "Default": "Has notification email?"
-        },
-        "Register ZGW": {
-            "Type": "Task",
-            "Resource": "arn:aws:states:::lambda:invoke",
-            "Output": "{% $states.input %}",
-            "Arguments": {
-                "FunctionName": "${ZGW_REGISTRATION_LAMBDA_ARN}",
-                "Payload": "{% $states.input %}"
-            },
-            "Next": "Has notification email?",
-            "Catch": [
-                {
-                    "ErrorEquals": [
-                        "States.ALL"
-                    ],
-                    "Comment": "ZGW Error catcher",
-                    "Next": "Has notification email?",
-                    "Output": "{% $states.input %}"
-                }
-            ]
-        },
-        "Success": {
-            "Type": "Succeed"
-        },
-        "VIP/JZ4ALL forward": {
-            "Type": "Task",
-            "Resource": "arn:aws:states:::lambda:invoke",
-            "Output": "{% $states.result.Payload %}",
-            "Arguments": {
-                "FunctionName": "${VIP_TRANSFORMATION_LAMBDA_ARN}",
-                "Payload": "{% $states.input %}"
-            },
-            "Retry": [
-                {
-                    "ErrorEquals": [
-                        "Lambda.ServiceException",
-                        "Lambda.AWSLambdaException",
-                        "Lambda.SdkClientException",
-                        "Lambda.TooManyRequestsException"
-                    ],
-                    "IntervalSeconds": 1,
-                    "MaxAttempts": 3,
-                    "BackoffRate": 2,
-                    "JitterStrategy": "FULL"
-                }
-            ],
-            "Comment": "VIP/JZ4ALL translation",
-            "Next": "Success"
-        }
+  "Comment": "A description of my state machine",
+  "StartAt": "Log object",
+  "States": {
+    "Log object": {
+      "Type": "Pass",
+      "Next": "Backup",
+      "Comment": "Log the object we are processing"
     },
-    "QueryLanguage": "JSONata"
+    "Backup": {
+      "Type": "Task",
+      "Arguments": {
+        "Body": "{% $states.input %}",
+        "Bucket": "${BACKUP_BUCKET_NAME}",
+        "Key": "{% $states.input.reference %}"
+      },
+      "Resource": "arn:aws:states:::aws-sdk:s3:putObject",
+      "Next": "Files to S3?",
+      "Output": "{% $states.input %}"
+    },
+    "Has notification email?": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Next": "Notification email",
+          "Condition": "{% ($exists($states.input.internalNotificationEmails) and $exists($states.input.internalNotificationEmails[0])) %}",
+          "Comment": "internalNotificationEmail(s) provided"
+        }
+      ],
+      "Default": "Success"
+    },
+    "Notification email": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Output": "{% $states.result.Payload %}",
+      "Arguments": {
+        "FunctionName": "${NOTIFICATION_EMAIL_LAMBDA_ARN}",
+        "Payload": "{% $states.input %}"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2,
+          "JitterStrategy": "FULL"
+        }
+      ],
+      "Next": "Success"
+    },
+    "Files to S3?": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Comment": "Has PDF key",
+          "Next": "Store files in S3",
+          "Condition": "{% ($exists($states.input.pdf)) %}"
+        }
+      ],
+      "Default": "ZGW registration?"
+    },
+    "Store files in S3": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Arguments": {
+        "FunctionName": "${S3_STORAGE_LAMBDA_ARN}",
+        "Payload": "{% $states.input %}"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2,
+          "JitterStrategy": "FULL"
+        }
+      ],
+      "Next": "Networkshare ESF VIP or Sociaal",
+      "Output": "{% $states.result.Payload %}"
+    },
+    "Networkshare ESF VIP or Sociaal": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Comment": "has statusformulier URL",
+          "Next": "ESF ESB Queue",
+          "Condition": "{% ($contains($states.input.enrichedObject.taak.formtaak.formulier.value, \"nijmegen.nl/statusformulier\") and $exists($states.input.enrichedObject.taak.formtaak.formulier.value)) %}"
+        },
+        {
+          "Next": "VIP/JZ4ALL forward",
+          "Condition": "{% ($contains($states.input.enrichedObject.appId, \"JUR\") or $contains($states.input.enrichedObject.appId, \"APV\")) %}",
+          "Comment": "VIP/JZ4ALL"
+        },
+        {
+          "Condition": "{% $exists($states.input.enrichedObject.sociaalDomeinRegeling) %}",
+          "Comment": "Sociaal Domein Aanvraag",
+          "Next": "Sociaal To ESB Folder?"
+        },
+        {
+          "Comment": "contains networkshare / monitoring",
+          "Next": "ESB Forwarder",
+          "Condition": "{% ($exists($states.input.enrichedObject.networkShare) or $exists($states.input.enrichedObject.monitoringNetworkShare)) %}"
+        }
+      ],
+      "Default": "ZGW registration?"
+    },
+    "Sociaal To ESB Folder?": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Comment": "Sociaal: has monitoringNetworkShare on enrichedZGWObject",
+          "Condition": "{% $exists($states.input.enrichedObject.networkShare) %}",
+          "Next": "Sociaal ESB Forwarder"
+        }
+      ],
+      "Default": "Sociaal Register ZGW"
+    },
+
+    "Sociaal ESB Forwarder": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Arguments": {
+        "FunctionName": "${FORWARDER_LAMBDA_ARN}",
+        "Payload": "{% $states.input %}"
+      },
+      "Output": "{% $states.input %}",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2,
+          "JitterStrategy": "FULL"
+        }
+      ],
+      "Next": "Sociaal Register ZGW"
+    },
+    "Sociaal Register ZGW": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Output": "{% $states.result.Payload %}",
+      "Arguments": {
+        "FunctionName": "${ZGW_REGISTRATION_LAMBDA_ARN}",
+        "Payload": "{% $states.input %}"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2,
+          "JitterStrategy": "FULL"
+        }
+      ],
+      "Next": "Sociaal notification email?"
+    },
+    "Sociaal notification email?": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Comment": "Sociaal: internalNotificationEmail(s) on enrichedZGWObject",
+          "Condition": "{% $exists($states.input.enrichedObject.internalNotificationEmails[0]) %}",
+          "Next": "Sociaal Internal Notification Email"
+        }
+      ],
+      "Default": "Sociaal SQS SendMessage"
+    },
+
+    "Sociaal Internal Notification Email": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Output": "{% $states.result.Payload %}",
+      "Arguments": {
+        "FunctionName": "${NOTIFICATION_EMAIL_LAMBDA_ARN}",
+        "Payload": "{% $states.input %}"
+      },
+      "Next": "Sociaal SQS SendMessage"
+    },
+    "Sociaal SQS SendMessage": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sqs:sendMessage",
+      "Arguments": {
+        "MessageBody": "{% $states.input %}",
+        "QueueUrl": "${SOCIAAL_QUEUE_URL}"
+      },
+      "Comment": "Sociaal SQS",
+      "Next": "Success"
+    },
+    "ESF ESB Queue": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sqs:sendMessage",
+      "Arguments": {
+        "MessageBody": "{% $states.input %}",
+        "QueueUrl": "${ESF_QUEUE_URL}"
+      },
+      "Next": "Success"
+    },
+    "ESB Forwarder": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Output": "{% $states.input.enrichedObject %}",
+      "Arguments": {
+        "FunctionName": "${FORWARDER_LAMBDA_ARN}",
+        "Payload": "{% $states.input %}"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2,
+          "JitterStrategy": "FULL"
+        }
+      ],
+      "Next": "ZGW registration?"
+    },
+    "ZGW registration?": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Next": "Register ZGW",
+          "Condition": "{% ($exists($states.input.bsn) or $exists($states.input.kvk)) %}",
+          "Comment": "Has bsn or kvk"
+        }
+      ],
+      "Default": "Has notification email?"
+    },
+    "Register ZGW": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Output": "{% $states.input %}",
+      "Arguments": {
+        "FunctionName": "${ZGW_REGISTRATION_LAMBDA_ARN}",
+        "Payload": "{% $states.input %}"
+      },
+      "Next": "Has notification email?",
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Comment": "ZGW Error catcher",
+          "Next": "Has notification email?",
+          "Output": "{% $states.input %}"
+        }
+      ]
+    },
+    "Success": {
+      "Type": "Succeed"
+    },
+    "VIP/JZ4ALL forward": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Output": "{% $states.result.Payload %}",
+      "Arguments": {
+        "FunctionName": "${VIP_TRANSFORMATION_LAMBDA_ARN}",
+        "Payload": "{% $states.input %}"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2,
+          "JitterStrategy": "FULL"
+        }
+      ],
+      "Comment": "VIP/JZ4ALL translation",
+      "Next": "Success"
+    }
+  },
+  "QueryLanguage": "JSONata"
 }
