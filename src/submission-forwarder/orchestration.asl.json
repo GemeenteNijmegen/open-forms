@@ -119,37 +119,37 @@
   "Choices": [
     {
       "Comment": "Sociaal: has monitoringNetworkShare on enrichedZGWObject",
-      "Condition": "{% $exists($states.input.enrichedZGWObject.monitoringNetworkShare) %}",
+      "Condition": "{% $exists($states.input.enrichedObject.networkShare) %}",
       "Next": "Sociaal ESB Forwarder"
     }
   ],
   "Default": "Sociaal Register ZGW"
 },
 
-"Sociaal ESB Forwarder": {
-  "Type": "Task",
-  "Resource": "arn:aws:states:::lambda:invoke",
-  "Arguments": {
-    "FunctionName": "${FORWARDER_LAMBDA_ARN}",
-    "Payload": "{% $states.input %}"
-  },
-  "Output": "{% $states.input %}",
-  "Retry": [
-    {
-      "ErrorEquals": [
-        "Lambda.ServiceException",
-        "Lambda.AWSLambdaException",
-        "Lambda.SdkClientException",
-        "Lambda.TooManyRequestsException"
-      ],
-      "IntervalSeconds": 1,
-      "MaxAttempts": 3,
-      "BackoffRate": 2,
-      "JitterStrategy": "FULL"
-    }
-  ],
-  "Next": "Sociaal Register ZGW"
-},
+        "Sociaal ESB Forwarder": {
+        "Type": "Task",
+        "Resource": "arn:aws:states:::lambda:invoke",
+        "Arguments": {
+            "FunctionName": "${FORWARDER_LAMBDA_ARN}",
+            "Payload": "{% $states.input %}"
+        },
+        "Output": "{% $states.input %}",
+        "Retry": [
+            {
+            "ErrorEquals": [
+                "Lambda.ServiceException",
+                "Lambda.AWSLambdaException",
+                "Lambda.SdkClientException",
+                "Lambda.TooManyRequestsException"
+            ],
+            "IntervalSeconds": 1,
+            "MaxAttempts": 3,
+            "BackoffRate": 2,
+            "JitterStrategy": "FULL"
+            }
+        ],
+        "Next": "Sociaal Register ZGW"
+        },
         "Sociaal Register ZGW": {
             "Type": "Task",
             "Resource": "arn:aws:states:::lambda:invoke",
@@ -179,7 +179,7 @@
         "Choices": [
             {
             "Comment": "Sociaal: internalNotificationEmail(s) on enrichedZGWObject",
-            "Condition": "{% ($exists($states.input.enrichedZGWObject.internalNotificationEmails) and $exists($states.input.enrichedZGWObject.internalNotificationEmails[0])) %}",
+            "Condition": "{% $exists($states.input.enrichedObject.internalNotificationEmails[0]) %}",
             "Next": "Sociaal Internal Notification Email"
             }
         ],
