@@ -89,6 +89,35 @@
       "items": { "type": "string" },
       "examples": [["https://.../bijlage1", "https://.../bijlage2"]]
     },
+    "networkShare": {
+      "type": "string",
+      "examples": [
+        "//karelstad/data/gemeenschappelijk/Webformulieren/Accp/TDL"
+      ],
+      "description": "De hoofdmap op de netwerkschijf waar de een map aangemaakt moet worden en de bestanden naartoe geschreven worden"
+    },
+    "monitoringNetworkShare": {
+      "type": "string",
+      "examples": [
+        "/karelstad/data/gemeenschappelijk/Webformulieren/Accp/TDL/Monitoring"
+      ],
+      "description": "Optionele locatie voor monitoring. Indien deze waarde gevuld is, wordt de aanvraag met bijlagen ook in deze map geplaatst."
+    },
+    "internalNotificationEmails": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "email"
+      },
+      "description": "E‑mail addresses of internal employees or departments to notify when a new submission arrives.",
+      "default": [],
+      "examples": [["ops-team@example.com", "support@example.com"]]
+    },
+    "bsnOrKvkToFile": {
+      "type": "boolean",
+      "examples": [true, false],
+      "description": "Indicates if the bsn / kvk field should be saved to a separate text file."
+    },
     "aanvragerGegevens": {
       "type": "object",
       "description": "Extra gegevens van de aanvrager om extra datachecks te kunnen doen.",

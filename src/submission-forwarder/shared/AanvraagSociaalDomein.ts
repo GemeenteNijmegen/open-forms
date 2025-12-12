@@ -78,6 +78,10 @@ export const AanvraagSociaalDomeinSchema = z.object({
   formName: z.string(),
   reference: z.string(),
   attachments: z.array(z.string()),
+  networkShare: z.string().optional(),
+  monitoringNetworkShare: z.string().optional().nullable(),
+  internalNotificationEmails: z.array(z.string()).optional().nullable(),
+  bsnOrKvkToFile: z.boolean().optional().nullable(),
   aanvragerGegevens: z.object({
     email: z.string().optional(),
     telefoonnummer: z.string().optional(),
