@@ -33,7 +33,7 @@ const PartnerSchema = z.object({
   Nationaliteit: NationaliteitSchema.optional(),
   Iban: z.string().optional(),
   Telefoonnr: TelefoonSchema.optional(),
-  EMailAdresClient: z.string().email().optional(),
+  EMailAdresClient: z.string().optional(),
 });
 
 const RelatieSchema = z.object({
@@ -58,7 +58,7 @@ const ClientSchema = z.object({
   Nationaliteit: NationaliteitSchema.optional(),
   Iban: z.string().optional(),
   Telefoonnr: TelefoonSchema.optional(),
-  EMailAdresClient: z.string().email().optional(),
+  EMailAdresClient: z.string().optional(),
   relatie: RelatieSchema.optional(),
 });
 
