@@ -2,7 +2,7 @@
 
 * text=auto eol=lf
 *.snap linguist-generated
-/.eslintrc.json linguist-generated linguist-language=JSON-with-Comments
+/.eslintrc.json linguist-generated
 /.gitattributes linguist-generated
 /.github/pull_request_template.md linguist-generated
 /.github/workflows/auto-merge.yml linguist-generated
@@ -32,6 +32,6 @@
 /src/submission-forwarder/resubmit-lambda/resubmit-function.ts linguist-generated
 /src/submission-forwarder/vip-transformation-lambda/vip-transformation-function.ts linguist-generated
 /src/submission-forwarder/zgw-registration-lambda/zgw-registration-function.ts linguist-generated
-/tsconfig.dev.json linguist-generated linguist-language=JSON-with-Comments
-/tsconfig.json linguist-generated linguist-language=JSON-with-Comments
+/tsconfig.dev.json linguist-generated
+/tsconfig.json linguist-generated
 /yarn.lock linguist-generated
