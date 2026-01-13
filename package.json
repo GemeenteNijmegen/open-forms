@@ -10,6 +10,8 @@
     "bundle:nl-wallet/token/token.lambda:watch": "npx projen bundle:nl-wallet/token/token.lambda:watch",
     "bundle:prefill-demo/handler.lambda": "npx projen bundle:prefill-demo/handler.lambda",
     "bundle:prefill-demo/handler.lambda:watch": "npx projen bundle:prefill-demo/handler.lambda:watch",
+    "bundle:receiver-monitoring/lambda/ReceiverMonitoring.lambda": "npx projen bundle:receiver-monitoring/lambda/ReceiverMonitoring.lambda",
+    "bundle:receiver-monitoring/lambda/ReceiverMonitoring.lambda:watch": "npx projen bundle:receiver-monitoring/lambda/ReceiverMonitoring.lambda:watch",
     "bundle:static-form-definitions/formio-login/login-mock.lambda": "npx projen bundle:static-form-definitions/formio-login/login-mock.lambda",
     "bundle:static-form-definitions/formio-login/login-mock.lambda:watch": "npx projen bundle:static-form-definitions/formio-login/login-mock.lambda:watch",
     "bundle:static-form-definitions/lambda/StaticFormDefinitions.lambda": "npx projen bundle:static-form-definitions/lambda/StaticFormDefinitions.lambda",

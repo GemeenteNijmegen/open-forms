@@ -5,10 +5,12 @@ import { Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { Key } from 'aws-cdk-lib/aws-kms';
 import { ARecord, HostedZone, IHostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { ApiGatewayDomain } from 'aws-cdk-lib/aws-route53-targets';
+import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 import { Configurable } from './Configuration';
 import { PrefillDemo } from './prefill-demo/PrefillDemoConstruct';
+import { ReceiverMonitoring } from './receiver-monitoring/ReceiverMonitoring';
 import { StaticFormDefinitions } from './static-form-definitions/StaticFormDefinitions';
 import { Statics } from './Statics';
 import { SubmissionForwarder } from './submission-forwarder/SubmissionForwarder';
@@ -40,7 +42,7 @@ export class MainStack extends Stack {
 
     // Setup the submission forwarder
     const forwarderResource = this.api.root.addResource('submission-forwarder');
-    new SubmissionForwarder(this, 'submission-forwarder', {
+    const submissionForwarder = new SubmissionForwarder(this, 'submission-forwarder', {
       key: this.key,
       resource: forwarderResource,
       criticality: props.configuration.criticality,
@@ -50,7 +52,7 @@ export class MainStack extends Stack {
     });
 
     this.setupStaticFromDefinitions();
-
+    this.setupReceiverMonitoring(submissionForwarder.stepFunctionArn);
   }
 
   /**
@@ -59,6 +61,13 @@ export class MainStack extends Stack {
   private setupStaticFromDefinitions() {
     new StaticFormDefinitions(this, 'static-form-definitions', {
       api: this.api,
+      logLevel: this.props.configuration.logLevel ?? 'INFO',
+    });
+  }
+
+  private setupReceiverMonitoring(stepFunctionArn: string) {
+    new ReceiverMonitoring(this, 'receiver-monitoring', {
+      stepFunctionArn,
       logLevel: this.props.configuration.logLevel ?? 'INFO',
     });
   }

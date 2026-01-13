@@ -23,6 +23,7 @@
 /src/nl-wallet/prefill/prefill-function.ts linguist-generated
 /src/nl-wallet/token/token-function.ts linguist-generated
 /src/prefill-demo/handler-function.ts linguist-generated
+/src/receiver-monitoring/lambda/ReceiverMonitoring-function.ts linguist-generated
 /src/static-form-definitions/formio-login/login-mock-function.ts linguist-generated
 /src/static-form-definitions/lambda/StaticFormDefinitions-function.ts linguist-generated
 /src/submission-forwarder/documentsToS3Storage/documentsToS3Storage-function.ts linguist-generated

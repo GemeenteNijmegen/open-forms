@@ -19,6 +19,7 @@
     "src/nl-wallet/prefill/prefill-function.ts",
     "src/nl-wallet/token/token-function.ts",
     "src/prefill-demo/handler-function.ts",
+    "src/receiver-monitoring/lambda/ReceiverMonitoring-function.ts",
     "src/static-form-definitions/formio-login/login-mock-function.ts",
     "src/static-form-definitions/lambda/StaticFormDefinitions-function.ts",
     "src/submission-forwarder/documentsToS3Storage/documentsToS3Storage-function.ts",

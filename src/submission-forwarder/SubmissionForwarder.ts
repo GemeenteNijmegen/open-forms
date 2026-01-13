@@ -63,7 +63,8 @@ export class SubmissionForwarder extends Construct {
   private esbDeadLetterQueue?: Queue;
   private submissionTopic: Topic;
   private readonly bucket: Bucket;
-  private readonly backupBucket: Bucket;
+  private backupBucket: Bucket;
+  public readonly stepFunctionArn: string;
   // Remove after mocks are removed. This provides access to lambda for sns publishing
   private wowebRole: Role;
   private wowebUser: User;
@@ -114,6 +115,7 @@ export class SubmissionForwarder extends Construct {
       esfQueue.queue,
       sociaalQueue.queue,
     );
+    this.stepFunctionArn = orchestrator.stateMachineArn;
     this.setupReceiverLambda(orchestrator);
     this.setupResubmitLambda(orchestrator);
   }

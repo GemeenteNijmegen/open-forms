@@ -56,6 +56,9 @@
           "spawn": "bundle:nl-wallet/token/token.lambda"
         },
         {
+          "spawn": "bundle:receiver-monitoring/lambda/ReceiverMonitoring.lambda"
+        },
+        {
           "spawn": "bundle:static-form-definitions/formio-login/login-mock.lambda"
         },
         {
@@ -135,6 +138,24 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/prefill-demo/handler.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/prefill-demo/handler.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
+        }
+      ]
+    },
+    "bundle:receiver-monitoring/lambda/ReceiverMonitoring.lambda": {
+      "name": "bundle:receiver-monitoring/lambda/ReceiverMonitoring.lambda",
+      "description": "Create a JavaScript bundle from src/receiver-monitoring/lambda/ReceiverMonitoring.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/receiver-monitoring/lambda/ReceiverMonitoring.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/receiver-monitoring/lambda/ReceiverMonitoring.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
+        }
+      ]
+    },
+    "bundle:receiver-monitoring/lambda/ReceiverMonitoring.lambda:watch": {
+      "name": "bundle:receiver-monitoring/lambda/ReceiverMonitoring.lambda:watch",
+      "description": "Continuously update the JavaScript bundle from src/receiver-monitoring/lambda/ReceiverMonitoring.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/receiver-monitoring/lambda/ReceiverMonitoring.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/receiver-monitoring/lambda/ReceiverMonitoring.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
         }
       ]
     },

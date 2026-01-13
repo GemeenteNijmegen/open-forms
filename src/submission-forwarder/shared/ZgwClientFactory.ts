@@ -75,9 +75,9 @@ export class ZgwClientFactory {
   }
 
   async getObjectsApiClient() {
-    await this.loadCredentials();
+    await this.loadObjectsCredentials();
     if (!this.objectsApikey) {
-      throw Error('Initalization of the credentials failed');
+      throw Error('Initalization of the objects api credentials failed');
     }
     return new ObjectsApiClient({ apikey: this.objectsApikey });
   }
@@ -108,9 +108,19 @@ export class ZgwClientFactory {
       try {
         this.clientId = await AWS.getParameter(this.credentials.clientIdSsm);
         this.clientSecret = await AWS.getSecret(this.credentials.clientSecretArn);
-        this.objectsApikey = await AWS.getSecret(this.credentials.objectsApikeyArn);
       } catch (error) {
         console.error('Error retrieving credentials for zgwclient', error);
+        throw error;
+      }
+    }
+  }
+
+  private async loadObjectsCredentials() {
+    if (!this.clientId || !this.clientSecret || !this.objectsApikey) {
+      try {
+        this.objectsApikey = await AWS.getSecret(this.credentials.objectsApikeyArn);
+      } catch (error) {
+        console.error('Error retrieving credentials for Objects Api zgwclient', error);
         throw error;
       }
     }
