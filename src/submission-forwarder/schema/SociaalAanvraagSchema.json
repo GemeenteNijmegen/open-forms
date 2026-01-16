@@ -1,8 +1,8 @@
 {
   "$id": "https://example.com/schemas/AanvragenSociaalDomein.json",
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "AanvragenSociaalDomein",
   "type": "object",
+  "title": "AanvragenSociaalDomein",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "required": [
     "pdf",
     "reference",
@@ -11,83 +11,500 @@
     "sociaalDomeinRegeling",
     "zaaktypeIdentificatie"
   ],
-  "description": "Gehele object aanvragen sociaal domein met verschillende regelingen. Voor nu nog los opgezet, weinig verplicht om te zorgen dat de connectie goed gemaakt kan worden.",
   "properties": {
-    "sociaalDomeinRegeling": {
-      "type": "string",
-      "description": "Naam van de regeling die aangevraagd wordt",
-      "examples": ["BIJSTAND", "BBZ", "IIT"]
-    },
-    "zaaktypeIdentificatie": {
-      "type": "string",
-      "description": "Identificatie van het zaaktype in open‑zaak",
-      "examples": ["BIJSTAND-AANVRAAG", "INDIVIDUELE-INKOMENSTOESLAG"]
-    },
-    "aardVerzoek": {
-      "type": "string",
-      "description": "Aard van het verzoek (GWS)",
-      "examples": []
-    },
-    "datumAanvraag": {
-      "type": "string",
-      "description": "Datum van aanvraag (nog kijken naar format",
-      "examples": ["2025-07-29"]
-    },
-    "datumStartAanvraag": {
-      "type": "string",
-      "description": "Startdatum van de aanvraag. Wanneer heeft iemand voor het eerst het formulier geopend zonder af te maken? Format nog onbekend.",
-      "examples": ["2025-08-01"]
-    },
-    "indBestaandeKlant": {
-      "type": "string",
-      "description": "Indicatie bestaande klant (ja/nee). Voor nu nog niet bedacht wat het format moet zijn.",
-      "examples": ["JA"]
-    },
     "bsn": {
       "type": "string",
-      "description": "BSN indien ingevuld",
-      "examples": ["999999333"]
+      "examples": [
+        "999999333"
+      ],
+      "description": "BSN indien ingevuld"
     },
-    "bsnNamens": {
+    "csv": {
       "type": "string",
-      "description": "BSN indien handmatig gevuld namens iemand",
-      "examples": ["999999333"]
+      "examples": [
+        "https://omgeving/open-zaak/documenten/.../uuid"
+      ],
+      "description": "CSV url"
     },
     "kvk": {
       "type": "string",
-      "description": "KVK indien gevuld",
-      "examples": ["69599084"]
-    },
-    "kvkNamens": {
-      "type": "string",
-      "description": "KVK indien handmatig gevuld namens iemand",
-      "examples": ["69599084"]
-    },
-    "inlogmiddel": {
-      "type": "string",
-      "description": "erhekenning of digid",
-      "examples": ["digid"]
+      "examples": [
+        "69599084"
+      ],
+      "description": "KVK indien gevuld"
     },
     "pdf": {
       "type": "string",
-      "description": "PDF url",
-      "examples": ["https://omgeving/open-zaak/documenten/.../uuid"]
+      "examples": [
+        "https://omgeving/open-zaak/documenten/.../uuid"
+      ],
+      "description": "PDF url"
+    },
+    "client": {
+      "type": "object",
+      "relatie": {
+        "type": "object",
+        "properties": {
+          "Partner": {
+            "type": "object",
+            "properties": {
+              "Iban": {
+                "type": "string",
+                "examples": [
+                  "NL12ABCD0123456789"
+                ],
+                "description": "IBAN van partner"
+              },
+              "Geslacht": {
+                "type": "string",
+                "examples": [
+                  "V"
+                ],
+                "description": "Geslacht partner"
+              },
+              "Voornamen": {
+                "type": "string",
+                "examples": [
+                  "Anna Maria"
+                ],
+                "description": "Volledige voornamen"
+              },
+              "Achternaam": {
+                "type": "string",
+                "examples": [
+                  "Jong"
+                ],
+                "description": "Achternaam partner"
+              },
+              "Telefoonnr": {
+                "type": "object",
+                "properties": {
+                  "Netnr": {
+                    "type": "string",
+                    "examples": [
+                      "024"
+                    ]
+                  },
+                  "Abonneenr": {
+                    "type": "string",
+                    "examples": [
+                      "1234567"
+                    ]
+                  },
+                  "TypeTelefoonnr": {
+                    "type": "string",
+                    "examples": [
+                      "MOBIEL"
+                    ]
+                  }
+                },
+                "description": "Telefoonnummer partner"
+              },
+              "Voorletters": {
+                "type": "string",
+                "examples": [
+                  "A.M."
+                ],
+                "description": "Initialen partner"
+              },
+              "Voorvoegsel": {
+                "type": "string",
+                "examples": [
+                  "de"
+                ],
+                "description": "Voorvoegsel achternaam partner"
+              },
+              "Geboortedatum": {
+                "type": "string",
+                "format": "date",
+                "examples": [
+                  "1983-11-20"
+                ],
+                "description": "Geboortedatum partner (YYYY‑MM‑DD)"
+              },
+              "Nationaliteit": {
+                "type": "object",
+                "properties": {
+                  "CdNationaliteit": {
+                    "type": "string",
+                    "examples": [
+                      "NL"
+                    ],
+                    "description": "NL-code nationaliteit"
+                  }
+                },
+                "description": "Nationaliteit van de partner"
+              },
+              "Feitelijkadres": {
+                "type": "object",
+                "properties": {
+                  "Postcode": {
+                    "type": "string",
+                    "examples": [
+                      "1234AB"
+                    ]
+                  },
+                  "Straatnaam": {
+                    "type": "string",
+                    "examples": [
+                      "Hoofdstraat"
+                    ]
+                  },
+                  "Woonplaatsnaam": {
+                    "type": "string",
+                    "examples": [
+                      "Nijmegen"
+                    ]
+                  }
+                },
+                "description": "Feitelijk verblijfadres"
+              },
+              "BurgerServiceNr": {
+                "type": "string",
+                "examples": [
+                  "123456788"
+                ],
+                "description": "BSN van partner"
+              },
+              "EMailAdresClient": {
+                "type": "string",
+                "format": "email",
+                "examples": [
+                  "partner@example.com"
+                ],
+                "description": "Emailadres partner"
+              },
+              "Correspondentieadres": {
+                "type": "object",
+                "properties": {
+                  "Postcode": {
+                    "type": "string",
+                    "examples": [
+                      "1234AB"
+                    ],
+                    "description": "Postcode"
+                  },
+                  "Huisnummer": {
+                    "type": "string",
+                    "examples": [
+                      "12"
+                    ],
+                    "description": "Huisnummer"
+                  },
+                  "Straatnaam": {
+                    "type": "string",
+                    "examples": [
+                      "Hoofdstraat"
+                    ],
+                    "description": "Naam van de straat"
+                  },
+                  "Gemeentenaam": {
+                    "type": "string",
+                    "examples": [
+                      "Nijmegen"
+                    ],
+                    "description": "Gemeentenaam"
+                  },
+                  "Woonplaatsnaam": {
+                    "type": "string",
+                    "examples": [
+                      "Nijmegen"
+                    ],
+                    "description": "Plaatsnaam"
+                  }
+                },
+                "description": "Adres voor correspondentie"
+              },
+              "AanduidingNaamgebruik": {
+                "type": "string",
+                "examples": [
+                  "Mevrouw"
+                ],
+                "description": "Naamgebruik aanduiding partner"
+              },
+              "CdFictieveGeboortedat": {
+                "type": "string",
+                "examples": [
+                  "99999999"
+                ],
+                "description": "Fictieve geboortedatumcode partner"
+              }
+            },
+            "description": "Gegevens van de partner in de relatie"
+          },
+          "Begindatum": {
+            "type": "string",
+            "format": "date",
+            "examples": [
+              "2025-01-01"
+            ],
+            "description": "Startdatum van de relatie (YYYY‑MM‑DD)"
+          },
+          "SoortRelatie": {
+            "type": "string",
+            "examples": [
+              "PARTNER"
+            ],
+            "description": "Type relatie (bijv. partner, kind, ouder)"
+          },
+          "CdFictieveBegindat": {
+            "type": "string",
+            "examples": [
+              "99999999"
+            ],
+            "description": "Code voor fictieve begindatum indien geen echte bekend is"
+          }
+        },
+        "description": "Optioneel relatie‑object voor de cliënt"
+      },
+      "properties": {
+        "Iban": {
+          "type": "string",
+          "examples": [
+            "NL12ABCD0123456789"
+          ]
+        },
+        "Geslacht": {
+          "type": "string",
+          "examples": [
+            "M"
+          ],
+          "description": "Geslacht"
+        },
+        "Voornamen": {
+          "type": "string",
+          "examples": [
+            "NaamEen NaamTwee"
+          ],
+          "description": "Volledige voornamen"
+        },
+        "Achternaam": {
+          "type": "string",
+          "examples": [
+            "Dijk"
+          ],
+          "description": "Achternaam klant"
+        },
+        "Telefoonnr": {
+          "type": "object",
+          "properties": {
+            "Netnr": {
+              "type": "string",
+              "examples": [
+                "024"
+              ]
+            },
+            "Abonneenr": {
+              "type": "string",
+              "examples": [
+                "1234567"
+              ]
+            },
+            "TypeTelefoonnr": {
+              "type": "string",
+              "examples": [
+                "MOBIEL"
+              ]
+            }
+          },
+          "description": "Telefoonnummer"
+        },
+        "Voorletters": {
+          "type": "string",
+          "examples": [
+            "V.L."
+          ],
+          "description": "Initialen"
+        },
+        "Voorvoegsel": {
+          "type": "string",
+          "examples": [
+            "van"
+          ],
+          "description": "Voorvoegsel achternaam"
+        },
+        "Geboortedatum": {
+          "type": "string",
+          "format": "date",
+          "examples": [
+            "1980-05-15"
+          ],
+          "description": "Geboortedatum (YYYY‑MM‑DD)"
+        },
+        "Nationaliteit": {
+          "type": "object",
+          "properties": {
+            "CdNationaliteit": {
+              "type": "string",
+              "examples": [
+                "NL"
+              ]
+            }
+          },
+          "description": "Nationaliteit"
+        },
+        "Feitelijkadres": {
+          "type": "object",
+          "properties": {
+            "Locatie": {
+              "type": "string"
+            },
+            "Postcode": {
+              "type": "string"
+            },
+            "Huisnummer": {
+              "type": "string"
+            },
+            "Straatnaam": {
+              "type": "string"
+            },
+            "Gemeentenaam": {
+              "type": "string"
+            },
+            "Woonplaatsnaam": {
+              "type": "string"
+            }
+          },
+          "description": "Feitelijk adres"
+        },
+        "BurgerServiceNr": {
+          "type": "string",
+          "examples": [
+            "123456789"
+          ],
+          "description": "BRP Burgerservicenummer"
+        },
+        "EMailAdresClient": {
+          "type": "string",
+          "format": "email",
+          "examples": [
+            "naam@example.com"
+          ],
+          "description": "Emailadres van de cliënt"
+        },
+        "Correspondentieadres": {
+          "type": "object",
+          "properties": {
+            "Locatie": {
+              "type": "string",
+              "examples": [
+                "Thuis"
+              ]
+            },
+            "Postcode": {
+              "type": "string",
+              "examples": [
+                "1234AB"
+              ]
+            },
+            "Huisletter": {
+              "type": "string",
+              "examples": [
+                "A"
+              ]
+            },
+            "Huisnummer": {
+              "type": "string",
+              "examples": [
+                "10"
+              ]
+            },
+            "Straatnaam": {
+              "type": "string",
+              "examples": [
+                "Hoofdstraat"
+              ]
+            },
+            "Gemeentenaam": {
+              "type": "string",
+              "examples": [
+                "Nijmegen"
+              ]
+            },
+            "Woonplaatsnaam": {
+              "type": "string",
+              "examples": [
+                "Nijmegen"
+              ]
+            },
+            "HuisnrToevoeging": {
+              "type": "string",
+              "examples": [
+                "bis"
+              ]
+            }
+          },
+          "description": "Correspondentieadres"
+        },
+        "AanduidingNaamgebruik": {
+          "type": "string",
+          "examples": [
+            "Meneer"
+          ],
+          "description": "Naamgebruik aanduiding"
+        },
+        "CdFictieveGeboortedat": {
+          "type": "string",
+          "examples": [
+            "99999999"
+          ],
+          "description": "Fictieve geboortedatumcode"
+        }
+      },
+      "description": "Gegevens van de klant/burger opgezet volgens het GWS webintake format. Uiteindelijk zijn achternaam, geslacht en geboortedatum verplicht. Nog niet in dit object"
     },
     "formName": {
       "type": "string",
-      "description": "Naam van het formulier",
-      "examples": ["Contactformulier"]
+      "examples": [
+        "Contactformulier"
+      ],
+      "description": "Naam van het formulier"
+    },
+    "bsnNamens": {
+      "type": "string",
+      "examples": [
+        "999999333"
+      ],
+      "description": "BSN indien handmatig gevuld namens iemand"
+    },
+    "kvkNamens": {
+      "type": "string",
+      "examples": [
+        "69599084"
+      ],
+      "description": "KVK indien handmatig gevuld namens iemand"
     },
     "reference": {
       "type": "string",
-      "description": "Unieke referentie van de submission",
-      "examples": ["OF-AB7634HJ"]
+      "examples": [
+        "OF-AB7634HJ"
+      ],
+      "description": "Unieke referentie van de submission"
+    },
+    "aardVerzoek": {
+      "type": "string",
+      "examples": [],
+      "description": "Aard van het verzoek (GWS)"
     },
     "attachments": {
       "type": "array",
-      "description": "Lijst van bijlage‑urls",
-      "items": { "type": "string" },
-      "examples": [["https://.../bijlage1", "https://.../bijlage2"]]
+      "items": {
+        "type": "string"
+      },
+      "examples": [
+        [
+          "https://.../bijlage1",
+          "https://.../bijlage2"
+        ]
+      ],
+      "description": "Lijst van bijlage‑urls"
+    },
+    "inlogmiddel": {
+      "type": "string",
+      "examples": [
+        "digid"
+      ],
+      "description": "erhekenning of digid"
     },
     "networkShare": {
       "type": "string",
@@ -95,6 +512,115 @@
         "//karelstad/data/gemeenschappelijk/Webformulieren/Accp/TDL"
       ],
       "description": "De hoofdmap op de netwerkschijf waar de een map aangemaakt moet worden en de bestanden naartoe geschreven worden"
+    },
+    "datumAanvraag": {
+      "type": "string",
+      "examples": [
+        "2025-07-29"
+      ],
+      "description": "Datum van aanvraag (nog kijken naar format"
+    },
+    "bsnOrKvkToFile": {
+      "type": "boolean",
+      "examples": [
+        true,
+        false
+      ],
+      "description": "Indicates if the bsn / kvk field should be saved to a separate text file."
+    },
+    "aanvragerGegevens": {
+      "type": "object",
+      "properties": {
+        "rni": {
+          "type": "string",
+          "examples": [
+            ""
+          ],
+          "description": "extra data rni check om data compleet te maken. Voor nu even open gehouden"
+        },
+        "email": {
+          "type": "string",
+          "examples": [
+            "test@example.com"
+          ],
+          "description": "e-mailadres voor contact"
+        },
+        "leeftijd": {
+          "type": "string",
+          "examples": [
+            "27"
+          ],
+          "description": "leeftijd volgens haal centraal"
+        },
+        "bewindvoering": {
+          "type": "boolean",
+          "examples": [
+            false
+          ],
+          "description": "In verband met correspondentie."
+        },
+        "geboorteDatum": {
+          "type": "string",
+          "examples": [
+            "01-01-1980"
+          ],
+          "description": "Optionele geboortedatum"
+        },
+        "volledigeNaam": {
+          "type": "string",
+          "examples": [
+            "Voornaam tussenvoegsel Achternaam"
+          ],
+          "description": "volledigenaam om aan te kunnen spreken"
+        },
+        "telefoonnummer": {
+          "type": "string",
+          "examples": [
+            "0612345678"
+          ],
+          "description": "telefoonnummer voor contact"
+        },
+        "geboorteDatumNietStandaard": {
+          "type": "boolean",
+          "examples": [
+            false
+          ],
+          "description": "In uitzonderlijke gevallen kan een geboortedatum data missen. In dat geval zal er een extra check gedaan moeten worden."
+        }
+      },
+      "description": "Extra gegevens van de aanvrager om extra datachecks te kunnen doen."
+    },
+    "indBestaandeKlant": {
+      "type": "string",
+      "examples": [
+        "JA"
+      ],
+      "description": "Indicatie bestaande klant (ja/nee). Voor nu nog niet bedacht wat het format moet zijn."
+    },
+    "datumStartAanvraag": {
+      "type": "string",
+      "examples": [
+        "2025-08-01"
+      ],
+      "description": "Startdatum van de aanvraag. Wanneer heeft iemand voor het eerst het formulier geopend zonder af te maken? Format nog onbekend."
+    },
+    "additionalProperties": true,
+    "sociaalDomeinRegeling": {
+      "type": "string",
+      "examples": [
+        "BIJSTAND",
+        "BBZ",
+        "IIT"
+      ],
+      "description": "Naam van de regeling die aangevraagd wordt"
+    },
+    "zaaktypeIdentificatie": {
+      "type": "string",
+      "examples": [
+        "BIJSTAND-AANVRAAG",
+        "INDIVIDUELE-INKOMENSTOESLAG"
+      ],
+      "description": "Identificatie van het zaaktype in open‑zaak"
     },
     "monitoringNetworkShare": {
       "type": "string",
@@ -109,316 +635,15 @@
         "type": "string",
         "format": "email"
       },
-      "description": "E‑mail addresses of internal employees or departments to notify when a new submission arrives.",
       "default": [],
-      "examples": [["ops-team@example.com", "support@example.com"]]
-    },
-    "bsnOrKvkToFile": {
-      "type": "boolean",
-      "examples": [true, false],
-      "description": "Indicates if the bsn / kvk field should be saved to a separate text file."
-    },
-    "aanvragerGegevens": {
-      "type": "object",
-      "description": "Extra gegevens van de aanvrager om extra datachecks te kunnen doen.",
-      "properties": {
-        "email": {
-          "type": "string",
-          "description": "e-mailadres voor contact",
-          "examples": ["test@example.com"]
-        },
-        "telefoonnummer": {
-          "type": "string",
-          "description": "telefoonnummer voor contact",
-          "examples": ["0612345678"]
-        },
-        "volledigeNaam": {
-          "type": "string",
-          "description": "volledigenaam om aan te kunnen spreken",
-          "examples": ["Voornaam tussenvoegsel Achternaam"]
-        },
-        "leeftijd": {
-          "type": "string",
-          "description": "leeftijd volgens haal centraal",
-          "examples": ["27"]
-        },
-        "geboorteDatum": {
-          "type": "string",
-          "description": "Optionele geboortedatum",
-          "examples": ["01-01-1980"]
-        },
-        "rni": {
-          "type": "string",
-          "description": "extra data rni check om data compleet te maken. Voor nu even open gehouden",
-          "examples": [""]
-        },
-        "geboorteDatumNietStandaard": {
-          "type": "boolean",
-          "description": "In uitzonderlijke gevallen kan een geboortedatum data missen. In dat geval zal er een extra check gedaan moeten worden.",
-          "examples": [false]
-        },
-        "bewindvoering": {
-          "type": "boolean",
-          "description": "In verband met correspondentie.",
-          "examples": [false]
-        }
-      }
-    },
-    "client": {
-      "type": "object",
-      "description": "Gegevens van de klant/burger opgezet volgens het GWS webintake format. Uiteindelijk zijn achternaam, geslacht en geboortedatum verplicht. Nog niet in dit object",
-      "properties": {
-        "BurgerServiceNr": {
-          "type": "string",
-          "description": "BRP Burgerservicenummer",
-          "examples": ["123456789"]
-        },
-        "Voornamen": {
-          "type": "string",
-          "description": "Volledige voornamen",
-          "examples": ["NaamEen NaamTwee"]
-        },
-        "Voorletters": {
-          "type": "string",
-          "description": "Initialen",
-          "examples": ["V.L."]
-        },
-        "Voorvoegsel": {
-          "type": "string",
-          "description": "Voorvoegsel achternaam",
-          "examples": ["van"]
-        },
-        "Achternaam": {
-          "type": "string",
-          "description": "Achternaam klant",
-          "examples": ["Dijk"]
-        },
-        "AanduidingNaamgebruik": {
-          "type": "string",
-          "description": "Naamgebruik aanduiding",
-          "examples": ["Meneer"]
-        },
-        "Geslacht": {
-          "type": "string",
-          "description": "Geslacht",
-          "examples": ["M"]
-        },
-        "Geboortedatum": {
-          "type": "string",
-          "format": "date",
-          "description": "Geboortedatum (YYYY‑MM‑DD)",
-          "examples": ["1980-05-15"]
-        },
-        "CdFictieveGeboortedat": {
-          "type": "string",
-          "description": "Fictieve geboortedatumcode",
-          "examples": ["99999999"]
-        },
-        "Correspondentieadres": {
-          "type": "object",
-          "description": "Correspondentieadres",
-          "properties": {
-            "Locatie": { "type": "string", "examples": ["Thuis"] },
-            "Straatnaam": { "type": "string", "examples": ["Hoofdstraat"] },
-            "Huisnummer": { "type": "string", "examples": ["10"] },
-            "Huisletter": { "type": "string", "examples": ["A"] },
-            "HuisnrToevoeging": { "type": "string", "examples": ["bis"] },
-            "Postcode": { "type": "string", "examples": ["1234AB"] },
-            "Woonplaatsnaam": { "type": "string", "examples": ["Nijmegen"] },
-            "Gemeentenaam": { "type": "string", "examples": ["Nijmegen"] }
-          }
-        },
-        "Feitelijkadres": {
-          "type": "object",
-          "description": "Feitelijk adres",
-          "properties": {
-            "Locatie": { "type": "string" },
-            "Straatnaam": { "type": "string" },
-            "Huisnummer": { "type": "string" },
-            "Postcode": { "type": "string" },
-            "Woonplaatsnaam": { "type": "string" },
-            "Gemeentenaam": { "type": "string" }
-          }
-        },
-        "Nationaliteit": {
-          "type": "object",
-          "description": "Nationaliteit",
-          "properties": {
-            "CdNationaliteit": {
-              "type": "string",
-              "examples": ["NL"]
-            }
-          }
-        },
-        "Iban": { "type": "string", "examples": ["NL12ABCD0123456789"] },
-        "Telefoonnr": {
-          "type": "object",
-          "description": "Telefoonnummer",
-          "properties": {
-            "Netnr": { "type": "string", "examples": ["024"] },
-            "Abonneenr": { "type": "string", "examples": ["1234567"] },
-            "TypeTelefoonnr": { "type": "string", "examples": ["MOBIEL"] }
-          }
-        },
-        "EMailAdresClient": {
-          "type": "string",
-          "format": "email",
-          "description": "Emailadres van de cliënt",
-          "examples": ["naam@example.com"]
-        }
-      },
-      "relatie": {
-        "type": "object",
-        "description": "Optioneel relatie‑object voor de cliënt",
-        "properties": {
-          "SoortRelatie": {
-            "type": "string",
-            "description": "Type relatie (bijv. partner, kind, ouder)",
-            "examples": ["PARTNER"]
-          },
-          "Begindatum": {
-            "type": "string",
-            "format": "date",
-            "description": "Startdatum van de relatie (YYYY‑MM‑DD)",
-            "examples": ["2025-01-01"]
-          },
-          "CdFictieveBegindat": {
-            "type": "string",
-            "description": "Code voor fictieve begindatum indien geen echte bekend is",
-            "examples": ["99999999"]
-          },
-          "Partner": {
-            "type": "object",
-            "description": "Gegevens van de partner in de relatie",
-            "properties": {
-              "BurgerServiceNr": {
-                "type": "string",
-                "description": "BSN van partner",
-                "examples": ["123456788"]
-              },
-              "Voornamen": {
-                "type": "string",
-                "description": "Volledige voornamen",
-                "examples": ["Anna Maria"]
-              },
-              "Voorletters": {
-                "type": "string",
-                "description": "Initialen partner",
-                "examples": ["A.M."]
-              },
-              "Voorvoegsel": {
-                "type": "string",
-                "description": "Voorvoegsel achternaam partner",
-                "examples": ["de"]
-              },
-              "Achternaam": {
-                "type": "string",
-                "description": "Achternaam partner",
-                "examples": ["Jong"]
-              },
-              "AanduidingNaamgebruik": {
-                "type": "string",
-                "description": "Naamgebruik aanduiding partner",
-                "examples": ["Mevrouw"]
-              },
-              "Geslacht": {
-                "type": "string",
-                "description": "Geslacht partner",
-                "examples": ["V"]
-              },
-              "Geboortedatum": {
-                "type": "string",
-                "format": "date",
-                "description": "Geboortedatum partner (YYYY‑MM‑DD)",
-                "examples": ["1983-11-20"]
-              },
-              "CdFictieveGeboortedat": {
-                "type": "string",
-                "description": "Fictieve geboortedatumcode partner",
-                "examples": ["99999999"]
-              },
-              "Correspondentieadres": {
-                "type": "object",
-                "description": "Adres voor correspondentie",
-                "properties": {
-                  "Straatnaam": {
-                    "type": "string",
-                    "description": "Naam van de straat",
-                    "examples": ["Hoofdstraat"]
-                  },
-                  "Huisnummer": {
-                    "type": "string",
-                    "description": "Huisnummer",
-                    "examples": ["12"]
-                  },
-                  "Postcode": {
-                    "type": "string",
-                    "description": "Postcode",
-                    "examples": ["1234AB"]
-                  },
-                  "Woonplaatsnaam": {
-                    "type": "string",
-                    "description": "Plaatsnaam",
-                    "examples": ["Nijmegen"]
-                  },
-                  "Gemeentenaam": {
-                    "type": "string",
-                    "description": "Gemeentenaam",
-                    "examples": ["Nijmegen"]
-                  }
-                }
-              },
-              "Feitelijkadres": {
-                "type": "object",
-                "description": "Feitelijk verblijfadres",
-                "properties": {
-                  "Straatnaam": {
-                    "type": "string",
-                    "examples": ["Hoofdstraat"]
-                  },
-                  "Postcode": { "type": "string", "examples": ["1234AB"] },
-                  "Woonplaatsnaam": {
-                    "type": "string",
-                    "examples": ["Nijmegen"]
-                  }
-                }
-              },
-              "Nationaliteit": {
-                "type": "object",
-                "description": "Nationaliteit van de partner",
-                "properties": {
-                  "CdNationaliteit": {
-                    "type": "string",
-                    "description": "NL-code nationaliteit",
-                    "examples": ["NL"]
-                  }
-                }
-              },
-              "Iban": {
-                "type": "string",
-                "description": "IBAN van partner",
-                "examples": ["NL12ABCD0123456789"]
-              },
-              "Telefoonnr": {
-                "type": "object",
-                "description": "Telefoonnummer partner",
-                "properties": {
-                  "Netnr": { "type": "string", "examples": ["024"] },
-                  "Abonneenr": { "type": "string", "examples": ["1234567"] },
-                  "TypeTelefoonnr": { "type": "string", "examples": ["MOBIEL"] }
-                }
-              },
-              "EMailAdresClient": {
-                "type": "string",
-                "format": "email",
-                "description": "Emailadres partner",
-                "examples": ["partner@example.com"]
-              }
-            }
-          }
-        }
-      }
-    },
-    "additionalProperties": true
-  }
+      "examples": [
+        [
+          "ops-team@example.com",
+          "support@example.com"
+        ]
+      ],
+      "description": "E‑mail addresses of internal employees or departments to notify when a new submission arrives."
+    }
+  },
+  "description": "Gehele object aanvragen sociaal domein met verschillende regelingen. Voor nu nog los opgezet, weinig verplicht om te zorgen dat de connectie goed gemaakt kan worden."
 }

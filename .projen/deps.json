@@ -90,30 +90,37 @@
     },
     {
       "name": "@aws-sdk/client-dynamodb",
+      "version": "3.966.0",
       "type": "runtime"
     },
     {
       "name": "@aws-sdk/client-s3",
+      "version": "3.966.0",
       "type": "runtime"
     },
     {
       "name": "@aws-sdk/client-ses",
+      "version": "3.966.0",
       "type": "runtime"
     },
     {
       "name": "@aws-sdk/client-sfn",
+      "version": "3.966.0",
       "type": "runtime"
     },
     {
       "name": "@aws-sdk/client-sns",
+      "version": "3.966.0",
       "type": "runtime"
     },
     {
       "name": "@aws-sdk/client-sqs",
+      "version": "3.966.0",
       "type": "runtime"
     },
     {
       "name": "@aws-sdk/lib-storage",
+      "version": "3.966.0",
       "type": "runtime"
     },
     {
