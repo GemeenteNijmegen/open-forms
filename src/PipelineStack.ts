@@ -1,5 +1,9 @@
 import { PermissionsBoundaryAspect } from '@gemeentenijmegen/aws-constructs';
+import { getNodeVersion } from '@gemeentenijmegen/projen-project-type';
 import { Stack, StackProps, Tags, pipelines, CfnParameter, Aspects } from 'aws-cdk-lib';
+import { BuildSpec } from 'aws-cdk-lib/aws-codebuild';
+import { PipelineType } from 'aws-cdk-lib/aws-codepipeline';
+import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
 import { Construct } from 'constructs';
 import { Configurable } from './Configuration';
 import { OpenFormsStage } from './OpenFormsStage';
@@ -52,13 +56,16 @@ export class PipelineStack extends Stack {
   }
 
   pipeline(source: pipelines.CodePipelineSource, props: PipelineStackProps): pipelines.CodePipeline {
+    const dockerHub = new Secret(this, 'docker-credentials', {
+      description: `Docker credentials for ${Statics.projectName} (${this.branchName})`,
+    });
     const synthStep = new pipelines.ShellStep('Synth', {
       input: source,
       env: {
         BRANCH_NAME: this.branchName,
       },
       commands: [
-        'n 22',
+        'node -v',
         'yarn install --frozen-lockfile',
         'npx projen build',
       ],
@@ -69,6 +76,19 @@ export class PipelineStack extends Stack {
       pipelineName: pipelineName,
       crossAccountKeys: true,
       synth: synthStep,
+      dockerCredentials: [pipelines.DockerCredential.dockerHub(dockerHub)],
+      pipelineType: PipelineType.V1,
+      synthCodeBuildDefaults: {
+        partialBuildSpec: BuildSpec.fromObject({
+          phases: {
+            install: {
+              'runtime-versions': {
+                nodejs: getNodeVersion(),
+              },
+            },
+          },
+        }),
+      },
     });
     return pipeline;
   }
