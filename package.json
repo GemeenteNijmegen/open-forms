@@ -86,7 +86,7 @@
     "@gemeentenijmegen/modules-zgw-client": "^0.0.8",
     "@gemeentenijmegen/projen-project-type": "^1.12.0",
     "@gemeentenijmegen/utils": "^0.0.38",
-    "@types/aws-lambda": "8.10.159",
+    "@types/aws-lambda": "8.10.160",
     "@types/jsonwebtoken": "^9.0.10",
     "aws-cdk-lib": "^2.1.0",
     "constructs": "^10.0.5",
