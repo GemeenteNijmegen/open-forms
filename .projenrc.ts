@@ -38,6 +38,11 @@ const project = new GemeenteNijmegenCdkApp({
     '**/excludedformdefinitions/',
     '**/output/',
   ],
+  tsconfig: {
+    compilerOptions: {
+      isolatedModules: true,
+    },
+  },
 });
 
 

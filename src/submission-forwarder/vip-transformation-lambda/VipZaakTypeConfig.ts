@@ -5,6 +5,8 @@ export interface ZaaktypeConfig {
   accUUID: string | null;
   prodUUID: string | null;
   appId: string;
+  accAdditionalAttributes?: Record<string, string>;
+  prodAdditionalAttributes?: Record<string, string>;
 }
 
 export const zaaktypeConfig: ZaaktypeConfig[] = [
@@ -142,6 +144,12 @@ export const zaaktypeConfig: ZaaktypeConfig[] = [
     option: '',
     accUUID: 'd459c41b-0aa7-48cf-8d11-b1d78e17e803',
     prodUUID: 'd459c41b-0aa7-48cf-8d11-b1d78e17e803',
+    accAdditionalAttributes: {
+      vipFormUuid: 'dadbcf96-025c-4889-b736-251337f16e33',
+    },
+    prodAdditionalAttributes: {
+      vipFormUuid: '3c4fbe07-7e1c-4dd4-baad-3e1fe580b2a5',
+    },
     appId: 'JUR',
   },
 
