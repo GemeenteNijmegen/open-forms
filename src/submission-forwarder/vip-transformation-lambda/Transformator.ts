@@ -1,7 +1,7 @@
 import { Logger } from '@aws-lambda-powertools/logger';
-import { VIPJZSubmission } from '../shared/VIPJZSubmission';
 import { PaymentSnsMessage } from './PaymentMessage';
 import { zaaktypeConfig } from './VipZaakTypeConfig';
+import { VIPJZSubmission } from '../shared/VIPJZSubmission';
 
 
 const logger = new Logger();
@@ -50,7 +50,7 @@ export class Transformator {
         payment: undefined, // Send in separate message
         internalNotificationEmails: undefined, // No need to pass this to vip/jz4all
         vipZaaktype: this.isProduction ? thisZaaktypeConfig.prodUUID : thisZaaktypeConfig.accUUID,
-        ...additionalAttributes
+        ...additionalAttributes,
         // Other fields are all part of the event and depdend on the form
       },
       // All file info is moved to this field
