@@ -61,6 +61,7 @@ junit.xml
 /cdk.out/
 .cdk.staging/
 .parcel-cache/
+!/src/prefill/prefill-function.ts
 !/src/prefill-demo/handler-function.ts
 !/src/nl-wallet/prefill/prefill-function.ts
 !/src/nl-wallet/token/token-function.ts

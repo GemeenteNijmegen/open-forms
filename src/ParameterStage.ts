@@ -5,7 +5,7 @@ import { Construct } from 'constructs';
 import { Configurable } from './Configuration';
 import { Statics } from './Statics';
 
-export interface ParameterStageProps extends StageProps, Configurable {}
+export interface ParameterStageProps extends StageProps, Configurable { }
 
 /**
  * Stage for creating SSM parameters. This needs to run
@@ -32,6 +32,7 @@ export class ParameterStack extends Stack {
     Tags.of(this).add('Project', Statics.projectName);
 
     this.addSnsSubscriptionUrlParameters();
+    this.addApiParameters();
   }
 
 
@@ -45,6 +46,14 @@ export class ParameterStack extends Stack {
       parameterName: Statics.ssmSNSSubscriptionUrlJZ4ALL,
       stringValue: '-',
       description: 'SNS Topic Subscription URL for JZ4ALL Woweb',
+    });
+  }
+
+  private addApiParameters() {
+    new StringParameter(this, 'prefill-iit-avi', {
+      stringValue: 'https://data-test.nijmegen.nl/eapi/nijmegen/webform/iit/mule', // Default value
+      parameterName: Statics.ssmName_individueleInkomensToeslagAviPrefillEndpoint,
+      description: 'ESB endpoint for prefill Individuele InkomensToeslag (IIT) and ambtshalve verstrekking IIT (AVI)',
     });
   }
 }

@@ -1,5 +1,5 @@
-import { Stack, StackProps } from 'aws-cdk-lib';
-import { RestApi, SecurityPolicy } from 'aws-cdk-lib/aws-apigateway';
+import { Duration, Stack, StackProps } from 'aws-cdk-lib';
+import { LambdaIntegration, RestApi, SecurityPolicy } from 'aws-cdk-lib/aws-apigateway';
 import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager';
 import { Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { Key } from 'aws-cdk-lib/aws-kms';
@@ -12,6 +12,8 @@ import { PrefillDemo } from './prefill-demo/PrefillDemoConstruct';
 import { StaticFormDefinitions } from './static-form-definitions/StaticFormDefinitions';
 import { Statics } from './Statics';
 import { SubmissionForwarder } from './submission-forwarder/SubmissionForwarder';
+import { ErrorMonitoringAlarm } from '@gemeentenijmegen/aws-constructs';
+import { PrefillFunction } from './prefill/prefill-function';
 
 interface MainStackProps extends StackProps, Configurable { }
 
@@ -51,10 +53,61 @@ export class MainStack extends Stack {
 
     this.setupStaticFromDefinitions();
 
+    this.setupPrefill();
+
+  }
+
+  private setupPrefill() {
+    const prefill = this.api.root.addResource('prefill');
+
+    const prefillLambda = new PrefillFunction(this, 'prefill-lambda', {
+      environment: {
+        LOG_LEVEL: this.props.configuration.logLevel ? 'true' : 'false',
+        IIT_AVI_PREFILL_ENDPOINT: StringParameter.valueForStringParameter(this, Statics.ssmName_individueleInkomensToeslagAviPrefillEndpoint),
+      }
+    })
+
+    new ErrorMonitoringAlarm(this, 'prefill-lambda-alarm', {
+      criticality: this.props.configuration.criticality.toString(),
+      lambda: prefillLambda,
+      errorRateProps: {
+        alarmThreshold: 1,
+        alarmEvaluationPeriods: 1,
+        alarmEvaluationPeriod: Duration.minutes(15),
+      },
+    });
+
+    //add throttling and api key
+    const plan = this.api.addUsagePlan('usage-plan-prefill-api', {
+      name: 'prefill',
+      description: 'used for rate-limit and api key',
+      throttle: {
+        rateLimit: 5,
+        burstLimit: 10,
+      },
+    });
+    const key = this.api.addApiKey('api-key-prefill', {
+      apiKeyName: 'prefill Api',
+      description: 'gebruikt voor alle methods van prefill API',
+    });
+
+    plan.addApiKey(key);
+    // plan.addApiStage({
+    //   stage: this.api.deploymentStage,
+    // }); Required?
+
+    prefill.addMethod('POST', new LambdaIntegration(prefillLambda), {
+      apiKeyRequired: true,
+      requestParameters: {
+        'method.request.querystring.formname': true,
+      },
+    });
+
+
   }
 
   /**
-   * Bucket and endpoin for serving static form definitions
+   * Bucket and endpoint for serving static form definitions
    */
   private setupStaticFromDefinitions() {
     new StaticFormDefinitions(this, 'static-form-definitions', {

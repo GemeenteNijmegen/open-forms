@@ -212,7 +212,7 @@
     "@smithy/util-waiter" "^4.2.8"
     tslib "^2.6.2"
 
-"@aws-sdk/client-secrets-manager@^3.901.0":
+"@aws-sdk/client-secrets-manager@^3.901.0", "@aws-sdk/client-secrets-manager@^3.984.0":
   version "3.985.0"
   resolved "https://registry.yarnpkg.com/@aws-sdk/client-secrets-manager/-/client-secrets-manager-3.985.0.tgz#a6853ce3f5af9e7e49299410cf22d2f551ae2c2a"
   integrity sha512-lssQ48JBYTjbpCc2oyev83fvnSnRAbTVzp5GLMuGCxlk9mdME80ArUJL14ZQrzay+7p3m6RdoBmPaa7RWlVTZA==
@@ -440,7 +440,7 @@
     "@smithy/util-utf8" "^4.2.0"
     tslib "^2.6.2"
 
-"@aws-sdk/client-ssm@^3.901.0":
+"@aws-sdk/client-ssm@^3.901.0", "@aws-sdk/client-ssm@^3.984.0":
   version "3.985.0"
   resolved "https://registry.yarnpkg.com/@aws-sdk/client-ssm/-/client-ssm-3.985.0.tgz#d77b9724c7cb6c7ce553b8a60ac81a9743e1b0e7"
   integrity sha512-7x0TBtdO20yoWHYhWywBUDRrNR1qz6yzizaXbXcPI2gh3kxM4Bl781URGPAaBiGz699eqcZ0pK+TQ9HjyOLpqw==
@@ -1527,6 +1527,16 @@
   dependencies:
     "@eslint/core" "^0.17.0"
     levn "^0.4.1"
+
+"@gemeentenijmegen/apiclient@^0.0.40":
+  version "0.0.40"
+  resolved "https://registry.yarnpkg.com/@gemeentenijmegen/apiclient/-/apiclient-0.0.40.tgz#7efec0d9c01a3b6b3583948f19efe21d38540342"
+  integrity sha512-FALrgFho8Mfe+CovR4cxsicUafs4SB15zZw2pTII0B02ZrtkDs5nHU/R17t8dpIxkWHkMdtwE8kDaBf3BnXGAQ==
+  dependencies:
+    "@aws-sdk/client-secrets-manager" "^3.984.0"
+    "@aws-sdk/client-ssm" "^3.984.0"
+    "@gemeentenijmegen/utils" "^0.0.38"
+    axios "^1.13.4"
 
 "@gemeentenijmegen/apigateway-http@^0.0.36":
   version "0.0.36"
@@ -3098,7 +3108,7 @@ aws-sdk-client-mock@^4.1.0:
     sinon "^18.0.1"
     tslib "^2.1.0"
 
-axios@^1.11.0:
+axios@^1.11.0, axios@^1.13.4:
   version "1.13.5"
   resolved "https://registry.yarnpkg.com/axios/-/axios-1.13.5.tgz#5e464688fa127e11a660a2c49441c009f6567a43"
   integrity sha512-cz4ur7Vb0xS4/KUN0tPWe44eqxrIu31me+fbang3ijiNscE129POzipJJA6zniq2C/Z6sJCjMimjS8Lc/GAs8Q==

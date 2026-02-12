@@ -48,4 +48,7 @@ export class Statics {
   // SNS Topic Subscription URLs
   static readonly ssmSNSSubscriptionUrlVIP = '/sns/subscriptionurl/vip';
   static readonly ssmSNSSubscriptionUrlJZ4ALL = '/sns/subscriptionurl/jz4all';
+
+  // Statics for prefill api
+  static readonly ssmName_individueleInkomensToeslagAviPrefillEndpoint = '/api/prefill-iit-avi-endpoint';
 }
