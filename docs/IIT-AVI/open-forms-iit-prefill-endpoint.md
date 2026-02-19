@@ -16,6 +16,8 @@ Mule maakt vervolgens een verzoek naar een view 'MW_IIT'. Deze view retourneert 
 }
 ```
 
+Certificaten zijn direct ingeladen binnen Open Forms. Deze zijn te vinden onder de naam AviPrefillCert.
+
 ## Wijzigingen in formulier
 
 ### Status melding AVI
