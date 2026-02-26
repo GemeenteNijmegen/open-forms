@@ -105,7 +105,7 @@ export class MainStack extends Stack {
       stringValue: api.restApiId,
       description: 'API Gateway REST API ID',
     });
-    
+
 
     return api;
   }
