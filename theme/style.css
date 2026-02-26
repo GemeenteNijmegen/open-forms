@@ -1501,7 +1501,7 @@ body {
   --utrecht-form-label-font-weight: bold;
   --of-utrecht-form-field-background-color: #ffffff;
   --of-utrecht-form-field-checkbox-background-color: #FFFFFF;
-  
+
   --of-form-navigation-link-button-padding-inline-start: var(--utrecht-button-padding-inline-start);
   --of-form-navigation-link-button-padding-inline-end: var(--utrecht-button-padding-inline-end);
 }
@@ -1610,53 +1610,6 @@ a:hover,
   font-weight: normal;
 }
 
-/*
- * Yivi login hack for BSN (DigiD OIDC)
- */
-.openforms-login-button>.utrecht-button-link[href*="digid_oidc"]::after {
-  content: 'Inloggen met Yivi';
-  text-indent: 0;
-  display: block;
-  line-height: initial;
-}
-
-.openforms-login-button>.utrecht-button-link[href*="digid_oidc"] {
-  text-indent: -9999px !important;
-  line-height: 0 !important;
-}
-
-.openforms-login-button>.utrecht-button-link[href*="digid_oidc"]+.openforms-login-button-logo>img {
-  display: none;
-  /* 
-  Note: use display:none; as we cannot change the url to where this logo links (digid info page). So it's better to just hide it.
-
-  content: url("https://mijn.nijmegen.nl/static/images/yivi.svg");
-  height: 46px;
-  width: 46px; 
-  */
-}
-
-/*
- * Yivi login hack for KVK (eHerkenning OIDC)
- */
-
-/* DISABLED AS WE DO NOT HAVE YIVI FOR KVK CONFIGURED YET this connection is currently used form eHerkenning
-.openforms-login-button > .utrecht-button-link[href*="eherkenning_oidc"]::after {
-  content: 'Inloggen met Yivi als ondernemer';
-  text-indent: 0;
-  display: block;
-  line-height: initial;
-}
-.openforms-login-button > .utrecht-button-link[href*="eherkenning_oidc"] {
-  text-indent: -9999px !important;
-  line-height: 0 !important;
-}
-.openforms-login-button > .utrecht-button-link[href*="eherkenning_oidc"] + .openforms-login-button-logo > img {
-  content:url("https://mijn.nijmegen.nl/static/images/yivi.svg");
-  height: 46px;
-  width: 46px;
-}
-*/
 /*
 * Inloggen als medewerker
 */
