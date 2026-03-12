@@ -100,12 +100,6 @@ export class MainStack extends Stack {
       recordName: domain,
     });
 
-    new StringParameter(this, 'ssm-shared-restapi-id', {
-      parameterName: Statics.ssmSharedRestApiGatewayId,
-      stringValue: api.restApiId,
-      description: 'API Gateway REST API ID',
-    });
-
 
     return api;
   }

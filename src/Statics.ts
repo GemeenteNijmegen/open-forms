@@ -49,5 +49,4 @@ export class Statics {
   static readonly ssmSNSSubscriptionUrlVIP = '/sns/subscriptionurl/vip';
   static readonly ssmSNSSubscriptionUrlJZ4ALL = '/sns/subscriptionurl/jz4all';
 
-  static readonly ssmSharedRestApiGatewayId = '/shared/restapi/id';
 }
