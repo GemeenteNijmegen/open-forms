@@ -90,7 +90,7 @@ export class SubmissionForwarderHandler {
           s3Files.push(attachmentS3Path);
         }
       } catch (error: any) {
-        console.log('Failed to create kvk/bsn save file');
+        console.log('Failed to create kvk/bsn save file', { error });
       }
     }
 
@@ -101,7 +101,7 @@ export class SubmissionForwarderHandler {
         const attachmentS3Path = `s3://${this.options.bucketName}/${submission.reference}/payment.txt`;
         s3Files.push(attachmentS3Path);
       } catch (error: any) {
-        console.log('Failed to create payment save file');
+        console.log('Failed to create payment save file', { error });
       }
     }
 
@@ -117,7 +117,7 @@ export class SubmissionForwarderHandler {
         const attachmentS3Path = `s3://${this.options.bucketName}/${submission.reference}/${fileName}`;
         s3Files.push(attachmentS3Path);
       } catch (error: any) {
-        logger.error(`Failed to create saveFile for ${name} - ${submission.reference}`);
+        logger.error(`Failed to create saveFile for ${name} - ${submission.reference}`, { error });
       }
     }
     return s3Files;

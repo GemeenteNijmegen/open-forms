@@ -73,7 +73,7 @@ export class DocumentLinker {
       return response.data.map(item => item.informatieobject);
     } catch (err: any) {
     // Do not make the zgw methods fail due to this call
-      logger.info(`Retrieving already linked files for ${zaakUrl} failed.`);
+      logger.info(`Retrieving already linked files for ${zaakUrl} failed.`, { err });
       return [];
     }
   }

@@ -174,7 +174,7 @@ async function fetchEsfTaak(bsn: string, periode: string) {
     const json = JSON.parse(text);
     return json;
   } catch (error) {
-    // console.error(error);
+    console.error(error);
     console.error(text);
     return undefined;
   }
