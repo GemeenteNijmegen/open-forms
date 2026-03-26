@@ -5,7 +5,7 @@ import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from 'aws-lambda';
 
 const db = new DynamoDBClient();
 
-export async function handler(event: APIGatewayProxyEventV2, _context: any): Promise<APIGatewayProxyResultV2> {
+export async function handler(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
 
   try {
     await authenticate(event);

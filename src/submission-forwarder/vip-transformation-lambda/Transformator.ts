@@ -102,7 +102,7 @@ export class Transformator {
    * @param data
    */
   private sanatizeData(data: Record<string, any>): Record<string, any> {
-    return Object.fromEntries(Object.entries(data).filter(([_, value]) => value !== ''));
+    return Object.fromEntries(Object.entries(data).filter(([, value]) => value !== ''));
   }
 
 

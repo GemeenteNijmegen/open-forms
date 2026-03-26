@@ -41,6 +41,7 @@ export async function handler(event: ALBEvent): Promise<ALBResult> {
     return response(await definition.Body.transformToString(), 200);
 
   } catch (error) {
+    logger.debug('Retrieve static form definition from S3 error', { error });
     return response(JSON.stringify({ error: 'Something went wrong' }), 500);
   }
 

@@ -5,7 +5,6 @@ import { InvalidStateError, ParseError, SendMessageError, UnknownObjectError } f
 import { NotificationEventParser } from './NotificationEventParser';
 import { ObjectParser } from './ObjectParser';
 import { StepFunction } from './StepFunction';
-import { EsfTaak } from '../shared/EsfTaak';
 import { trace } from '../shared/trace';
 import { ZgwClientFactory } from '../shared/ZgwClientFactory';
 import { ObjectSchema } from '../shared/ZgwObject';
