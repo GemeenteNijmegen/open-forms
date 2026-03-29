@@ -84,12 +84,12 @@ const BewijzenSchema = z.union([
 
 
 const CosignerSchema = z.object({
-  cosign_data: z.record(z.unknown()).optional(),
-  cosign_date: z.string().optional(),
-  cosign_bsn: z.string().optional(),
-  cosign_kvk: z.string().optional(),
-  cosign_pseudo: z.string().optional(),
-  cosignType: z.string().optional(),
+  cosign_data: z.record(z.unknown()).nullable().optional(),
+  cosign_date: z.string().nullable().optional(),
+  cosign_bsn: z.string().nullable().optional(),
+  cosign_kvk: z.string().nullable().optional(),
+  cosign_pseudo: z.string().nullable().optional(),
+  cosignType: z.string().nullable().optional(),
   volledigeNaam: z.string().optional(),
   voornaam: z.string().optional(),
   tussenvoegsel: z.string().optional(),

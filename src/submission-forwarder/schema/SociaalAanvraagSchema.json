@@ -481,34 +481,36 @@
           "additionalProperties": true,
           "properties": {
             "cosign_data": {
-              "type": "object",
-              "description": "Co-sign data object (nog te configureren)",
-              "additionalProperties": true
+              "anyOf": [
+                { "type": "object", "additionalProperties": true },
+                { "type": "null" }
+              ],
+              "description": "Co-sign data object (nog te configureren)"
             },
             "cosign_date": {
-              "type": "string",
+              "type": ["string", "null"],
               "format": "date-time",
-              "examples": ["2025-07-29T10:00:00Z"],
+              "examples": ["2025-07-29T10:00:00Z", null],
               "description": "Datum en tijd van ondertekening"
             },
             "cosign_bsn": {
-              "type": "string",
-              "examples": ["123456789"],
+              "type": ["string", "null"],
+              "examples": ["123456789", null],
               "description": "BSN van de mede-ondertekenaar"
             },
             "cosign_kvk": {
-              "type": "string",
-              "examples": ["69599084"],
+              "type": ["string", "null"],
+              "examples": ["69599084", null],
               "description": "KVK-nummer van de mede-ondertekenaar"
             },
             "cosign_pseudo": {
-              "type": "string",
-              "examples": ["pseudo-abc123"],
+              "type": ["string", "null"],
+              "examples": ["pseudo-abc123", null],
               "description": "Pseudoniem of geanonimiseerde identificatie van de mede-ondertekenaar"
             },
             "cosignType": {
-              "type": "string",
-              "examples": ["PARTNER"],
+              "type": ["string", "null"],
+              "examples": ["PARTNER", null],
               "description": "Type mede-ondertekenaar (bijv. PARTNER, OUDER, VOOGD)"
             },
             "volledigeNaam": {
