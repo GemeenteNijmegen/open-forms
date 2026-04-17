@@ -7,6 +7,7 @@ import { ARecord, HostedZone, IHostedZone, RecordTarget } from 'aws-cdk-lib/aws-
 import { ApiGatewayDomain } from 'aws-cdk-lib/aws-route53-targets';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
+import { Api } from './Api';
 import { Configurable } from './Configuration';
 import { PrefillDemo } from './prefill-demo/PrefillDemoConstruct';
 import { StaticFormDefinitions } from './static-form-definitions/StaticFormDefinitions';
@@ -30,6 +31,8 @@ export class MainStack extends Stack {
     // Hosted zone and api-gateway
     this.hostedzone = this.importHostedzone();
     this.api = this.setupRestApi();
+
+    new Api(this, 'form-api', { key: this.key, configuration: props.configuration });
 
     // Setup a dummy prefill lambda for testing purposes
     const prefillDemo = this.api.root.addResource('prefill-demo');
