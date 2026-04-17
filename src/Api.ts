@@ -5,12 +5,10 @@ import { IHostedZone, ARecord, RecordTarget, HostedZone } from 'aws-cdk-lib/aws-
 import { ApiGatewayDomain } from 'aws-cdk-lib/aws-route53-targets';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
-import { Configurable, Configuration } from './Configuration';
 import { PrefillDemo } from './prefill-demo/PrefillDemoConstruct';
 import { Statics } from './Statics';
-import { SubmissionForwarder } from './submission-forwarder/SubmissionForwarder';
 
-interface ApiProps extends Configurable {
+interface ApiProps {
   key: Key;
 }
 /**
@@ -25,10 +23,10 @@ export class Api extends Construct {
   constructor(scope: Construct, id: string, props: ApiProps) {
     super(scope, id);
     this.hostedzone = this.importHostedzone();
-    this.setupRestApi(props.key, props.configuration);
+    this.setupRestApi(props.key);
   }
 
-  private setupRestApi(key: Key, configuration: Configuration) {
+  private setupRestApi(key: Key) {
     const domain = `form-api.${this.hostedzone.zoneName}`;
     const cert = new Certificate(this, 'certificate', {
       domainName: domain,
@@ -46,20 +44,6 @@ export class Api extends Construct {
     this.createUsagePlan();
     this.addDnsRecords(domain);
     this.addRoutes(key);
-    this.addForwarder(configuration, key);
-  }
-
-  private addForwarder(configuration: Configuration, key: Key) {
-    const forwarderResource = this.restApi.root.addResource('submission-forwarder');
-    new SubmissionForwarder(this, 'submission-forwarder', {
-      key,
-      resource: forwarderResource,
-      criticality: configuration.criticality,
-      useVipJzProductionMapping: configuration.branch == 'main', // TODO remove when we can use ZGW to register submisisons in VIP/JZ4ALL
-      logLevel: configuration.logLevel ?? 'INFO',
-      urlSubscriptions: configuration.urlSubscriptions,
-    });
-
   }
 
   private addDnsRecords(domain: string) {

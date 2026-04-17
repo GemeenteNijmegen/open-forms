@@ -32,7 +32,7 @@ export class MainStack extends Stack {
     this.hostedzone = this.importHostedzone();
     this.api = this.setupRestApi();
 
-    new Api(this, 'form-api', { key: this.key, configuration: props.configuration });
+    const api = new Api(this, 'form-api', { key: this.key });
 
     // Setup a dummy prefill lambda for testing purposes
     const prefillDemo = this.api.root.addResource('prefill-demo');
@@ -43,9 +43,10 @@ export class MainStack extends Stack {
 
     // Setup the submission forwarder
     const forwarderResource = this.api.root.addResource('submission-forwarder');
+    const apiForwarderResource = api.restApi.root.addResource('submission-forwarder');
     new SubmissionForwarder(this, 'submission-forwarder', {
       key: this.key,
-      resource: forwarderResource,
+      resources: [forwarderResource, apiForwarderResource],
       criticality: props.configuration.criticality,
       useVipJzProductionMapping: props.configuration.branch == 'main', // TODO remove when we can use ZGW to register submisisons in VIP/JZ4ALL
       logLevel: props.configuration.logLevel ?? 'INFO',
