@@ -53,16 +53,16 @@ export class MainStack extends Stack {
       urlSubscriptions: props.configuration.urlSubscriptions,
     });
 
-    this.setupStaticFromDefinitions();
+    this.setupStaticFromDefinitions([this.api, api.restApi]);
 
   }
 
   /**
    * Bucket and endpoin for serving static form definitions
    */
-  private setupStaticFromDefinitions() {
+  private setupStaticFromDefinitions(apis: RestApi[]) {
     new StaticFormDefinitions(this, 'static-form-definitions', {
-      api: this.api,
+      apis,
       logLevel: this.props.configuration.logLevel ?? 'INFO',
     });
   }
