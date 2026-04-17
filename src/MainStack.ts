@@ -7,6 +7,7 @@ import { ARecord, HostedZone, IHostedZone, RecordTarget } from 'aws-cdk-lib/aws-
 import { ApiGatewayDomain } from 'aws-cdk-lib/aws-route53-targets';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
+import { Api } from './Api';
 import { Configurable } from './Configuration';
 import { PrefillDemo } from './prefill-demo/PrefillDemoConstruct';
 import { StaticFormDefinitions } from './static-form-definitions/StaticFormDefinitions';
@@ -31,6 +32,8 @@ export class MainStack extends Stack {
     this.hostedzone = this.importHostedzone();
     this.api = this.setupRestApi();
 
+    const api = new Api(this, 'form-api', { key: this.key });
+
     // Setup a dummy prefill lambda for testing purposes
     const prefillDemo = this.api.root.addResource('prefill-demo');
     new PrefillDemo(this, 'prefill-demo', {
@@ -40,9 +43,10 @@ export class MainStack extends Stack {
 
     // Setup the submission forwarder
     const forwarderResource = this.api.root.addResource('submission-forwarder');
+    const apiForwarderResource = api.restApi.root.addResource('submission-forwarder');
     new SubmissionForwarder(this, 'submission-forwarder', {
       key: this.key,
-      resource: forwarderResource,
+      resources: [forwarderResource, apiForwarderResource],
       criticality: props.configuration.criticality,
       useVipJzProductionMapping: props.configuration.branch == 'main', // TODO remove when we can use ZGW to register submisisons in VIP/JZ4ALL
       logLevel: props.configuration.logLevel ?? 'INFO',

@@ -31,7 +31,7 @@ interface SubmissionForwarderOptions {
    * The API Gateway resource to create the
    * endpoint(s) in.
    */
-  resource: Resource;
+  resources: Resource[];
   /**
    * KMS key used for encrypting the logs
    */
@@ -251,7 +251,9 @@ export class SubmissionForwarder extends Construct {
     });
     this.parameters.apikey.grantRead(receiver);
     this.options.key.grantEncryptDecrypt(receiver);
-    this.options.resource.addMethod('POST', new LambdaIntegration(receiver));
+    for (let resource of this.options.resources) {
+      resource.addMethod('POST', new LambdaIntegration(receiver));
+    }
     this.parameters.objectsApikey.grantRead(receiver);
     this.parameters.mijnServicesOpenZaakApiClientId.grantRead(receiver);
     this.parameters.mijnServicesOpenZaakApiClientSecret.grantRead(receiver);
@@ -649,8 +651,9 @@ export class SubmissionForwarder extends Construct {
     this.bucket.grantRead(resubmitLambda);
 
     // Setup API gateway path
-    const resource = this.options.resource.addResource('resubmit');
-    resource.addMethod('POST', new LambdaIntegration(resubmitLambda));
+    for (let resource of this.options.resources) {
+      resource.addResource('resubmit').addMethod('POST', new LambdaIntegration(resubmitLambda));
+    }
   }
 }
 
