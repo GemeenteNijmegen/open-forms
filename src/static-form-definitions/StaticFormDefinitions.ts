@@ -6,7 +6,7 @@ import { StaticFormDefinitionsFunction } from './lambda/StaticFormDefinitions-fu
 
 export interface StaticFormDefinitionsProps {
   logLevel: string;
-  api: RestApi;
+  apis: RestApi[];
 }
 
 export class StaticFormDefinitions extends Construct {
@@ -27,14 +27,16 @@ export class StaticFormDefinitions extends Construct {
     });
     bucket.grantRead(endpoint);
 
-    const resource = this.props.api.root.addResource('static-form-definitions');
-    resource.addProxy().addMethod('GET', new LambdaIntegration(endpoint));
-
     const loginMock = new LoginMockFunction(this, 'formio-login-mock', {
       description: 'Mock the login endpoint',
     });
-    const resourceMockLogin = this.props.api.root.addResource('formio-login-mock');
-    resourceMockLogin.addProxy().addMethod('POST', new LambdaIntegration(loginMock));
 
+    for (let api of props.apis) {
+      const resource = api.root.addResource('static-form-definitions');
+      resource.addProxy().addMethod('GET', new LambdaIntegration(endpoint));
+
+      const resourceMockLogin = api.root.addResource('formio-login-mock');
+      resourceMockLogin.addProxy().addMethod('POST', new LambdaIntegration(loginMock));
+    }
   }
 }
