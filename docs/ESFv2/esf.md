@@ -246,24 +246,28 @@ In `formtaak.verzonden_data` zit na het indienen door inwoner (Proces B stap 9) 
                             "soort": "url",
                             "value": "https://formulier.accp.nijmegen.nl/statusformulier"
                         },
-                        "data": {
-                            "dossiernummer": "dossier-test-1",
-                            "regelingnummer": "6",
-                            "periodenummer": "202506",
-                            "clientnummer" "1234",
+                        "data": 
+                            "email": "info@example.com",
                             "inkhef": "NEE",
-                            "email": "test@example.com",
-                            "telefoon": "1234567890"
-                        }
+                            "telefoon": "0612345678",
+                            "achternaam": "Achternaam",
+                            "voorletter": "E",
+                            "voorvoegsel": "van",
+                            "clientnummer": "12345",
+                            "dossiernummer": "12345678",
+                            "periodenummer": "202510",
+                            "regelingnummer": "0",
+                            "reminder_verzonden": "nee",
+                            "termijnvanordedatum": "2025-10-14 00:00:00"
                     },
                     "koppeling": {
-                        "uuid": "4c9b685d-3a9c-4216-9bb8-cac7fb2456e1",
+                        "uuid": "cee456aa-43d5-4ed1-9f96-5509dd269990",
                         "registratie": "zaak"
                     },
                     "verloopdatum": "2025-05-21 00:00:00",
                     "identificatie": {
                         "type": "bsn",
-                        "value": "900026236"
+                        "value": "999999333"
                     },
                     "verwerker_taak_id": "client_task"
                 },
@@ -358,16 +362,36 @@ In `formtaak.verzonden_data` zit na het indienen door inwoner (Proces B stap 9) 
       "required": [
         "dossiernummer",
         "periodenummer",
+        "regelingnummer",
         "clientnummer",
         "termijnvanordedatum",
         "inkhef",
-        "email"
+        "email",
+        "reminder_verzonden",
+        "voorletter",
+        "voorvoegsel",
+        "achternaam"
       ],
       "properties": {
         "email": {
           "type": "string"
         },
+        "inkhef": {
+          "type": "string"
+        },
         "telefoon": {
+          "type": "string"
+        },
+        "achternaam": {
+          "type": "string"
+        },
+        "voorletter": {
+          "type": "string"
+        },
+        "voorvoegsel": {
+          "type": "string"
+        },
+        "clientnummer": {
           "type": "string"
         },
         "dossiernummer": {
@@ -376,14 +400,23 @@ In `formtaak.verzonden_data` zit na het indienen door inwoner (Proces B stap 9) 
         "periodenummer": {
           "type": "string"
         },
-        "clientnummer": {
+        "regelingnummer": {
+          "type": "string"
+        },
+        "reminder_verzonden": {
+          "enum": [
+            "ja",
+            "nee"
+          ],
           "type": "string"
         },
         "termijnvanordedatum": {
           "type": "string"
         },
-        "inkhef": {
-          "type": "string"
+        "reminder_verzonden_datum": {
+          "type": "string",
+          "format": "date",
+          "description": "Optioneel: verzonde datum van de reminder"
         }
       },
       "description": "Data die benodigd is om het ESF te verwerken"
@@ -470,6 +503,9 @@ In `formtaak.verzonden_data` zit na het indienen door inwoner (Proces B stap 9) 
           ],
           "type": "string"
         },
+        "toelichtingingevuld": {
+          "type": "string"
+        },
         "woonsituatiegewijzigd": {
           "enum": [
             "ja",
@@ -483,9 +519,6 @@ In `formtaak.verzonden_data` zit na het indienen door inwoner (Proces B stap 9) 
             "jaGestoptMetVrijwilligerswerk",
             "nee"
           ],
-          "type": "string"
-        },
-        "toelichtingingevuld": {
           "type": "string"
         }
       },
@@ -508,7 +541,9 @@ In `formtaak.verzonden_data` zit na het indienen door inwoner (Proces B stap 9) 
           "voornaam": "Jan",
           "achternaam": "Smit",
           "toestemming": true,
-          "geboortedatum": "01-01-1970"
+          "geboortedatum": "01-01-1970",
+          "reminder_verzonden": "ja",
+          "reminder_verzonden_datum": "2024-09-20"
         },
         "formulier": {
           "soort": "url",
