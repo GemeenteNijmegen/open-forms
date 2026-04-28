@@ -5,7 +5,7 @@ import { IHostedZone, ARecord, RecordTarget, HostedZone } from 'aws-cdk-lib/aws-
 import { ApiGatewayDomain } from 'aws-cdk-lib/aws-route53-targets';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
-import { PrefillDemo } from './prefill-demo/PrefillDemoConstruct';
+import { discoverEndpoints } from './api/form-prefill/discovery';
 import { Statics } from './Statics';
 
 interface ApiProps {
@@ -73,12 +73,16 @@ export class Api extends Construct {
   }
 
   private addRoutes(key: Key) {
-    // Setup a dummy prefill lambda for testing purposes
-    const prefillDemo = this.restApi.root.addResource('prefill-demo');
-    new PrefillDemo(this, 'prefill-demo', {
-      key,
-      resource: prefillDemo,
-    });
+    const prefill = this.restApi.root.addResource('prefill');
+    const endpoints = discoverEndpoints();
+
+    for (const { formName, EndpointClass } of endpoints) {
+      const resource = prefill.addResource(formName);
+      new EndpointClass(this, `prefill-${formName}`, {
+        key,
+        resource,
+      });
+    }
   }
 
   private importHostedzone() {
