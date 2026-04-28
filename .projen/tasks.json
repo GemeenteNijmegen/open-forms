@@ -81,6 +81,27 @@
         },
         {
           "spawn": "bundle:submission-forwarder/zgw-registration-lambda/zgw-registration.lambda"
+        },
+        {
+          "spawn": "bundle:api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda"
+        }
+      ]
+    },
+    "bundle:api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda": {
+      "name": "bundle:api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda",
+      "description": "Create a JavaScript bundle from src/api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
+        }
+      ]
+    },
+    "bundle:api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda:watch": {
+      "name": "bundle:api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda:watch",
+      "description": "Continuously update the JavaScript bundle from src/api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
         }
       ]
     },
