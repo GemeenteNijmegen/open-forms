@@ -714,3 +714,23 @@ JWT:
 
 `<naam>-<iss-UUID>-<jwt-secret>`
 De jwt moet de iss-uuid gebruiken in de body. Zie de [auth-documentatie](https://docs.notifications.service.gov.uk/rest-api.html#headers) voor details.
+
+
+## Verwerking
+```mermaid
+flowchart TD
+    A([Start: Formulier ingevuld]) --> B{inkomstengewijzigd = ja?}
+
+    B -- Ja --> C([Uitkomst 3: Niet schoon])
+    B -- Nee --> D{inkhef = ja?}
+
+    D -- Ja --> C
+    D -- Nee --> F{Zijn alle overige velden 'nee'?}
+
+    F -- Ja --> G([Uitkomst 4: Schoon])
+
+    F -- Nee --> H([Uitkomst 5: Niet schoon])
+
+    style C fill:#f28b82
+    style G fill:#b6d7a8
+    style H fill:#ffe599
