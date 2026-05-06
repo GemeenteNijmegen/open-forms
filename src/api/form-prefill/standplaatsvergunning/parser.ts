@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { CostCalculationInput, WatWiltUDoen } from './costCalculation';
+import { TIME_REGEX } from './time';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -11,8 +12,6 @@ const VALID_WAT_WILT_U_DOEN = [
   'koningsdag',
 ] as const satisfies WatWiltUDoen[];
 
-// Accepts HH:MM and HH:MM:SS
-const TIME_REGEX = /^([01]\d|2[0-3]):([0-5]\d)(?::([0-5]\d))?$/;
 
 // ─── Schemas ──────────────────────────────────────────────────────────────────
 

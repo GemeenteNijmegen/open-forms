@@ -1,4 +1,4 @@
-
+import { TIME_REGEX, timeToSeconds } from './time';
 /**
  * variables for cost calculation:
  * - watWiltUDoen -> [gemeentegrond, priveterrein, concerten, winter, koningsdag]
@@ -48,7 +48,7 @@ const COSTS = {
 } as const;
 
 const DURATION_THRESHOLD_DAYS = 42;
-const CONCERT_LATE_TIME = '22:00';
+const CONCERT_LATE_TIME = '22:00:00';
 
 // ─── Utilities ────────────────────────────────────────────────────────────────
 
@@ -70,18 +70,6 @@ function getDurationInDays(start: Date, end: Date): number {
   );
   return Math.floor((endUtc - startUtc) / msPerDay);
 }
-
-/**
- * Converts "HH:MM" string to total minutes since midnight.
- */
-function timeToMinutes(time: string): number {
-  const [hours, minutes] = time.split(':').map(Number);
-  return hours * 60 + minutes;
-}
-
-// ─── Validators ───────────────────────────────────────────────────────────────
-
-const TIME_REGEX = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
 function validateTimeFormat(time: string, fieldName: string): void {
   if (!TIME_REGEX.test(time)) {
@@ -138,12 +126,13 @@ function calculateConcerten(
   tijdStartConcerten: string,
   tijdEindeConcerten: string,
 ): CostCalculationResult {
-  const endMinutes = timeToMinutes(tijdEindeConcerten);
-  const startMinutes = timeToMinutes(tijdStartConcerten);
-  const lateMinutes = timeToMinutes(CONCERT_LATE_TIME);
 
-  const isOvernight = endMinutes < startMinutes;
-  const isLate = endMinutes > lateMinutes;
+  const endSeconds = timeToSeconds(tijdEindeConcerten);
+  const startSeconds = timeToSeconds(tijdStartConcerten);
+  const lateSeconds = timeToSeconds(CONCERT_LATE_TIME);
+
+  const isOvernight = endSeconds < startSeconds;
+  const isLate = endSeconds > lateSeconds;
 
   const cost = isOvernight || isLate
     ? COSTS.CONCERT_LATE

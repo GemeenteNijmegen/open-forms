@@ -95,7 +95,7 @@ describe('calculateCost - happy path', () => {
         'returns 125.80 when tijdEindeConcerten is before 22:00',
         {
           watWiltUDoen: 'concerten',
-          tijdStartConcerten: '20:00',
+          tijdStartConcerten: '20:00:00',
           tijdEindeConcerten: '21:30',
         } as CostCalculationInput,
         125.8,
@@ -104,8 +104,8 @@ describe('calculateCost - happy path', () => {
         'returns 125.80 when tijdEindeConcerten is exactly 22:00',
         {
           watWiltUDoen: 'concerten',
-          tijdStartConcerten: '20:00',
-          tijdEindeConcerten: '22:00',
+          tijdStartConcerten: '20:00:00',
+          tijdEindeConcerten: '22:00:00',
         } as CostCalculationInput,
         125.8,
       ],
@@ -113,8 +113,8 @@ describe('calculateCost - happy path', () => {
         'returns 284.60 when tijdEindeConcerten is after 22:00',
         {
           watWiltUDoen: 'concerten',
-          tijdStartConcerten: '20:00',
-          tijdEindeConcerten: '23:00',
+          tijdStartConcerten: '20:00:00',
+          tijdEindeConcerten: '23:00:00',
         } as CostCalculationInput,
         284.6,
       ],
@@ -123,7 +123,7 @@ describe('calculateCost - happy path', () => {
         {
           watWiltUDoen: 'concerten',
           tijdStartConcerten: '23:00',
-          tijdEindeConcerten: '01:00',
+          tijdEindeConcerten: '01:00:00',
         } as CostCalculationInput,
         284.6,
       ],
@@ -159,8 +159,8 @@ describe('calculateCost - boundary conditions', () => {
       'concerten: tijdEindeConcerten exactly at 22:00 is treated as not late',
       {
         watWiltUDoen: 'concerten',
-        tijdStartConcerten: '20:00',
-        tijdEindeConcerten: '22:00',
+        tijdStartConcerten: '20:00:00',
+        tijdEindeConcerten: '22:00:00',
       } as CostCalculationInput,
       125.8, // adjust if implementation uses >= 22:00
     ],
@@ -215,7 +215,7 @@ describe('calculateCost - failure modes', () => {
       'throws when concerten is missing tijdEindeConcerten',
       {
         watWiltUDoen: 'concerten',
-        tijdStartConcerten: '20:00',
+        tijdStartConcerten: '20:00:00',
       } as CostCalculationInput,
       'tijdEindeConcerten is required for concerten',
     ],
@@ -223,7 +223,7 @@ describe('calculateCost - failure modes', () => {
       'throws when concerten is missing tijdStartConcerten',
       {
         watWiltUDoen: 'concerten',
-        tijdEindeConcerten: '21:00',
+        tijdEindeConcerten: '21:00:00',
       } as CostCalculationInput,
       'tijdStartConcerten is required for concerten',
     ],
@@ -231,8 +231,8 @@ describe('calculateCost - failure modes', () => {
       'throws when tijdEindeConcerten has invalid format',
       {
         watWiltUDoen: 'concerten',
-        tijdStartConcerten: '20:00',
-        tijdEindeConcerten: '25:99', // invalid time
+        tijdStartConcerten: '20:00:00',
+        tijdEindeConcerten: '25:99:00', // invalid time
       } as CostCalculationInput,
       'Invalid time format',
     ],
