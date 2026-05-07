@@ -1,0 +1,35 @@
+info:
+  name: standplaatsvergunning
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{baseUrl}}/prefill/standplaatsvergunning?watWiltUDoen=koningsdag&startdatum=&einddatum=&tijdStartConcerten=&tijdEindeConcerten="
+  params:
+    - name: watWiltUDoen
+      value: koningsdag
+      type: query
+    - name: startdatum
+      value: ""
+      type: query
+    - name: einddatum
+      value: ""
+      type: query
+    - name: tijdStartConcerten
+      value: ""
+      type: query
+    - name: tijdEindeConcerten
+      value: ""
+      type: query
+    - name: standplaatsOpties
+      value: "true"
+      type: query
+      disabled: true
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
