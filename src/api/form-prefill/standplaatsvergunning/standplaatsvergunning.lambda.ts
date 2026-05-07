@@ -1,12 +1,23 @@
-
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { calculateCost } from './costCalculation';
 import { parseEvent, ParseError } from './parser';
+import { getStandplaatsOpties } from './standplaatsOpties';
 
 export async function handler(
   event: APIGatewayProxyEvent,
 ): Promise<APIGatewayProxyResult> {
   try {
+    // Check if 'standplaatsOpties' query param is provided
+    const queryParams = event.queryStringParameters || {};
+    if ('standplaatsOpties' in queryParams) {
+      const result = getStandplaatsOpties();
+      return {
+        statusCode: 200,
+        body: JSON.stringify(result.options),
+      };
+    }
+
+    // Default behavior: cost calculation
     const input = parseEvent(event);
     const cost = calculateCost(input);
 
