@@ -37,7 +37,7 @@ describe('getStandplaatsOptiesForDate', () => {
       [new Date('2025-03-25'), 'March 25 (start date)'],
       [new Date('2025-04-15'), 'April 15 (middle of season)'],
       [new Date('2025-05-04'), 'May 4 (end date)'],
-    ])('should include concerten option on %s', (date, description) => {
+    ])('should include concerten option on %s', (date) => {
       const result = getStandplaatsOptiesForDate(date);
 
       expect(result.options).toHaveLength(BASE_OPTIONS_COUNT + 1);
@@ -50,7 +50,7 @@ describe('getStandplaatsOptiesForDate', () => {
     it.each([
       [new Date('2025-03-24'), 'March 24 (day before)'],
       [new Date('2025-05-05'), 'May 5 (day after)'],
-    ])('should NOT include concerten option on %s', (date, description) => {
+    ])('should NOT include concerten option on %s', (date) => {
       const result = getStandplaatsOptiesForDate(date);
 
       expect(result.options).toHaveLength(BASE_OPTIONS_COUNT);
@@ -66,7 +66,7 @@ describe('getStandplaatsOptiesForDate', () => {
       [new Date('2025-08-12'), 'August 12 (start date)'],
       [new Date('2025-08-19'), 'August 19 (middle of season)'],
       [new Date('2025-08-27'), 'August 27 (end date)'],
-    ])('should include winter option on %s', (date, description) => {
+    ])('should include winter option on %s', (date) => {
       const result = getStandplaatsOptiesForDate(date);
 
       expect(result.options).toHaveLength(BASE_OPTIONS_COUNT + 1);
@@ -79,7 +79,7 @@ describe('getStandplaatsOptiesForDate', () => {
     it.each([
       [new Date('2025-08-11'), 'August 11 (day before)'],
       [new Date('2025-08-28'), 'August 28 (day after)'],
-    ])('should NOT include winter option on %s', (date, description) => {
+    ])('should NOT include winter option on %s', (date) => {
       const result = getStandplaatsOptiesForDate(date);
 
       expect(result.options).toHaveLength(BASE_OPTIONS_COUNT);
@@ -95,7 +95,7 @@ describe('getStandplaatsOptiesForDate', () => {
       [new Date('2025-01-01'), 'January 1 (start date)'],
       [new Date('2025-01-15'), 'January 15 (middle of season)'],
       [new Date('2025-03-01'), 'March 1 (end date)'],
-    ])('should include koningsdag option on %s', (date, description) => {
+    ])('should include koningsdag option on %s', (date) => {
       const result = getStandplaatsOptiesForDate(date);
 
       expect(result.options).toHaveLength(BASE_OPTIONS_COUNT + 1);
@@ -108,7 +108,7 @@ describe('getStandplaatsOptiesForDate', () => {
     it.each([
       [new Date('2024-12-31'), 'December 31 (day before)'],
       [new Date('2025-03-02'), 'March 2 (day after)'],
-    ])('should NOT include koningsdag option on %s', (date, description) => {
+    ])('should NOT include koningsdag option on %s', (date) => {
       const result = getStandplaatsOptiesForDate(date);
 
       expect(result.options).toHaveLength(BASE_OPTIONS_COUNT);
@@ -139,7 +139,7 @@ describe('getStandplaatsOptiesForDate', () => {
       [new Date('2025-07-15'), 'July'],
       [new Date('2025-09-01'), 'September'],
       [new Date('2025-12-25'), 'December'],
-    ])('should only return base options on %s', (date, description) => {
+    ])('should only return base options on %s', (date) => {
       const result = getStandplaatsOptiesForDate(date);
 
       expect(result.options).toHaveLength(BASE_OPTIONS_COUNT);
