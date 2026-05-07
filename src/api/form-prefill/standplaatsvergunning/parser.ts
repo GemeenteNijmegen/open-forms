@@ -154,8 +154,13 @@ export function parseEvent(rawEvent: unknown): CostCalculationInput {
     ...bodyParams,
   };
 
-  // 4. Validate and transform merged params
-  const paramsResult = ParamsSchema.safeParse(merged);
+  // 4. Clean empty strings to undefined to allow optional fields to be truly optional
+  const cleaned = Object.fromEntries(
+    Object.entries(merged).filter(([, value]) => value !== ''),
+  );
+
+  // 5. Validate and transform merged params
+  const paramsResult = ParamsSchema.safeParse(cleaned);
   if (!paramsResult.success) {
     throw new ParseError(paramsResult.error.issues);
   }

@@ -318,6 +318,60 @@ describe('parseEvent - happy path', () => {
       });
       expect(() => parseEvent(event)).not.toThrow();
     });
+
+    it('ignores extra parameters sent as empty strings (koningsdag)', () => {
+      const event = makeEvent({
+        watWiltUDoen: 'koningsdag',
+        startdatum: '',
+        einddatum: '',
+        tijdStartConcerten: '',
+        tijdEindeConcerten: '',
+      });
+      expect(() => parseEvent(event)).not.toThrow();
+      expect(parseEvent(event).watWiltUDoen).toBe('koningsdag');
+    });
+
+    it('ignores extra parameters sent as empty strings (winter)', () => {
+      const event = makeEvent({
+        watWiltUDoen: 'winter',
+        startdatum: '',
+        einddatum: '',
+        tijdStartConcerten: '',
+        tijdEindeConcerten: '',
+      });
+      expect(() => parseEvent(event)).not.toThrow();
+      expect(parseEvent(event).watWiltUDoen).toBe('winter');
+    });
+
+    it('ignores extra parameters sent as empty strings (gemeentegrond with valid dates)', () => {
+      const event = makeEvent({
+        watWiltUDoen: 'gemeentegrond',
+        startdatum: '2025-01-01',
+        einddatum: '2025-01-31',
+        tijdStartConcerten: '',
+        tijdEindeConcerten: '',
+      });
+      expect(() => parseEvent(event)).not.toThrow();
+      const result = parseEvent(event);
+      expect(result.watWiltUDoen).toBe('gemeentegrond');
+      expect(result.startdatum).toEqual(new Date('2025-01-01'));
+      expect(result.einddatum).toEqual(new Date('2025-01-31'));
+    });
+
+    it('ignores extra parameters sent as empty strings (concerten with valid times)', () => {
+      const event = makeEvent({
+        watWiltUDoen: 'concerten',
+        tijdStartConcerten: '20:00',
+        tijdEindeConcerten: '21:00',
+        startdatum: '',
+        einddatum: '',
+      });
+      expect(() => parseEvent(event)).not.toThrow();
+      const result = parseEvent(event);
+      expect(result.watWiltUDoen).toBe('concerten');
+      expect(result.tijdStartConcerten).toBe('20:00');
+      expect(result.tijdEindeConcerten).toBe('21:00');
+    });
   });
 });
 
