@@ -1,0 +1,4 @@
+name: Open Forms management - accp
+variables:
+  - name: baseUrl
+    value: https://form-api.open-forms-accp.csp-nijmegen.nl
