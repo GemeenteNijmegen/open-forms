@@ -3,6 +3,10 @@ import { Construct } from 'constructs';
 import { PrefillEndpointBase, PrefillEndpointProps } from '../PrefillEndpointBase';
 import { StandplaatsvergunningFunction } from './standplaatsvergunning-function';
 
+/**
+ * Standplaatsvergunning prefill endpoint
+ * Docs: docs/prefill/standplaatsvergunning/README.md
+ */
 export class PrefillEndpoint extends PrefillEndpointBase {
   constructor(scope: Construct, id: string, props: PrefillEndpointProps) {
     super(scope, id, props);
