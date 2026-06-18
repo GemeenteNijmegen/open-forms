@@ -8,7 +8,7 @@ import { ObjectsApiClient } from './ObjectsApiClient';
 /**
  * Standard max token cache time before renewal
  */
-const ZGW_TOKEN_CACHE_TTL_MS = 2 * 60 * 1000; // 1 minute in millisecond for testing purposes not too long
+export const ZGW_TOKEN_CACHE_TTL_MS = 15 * 60 * 1000; // 15 minuten
 /**
  * CRS headers needed in some of the zgw clients
  */
