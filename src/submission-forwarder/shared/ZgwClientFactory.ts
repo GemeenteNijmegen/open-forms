@@ -8,7 +8,7 @@ import { ObjectsApiClient } from './ObjectsApiClient';
 /**
  * Standard max token cache time before renewal
  */
-const ZGW_TOKEN_CACHE_TTL_MS = 1 * 60 * 1000; // 1 minute in millisecond for testing purposes not too long
+const ZGW_TOKEN_CACHE_TTL_MS = 2 * 60 * 1000; // 1 minute in millisecond for testing purposes not too long
 /**
  * CRS headers needed in some of the zgw clients
  */
@@ -33,38 +33,20 @@ export class ZgwClientFactory {
   constructor(private readonly credentials: ZgwClientFactoryCredentials) { }
 
   async getCatalogiClient(baseUrl: string) {
-    const token = await this.createToken();
     const client = new CatalogiHttpClient({
       baseURL: baseUrl,
       format: 'json',
-      async securityWorker(securityData: any) {
-        return {
-          headers: {
-            'Authorization': `Bearer ${securityData?.token}`,
-            'Content-Crs': 'EPSG:4326',
-            'Accept-Crs': 'EPSG:4326',
-          },
-        };
-      },
+      securityWorker: () => this.createSecurityParameters(true),
     });
-    client.setSecurityData({ token });
     return client;
   }
 
   async getDocumentenClient(baseUrl: string) {
-    const token = await this.createToken();
     const client = new DocumentenHttpClient({
       baseURL: baseUrl,
       format: 'json',
-      async securityWorker(securityData: any) {
-        return {
-          headers: {
-            Authorization: `Bearer ${securityData?.token}`,
-          },
-        };
-      },
+      securityWorker: () => this.createSecurityParameters(false),
     });
-    client.setSecurityData({ token });
     return client;
   }
 
@@ -74,7 +56,6 @@ export class ZgwClientFactory {
       format: 'json',
       securityWorker: () => this.createSecurityParameters(true),
     });
-
     return client;
   }
 
@@ -101,6 +82,7 @@ export class ZgwClientFactory {
     const cachedToken = this.zgwTokenCache;
     const now = Date.now();
     if (cachedToken && now < cachedToken.refreshAt) {
+      console.debug('ZGW JWT cache used.', { currentIat: cachedToken?.issuedAt, refreshAt: cachedToken?.refreshAt });
       return cachedToken.token;
     }
     const token = await this.createToken();
