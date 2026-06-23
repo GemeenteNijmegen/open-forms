@@ -96,7 +96,7 @@
       "description": "Create a JavaScript bundle from src/api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
+          "exec": "esbuild --bundle src/api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/*"
         }
       ]
     },
@@ -105,7 +105,7 @@
       "description": "Continuously update the JavaScript bundle from src/api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
+          "exec": "esbuild --bundle src/api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/* --watch"
         }
       ]
     },
@@ -114,7 +114,7 @@
       "description": "Create a JavaScript bundle from src/nl-wallet/prefill/prefill.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/nl-wallet/prefill/prefill.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/nl-wallet/prefill/prefill.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
+          "exec": "esbuild --bundle src/nl-wallet/prefill/prefill.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/nl-wallet/prefill/prefill.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/*"
         }
       ]
     },
@@ -123,7 +123,7 @@
       "description": "Continuously update the JavaScript bundle from src/nl-wallet/prefill/prefill.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/nl-wallet/prefill/prefill.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/nl-wallet/prefill/prefill.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
+          "exec": "esbuild --bundle src/nl-wallet/prefill/prefill.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/nl-wallet/prefill/prefill.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/* --watch"
         }
       ]
     },
@@ -132,7 +132,7 @@
       "description": "Create a JavaScript bundle from src/nl-wallet/token/token.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/nl-wallet/token/token.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/nl-wallet/token/token.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
+          "exec": "esbuild --bundle src/nl-wallet/token/token.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/nl-wallet/token/token.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/*"
         }
       ]
     },
@@ -141,7 +141,7 @@
       "description": "Continuously update the JavaScript bundle from src/nl-wallet/token/token.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/nl-wallet/token/token.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/nl-wallet/token/token.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
+          "exec": "esbuild --bundle src/nl-wallet/token/token.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/nl-wallet/token/token.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/* --watch"
         }
       ]
     },
@@ -150,7 +150,7 @@
       "description": "Create a JavaScript bundle from src/prefill-demo/handler.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/prefill-demo/handler.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/prefill-demo/handler.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
+          "exec": "esbuild --bundle src/prefill-demo/handler.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/prefill-demo/handler.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/*"
         }
       ]
     },
@@ -159,7 +159,7 @@
       "description": "Continuously update the JavaScript bundle from src/prefill-demo/handler.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/prefill-demo/handler.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/prefill-demo/handler.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
+          "exec": "esbuild --bundle src/prefill-demo/handler.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/prefill-demo/handler.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/* --watch"
         }
       ]
     },
@@ -168,7 +168,7 @@
       "description": "Create a JavaScript bundle from src/static-form-definitions/formio-login/login-mock.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/static-form-definitions/formio-login/login-mock.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/static-form-definitions/formio-login/login-mock.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
+          "exec": "esbuild --bundle src/static-form-definitions/formio-login/login-mock.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/static-form-definitions/formio-login/login-mock.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/*"
         }
       ]
     },
@@ -177,7 +177,7 @@
       "description": "Continuously update the JavaScript bundle from src/static-form-definitions/formio-login/login-mock.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/static-form-definitions/formio-login/login-mock.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/static-form-definitions/formio-login/login-mock.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
+          "exec": "esbuild --bundle src/static-form-definitions/formio-login/login-mock.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/static-form-definitions/formio-login/login-mock.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/* --watch"
         }
       ]
     },
@@ -186,7 +186,7 @@
       "description": "Create a JavaScript bundle from src/static-form-definitions/lambda/StaticFormDefinitions.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/static-form-definitions/lambda/StaticFormDefinitions.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/static-form-definitions/lambda/StaticFormDefinitions.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
+          "exec": "esbuild --bundle src/static-form-definitions/lambda/StaticFormDefinitions.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/static-form-definitions/lambda/StaticFormDefinitions.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/*"
         }
       ]
     },
@@ -195,7 +195,7 @@
       "description": "Continuously update the JavaScript bundle from src/static-form-definitions/lambda/StaticFormDefinitions.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/static-form-definitions/lambda/StaticFormDefinitions.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/static-form-definitions/lambda/StaticFormDefinitions.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
+          "exec": "esbuild --bundle src/static-form-definitions/lambda/StaticFormDefinitions.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/static-form-definitions/lambda/StaticFormDefinitions.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/* --watch"
         }
       ]
     },
@@ -204,7 +204,7 @@
       "description": "Create a JavaScript bundle from src/submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
+          "exec": "esbuild --bundle src/submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/*"
         }
       ]
     },
@@ -213,7 +213,7 @@
       "description": "Continuously update the JavaScript bundle from src/submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
+          "exec": "esbuild --bundle src/submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/* --watch"
         }
       ]
     },
@@ -222,7 +222,7 @@
       "description": "Create a JavaScript bundle from src/submission-forwarder/forwarder-lambda/forwarder.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/submission-forwarder/forwarder-lambda/forwarder.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/forwarder-lambda/forwarder.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
+          "exec": "esbuild --bundle src/submission-forwarder/forwarder-lambda/forwarder.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/forwarder-lambda/forwarder.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/*"
         }
       ]
     },
@@ -231,7 +231,7 @@
       "description": "Continuously update the JavaScript bundle from src/submission-forwarder/forwarder-lambda/forwarder.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/submission-forwarder/forwarder-lambda/forwarder.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/forwarder-lambda/forwarder.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
+          "exec": "esbuild --bundle src/submission-forwarder/forwarder-lambda/forwarder.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/forwarder-lambda/forwarder.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/* --watch"
         }
       ]
     },
@@ -240,7 +240,7 @@
       "description": "Create a JavaScript bundle from src/submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
+          "exec": "esbuild --bundle src/submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/*"
         }
       ]
     },
@@ -249,7 +249,7 @@
       "description": "Continuously update the JavaScript bundle from src/submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
+          "exec": "esbuild --bundle src/submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/* --watch"
         }
       ]
     },
@@ -258,7 +258,7 @@
       "description": "Create a JavaScript bundle from src/submission-forwarder/receiver-lambda/receiver.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/submission-forwarder/receiver-lambda/receiver.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/receiver-lambda/receiver.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
+          "exec": "esbuild --bundle src/submission-forwarder/receiver-lambda/receiver.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/receiver-lambda/receiver.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/*"
         }
       ]
     },
@@ -267,7 +267,7 @@
       "description": "Continuously update the JavaScript bundle from src/submission-forwarder/receiver-lambda/receiver.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/submission-forwarder/receiver-lambda/receiver.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/receiver-lambda/receiver.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
+          "exec": "esbuild --bundle src/submission-forwarder/receiver-lambda/receiver.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/receiver-lambda/receiver.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/* --watch"
         }
       ]
     },
@@ -276,7 +276,7 @@
       "description": "Create a JavaScript bundle from src/submission-forwarder/resubmit-lambda/resubmit.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/submission-forwarder/resubmit-lambda/resubmit.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/resubmit-lambda/resubmit.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
+          "exec": "esbuild --bundle src/submission-forwarder/resubmit-lambda/resubmit.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/resubmit-lambda/resubmit.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/*"
         }
       ]
     },
@@ -285,7 +285,7 @@
       "description": "Continuously update the JavaScript bundle from src/submission-forwarder/resubmit-lambda/resubmit.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/submission-forwarder/resubmit-lambda/resubmit.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/resubmit-lambda/resubmit.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
+          "exec": "esbuild --bundle src/submission-forwarder/resubmit-lambda/resubmit.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/resubmit-lambda/resubmit.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/* --watch"
         }
       ]
     },
@@ -294,7 +294,7 @@
       "description": "Create a JavaScript bundle from src/submission-forwarder/vip-transformation-lambda/vip-transformation.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/submission-forwarder/vip-transformation-lambda/vip-transformation.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/vip-transformation-lambda/vip-transformation.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
+          "exec": "esbuild --bundle src/submission-forwarder/vip-transformation-lambda/vip-transformation.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/vip-transformation-lambda/vip-transformation.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/*"
         }
       ]
     },
@@ -303,7 +303,7 @@
       "description": "Continuously update the JavaScript bundle from src/submission-forwarder/vip-transformation-lambda/vip-transformation.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/submission-forwarder/vip-transformation-lambda/vip-transformation.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/vip-transformation-lambda/vip-transformation.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
+          "exec": "esbuild --bundle src/submission-forwarder/vip-transformation-lambda/vip-transformation.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/vip-transformation-lambda/vip-transformation.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/* --watch"
         }
       ]
     },
@@ -312,7 +312,7 @@
       "description": "Create a JavaScript bundle from src/submission-forwarder/zgw-registration-lambda/zgw-registration.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/submission-forwarder/zgw-registration-lambda/zgw-registration.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/zgw-registration-lambda/zgw-registration.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/*"
+          "exec": "esbuild --bundle src/submission-forwarder/zgw-registration-lambda/zgw-registration.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/zgw-registration-lambda/zgw-registration.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/*"
         }
       ]
     },
@@ -321,7 +321,7 @@
       "description": "Continuously update the JavaScript bundle from src/submission-forwarder/zgw-registration-lambda/zgw-registration.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/submission-forwarder/zgw-registration-lambda/zgw-registration.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/zgw-registration-lambda/zgw-registration.lambda/index.js\" --tsconfig=\"tsconfig.dev.json\" --external:@aws-sdk/* --watch"
+          "exec": "esbuild --bundle src/submission-forwarder/zgw-registration-lambda/zgw-registration.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/zgw-registration-lambda/zgw-registration.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/* --watch"
         }
       ]
     },
@@ -366,7 +366,7 @@
       "description": "Synthesize project files",
       "steps": [
         {
-          "exec": "ts-node --project tsconfig.dev.json .projenrc.ts"
+          "exec": "ts-node --project test/tsconfig.json .projenrc.ts"
         }
       ]
     },
