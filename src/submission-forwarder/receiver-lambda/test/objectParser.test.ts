@@ -52,6 +52,11 @@ describe('Parsing for the next step', () => {
 });
 
 
+const esfTaakUuid = '6df21057-e07c-4909-8933-d70b79cfd15e';
+const submissionUuid = 'd3713c2b-307c-4c07-8eaa-c2c6d75869cf';
+const vipJzSubmissionUuid = '167e0aec-e416-46fa-9868-e35f11f3f151';
+const aanvraagSociaalDomeinUuid = '167e0aec-e416-46fa-9868-e35f11f3f151';
+
 describe('Parsing urls from env var', () => {
   const envStringEsfTaak = `esfTaak##${esfTaakUrl}`;
   const envStringSubmission = `submission##${submissionTaakUrl}`;
@@ -75,6 +80,66 @@ describe('Parsing urls from env var', () => {
     expect(parsed[1].parser).toBe(SubmissionSchema);
     expect(parsed[2].parser).toBe(VIPJZSubmissionSchema);
     expect(parsed[3].parser).toBe(AanvraagSociaalDomeinSchema);
+  });
+
+  describe('UUID-only format', () => {
+    test('Parsing a UUID-only string (single)', () => {
+      const parsed = objectParser.parseObjectTypestring(`esfTaak##${esfTaakUuid}`);
+      expect(parsed.length).toBe(1);
+      expect(parsed[0].objectTypeUrl).toBe(esfTaakUuid);
+    });
+
+    test('Parsing a UUID-only string (multiple)', () => {
+      const uuidEnvString = `esfTaak##${esfTaakUuid};submission##${submissionUuid};vipJzSubmission##${vipJzSubmissionUuid};aanvraagSociaalDomein##${aanvraagSociaalDomeinUuid}`;
+      const parsed = objectParser.parseObjectTypestring(uuidEnvString);
+      expect(parsed.length).toBe(4);
+      expect(parsed[0].objectTypeUrl).toBe(esfTaakUuid);
+      expect(parsed[1].objectTypeUrl).toBe(submissionUuid);
+    });
+  });
+});
+
+describe('UUID-only object type matching', () => {
+  let uuidObjectParser: ObjectParser;
+
+  beforeAll(() => {
+    uuidObjectParser = new ObjectParser([
+      { objectTypeUrl: submissionUuid, parser: SubmissionSchema },
+      { objectTypeUrl: esfTaakUuid, parser: EsfTaakSchema },
+      { objectTypeUrl: vipJzSubmissionUuid, parser: VIPJZSubmissionSchema },
+      { objectTypeUrl: aanvraagSociaalDomeinUuid, parser: AanvraagSociaalDomeinSchema },
+    ]);
+  });
+
+  test('Matches submission by UUID even when object.type is a URL', () => {
+    expect(uuidObjectParser.parse(submission)).toBeTruthy();
+  });
+
+  test('Matches taak by UUID even when object.type is a URL', () => {
+    expect(uuidObjectParser.parse(taak)).toBeTruthy();
+  });
+
+  test('Matches vipjz by UUID even when object.type is a URL', () => {
+    expect(uuidObjectParser.parse(vipjzVerzoek)).toBeTruthy();
+  });
+
+  test('Unknown object still throws', () => {
+    expect(() => uuidObjectParser.parse(randomObject)).toThrow();
+  });
+
+  test('UUID config matches object.type regardless of domain (domain migration)', () => {
+    const modifiedSubmission = structuredClone(submission);
+    (modifiedSubmission as any).type = `https://new-domain.example.com/objecttypes/api/v2/objecttypes/${submissionUuid}`;
+    const modifiedSubmission2 = structuredClone(submission);
+    (modifiedSubmission2 as any).type = `https://old-domain.example.com/objecttypes/api/v2/objecttypes/${submissionUuid}`;
+    expect(uuidObjectParser.parse(modifiedSubmission as any)).toBeTruthy();
+    expect(uuidObjectParser.parse(modifiedSubmission2 as any)).toBeTruthy();
+  });
+
+  test('UUID config from env var string matches object', () => {
+    const parser = new ObjectParser(`esfTaak##${esfTaakUuid};submission##${submissionUuid};vipJzSubmission##${vipJzSubmissionUuid};aanvraagSociaalDomein##${aanvraagSociaalDomeinUuid}`);
+    expect(parser.parse(submission)).toBeTruthy();
+    expect(parser.parse(taak)).toBeTruthy();
   });
 });
 describe('Adding optional s3SubFolderObject to enrichedZGWObject', () => {

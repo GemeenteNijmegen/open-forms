@@ -7,9 +7,19 @@ import { VIPJZSubmission, VIPJZSubmissionSchema } from '../shared/VIPJZSubmissio
 import { ZgwObject } from '../shared/ZgwObject';
 
 interface objectType {
+  /** Full URL or bare UUID of the object type */
   objectTypeUrl: string;
   parser: any;
 };
+
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function matchesObjectType(configured: string, actual: string): boolean {
+  if (UUID_PATTERN.test(configured)) {
+    return actual.toLowerCase().endsWith(`/${configured.toLowerCase()}`);
+  }
+  return configured === actual;
+}
 
 /**
  * The Object parser takes an object from the Objects API,
@@ -37,7 +47,7 @@ export class ObjectParser {
   }
 
   parse(object: ZgwObject): EnrichedZgwObjectData {
-    const type = this.objectTypes.find(objectType => objectType.objectTypeUrl == object.type);
+    const type = this.objectTypes.find(objectType => matchesObjectType(objectType.objectTypeUrl, object.type));
     if (!type) {
       throw new UnknownObjectError(`Unknown object type, unable to parse, object type: ${object.type}`);
     }
