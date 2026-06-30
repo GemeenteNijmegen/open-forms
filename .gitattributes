@@ -20,6 +20,7 @@
 /.projen/tasks.json linguist-generated
 /cdk.json linguist-generated
 /LICENSE linguist-generated
+/package-lock.json linguist-generated
 /package.json linguist-generated
 /src/api/form-prefill/standplaatsvergunning/standplaatsvergunning-function.ts linguist-generated
 /src/nl-wallet/prefill/prefill-function.ts linguist-generated
@@ -36,4 +37,3 @@
 /src/submission-forwarder/zgw-registration-lambda/zgw-registration-function.ts linguist-generated
 /tsconfig.dev.json linguist-generated
 /tsconfig.json linguist-generated
-/yarn.lock linguist-generated
