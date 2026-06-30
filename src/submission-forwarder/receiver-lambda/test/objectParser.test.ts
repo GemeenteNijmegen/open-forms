@@ -130,7 +130,10 @@ describe('UUID-only object type matching', () => {
   test('UUID config matches object.type regardless of domain (domain migration)', () => {
     const modifiedSubmission = structuredClone(submission);
     (modifiedSubmission as any).type = `https://new-domain.example.com/objecttypes/api/v2/objecttypes/${submissionUuid}`;
+    const modifiedSubmission2 = structuredClone(submission);
+    (modifiedSubmission2 as any).type = `https://old-domain.example.com/objecttypes/api/v2/objecttypes/${submissionUuid}`;
     expect(uuidObjectParser.parse(modifiedSubmission as any)).toBeTruthy();
+    expect(uuidObjectParser.parse(modifiedSubmission2 as any)).toBeTruthy();
   });
 
   test('UUID config from env var string matches object', () => {
