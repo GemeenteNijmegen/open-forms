@@ -1,0 +1,23 @@
+info:
+  name: Autodelen
+  type: folder
+  seq: 1
+
+request:
+  auth:
+    type: oauth2
+    flow: client_credentials
+    accessTokenUrl: https://auth.tribecrm.nl/oauth2/token
+    credentials:
+      clientId: "{{clientId}}"
+      clientSecret: "{{clientSecret}}"
+      placement: body
+    scope: read write offline
+    tokenConfig:
+      id: credentials
+      placement:
+        header: Bearer
+      source: access_token
+    settings:
+      autoFetchToken: true
+      autoRefreshToken: true
