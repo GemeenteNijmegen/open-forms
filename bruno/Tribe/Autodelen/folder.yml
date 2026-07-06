@@ -7,7 +7,7 @@ request:
   auth:
     type: oauth2
     flow: client_credentials
-    accessTokenUrl: https://auth.tribecrm.nl/oauth2/token
+    accessTokenUrl: "{{tokenUrl}}"
     credentials:
       clientId: "{{clientId}}"
       clientSecret: "{{clientSecret}}"
@@ -21,3 +21,117 @@ request:
     settings:
       autoFetchToken: true
       autoRefreshToken: true
+
+docs:
+  content: |
+    ## Healthcheck / metadata
+
+    Als eerste simpele controle kan de metadata van de Tribe-omgeving worden opgehaald:
+
+    ```http
+    GET {{baseUrl}}$metadata
+    ```
+
+    Deze call haalt het volledige OData-schema van de Tribe-omgeving op. Dit schema bevat alle beschikbare entiteiten, formulieren, velden, veldtypes, relaties en keuzelijsten. Dit is handig om te controleren of de API-koppeling werkt en om de juiste veldnamen/ID’s te vinden.
+
+    ## Bestaand formulier
+
+    In Tribe bestaat al een formulier voor de aanmelding Autodelen. Dit formulier mag niet zomaar aangepast worden, omdat hier ook Tribe-automations aan hangen. Door via de API een record aan te maken op dit bestaande formulier, kan dezelfde verwerking in Tribe worden gebruikt als bij een inzending via het webformulier.
+
+    De API-specificatie van het formulier is te vinden in Tribe via:
+
+    **Configuratie** → **Administratie** → **Toepassingen**
+
+    Daar kan het OData-schema / de API-specificatie van de omgeving worden geraadpleegd.
+
+    ## Velden en ID’s
+
+    Alle velden in Tribe hebben technische veld-ID’s. In de API wordt dus niet de zichtbare veldnaam gebruikt, maar de technische veldnaam uit het schema.
+
+    Voorbeeld:
+
+    ```json
+    {
+      "e4d6da94__fe9d__43e8__be1f__8a359911b9a8": "Jan"
+    }
+    ```
+
+    Dit veld is in het formulier bijvoorbeeld de vraag “Wat is uw voornaam?”.
+
+    Gewone tekstvelden kunnen direct als string worden meegestuurd. Voorbeelden zijn voornaam, tussenvoegsel, achternaam, postcode, e-mailadres, telefoonnummer en opmerkingen.
+    Dit is zichtbaar in de metadata en in Configuratie > Toepassingen > Verken mijn datamodel
+    Zoek naar het formulier om een UI overzicht te hebben van alle velden met ID's.
+
+    ## Keuzevelden
+
+    Sommige velden zijn keuzevelden, zoals dropdowns of radiobuttons. Deze velden hebben vaste keuzewaarden in Tribe. In de API worden deze niet als tekst meegestuurd, maar als verwijzing naar de bestaande keuze-ID.
+
+    Daarom worden de mogelijke keuzes eerst opgehaald via GET-calls op de betreffende keuzelijst-entiteiten. In het resultaat staat per keuze onder andere:
+
+    ```json
+    {
+      "ID": "f72c0ba5-1a70-4a7c-9315-5dea6d98e088",
+      "_Name": "Ik wil autodelen met mijn eigen auto"
+    }
+    ```
+
+    De waarde in `_Name` is de zichtbare tekst van de keuze. De waarde in `ID` moet worden gebruikt in de uiteindelijke POST.
+
+    Voorbeeld van een keuzeveld in de POST:
+
+    ```json
+    {
+      "fab54a03__2654__4a1c__8dbd__48736065db9a": {
+        "ID": "f72c0ba5-1a70-4a7c-9315-5dea6d98e088"
+      }
+    }
+    ```
+
+    Dus niet:
+
+    ```json
+    {
+      "fab54a03__2654__4a1c__8dbd__48736065db9a": "Ik wil autodelen met mijn eigen auto"
+    }
+    ```
+
+    ## Opbouw van de POST
+
+    De uiteindelijke aanmelding wordt aangemaakt met een POST op de formulier-entiteit:
+
+    ```http
+    POST {{baseUrl}}_3881e9fc__a770__47ab__a547__091ca1bd5fc7
+    ```
+
+    De body bevat:
+
+    1. gewone formulierwaarden als string;
+    2. keuzevelden als object met een bestaande `ID`.
+
+    Voorbeeld:
+
+    ```json
+    {
+      "e4d6da94__fe9d__43e8__be1f__8a359911b9a8": "Test",
+      "_4393ae03__e0a2__432d__bfb6__009f4f3138ad": "van",
+      "_04d904c7__9725__4563__97e9__6aeb00cfa449": "DevOps",
+      "bfb01497__9ca8__4c9d__b562__1dd5c0093ede": "1234AB",
+      "_3c999636__add0__44c7__91ee__e74d26a14200": "testexample@nijmegen.nl",
+      "_36d6045c__1cca__4f48__af68__91af51f20494": "0612345678",
+      "_84a55cbb__9925__49be__9e09__da33dd726fdd": "Ik wil graag meedoen.",
+      "_8f5cedc0__6a5f__4b79__b760__9e9632bb09f4": "Via een API-test",
+      "fab54a03__2654__4a1c__8dbd__48736065db9a": {
+        "ID": "f72c0ba5-1a70-4a7c-9315-5dea6d98e088"
+      },
+      "_3c6845d6__33e6__4d69__b340__a1706e440baf": {
+        "ID": "eeb9008a-be77-4b83-8aa4-1e8d818ddf8a"
+      },
+      "_448b0832__def2__4bdd__a624__588b2517fedc": {
+        "ID": "ea97af44-4327-4ac5-b8dd-6de87bcd3119"
+      },
+      "fa59cb08__d5e2__4349__8fdb__519f5ffb8e35": "Test met navigation properties"
+    }
+    ```
+
+    In Bruno kunnen de drie keuze-ID’s opties vooraf als variabelen worden opgeslagen. Dan is voor een normale aanmelding alleen de laatste POST-call nodig. De GET-calls voor de keuzelijsten blijven nuttig om de beschikbare opties en bijbehorende ID’s te controleren.
+  type: text/markdown
