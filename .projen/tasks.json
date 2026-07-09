@@ -601,13 +601,65 @@
       },
       "steps": [
         {
-          "exec": "npx npm-check-updates@20 --upgrade --target=minor --peer --no-deprecated --dep=dev,peer,prod,optional --filter=@types/jest,@types/node,aws-sdk-client-mock,esbuild,eslint-import-resolver-typescript,eslint-plugin-import,jest,projen,ts-jest,ts-node,typescript,@aws-lambda-powertools/logger,@aws-sdk/client-dynamodb,@aws-sdk/client-s3,@aws-sdk/client-ses,@aws-sdk/client-sfn,@aws-sdk/client-sns,@aws-sdk/client-sqs,@aws-sdk/lib-storage,@gemeentenijmegen/apigateway-http,@gemeentenijmegen/aws-constructs,@gemeentenijmegen/design-tokens,@gemeentenijmegen/modules-zgw-client,@gemeentenijmegen/projen-project-type,@gemeentenijmegen/utils,@types/aws-lambda,@types/jsonwebtoken,dotenv,jose,jsonwebtoken,zod"
+          "execArgs": [
+            "npx",
+            "npm-check-updates@20",
+            "--upgrade",
+            "--target=minor",
+            "--peer",
+            "--no-deprecated",
+            "--dep=dev,prod,peer,optional",
+            "--filter=@types/jest,@types/node,aws-sdk-client-mock,esbuild,eslint-import-resolver-typescript,eslint-plugin-import,jest,projen,ts-jest,ts-node,typescript,@aws-lambda-powertools/logger,@aws-sdk/client-dynamodb,@aws-sdk/client-s3,@aws-sdk/client-ses,@aws-sdk/client-sfn,@aws-sdk/client-sns,@aws-sdk/client-sqs,@aws-sdk/lib-storage,@gemeentenijmegen/apigateway-http,@gemeentenijmegen/aws-constructs,@gemeentenijmegen/design-tokens,@gemeentenijmegen/modules-zgw-client,@gemeentenijmegen/projen-project-type,@gemeentenijmegen/utils,@types/aws-lambda,@types/jsonwebtoken,dotenv,jose,jsonwebtoken,zod"
+          ]
         },
         {
           "exec": "npm install"
         },
         {
-          "exec": "npm update @stylistic/eslint-plugin @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-cdk aws-sdk-client-mock commit-and-tag-version esbuild eslint-import-resolver-typescript eslint-plugin-import eslint jest jest-junit projen ts-jest ts-node typescript @aws-lambda-powertools/logger @aws-sdk/client-dynamodb @aws-sdk/client-s3 @aws-sdk/client-ses @aws-sdk/client-sfn @aws-sdk/client-sns @aws-sdk/client-sqs @aws-sdk/lib-storage @gemeentenijmegen/apigateway-http @gemeentenijmegen/aws-constructs @gemeentenijmegen/design-tokens @gemeentenijmegen/modules-zgw-client @gemeentenijmegen/projen-project-type @gemeentenijmegen/utils @types/aws-lambda @types/jsonwebtoken aws-cdk-lib constructs dotenv jose jsonwebtoken zod"
+          "execArgs": [
+            "npm",
+            "update",
+            "@stylistic/eslint-plugin",
+            "@types/jest",
+            "@types/node",
+            "@typescript-eslint/eslint-plugin",
+            "@typescript-eslint/parser",
+            "aws-cdk",
+            "aws-sdk-client-mock",
+            "commit-and-tag-version",
+            "esbuild",
+            "eslint-import-resolver-typescript",
+            "eslint-plugin-import",
+            "eslint",
+            "jest",
+            "jest-junit",
+            "projen",
+            "ts-jest",
+            "ts-node",
+            "typescript",
+            "@aws-lambda-powertools/logger",
+            "@aws-sdk/client-dynamodb",
+            "@aws-sdk/client-s3",
+            "@aws-sdk/client-ses",
+            "@aws-sdk/client-sfn",
+            "@aws-sdk/client-sns",
+            "@aws-sdk/client-sqs",
+            "@aws-sdk/lib-storage",
+            "@gemeentenijmegen/apigateway-http",
+            "@gemeentenijmegen/aws-constructs",
+            "@gemeentenijmegen/design-tokens",
+            "@gemeentenijmegen/modules-zgw-client",
+            "@gemeentenijmegen/projen-project-type",
+            "@gemeentenijmegen/utils",
+            "@types/aws-lambda",
+            "@types/jsonwebtoken",
+            "aws-cdk-lib",
+            "constructs",
+            "dotenv",
+            "jose",
+            "jsonwebtoken",
+            "zod"
+          ]
         },
         {
           "exec": "npx projen"
