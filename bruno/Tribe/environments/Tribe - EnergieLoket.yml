@@ -1,0 +1,8 @@
+name: Tribe - EnergieLoket
+variables:
+  - name: baseUrl
+    value: https://auth.tribecrm.nl/oauth2/token
+  - name: clientId
+    value: 7c795fe7-8108-4704-a00d-df0b554412df
+  - secret: true
+    name: clientSecret

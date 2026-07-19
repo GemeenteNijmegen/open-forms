@@ -1,0 +1,38 @@
+info:
+  name: Formulier aanmelden
+  type: http
+  seq: 5
+
+http:
+  method: POST
+  url: "{{baseUrl}}_3881e9fc__a770__47ab__a547__091ca1bd5fc7"
+  body:
+    type: json
+    data: |-
+      {
+        "e4d6da94__fe9d__43e8__be1f__8a359911b9a8": "Test",
+        "_4393ae03__e0a2__432d__bfb6__009f4f3138ad": "van",
+        "_04d904c7__9725__4563__97e9__6aeb00cfa449": "DevOps",
+        "bfb01497__9ca8__4c9d__b562__1dd5c0093ede": "1234AB",
+        "_3c999636__add0__44c7__91ee__e74d26a14200": "testexample@nijmegen.nl",
+        "_36d6045c__1cca__4f48__af68__91af51f20494": "0612345678",
+        "_84a55cbb__9925__49be__9e09__da33dd726fdd": "Ik wil graag meedoen.",
+        "_8f5cedc0__6a5f__4b79__b760__9e9632bb09f4": "Via een API-test",
+        "fab54a03__2654__4a1c__8dbd__48736065db9a": {
+          "ID": "f72c0ba5-1a70-4a7c-9315-5dea6d98e088"
+        },
+        "_3c6845d6__33e6__4d69__b340__a1706e440baf": {
+          "ID": "eeb9008a-be77-4b83-8aa4-1e8d818ddf8a"
+        },
+        "_448b0832__def2__4bdd__a624__588b2517fedc": {
+          "ID": "ea97af44-4327-4ac5-b8dd-6de87bcd3119"
+        },
+        "fa59cb08__d5e2__4349__8fdb__519f5ffb8e35": "Test met navigation properties"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
