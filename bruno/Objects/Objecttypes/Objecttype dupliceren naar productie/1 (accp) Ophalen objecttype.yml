@@ -1,0 +1,34 @@
+info:
+  name: 1 (accp) Ophalen objecttype
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{baseUrlObjecttypes}}/{{objectTypeUuid}}"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        bru.setVar('objectTypeName', res.body.name);
+        bru.setVar('objectTypeNamePlural', res.body.namePlural);
+        bru.setVar('objectTypeDescription', res.body.description);
+        bru.setVar('objectTypeDataClassification', res.body.dataClassification);
+        bru.setVar('objectTypeMaintainerOrganization', res.body.maintainerOrganization);
+        bru.setVar('objectTypeMaintainerDepartment', res.body.maintainerDepartment);
+        bru.setVar('objectTypeContactPerson', res.body.contactPerson);
+        bru.setVar('objectTypeContactEmail', res.body.contactEmail);
+        bru.setVar('objectTypeSource', res.body.source);
+        bru.setVar('objectTypeUpdateFrequency', res.body.updateFrequency);
+        bru.setVar('objectTypeProviderOrganization', res.body.providerOrganization);
+        bru.setVar('objectTypeDocumentationUrl', res.body.documentationUrl);
+        bru.setVar('objectTypeLabelsJson', JSON.stringify(res.body.labels || {}));
+        bru.setVar('objectTypeAllowGeometry', res.body.allowGeometry);
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
