@@ -1,0 +1,39 @@
+info:
+  name: 2 (prod) Aanmaken objecttype
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{baseUrlObjecttypes}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+      type: header
+  body:
+    type: json
+    data: |-
+      {
+        "uuid": "{{objectTypeUuid}}",
+        "name": "{{objectTypeName}}",
+        "namePlural": "{{objectTypeNamePlural}}",
+        "description": "{{objectTypeDescription}}",
+        "dataClassification": "{{objectTypeDataClassification}}",
+        "maintainerOrganization": "{{objectTypeMaintainerOrganization}}",
+        "maintainerDepartment": "{{objectTypeMaintainerDepartment}}",
+        "contactPerson": "{{objectTypeContactPerson}}",
+        "contactEmail": "{{objectTypeContactEmail}}",
+        "source": "{{objectTypeSource}}",
+        "updateFrequency": "{{objectTypeUpdateFrequency}}",
+        "providerOrganization": "{{objectTypeProviderOrganization}}",
+        "documentationUrl": "{{objectTypeDocumentationUrl}}",
+        "labels": {{objectTypeLabelsJson}},
+        "allowGeometry": {{objectTypeAllowGeometry}}
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

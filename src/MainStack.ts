@@ -51,6 +51,7 @@ export class MainStack extends Stack {
       useVipJzProductionMapping: props.configuration.branch == 'main', // TODO remove when we can use ZGW to register submisisons in VIP/JZ4ALL
       logLevel: props.configuration.logLevel ?? 'INFO',
       urlSubscriptions: props.configuration.urlSubscriptions,
+      tribeDryRun: props.configuration.branch !== 'main',
     });
 
     this.setupStaticFromDefinitions([this.api, api.restApi]);

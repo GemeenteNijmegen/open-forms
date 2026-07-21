@@ -1,0 +1,17 @@
+{
+    "tribeEnvironment": "AUTODELEN",
+    "tribeSubmissionType": "AUTODELEN_AANMELDING",
+    "pdf": "https://example.com/documenten/api/v1/enkelvoudiginformatieobjecten/03c047e1-0083-4d8b-8b31-714564b9fdb9",
+    "reference": "OF-TELEFOON01",
+    "attachments": [],
+    "autodelen": {
+        "voornaam": "Bram",
+        "achternaam": "Visser",
+        "postcode": "6533 EF",
+        "emailadres": null,
+        "telefoonnummer": "0634567890",
+        "situatie": "inEenCooperatie",
+        "hoeGevonden": "viaBekenden",
+        "contactMetAnderen": "neeBekenden"
+    }
+}
