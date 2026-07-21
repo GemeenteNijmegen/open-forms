@@ -67,12 +67,12 @@ describe('SubmissionForwarder — Tribe resources', () => {
     });
   });
 
-  test('TRIBE_SEND_MODE is empty when tribeDryRun is false (productie)', () => {
+  test('TRIBE_SEND_MODE is LIVE when tribeDryRun is false (productie)', () => {
     const template = synth(false);
     template.hasResourceProperties('AWS::Lambda::Function', {
       Description: 'Maps and sends Tribe submissions (Autodelen)',
       Environment: {
-        Variables: Match.objectLike({ TRIBE_SEND_MODE: '' }),
+        Variables: Match.objectLike({ TRIBE_SEND_MODE: 'LIVE' }),
       },
     });
   });

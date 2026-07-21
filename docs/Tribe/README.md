@@ -67,9 +67,9 @@ gebruiken om een volgende payload te bouwen; dat is nog niet nodig voor Autodele
 ## Dry-run
 
 Op acceptatie staat de omgevingsvariabele `TRIBE_SEND_MODE` op `DRY_RUN`; op productie
-is die leeg. Bij dry-run authenticeert de processor gewoon, maar slaat de POST naar
-Tribe over. De gemapte payload wordt dan alleen op `DEBUG`-niveau gelogd, dus in de
-praktijk alleen zichtbaar op acceptatie.
+staat die op `LIVE`. Bij dry-run authenticeert de processor gewoon, maar slaat de POST
+naar Tribe over. De gemapte payload wordt dan alleen op `DEBUG`-niveau gelogd, dus in
+de praktijk alleen zichtbaar op acceptatie.
 
 ## Een inzending volgen
 
