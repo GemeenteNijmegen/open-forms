@@ -103,6 +103,9 @@
           "spawn": "bundle:submission-forwarder/resubmit-lambda/resubmit.lambda"
         },
         {
+          "spawn": "bundle:submission-forwarder/tribe/TribeProcessor.lambda"
+        },
+        {
           "spawn": "bundle:submission-forwarder/vip-transformation-lambda/vip-transformation.lambda"
         },
         {
@@ -308,6 +311,24 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/submission-forwarder/resubmit-lambda/resubmit.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/resubmit-lambda/resubmit.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/* --watch"
+        }
+      ]
+    },
+    "bundle:submission-forwarder/tribe/TribeProcessor.lambda": {
+      "name": "bundle:submission-forwarder/tribe/TribeProcessor.lambda",
+      "description": "Create a JavaScript bundle from src/submission-forwarder/tribe/TribeProcessor.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/submission-forwarder/tribe/TribeProcessor.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/tribe/TribeProcessor.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/*"
+        }
+      ]
+    },
+    "bundle:submission-forwarder/tribe/TribeProcessor.lambda:watch": {
+      "name": "bundle:submission-forwarder/tribe/TribeProcessor.lambda:watch",
+      "description": "Continuously update the JavaScript bundle from src/submission-forwarder/tribe/TribeProcessor.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/submission-forwarder/tribe/TribeProcessor.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/submission-forwarder/tribe/TribeProcessor.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/* --watch"
         }
       ]
     },

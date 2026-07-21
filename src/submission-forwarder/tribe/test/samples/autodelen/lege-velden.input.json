@@ -1,0 +1,21 @@
+{
+    "tribeEnvironment": "AUTODELEN",
+    "tribeSubmissionType": "AUTODELEN_AANMELDING",
+    "pdf": "https://example.com/documenten/api/v1/enkelvoudiginformatieobjecten/03c047e1-0083-4d8b-8b31-714564b9fdb9",
+    "reference": "OF-LEEG01",
+    "attachments": [],
+    "autodelen": {
+        "voornaam": "",
+        "tussenvoegsel": null,
+        "achternaam": "",
+        "postcode": null,
+        "emailadres": "",
+        "telefoonnummer": "",
+        "situatie": null,
+        "toelichtingSituatie": "",
+        "hoeGevonden": null,
+        "toelichtingHoeGevonden": "",
+        "contactMetAnderen": "",
+        "andereOpmerkingen": null
+    }
+}

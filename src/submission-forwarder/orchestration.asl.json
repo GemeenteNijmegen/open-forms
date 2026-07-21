@@ -85,12 +85,17 @@
           "JitterStrategy": "FULL"
         }
       ],
-      "Next": "Networkshare ESF VIP or Sociaal",
+      "Next": "Tribe or Networkshare ESF VIP or Sociaal",
       "Output": "{% $states.result.Payload %}"
     },
-    "Networkshare ESF VIP or Sociaal": {
+    "Tribe or Networkshare ESF VIP or Sociaal": {
       "Type": "Choice",
       "Choices": [
+        {
+          "Comment": "Tribe-omgeving aanwezig",
+          "Next": "TribeProcessor",
+          "Condition": "{% $exists($states.input.enrichedObject.tribeEnvironment) %}"
+        },
         {
           "Comment": "has statusformulier URL",
           "Next": "ESF ESB Queue",
@@ -238,6 +243,29 @@
         }
       ],
       "Next": "ZGW registration?"
+    },
+    "TribeProcessor": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Arguments": {
+        "FunctionName": "${TRIBE_PROCESSOR_LAMBDA_ARN}",
+        "Payload": "{% $states.input.enrichedObject %}"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2,
+          "JitterStrategy": "FULL"
+        }
+      ],
+      "Next": "Success"
     },
     "ZGW registration?": {
       "Type": "Choice",

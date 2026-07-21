@@ -27,6 +27,8 @@
     "bundle:submission-forwarder/receiver-lambda/receiver.lambda:watch": "projen bundle:submission-forwarder/receiver-lambda/receiver.lambda:watch",
     "bundle:submission-forwarder/resubmit-lambda/resubmit.lambda": "projen bundle:submission-forwarder/resubmit-lambda/resubmit.lambda",
     "bundle:submission-forwarder/resubmit-lambda/resubmit.lambda:watch": "projen bundle:submission-forwarder/resubmit-lambda/resubmit.lambda:watch",
+    "bundle:submission-forwarder/tribe/TribeProcessor.lambda": "projen bundle:submission-forwarder/tribe/TribeProcessor.lambda",
+    "bundle:submission-forwarder/tribe/TribeProcessor.lambda:watch": "projen bundle:submission-forwarder/tribe/TribeProcessor.lambda:watch",
     "bundle:submission-forwarder/vip-transformation-lambda/vip-transformation.lambda": "projen bundle:submission-forwarder/vip-transformation-lambda/vip-transformation.lambda",
     "bundle:submission-forwarder/vip-transformation-lambda/vip-transformation.lambda:watch": "projen bundle:submission-forwarder/vip-transformation-lambda/vip-transformation.lambda:watch",
     "bundle:submission-forwarder/zgw-registration-lambda/zgw-registration.lambda": "projen bundle:submission-forwarder/zgw-registration-lambda/zgw-registration.lambda",

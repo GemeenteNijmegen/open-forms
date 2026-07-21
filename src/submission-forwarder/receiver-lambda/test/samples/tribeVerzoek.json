@@ -1,0 +1,37 @@
+{
+    "url": "https://example.com/objects/api/v2/objects/9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+    "uuid": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+    "type": "https://example.com/objecttypes/api/v2/objecttypes/746b78a3-7be7-4fc4-b0bb-075ea39fb897",
+    "record": {
+        "index": 1,
+        "typeVersion": 1,
+        "data": {
+            "tribeEnvironment": "AUTODELEN",
+            "tribeSubmissionType": "AUTODELEN_AANMELDING",
+            "pdf": "https://example.com/documenten/api/v1/enkelvoudiginformatieobjecten/03c047e1-0083-4d8b-8b31-714564b9fdb9",
+            "reference": "OF-TESTAD01",
+            "attachments": [],
+            "formName": "Aanmelden voor autodelen",
+            "autodelen": {
+                "voornaam": "Jan",
+                "tussenvoegsel": null,
+                "achternaam": "Jansen",
+                "postcode": "1234 AB",
+                "emailadres": "jan.jansen@example.com",
+                "telefoonnummer": "0612345678",
+                "situatie": "benieuwd",
+                "toelichtingSituatie": "Ik denk na over een elektrische deelauto.",
+                "hoeGevonden": "viaSocialeMedia",
+                "toelichtingHoeGevonden": "",
+                "contactMetAnderen": "neeBekenden",
+                "andereOpmerkingen": ""
+            }
+        },
+        "geometry": null,
+        "startAt": "2026-07-01",
+        "endAt": null,
+        "registrationAt": "2026-07-01",
+        "correctionFor": null,
+        "correctedBy": null
+    }
+}

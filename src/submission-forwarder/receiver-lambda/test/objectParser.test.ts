@@ -1,17 +1,20 @@
 import { AanvraagSociaalDomeinSchema } from '../../shared/AanvraagSociaalDomein';
 import { EsfTaakSchema } from '../../shared/EsfTaak';
 import { SubmissionSchema } from '../../shared/Submission';
+import { TribeVerzoekSchema } from '../../shared/TribeVerzoek';
 import { VIPJZSubmissionSchema } from '../../shared/VIPJZSubmission';
 import { ObjectParser } from '../ObjectParser';
 import * as taak from './samples/esfTaak.json';
 import * as randomObject from './samples/randomObject.json';
 import * as submission from './samples/submission.json';
+import * as tribeVerzoek from './samples/tribeVerzoek.json';
 import * as vipjzVerzoek from './samples/vipjzVerzoek.json';
 
 const esfTaakUrl = 'https://example.com/objecttypes/api/v2/objecttypes/6df21057-e07c-4909-8933-d70b79cfd15e';
 const submissionTaakUrl = 'https://example.com/objecttypes/api/v2/objecttypes/d3713c2b-307c-4c07-8eaa-c2c6d75869cf';
 const vipJzSubmissionUrl = 'https://example.com/objecttypes/api/v2/objecttypes/167e0aec-e416-46fa-9868-e35f11f3f151';
 const aanvraagSociaalDomeinUrl = 'https://example.com/objecttypes/api/v2/objecttypes/167e0aec-e416-46fa-9868-e35f11f3f151';
+const tribeVerzoekUrl = 'https://example.com/objecttypes/api/v2/objecttypes/746b78a3-7be7-4fc4-b0bb-075ea39fb897';
 
 let objectParser: ObjectParser;
 beforeAll(() => {
@@ -32,6 +35,10 @@ beforeAll(() => {
       objectTypeUrl: `${aanvraagSociaalDomeinUrl}`,
       parser: AanvraagSociaalDomeinSchema,
     },
+    {
+      objectTypeUrl: `${tribeVerzoekUrl}`,
+      parser: TribeVerzoekSchema,
+    },
   ];
   objectParser = new ObjectParser(objectTypes);
 });
@@ -48,6 +55,31 @@ describe('Parsing for the next step', () => {
   });
   test('Parsing an unknown object throws', async () => {
     expect(() => { objectParser.parse(randomObject); }).toThrow();
+  });
+});
+
+describe('Parsing a TribeVerzoek object', () => {
+  test('Parsing a tribeVerzoek object succeeds', async () => {
+    expect(objectParser.parse(tribeVerzoek)).toBeTruthy();
+  });
+  test('Parsed result carries tribeEnvironment and tribeSubmissionType through', async () => {
+    const parsed: any = objectParser.parse(tribeVerzoek);
+    expect(parsed.tribeEnvironment).toBe('AUTODELEN');
+    expect(parsed.tribeSubmissionType).toBe('AUTODELEN_AANMELDING');
+  });
+  test('Parsed result carries the autodelen subobject through', async () => {
+    const parsed: any = objectParser.parse(tribeVerzoek);
+    expect(parsed.autodelen).toMatchObject({ voornaam: 'Jan', situatie: 'benieuwd' });
+  });
+  test('Parsed result includes objectUrl and objectUUID', async () => {
+    const parsed: any = objectParser.parse(tribeVerzoek);
+    expect(parsed.objectUrl).toBe(tribeVerzoek.url);
+    expect(parsed.objectUUID).toBe(tribeVerzoek.uuid);
+  });
+  test('Existing (non-Tribe) object types are still recognized alongside TribeVerzoek', async () => {
+    expect(objectParser.parse(submission)).toBeTruthy();
+    expect(objectParser.parse(taak)).toBeTruthy();
+    expect(objectParser.parse(vipjzVerzoek)).toBeTruthy();
   });
 });
 

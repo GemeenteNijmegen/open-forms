@@ -2,9 +2,9 @@ import { z } from 'zod';
 import { KeyValuePairSchema } from './Submission';
 
 /**
- * Manually derived from src/submission-forwarder/tribe/schema/TribeVerzoek.json (stap 1.2). Keep both in sync.
- * Autodelenvelden zijn bewust vrije strings zonder enum (architectuur §4.4) en
- * accepteren leeg/null; onbekende properties blijven behouden (.passthrough()).
+ * Manually derived from src/submission-forwarder/schema/TribeVerzoek.json. Keep both in sync.
+ * Autodelen fields are deliberately free strings without an enum and accept
+ * empty/null; unknown properties are kept (.passthrough()).
  */
 export const AutodelenSchema = z.object({
   voornaam: z.string().optional().nullable(),
@@ -23,8 +23,8 @@ export const AutodelenSchema = z.object({
 export type Autodelen = z.infer<typeof AutodelenSchema>;
 
 /**
- * Placeholder voor toekomstige Energieloket-velden (architectuur §1, §15).
- * Nog geen deelschema; blijft vrij totdat het eerste Energieloket-submissiontype wordt gebouwd.
+ * Placeholder for future Energieloket fields. No sub-schema yet; stays free
+ * until the first Energieloket submission type is built.
  */
 export const EnergieloketSchema = z.object({}).passthrough();
 export type Energieloket = z.infer<typeof EnergieloketSchema>;
