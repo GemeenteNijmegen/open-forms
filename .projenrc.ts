@@ -43,7 +43,6 @@ const project = new GemeenteNijmegenCdkApp({
       isolatedModules: true,
     },
   },
-  enableCfnLintOnGithub: false, //TODO: JB Workaround, remove: 2026-06-30
 });
 
 

@@ -1,0 +1,12 @@
+name: Objects - accp
+variables:
+  - name: baseUrl
+    value: https://mijn-services.accp.nijmegen.nl/
+  - name: baseUrlObjects
+    value: "{{baseUrl}}objects/api/v2/objects"
+  - name: baseUrlObjecttypes
+    value: "{{baseUrl}}objects/api/v2/objecttypes"
+  - secret: true
+    name: objectsToken
+  - name: objectTypeUuid
+    value: 746b78a3-7be7-4fc4-b0bb-075ea39fb897

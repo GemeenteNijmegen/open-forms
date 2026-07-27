@@ -1,0 +1,50 @@
+opencollection: 1.0.0
+
+info:
+  name: Tribe
+config:
+  proxy:
+    inherit: true
+    config:
+      protocol: http
+      hostname: ""
+      port: ""
+      auth:
+        username: ""
+        password: ""
+      bypassProxy: ""
+
+docs:
+  content: |-
+    # Tribe API
+
+    Deze Bruno-collectie bevat API-calls naar Tribe
+
+    Authenticatie
+
+    De Tribe API wordt aangeroepen met OAuth 2.0 via Client Credentials.
+
+    De credentials zijn in Tribe te vinden via:
+
+    Configuratie (tandwiel linksonder) → Administratie → Toepassingen → tabblad Klantgegevens
+
+    Daar staan onder andere de clientgegevens waarmee in Bruno een access token kan worden opgehaald. In Bruno is hiervoor OAuth 2.0 met client_credentials ingericht. Het access token wordt vervolgens gebruikt als Bearer token bij de API-calls.
+
+    Per Tribe omgeving moeten client credentials aangemaakt worden. Daarom staat de authenticatie ingesteld op folder niveau van de Tribe omgeving
+
+    ## Healthcheck / metadata
+
+    Als eerste simpele controle kan de metadata van de Tribe-omgeving worden opgehaald:
+
+    GET {{baseUrl}}$metadata
+
+    Deze call haalt het volledige OData-schema van de Tribe-omgeving op. Dit schema bevat alle beschikbare entiteiten, formulieren, velden, veldtypes, relaties en keuzelijsten. Dit is handig om te controleren of de API-koppeling werkt en om de juiste veldnamen/ID’s te vinden.
+
+    Deze informatie is ook zichtbaar in de Tribe omgeving in configuratie > toepassingen.
+  type: text/markdown
+bundled: false
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git

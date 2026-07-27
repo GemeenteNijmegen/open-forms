@@ -23,6 +23,8 @@ import { SubmissionForwarderStepFunctionDashboard } from './monitoring/submissio
 import { OpenFormsSubmissionsTopic } from './open-forms-submission-topic/OpenFormsSubmissionsTopic';
 import { ReceiverFunction } from './receiver-lambda/receiver-function';
 import { ResubmitFunction } from './resubmit-lambda/resubmit-function';
+import { setupTribeCredentials } from './tribe/TribeCredentials';
+import { TribeProcessorFunction } from './tribe/TribeProcessor-function';
 import { VipTransformationFunction } from './vip-transformation-lambda/vip-transformation-function';
 import { ZgwRegistrationFunction } from './zgw-registration-lambda/zgw-registration-function';
 
@@ -52,6 +54,11 @@ interface SubmissionForwarderOptions {
   useVipJzProductionMapping: boolean;
 
   urlSubscriptions?: { url: string; appId: string }[];
+
+  /**
+   * DRY_RUN on accp, never on production.
+   */
+  tribeDryRun: boolean;
 }
 
 /**
@@ -104,6 +111,7 @@ export class SubmissionForwarder extends Construct {
     const notification = this.setupNotificationMailLambda();
     const zgw = this.setupZgwRegistrationLambda();
     const vipTranslation = this.setupVipTransformationLambda();
+    const tribeProcessor = this.setupTribeProcessorLambda();
 
     const orchestrator = this.setupOrchestrationStepFunction(
       documentStorage,
@@ -111,6 +119,7 @@ export class SubmissionForwarder extends Construct {
       notification,
       zgw,
       vipTranslation,
+      tribeProcessor,
       esfQueue.queue,
       sociaalQueue.queue,
     );
@@ -371,6 +380,7 @@ export class SubmissionForwarder extends Construct {
     notificationEmailLambda: Function,
     zgwLambda: Function,
     vipTransformation: Function,
+    tribeProcessorLambda: Function,
     esfQueue: Queue,
     sociaalQueue: Queue,
   ) {
@@ -391,6 +401,7 @@ export class SubmissionForwarder extends Construct {
         NOTIFICATION_EMAIL_LAMBDA_ARN: notificationEmailLambda.functionArn,
         ZGW_REGISTRATION_LAMBDA_ARN: zgwLambda.functionArn,
         VIP_TRANSFORMATION_LAMBDA_ARN: vipTransformation.functionArn,
+        TRIBE_PROCESSOR_LAMBDA_ARN: tribeProcessorLambda.functionArn,
         ESF_QUEUE_URL: esfQueue.queueUrl,
         SOCIAAL_QUEUE_URL: sociaalQueue.queueUrl,
       },
@@ -409,6 +420,7 @@ export class SubmissionForwarder extends Construct {
     forwarderLambda.grantInvoke(stepfunction);
     notificationEmailLambda.grantInvoke(stepfunction);
     vipTransformation.grantInvoke(stepfunction);
+    tribeProcessorLambda.grantInvoke(stepfunction);
     esfQueue.grantSendMessages(stepfunction);
     sociaalQueue.grantSendMessages(stepfunction);
     this.backupBucket.grantWrite(stepfunction);
@@ -579,6 +591,40 @@ export class SubmissionForwarder extends Construct {
     this.options.key.grantEncryptDecrypt(zgwLambda);
 
     return zgwLambda;
+  }
+
+  /**
+   * TribeProcessor Lambda. Three-minute timeout leaves headroom for slow
+   * Tribe calls (each individual call already has its own 60s timeout).
+   */
+  private setupTribeProcessorLambda() {
+    const tribeCredentials = setupTribeCredentials(this);
+
+    const tribeProcessor = new TribeProcessorFunction(this, 'tribe-processor-function', {
+      logGroup: new LogGroup(this, 'tribe-processor-logs', {
+        encryptionKey: this.options.key,
+        retention: RetentionDays.SIX_MONTHS,
+      }),
+      description: 'Maps and sends Tribe submissions (Autodelen)',
+      timeout: Duration.minutes(3),
+      environment: {
+        POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'INFO',
+        // One Tribe environment for both accp and production — no per-environment difference.
+        TRIBE_BASE_URL: 'https://api.tribecrm.nl/v1/odata/',
+        TRIBE_TOKEN_URL: 'https://auth.tribecrm.nl/oauth2/token',
+        TRIBE_AUTODELEN_SECRET_ARN: tribeCredentials.AUTODELEN.secretArn,
+        TRIBE_SEND_MODE: this.options.tribeDryRun ? 'DRY_RUN' : 'LIVE',
+      },
+    });
+    tribeCredentials.AUTODELEN.grantRead(tribeProcessor);
+    this.options.key.grantEncryptDecrypt(tribeProcessor);
+
+    new ErrorMonitoringAlarm(this, 'tribe-processor-alarm', {
+      criticality: this.options.criticality,
+      lambda: tribeProcessor,
+    });
+
+    return tribeProcessor;
   }
 
   private setupVipTransformationLambda() {

@@ -3,6 +3,7 @@ import { AanvraagSociaalDomein, AanvraagSociaalDomeinSchema } from '../shared/Aa
 import { EnrichedZgwObjectData } from '../shared/EnrichedZgwObjectData';
 import { EsfTaak, EsfTaakSchema } from '../shared/EsfTaak';
 import { Submission, SubmissionSchema } from '../shared/Submission';
+import { TribeVerzoek, TribeVerzoekSchema } from '../shared/TribeVerzoek';
 import { VIPJZSubmission, VIPJZSubmissionSchema } from '../shared/VIPJZSubmission';
 import { ZgwObject } from '../shared/ZgwObject';
 
@@ -36,6 +37,7 @@ export class ObjectParser {
     submission: SubmissionSchema,
     vipJzSubmission: VIPJZSubmissionSchema,
     aanvraagSociaalDomein: AanvraagSociaalDomeinSchema,
+    tribeVerzoek: TribeVerzoekSchema,
   };
 
   constructor(objectTypes: objectType[] | string) {
@@ -85,6 +87,13 @@ export class ObjectParser {
         objectUrl: object.url,
         objectUUID: object.uuid,
         ...submission,
+      };
+    } else if (type.parser == TribeVerzoekSchema) {
+      let tribeVerzoek = parsed as TribeVerzoek;
+      return {
+        objectUrl: object.url,
+        objectUUID: object.uuid,
+        ...tribeVerzoek,
       };
     }
     throw new UnknownObjectError('Unexpectedly reached end of parser');

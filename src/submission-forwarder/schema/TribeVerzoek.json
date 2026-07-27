@@ -1,0 +1,288 @@
+{
+  "$id": "TribeVerzoek",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TribeVerzoek",
+  "type": "object",
+  "required": [
+    "pdf",
+    "reference",
+    "attachments",
+    "tribeEnvironment",
+    "tribeSubmissionType"
+  ],
+  "properties": {
+    "tribeEnvironment": {
+      "type": "string",
+      "title": "Tribe-omgeving",
+      "examples": [
+        "AUTODELEN",
+        "ENERGIELOKET"
+      ],
+      "description": "AUTODELEN, ENERGIELOKET. Verplichte logische sleutel van de Tribe-omgeving waarnaar de formulierinzending moet worden verstuurd. Deze waarde bepaalt welke Tribe API-omgeving en configuratie worden gebruikt. Gebruik geen URL, client-id, secret of technisch Tribe-UUID."
+    },
+    "tribeSubmissionType": {
+      "type": "string",
+      "title": "Tribe-aanmeldingstype",
+      "examples": [
+        "AUTODELEN_AANMELDING",
+        "ENERGIELOKET_INWONER",
+        "ENERGIELOKET_VVE"
+      ],
+      "description": "AUTODELEN_AANMELDING, ENERGIELOKET_INWONER, ENERGIELOKET_VVE. Verplicht type aanmelding dat binnen de geselecteerde Tribe-omgeving moet worden aangemaakt. De combinatie van tribeEnvironment en tribeSubmissionType bepaalt welke verwerking en veldmapping worden gebruikt. Voor AUTODELEN is AUTODELEN_AANMELDING beschikbaar. Voor ENERGIELOKET zijn ENERGIELOKET_INWONER en ENERGIELOKET_VVE beschikbaar."
+    },
+    "bsn": {
+      "type": ["string", "null"],
+      "title": "BSN",
+      "examples": [
+        "999999333"
+      ],
+      "description": "Optioneel BSN wanneer het formulier is ingevuld met DigiD of Yivi met BSN."
+    },
+    "kvk": {
+      "type": ["string", "null"],
+      "title": "KvK-nummer",
+      "examples": [
+        "69599084"
+      ],
+      "description": "Optioneel KvK-nummer wanneer het formulier is ingevuld met eHerkenning of Yivi met KvK."
+    },
+    "pdf": {
+      "type": "string",
+      "title": "PDF",
+      "examples": [
+        "https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/93853c62-70b9-482a-b433-1733b98d163c"
+      ],
+      "description": "Verplichte URL van de PDF met de volledige formulierinzending."
+    },
+    "csv": {
+      "type": ["string", "null"],
+      "title": "CSV",
+      "examples": [
+        "https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/93853c62-70b9-482a-b433-1dew34edfewe"
+      ],
+      "description": "Optionele URL van een CSV-bestand dat bij de formulierinzending hoort."
+    },
+    "formName": {
+      "type": ["string", "null"],
+      "title": "Formuliernaam",
+      "examples": [
+        "Aanmelden voor autodelen",
+        "Aanmelden bij het Energieloket"
+      ],
+      "description": "Optionele naam van het Open Formulieren-formulier waarmee de inzending is gedaan."
+    },
+    "reference": {
+      "type": "string",
+      "title": "Referentie",
+      "examples": [
+        "OF-AB7634HJ",
+        "Z02-39849384"
+      ],
+      "description": "Verplichte publieke referentie van de formulierinzending. Deze referentie wordt gebruikt om de inzending tijdens de verwerking te herkennen en te volgen."
+    },
+    "attachments": {
+      "type": "array",
+      "title": "Bijlagen",
+      "items": {
+        "type": "string"
+      },
+      "examples": [
+        [],
+        [
+          "https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/93853c62-70b9-482a-b433-1733b98d163c",
+          "https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/348f9e95-f1d0-4695-a421-b8ea995135a9"
+        ]
+      ],
+      "description": "Verplichte lijst met URL's van bijlagen bij de formulierinzending. Gebruik een lege lijst wanneer de inzending geen bijlagen bevat."
+    },
+    "networkShare": {
+      "type": ["string", "null"],
+      "title": "Netwerkschijf",
+      "examples": [
+        "//karelstad/data/gemeenschappelijk/Webformulieren/Accp/TDL"
+      ],
+      "description": "Optionele hoofdmap op de netwerkschijf. Wanneer deze waarde is ingevuld, kan tijdens de verwerking een map voor de inzending worden aangemaakt en kunnen de PDF en bijlagen daar worden opgeslagen."
+    },
+    "monitoringNetworkShare": {
+      "type": ["string", "null"],
+      "title": "Monitoringmap op netwerkschijf",
+      "examples": [
+        "/karelstad/data/gemeenschappelijk/Webformulieren/Accp/TDL/Monitoring"
+      ],
+      "description": "Optionele locatie voor monitoring. Wanneer deze waarde is ingevuld, wordt de aanvraag met de bijbehorende bestanden ook in deze map geplaatst."
+    },
+    "internalNotificationEmails": {
+      "type": "array",
+      "title": "Interne notificatieadressen",
+      "items": {
+        "type": "string",
+        "format": "email"
+      },
+      "default": [],
+      "examples": [
+        [],
+        [
+          "ops-team@example.com",
+          "support@example.com"
+        ]
+      ],
+      "description": "Optionele e-mailadressen van interne medewerkers of afdelingen die een notificatie moeten ontvangen wanneer de formulierinzending binnenkomt."
+    },
+    "submissionValuesToFiles": {
+      "title": "Formulierwaarden opslaan als bestanden",
+      "description": "Optionele key-valueparen van formuliergegevens die als afzonderlijke tekstbestanden naast de aanvraag-PDF en bijlagen moeten worden opgeslagen. Ieder item bevat eerst de bestandsnaam of sleutel en daarna de waarde die in het bestand moet worden opgeslagen.",
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": [],
+      "examples": [
+        [],
+        [
+          [
+            "bsn",
+            "999999333"
+          ],
+          [
+            "formuliernaam",
+            "Aanmelden voor autodelen"
+          ]
+        ],
+        null
+      ]
+    },
+    "bsnOrKvkToFile": {
+      "type": "boolean",
+      "title": "BSN of KvK opslaan als bestand",
+      "examples": [
+        true,
+        false
+      ],
+      "description": "Optionele indicatie of het aanwezige BSN- of KvK-nummer als afzonderlijk tekstbestand moet worden opgeslagen."
+    },
+    "autodelen": {
+      "type": "object",
+      "title": "Autodelengegevens",
+      "examples": [
+        {}
+      ],
+      "description": "Optioneel object met de formulier-specifieke gegevens voor tribeEnvironment AUTODELEN en tribeSubmissionType AUTODELEN_AANMELDING. Vul dit object alleen bij een autodelenformulier. Alle onderliggende velden zijn optioneel; een leeg of ontbrekend veld wordt bij verwerking niet naar Tribe gestuurd tenzij hieronder anders vermeld.",
+      "additionalProperties": true,
+      "properties": {
+        "voornaam": {
+          "type": ["string", "null"],
+          "title": "Voornaam",
+          "examples": ["Jan"],
+          "description": "Voornaam van de aanmelder."
+        },
+        "tussenvoegsel": {
+          "type": ["string", "null"],
+          "title": "Tussenvoegsel",
+          "examples": ["van der", ""],
+          "description": "Tussenvoegsel van de achternaam. Ontbreekt in het huidige formulier en blijft daardoor voorlopig leeg. Openstaand afstemmingspunt met de formulierbeheerder; deze beschrijving kan later wijzigen zodra dat is uitgesloten."
+        },
+        "achternaam": {
+          "type": ["string", "null"],
+          "title": "Achternaam",
+          "examples": ["Jansen"],
+          "description": "Achternaam van de aanmelder."
+        },
+        "postcode": {
+          "type": ["string", "null"],
+          "title": "Postcode",
+          "examples": ["1234 AA"],
+          "description": "Postcode van de aanmelder."
+        },
+        "emailadres": {
+          "type": ["string", "null"],
+          "title": "E-mailadres",
+          "examples": ["naam@example.com", ""],
+          "description": "E-mailadres van de aanmelder. Kan leeg zijn wanneer de aanmelder telefonisch contact prefereert."
+        },
+        "telefoonnummer": {
+          "type": ["string", "null"],
+          "title": "Telefoonnummer",
+          "examples": ["0612345678", ""],
+          "description": "Telefoonnummer van de aanmelder. Kan leeg zijn wanneer de aanmelder per e-mail contact prefereert."
+        },
+        "situatie": {
+          "type": ["string", "null"],
+          "title": "Situatie",
+          "examples": [
+            "begonnen",
+            "benieuwd",
+            "weetNogNietHoe",
+            "inEenCooperatie",
+            "metHulpVanEenAanbieder",
+            "metEenAutoVanIemandAnders",
+            "ikWilAutodelenMetMijnEigenAuto"
+          ],
+          "description": "Omschrijving van de situatie van de aanmelder ten aanzien van autodelen. Vrije string, geen enum. Bekende waarden: begonnen, benieuwd, weetNogNietHoe, inEenCooperatie, metHulpVanEenAanbieder, metEenAutoVanIemandAnders, ikWilAutodelenMetMijnEigenAuto. Een onbekende, niet-lege waarde leidt bij verwerking tot een terminale mappingfout, geen stille fallback."
+        },
+        "toelichtingSituatie": {
+          "type": ["string", "null"],
+          "title": "Toelichting situatie",
+          "examples": ["Ik denk na over een elektrische deelauto."],
+          "description": "Vrije toelichting bij de gekozen situatie. Openstaand afstemmingspunt: het is nog niet vastgesteld of dit veld, andereOpmerkingen, of beide worden gevuld vanuit het formulier. Deze beschrijving kan later wijzigen."
+        },
+        "hoeGevonden": {
+          "type": ["string", "null"],
+          "title": "Hoe gevonden",
+          "examples": [
+            "viaWeekblad",
+            "viaWijkkrant",
+            "viaSocialeMedia",
+            "viaBekenden",
+            "anders"
+          ],
+          "description": "Hoe de aanmelder de gemeente heeft gevonden voor autodelen. Vrije string, geen enum. Bekende waarden: viaWeekblad, viaWijkkrant, viaSocialeMedia, viaBekenden, anders. Bij de waarde anders wordt doorgaans ook toelichtingHoeGevonden gevuld. Een onbekende, niet-lege waarde leidt bij verwerking tot een terminale mappingfout, geen stille fallback."
+        },
+        "toelichtingHoeGevonden": {
+          "type": ["string", "null"],
+          "title": "Toelichting hoe gevonden",
+          "examples": ["Via een folder bij de bibliotheek"],
+          "description": "Toelichting wanneer hoeGevonden de waarde anders heeft."
+        },
+        "contactMetAnderen": {
+          "type": ["string", "null"],
+          "title": "Contact met anderen",
+          "examples": [
+            "ja",
+            "neeBekenden",
+            "nee"
+          ],
+          "description": "Of de aanmelder in contact gebracht wil worden met andere geïnteresseerden in de buurt. Vrije string, geen enum. Bekende waarden: ja, neeBekenden, nee. Openstaand afstemmingspunt: er bestaat een vierde mogelijke betekenis ('weet ik nog niet') die vanuit dit formulier nog niet bereikbaar is, en de precieze toestemmingstekst bij de waarde ja wordt nog afgestemd. Deze beschrijving kan later wijzigen. Een onbekende, niet-lege waarde leidt bij verwerking tot een terminale mappingfout, geen stille fallback."
+        },
+        "andereOpmerkingen": {
+          "type": ["string", "null"],
+          "title": "Andere opmerkingen",
+          "examples": ["Ik hoor graag meer informatie."],
+          "description": "Overige vrije opmerkingen van de aanmelder. Openstaand afstemmingspunt: zie toelichtingSituatie, welk van beide opmerkingenvelden gevuld wordt is nog niet vastgesteld en kan later wijzigen."
+        }
+      }
+    },
+    "energieloket": {
+      "type": "object",
+      "title": "Energieloketgegevens",
+      "examples": [
+        {}
+      ],
+      "description": "Optioneel object met de formulier-specifieke gegevens voor tribeEnvironment ENERGIELOKET. Dit object kan worden gebruikt voor tribeSubmissionType ENERGIELOKET_INWONER en ENERGIELOKET_VVE. Vul dit object alleen bij een Energieloketformulier. De onderliggende Energieloketvelden worden later in het deelschema van dit object vastgelegd.",
+      "additionalProperties": true
+    }
+  },
+  "description": "Generiek object voor Open Formulieren-inzendingen die naar Tribe moeten worden verstuurd. tribeEnvironment bepaalt de Tribe-omgeving en tribeSubmissionType bepaalt het type aanmelding binnen die omgeving. De formulier-specifieke gegevens worden opgenomen in het optionele autodelen- of energieloketobject.",
+  "additionalProperties": true
+}

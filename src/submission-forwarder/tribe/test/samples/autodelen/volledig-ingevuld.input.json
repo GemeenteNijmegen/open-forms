@@ -1,0 +1,22 @@
+{
+    "tribeEnvironment": "AUTODELEN",
+    "tribeSubmissionType": "AUTODELEN_AANMELDING",
+    "pdf": "https://example.com/documenten/api/v1/enkelvoudiginformatieobjecten/03c047e1-0083-4d8b-8b31-714564b9fdb9",
+    "reference": "OF-VOLLEDIG01",
+    "attachments": [],
+    "formName": "Aanmelden voor autodelen",
+    "autodelen": {
+        "voornaam": "Marieke",
+        "tussenvoegsel": "van der",
+        "achternaam": "Berg",
+        "postcode": "6511 AB",
+        "emailadres": "marieke.vandenberg@example.com",
+        "telefoonnummer": "0623456789",
+        "situatie": "begonnen",
+        "toelichtingSituatie": "Ik deel al een auto met mijn buren.",
+        "hoeGevonden": "viaWeekblad",
+        "toelichtingHoeGevonden": "",
+        "contactMetAnderen": "ja",
+        "andereOpmerkingen": "Graag telefonisch contact overdag."
+    }
+}

@@ -1,0 +1,51 @@
+info:
+  name: Objecttype dupliceren naar productie
+  type: folder
+  seq: 2
+
+docs:
+  content: |-
+    ## Een objecttype op productie aanmaken met dezelfde UUID, metadata en schema als acceptatie
+
+    Herbruikbaar voor ieder objecttype (TribeVerzoek, en toekomstige objecttypes),
+    zolang je het al op accp hebt aangemaakt (met een gepubliceerde versie/schema) en
+    hetzelfde op productie wilt laten landen.
+
+    Let op: `POST /objecttypes` maakt alleen de metadata aan (naam, uuid, etc.) — er
+    zit geen schema op het objecttype zelf. Het schema hoort bij een aparte versie
+    (`POST /objecttypes/{uuid}/versions`, met `status: published`). Zonder gepubliceerde
+    versie heeft het objecttype geen bruikbaar schema om objecten tegen te valideren,
+    dus stap "3 (prod) Versie aanmaken" hieronder is niet optioneel.
+
+    De POST naar productie stuurt alle schrijfbare velden van het objecttype mee (alles
+    behalve de door de API alleen-lezen velden `url`, `createdAt`, `modifiedAt` en
+    `versions`): `uuid`, `name`, `namePlural`, `description`, `dataClassification`,
+    `maintainerOrganization`, `maintainerDepartment`, `contactPerson`, `contactEmail`,
+    `source`, `updateFrequency`, `providerOrganization`, `documentationUrl`, `labels`
+    en `allowGeometry`. Alleen `name` en `namePlural` zijn door de API verplicht
+    (`required: [name, namePlural]` in de spec); de rest is optioneel maar wordt hier
+    standaard wel meegenomen voor volledige pariteit met accp.
+
+    Niets hoef je handmatig over te typen: call 1 vult al deze velden via een
+    `after-response`-script automatisch in Bruno-variabelen (`objectTypeName`,
+    `objectTypeDescription`, `objectTypeLabelsJson`, etc.), die call 2 direct gebruikt.
+
+    De calls zijn genummerd met de omgeving erbij (accp/prod) zodat duidelijk is
+    wanneer je handmatig van Bruno-omgeving moet wisselen.
+
+    1. Zet de Bruno-omgeving op "Objects - accp" en vul `objectsToken` (accp
+       Objects-apikey) en `objectTypeUuid` (de UUID van het al aangemaakte objecttype
+       op accp, te vinden via "Alle objecttypes" een niveau hoger) in.
+    2. Draai "1 (accp) Ophalen objecttype". Het script vult automatisch alle
+       objecttype-variabelen.
+    3. **Wissel de Bruno-omgeving naar "Objects - prod"** en vul `objectsToken` (prod
+       Objects-apikey) en dezelfde `objectTypeUuid` in (moet identiek zijn aan accp).
+    4. Draai "2 (prod) Aanmaken objecttype" — de body is al gevuld via de variabelen uit
+       stap 2, niets handmatig over te typen. Controleer de 201-response en dat de uuid
+       gelijk is aan de accp-uuid.
+    5. Vul in "3 (prod) Versie aanmaken" de lege `jsonSchema: {}` met het volledige
+       JSON Schema van dit objecttype (bijv. de inhoud van het betreffende
+       schema/*.json-bestand in de repo) en draai de POST. Alternatief: dit kan ook
+       handmatig via de Objects-beheerinterface, zoals je op accp hebt gedaan — beide
+       leiden tot dezelfde gepubliceerde versie.
+  type: text/markdown

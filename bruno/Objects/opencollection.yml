@@ -1,0 +1,30 @@
+opencollection: 1.0.0
+
+info:
+  name: Objects
+bundled: false
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git
+
+request:
+  auth:
+    type: apikey
+    key: Authorization
+    value: "Token {{objectsToken}}"
+    placement: header
+
+docs:
+  content: |-
+    # Objects / Objecttypen API
+
+    Bruno-collectie voor het Objecten- en Objecttypenregister (`objects/api/v2` en
+    `objecttypes/api/v2` op `mijn-services`). Auth is op collectieniveau ingesteld
+    (API-key via `Authorization: Token <token>`) en wordt overal onder deze collectie
+    geërfd, tenzij een map of request dit expliciet overschrijft.
+
+    Vul per omgeving (accp/prod) de secret-variabele `objectsToken` en de variabele
+    `objectTypeUuid` zelf in Bruno in.
+  type: text/markdown

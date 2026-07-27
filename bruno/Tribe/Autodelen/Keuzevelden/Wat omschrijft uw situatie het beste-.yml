@@ -1,0 +1,15 @@
+info:
+  name: Wat omschrijft uw situatie het beste?
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{baseUrl}}b21058da__34f4__4727__9b85__28c5bf9c9003"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,15 @@
+info:
+  name: Hoe heeft u ons gevonden?
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: "{{baseUrl}}_1f5df35f__2666__4a85__924d__ca35fb84b455"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

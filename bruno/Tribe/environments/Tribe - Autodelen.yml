@@ -1,0 +1,10 @@
+name: Tribe - Autodelen
+variables:
+  - name: tokenUrl
+    value: https://auth.tribecrm.nl/oauth2/token
+  - secret: true
+    name: clientId
+  - secret: true
+    name: clientSecret
+  - name: baseUrl
+    value: https://api.tribecrm.nl/v1/odata/

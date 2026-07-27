@@ -1,0 +1,9 @@
+info:
+  name: Objecttypes
+  type: folder
+  seq: 1
+
+docs:
+  content: |-
+    Erft de auth (`Authorization: Token {{objectsToken}}`) van de collectie "Objects".
+  type: text/markdown
