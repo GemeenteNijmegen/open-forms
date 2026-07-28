@@ -19,13 +19,15 @@ describe('mapAutodelenAanmelding', () => {
     expect(payload[AUTODELEN_TRIBE_FIELDS.SITUATIE]).toEqual({ ID: AUTODELEN_SITUATIE_IDS.BENIEUWD });
     expect(payload[AUTODELEN_TRIBE_FIELDS.HOE_GEVONDEN]).toEqual({ ID: AUTODELEN_HOE_GEVONDEN_IDS.VIA_SOCIALE_MEDIA });
     expect(payload[AUTODELEN_TRIBE_FIELDS.CONTACT_MET_ANDEREN]).toEqual({ ID: AUTODELEN_CONTACT_MET_ANDEREN_IDS.NEE_BEKENDEN });
+    expect(payload[AUTODELEN_TRIBE_FIELDS.CONTACTVOORKEUR]).toBe('telefonisch');
+    expect(payload[AUTODELEN_TRIBE_FIELDS.OPEN_FORMULIEREN_REFERENTIE]).toBe(fixtureRequest.reference);
     // fixture has null tussenvoegsel and empty toelichtingHoeGevonden/andereOpmerkingen -> omitted
     expect(payload).not.toHaveProperty(AUTODELEN_TRIBE_FIELDS.TUSSENVOEGSEL);
     expect(payload).not.toHaveProperty(AUTODELEN_TRIBE_FIELDS.ANDERS_GEVONDEN_TOELICHTING);
     expect(payload).not.toHaveProperty(AUTODELEN_TRIBE_FIELDS.ANDERE_OPMERKINGEN);
   });
 
-  test('minimal fixture (no autodelen object at all) maps to an empty payload', () => {
+  test('minimal fixture (no autodelen object at all) still maps the Tribe referentieproperty from the top-level reference', () => {
     const request: TribeVerzoek = {
       pdf: 'https://example.com/doc',
       reference,
@@ -33,10 +35,12 @@ describe('mapAutodelenAanmelding', () => {
       tribeEnvironment: 'AUTODELEN',
       tribeSubmissionType: 'AUTODELEN_AANMELDING',
     };
-    expect(mapAutodelenAanmelding(request, { reference })).toEqual({});
+    expect(mapAutodelenAanmelding(request, { reference })).toEqual({
+      [AUTODELEN_TRIBE_FIELDS.OPEN_FORMULIEREN_REFERENTIE]: reference,
+    });
   });
 
-  test('empty autodelen object maps to an empty payload', () => {
+  test('empty autodelen object still maps the Tribe referentieproperty from the top-level reference', () => {
     const request: TribeVerzoek = {
       pdf: 'https://example.com/doc',
       reference,
@@ -45,7 +49,47 @@ describe('mapAutodelenAanmelding', () => {
       tribeSubmissionType: 'AUTODELEN_AANMELDING',
       autodelen: {},
     };
-    expect(mapAutodelenAanmelding(request, { reference })).toEqual({});
+    expect(mapAutodelenAanmelding(request, { reference })).toEqual({
+      [AUTODELEN_TRIBE_FIELDS.OPEN_FORMULIEREN_REFERENTIE]: reference,
+    });
+  });
+
+  test('contactVoorkeur maps to its Tribe property', () => {
+    const request: TribeVerzoek = {
+      pdf: 'https://example.com/doc',
+      reference,
+      attachments: [],
+      tribeEnvironment: 'AUTODELEN',
+      tribeSubmissionType: 'AUTODELEN_AANMELDING',
+      autodelen: { contactVoorkeur: 'e-mail' },
+    };
+    const payload = mapAutodelenAanmelding(request, { reference });
+    expect(payload[AUTODELEN_TRIBE_FIELDS.CONTACTVOORKEUR]).toBe('e-mail');
+  });
+
+  test('null and empty-string contactVoorkeur are omitted, not sent as empty values', () => {
+    const request: TribeVerzoek = {
+      pdf: 'https://example.com/doc',
+      reference,
+      attachments: [],
+      tribeEnvironment: 'AUTODELEN',
+      tribeSubmissionType: 'AUTODELEN_AANMELDING',
+      autodelen: { contactVoorkeur: null },
+    };
+    const payload = mapAutodelenAanmelding(request, { reference });
+    expect(payload).not.toHaveProperty(AUTODELEN_TRIBE_FIELDS.CONTACTVOORKEUR);
+  });
+
+  test('an empty top-level reference is omitted from the Tribe payload, not sent as an empty value', () => {
+    const request: TribeVerzoek = {
+      pdf: 'https://example.com/doc',
+      reference: '',
+      attachments: [],
+      tribeEnvironment: 'AUTODELEN',
+      tribeSubmissionType: 'AUTODELEN_AANMELDING',
+    };
+    const payload = mapAutodelenAanmelding(request, { reference: '' });
+    expect(payload).not.toHaveProperty(AUTODELEN_TRIBE_FIELDS.OPEN_FORMULIEREN_REFERENTIE);
   });
 
   test('only email filled in (no phone) results in only the email key', () => {

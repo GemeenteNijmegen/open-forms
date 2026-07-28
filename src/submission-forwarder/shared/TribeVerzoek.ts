@@ -19,6 +19,7 @@ export const AutodelenSchema = z.object({
   toelichtingHoeGevonden: z.string().optional().nullable(),
   contactMetAnderen: z.string().optional().nullable(),
   andereOpmerkingen: z.string().optional().nullable(),
+  contactVoorkeur: z.string().optional().nullable(),
 }).passthrough();
 export type Autodelen = z.infer<typeof AutodelenSchema>;
 

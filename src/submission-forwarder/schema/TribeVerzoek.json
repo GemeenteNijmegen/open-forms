@@ -270,6 +270,12 @@
           "title": "Andere opmerkingen",
           "examples": ["Ik hoor graag meer informatie."],
           "description": "Overige vrije opmerkingen van de aanmelder. Openstaand afstemmingspunt: zie toelichtingSituatie, welk van beide opmerkingenvelden gevuld wordt is nog niet vastgesteld en kan later wijzigen."
+        },
+        "contactVoorkeur": {
+          "type": ["string", "null"],
+          "title": "Contactvoorkeur",
+          "examples": ["telefonisch", ""],
+          "description": "Optionele, vrije aanduiding van de gewenste manier waarop de aanmelder benaderd wil worden."
         }
       }
     },
