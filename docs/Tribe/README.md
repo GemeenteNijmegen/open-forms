@@ -16,14 +16,21 @@ flowchart TD
     SF --> S3[Bestanden naar S3]
     S3 -->|tribeEnvironment aanwezig| TP[TribeProcessor Lambda]
     TP --> T[Tribe CRM]
-    TP --> OK[Success]
+    TP --> NC{Interne notificatieadressen?}
+    NC -->|ja| NM[Notification email Lambda]
+    NC -->|nee| OK[Success]
+    NM --> OK
 ```
 
 Een formulier wordt in Open Formulieren gekoppeld aan het objecttype `TribeVerzoek`.
 De receiver herkent dit objecttype net als elk ander (submission, ESF-taak, etc.) en
 zet de inzending op de bestaande Step Function. Zodra de Step Function ziet dat
 `tribeEnvironment` aanwezig is, wordt de `TribeProcessor`-Lambda aangeroepen; die mapt
-de gegevens naar het Tribe-formulier en post ze naar Tribe.
+de gegevens naar het Tribe-formulier en post ze naar Tribe. Na een succesvolle
+Tribe-verwerking (of, op acceptatie, een succesvolle dry-run) controleert de Step
+Function of `internalNotificationEmails` minimaal één adres bevat. Zo ja, dan wordt de
+bestaande interne-notificatie-Lambda aangeroepen; zonder adressen volgt de inzending
+direct `Success`. Bij een terminale Tribe-fout wordt deze notificatiestap niet bereikt.
 
 ## Het objecttype als contract
 

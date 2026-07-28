@@ -265,6 +265,41 @@
           "JitterStrategy": "FULL"
         }
       ],
+      "Output": "{% $states.input.enrichedObject %}",
+      "Next": "Tribe notification email?"
+    },
+    "Tribe notification email?": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Next": "Tribe notification email",
+          "Condition": "{% ($exists($states.input.internalNotificationEmails) and $exists($states.input.internalNotificationEmails[0])) %}",
+          "Comment": "internalNotificationEmail(s) provided"
+        }
+      ],
+      "Default": "Success"
+    },
+    "Tribe notification email": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Arguments": {
+        "FunctionName": "${NOTIFICATION_EMAIL_LAMBDA_ARN}",
+        "Payload": "{% $states.input %}"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2,
+          "JitterStrategy": "FULL"
+        }
+      ],
       "Next": "Success"
     },
     "ZGW registration?": {
