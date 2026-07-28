@@ -44,6 +44,7 @@ const TEXT_FIELDS: Array<[string, string]> = [
   ['toelichtingSituatie', AUTODELEN_TRIBE_FIELDS.TOELICHTING_SITUATIE],
   ['andereOpmerkingen', AUTODELEN_TRIBE_FIELDS.ANDERE_OPMERKINGEN],
   ['toelichtingHoeGevonden', AUTODELEN_TRIBE_FIELDS.ANDERS_GEVONDEN_TOELICHTING],
+  ['contactVoorkeur', AUTODELEN_TRIBE_FIELDS.CONTACTVOORKEUR],
 ];
 
 /** Objecttype field -> [Tribe property, value-to-ID table], choice fields. */
@@ -94,6 +95,11 @@ export function mapAutodelenAanmelding(
     if (mapped !== undefined) {
       payload[fieldId] = mapped;
     }
+  }
+
+  const mappedReference = mapTextField(request.reference);
+  if (mappedReference !== undefined) {
+    payload[AUTODELEN_TRIBE_FIELDS.OPEN_FORMULIEREN_REFERENTIE] = mappedReference;
   }
 
   return payload;

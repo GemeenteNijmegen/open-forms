@@ -16,6 +16,7 @@
         "hoeGevonden": null,
         "toelichtingHoeGevonden": "",
         "contactMetAnderen": "",
-        "andereOpmerkingen": null
+        "andereOpmerkingen": null,
+        "contactVoorkeur": ""
     }
 }

@@ -17,6 +17,7 @@
         "hoeGevonden": "viaWeekblad",
         "toelichtingHoeGevonden": "",
         "contactMetAnderen": "ja",
-        "andereOpmerkingen": "Graag telefonisch contact overdag."
+        "andereOpmerkingen": "Graag telefonisch contact overdag.",
+        "contactVoorkeur": "telefonisch"
     }
 }
