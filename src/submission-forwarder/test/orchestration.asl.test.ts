@@ -61,13 +61,44 @@ describe('orchestration.asl.json', () => {
     expect(choices[tribeIndex].Condition).toContain('enrichedObject.tribeEnvironment');
   });
 
-  test('TribeProcessor is a lambda:invoke task using TRIBE_PROCESSOR_LAMBDA_ARN, and ends at Success', () => {
+  test('TribeProcessor is a lambda:invoke task using TRIBE_PROCESSOR_LAMBDA_ARN, keeps its payload, and continues to its own notification check', () => {
     const tribeProcessor: any = (asl as any).States.TribeProcessor;
     expect(tribeProcessor.Type).toBe('Task');
     expect(tribeProcessor.Resource).toBe('arn:aws:states:::lambda:invoke');
     expect(tribeProcessor.Arguments.FunctionName).toBe('${TRIBE_PROCESSOR_LAMBDA_ARN}');
+    expect(tribeProcessor.Arguments.Payload).toBe('{% $states.input.enrichedObject %}');
     expect(tribeProcessor.Retry).toEqual(STANDARD_RETRY);
-    expect(tribeProcessor.Next).toBe('Success');
+    expect(tribeProcessor.Output).toBe('{% $states.input.enrichedObject %}');
+    expect(tribeProcessor.Next).toBe('Tribe notification email?');
+  });
+
+  test('"Tribe notification email?" checks internalNotificationEmails[0] and defaults to Success without it', () => {
+    const choice: any = (asl as any).States['Tribe notification email?'];
+    expect(choice.Type).toBe('Choice');
+    expect(choice.Choices).toHaveLength(1);
+    expect(choice.Choices[0].Condition).toContain('internalNotificationEmails');
+    expect(choice.Choices[0].Condition).toContain('internalNotificationEmails[0]');
+    expect(choice.Choices[0].Next).toBe('Tribe notification email');
+    expect(choice.Default).toBe('Success');
+  });
+
+  test('"Tribe notification email" invokes NOTIFICATION_EMAIL_LAMBDA_ARN with the state input as payload, standard retry, and ends at Success', () => {
+    const tribeNotificationEmail: any = (asl as any).States['Tribe notification email'];
+    expect(tribeNotificationEmail.Type).toBe('Task');
+    expect(tribeNotificationEmail.Resource).toBe('arn:aws:states:::lambda:invoke');
+    expect(tribeNotificationEmail.Arguments.FunctionName).toBe('${NOTIFICATION_EMAIL_LAMBDA_ARN}');
+    expect(tribeNotificationEmail.Arguments.Payload).toBe('{% $states.input %}');
+    expect(tribeNotificationEmail.Retry).toEqual(STANDARD_RETRY);
+    expect(tribeNotificationEmail.Next).toBe('Success');
+  });
+
+  test('the generic "Has notification email?"/"Notification email" states and the routes using them (top-level ZGW, Sociaal) are unchanged', () => {
+    expect((asl as any).States['ZGW registration?'].Default).toBe('Has notification email?');
+    expect((asl as any).States['Register ZGW'].Next).toBe('Has notification email?');
+    expect((asl as any).States['Has notification email?'].Choices[0].Next).toBe('Notification email');
+    expect((asl as any).States['Has notification email?'].Default).toBe('Success');
+    expect((asl as any).States['Notification email'].Next).toBe('Success');
+    expect((asl as any).States['Sociaal notification email?'].Default).toBe('Sociaal SQS SendMessage');
   });
 
   test('the full state machine matches the recorded baseline snapshot', () => {

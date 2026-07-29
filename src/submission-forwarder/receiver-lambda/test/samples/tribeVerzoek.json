@@ -24,7 +24,8 @@
                 "hoeGevonden": "viaSocialeMedia",
                 "toelichtingHoeGevonden": "",
                 "contactMetAnderen": "neeBekenden",
-                "andereOpmerkingen": ""
+                "andereOpmerkingen": "",
+                "contactVoorkeur": "telefonisch"
             }
         },
         "geometry": null,

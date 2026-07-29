@@ -238,6 +238,40 @@ exports[`orchestration.asl.json the full state machine matches the recorded base
     "Success": {
       "Type": "Succeed",
     },
+    "Tribe notification email": {
+      "Arguments": {
+        "FunctionName": "\${NOTIFICATION_EMAIL_LAMBDA_ARN}",
+        "Payload": "{% $states.input %}",
+      },
+      "Next": "Success",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Retry": [
+        {
+          "BackoffRate": 2,
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException",
+          ],
+          "IntervalSeconds": 1,
+          "JitterStrategy": "FULL",
+          "MaxAttempts": 3,
+        },
+      ],
+      "Type": "Task",
+    },
+    "Tribe notification email?": {
+      "Choices": [
+        {
+          "Comment": "internalNotificationEmail(s) provided",
+          "Condition": "{% ($exists($states.input.internalNotificationEmails) and $exists($states.input.internalNotificationEmails[0])) %}",
+          "Next": "Tribe notification email",
+        },
+      ],
+      "Default": "Success",
+      "Type": "Choice",
+    },
     "Tribe or Networkshare ESF VIP or Sociaal": {
       "Choices": [
         {
@@ -274,7 +308,8 @@ exports[`orchestration.asl.json the full state machine matches the recorded base
         "FunctionName": "\${TRIBE_PROCESSOR_LAMBDA_ARN}",
         "Payload": "{% $states.input.enrichedObject %}",
       },
-      "Next": "Success",
+      "Next": "Tribe notification email?",
+      "Output": "{% $states.input.enrichedObject %}",
       "Resource": "arn:aws:states:::lambda:invoke",
       "Retry": [
         {
@@ -566,6 +601,40 @@ exports[`orchestration.asl.json the full state machine matches the recorded base
       "Success": {
         "Type": "Succeed",
       },
+      "Tribe notification email": {
+        "Arguments": {
+          "FunctionName": "\${NOTIFICATION_EMAIL_LAMBDA_ARN}",
+          "Payload": "{% $states.input %}",
+        },
+        "Next": "Success",
+        "Resource": "arn:aws:states:::lambda:invoke",
+        "Retry": [
+          {
+            "BackoffRate": 2,
+            "ErrorEquals": [
+              "Lambda.ServiceException",
+              "Lambda.AWSLambdaException",
+              "Lambda.SdkClientException",
+              "Lambda.TooManyRequestsException",
+            ],
+            "IntervalSeconds": 1,
+            "JitterStrategy": "FULL",
+            "MaxAttempts": 3,
+          },
+        ],
+        "Type": "Task",
+      },
+      "Tribe notification email?": {
+        "Choices": [
+          {
+            "Comment": "internalNotificationEmail(s) provided",
+            "Condition": "{% ($exists($states.input.internalNotificationEmails) and $exists($states.input.internalNotificationEmails[0])) %}",
+            "Next": "Tribe notification email",
+          },
+        ],
+        "Default": "Success",
+        "Type": "Choice",
+      },
       "Tribe or Networkshare ESF VIP or Sociaal": {
         "Choices": [
           {
@@ -602,7 +671,8 @@ exports[`orchestration.asl.json the full state machine matches the recorded base
           "FunctionName": "\${TRIBE_PROCESSOR_LAMBDA_ARN}",
           "Payload": "{% $states.input.enrichedObject %}",
         },
-        "Next": "Success",
+        "Next": "Tribe notification email?",
+        "Output": "{% $states.input.enrichedObject %}",
         "Resource": "arn:aws:states:::lambda:invoke",
         "Retry": [
           {

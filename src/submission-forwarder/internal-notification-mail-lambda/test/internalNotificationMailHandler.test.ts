@@ -114,6 +114,40 @@ describe('handler', () => {
     );
 
   });
+  it('sends an email for a direct Tribe submission object (no enrichedObject wrapper, no networkshares)', async () => {
+    const tribeSubmission = {
+      formName: 'Aanmelden voor autodelen',
+      reference: 'OF-TRIBE01',
+      pdf: 'urlpdf',
+      attachments: [],
+      tribeEnvironment: 'AUTODELEN',
+      tribeSubmissionType: 'AUTODELEN_AANMELDING',
+      internalNotificationEmails: ['tribe-notify@example.com'],
+    };
+    sesMock.on(SendEmailCommand).resolves({});
+    const traceSpy = jest.spyOn(traceModule, 'trace').mockResolvedValue();
+
+    const result = await handler(tribeSubmission);
+    expect(result).toEqual(tribeSubmission);
+
+    expect(traceSpy).toHaveBeenCalledWith('OF-TRIBE01', 'NOTIFICATION_MAIL', 'OK');
+
+    const sentCommands = sesMock.commandCalls(SendEmailCommand);
+    expect(sentCommands.length).toBe(1);
+    expect(sentCommands[0].args[0].input).toMatchObject({
+      Destination: { ToAddresses: ['tribe-notify@example.com'] },
+      Message: {
+        Subject: { Data: expect.stringContaining('Aanmelden voor autodelen') },
+        Body: {
+          Text: { Data: expect.stringContaining('kenmerk OF-TRIBE01') },
+        },
+      },
+    });
+    const bodyToCheck = sentCommands[0].args[0].input.Message?.Body?.Text?.Data;
+    expect(bodyToCheck).toContain('Aanmelden voor autodelen');
+    expect(bodyToCheck).not.toContain('U kunt de aanvraag op de volgende locaties terugvinden');
+  });
+
   it('should throw an error caught with trace when internalNotificationMails is falsy', async () =>{
     // Should never happen in step function when choice step is used to check for internalNotificationMails
     const traceSpy = jest.spyOn(traceModule, 'trace').mockResolvedValue();

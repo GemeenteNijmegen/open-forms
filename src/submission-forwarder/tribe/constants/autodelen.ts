@@ -29,6 +29,8 @@ export const AUTODELEN_TRIBE_FIELDS = {
   SITUATIE: 'fab54a03__2654__4a1c__8dbd__48736065db9a',
   HOE_GEVONDEN: '_3c6845d6__33e6__4d69__b340__a1706e440baf',
   CONTACT_MET_ANDEREN: '_448b0832__def2__4bdd__a624__588b2517fedc',
+  CONTACTVOORKEUR: '_34490040__b10f__4fac__8e01__fe26532a88da',
+  OPEN_FORMULIEREN_REFERENTIE: 'b8ab90c8__549d__4100__87bc__e19a9185b657',
 } as const;
 
 /** Datastore "Interesseniveau" — belongs to AUTODELEN_TRIBE_FIELDS.SITUATIE. */
