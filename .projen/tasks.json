@@ -112,28 +112,7 @@
           "spawn": "bundle:submission-forwarder/zgw-registration-lambda/zgw-registration.lambda"
         },
         {
-          "spawn": "bundle:api/form-prefill/contactgegevens/contactgegevens.lambda"
-        },
-        {
           "spawn": "bundle:api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda"
-        }
-      ]
-    },
-    "bundle:api/form-prefill/contactgegevens/contactgegevens.lambda": {
-      "name": "bundle:api/form-prefill/contactgegevens/contactgegevens.lambda",
-      "description": "Create a JavaScript bundle from src/api/form-prefill/contactgegevens/contactgegevens.lambda.ts",
-      "steps": [
-        {
-          "exec": "esbuild --bundle src/api/form-prefill/contactgegevens/contactgegevens.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/api/form-prefill/contactgegevens/contactgegevens.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/*"
-        }
-      ]
-    },
-    "bundle:api/form-prefill/contactgegevens/contactgegevens.lambda:watch": {
-      "name": "bundle:api/form-prefill/contactgegevens/contactgegevens.lambda:watch",
-      "description": "Continuously update the JavaScript bundle from src/api/form-prefill/contactgegevens/contactgegevens.lambda.ts",
-      "steps": [
-        {
-          "exec": "esbuild --bundle src/api/form-prefill/contactgegevens/contactgegevens.lambda.ts --target=\"node24\" --platform=\"node\" --outfile=\"assets/api/form-prefill/contactgegevens/contactgegevens.lambda/index.js\" --tsconfig=\"test/tsconfig.json\" --external:@aws-sdk/* --watch"
         }
       ]
     },

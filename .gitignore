@@ -75,7 +75,6 @@ junit.xml
 !/src/submission-forwarder/tribe/TribeProcessor-function.ts
 !/src/submission-forwarder/vip-transformation-lambda/vip-transformation-function.ts
 !/src/submission-forwarder/zgw-registration-lambda/zgw-registration-function.ts
-!/src/api/form-prefill/contactgegevens/contactgegevens-function.ts
 !/src/api/form-prefill/standplaatsvergunning/standplaatsvergunning-function.ts
 !/.github/workflows/emergency.yml
 !/.github/workflows/auto-merge.yml
