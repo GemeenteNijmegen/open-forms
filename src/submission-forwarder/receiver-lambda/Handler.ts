@@ -1,6 +1,7 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import { Response } from '@gemeentenijmegen/apigateway-http/lib/V1/Response';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { ZodError } from 'zod';
 import { InvalidStateError, ParseError, SendMessageError, UnknownObjectError } from './ErrorTypes';
 import { NotificationEventParser } from './NotificationEventParser';
 import { ObjectParser } from './ObjectParser';
@@ -71,6 +72,10 @@ export class ReceiverHandler {
     } catch (error: unknown) {
       if (error instanceof ParseError) {
         return Response.error(400, error.message);
+      }
+      if (error instanceof ZodError) {
+        logger.info('Received data failed schema validation', { error });
+        return Response.error(400, 'Received data failed schema validation');
       }
       if (error instanceof SendMessageError) {
         return Response.error(502, error.message);

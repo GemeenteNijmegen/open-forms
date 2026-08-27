@@ -5,6 +5,8 @@
     "bump": "projen bump",
     "bump:releasable-commits": "projen bump:releasable-commits",
     "bundle": "projen bundle",
+    "bundle:api/form-prefill/contactgegevens/contactgegevens.lambda": "projen bundle:api/form-prefill/contactgegevens/contactgegevens.lambda",
+    "bundle:api/form-prefill/contactgegevens/contactgegevens.lambda:watch": "projen bundle:api/form-prefill/contactgegevens/contactgegevens.lambda:watch",
     "bundle:api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda": "projen bundle:api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda",
     "bundle:api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda:watch": "projen bundle:api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda:watch",
     "bundle:nl-wallet/prefill/prefill.lambda": "projen bundle:nl-wallet/prefill/prefill.lambda",

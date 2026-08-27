@@ -171,6 +171,7 @@
           "src/submission-forwarder/tribe/TribeProcessor.lambda.ts",
           "src/submission-forwarder/vip-transformation-lambda/vip-transformation.lambda.ts",
           "src/submission-forwarder/zgw-registration-lambda/zgw-registration.lambda.ts",
+          "src/api/form-prefill/contactgegevens/contactgegevens.lambda.ts",
           "src/api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda.ts",
           ".projenrc.ts",
           "projenrc/**/*.ts"

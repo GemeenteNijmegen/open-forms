@@ -17,11 +17,17 @@ export const EsfTaakSchema = z.object({
       dossiernummer: z.string(),
       regelingnummer: z.string(),
       periodenummer: z.string(),
-      email: z.string().email(),
+      /**
+       * Do not validate on email here as prefill data is very untrustowthy.
+       */
+      email: z.string(),
       telefoon: z.string().optional(),
     }).passthrough(),
     verzonden_data: z.object({
       formulierreferentie: z.string(),
+      /**
+       * Do validate here as this is enforced by open-forms.
+       */
       email: z.string().email(),
       telefoon: z.string(),
       inkomstengewijzigd: z.string(),
