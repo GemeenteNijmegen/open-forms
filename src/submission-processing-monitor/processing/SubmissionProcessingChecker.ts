@@ -55,6 +55,7 @@ function toResult(record: ObjectRecord, status: ProcessingStatus, match?: Execut
     objectUuid: record.objectUuid,
     objectIndex: record.objectIndex,
     objectType: record.objectType,
+    registrationAt: record.registrationAt,
     reference: record.reference,
     clientNumber: record.clientNumber,
     esfStatus: record.esfStatus,

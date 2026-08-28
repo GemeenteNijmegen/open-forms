@@ -954,7 +954,7 @@
             "--peer",
             "--no-deprecated",
             "--dep=dev,prod,peer,optional",
-            "--filter=@types/jest,@types/node,aws-sdk-client-mock,esbuild,eslint-import-resolver-typescript,eslint-plugin-import,jest,projen,ts-jest,ts-node,typescript,@aws-lambda-powertools/logger,@aws-sdk/client-dynamodb,@aws-sdk/client-s3,@aws-sdk/client-ses,@aws-sdk/client-sfn,@aws-sdk/client-sns,@aws-sdk/client-sqs,@aws-sdk/lib-storage,@gemeentenijmegen/apigateway-http,@gemeentenijmegen/aws-constructs,@gemeentenijmegen/design-tokens,@gemeentenijmegen/modules-zgw-client,@gemeentenijmegen/projen-project-type,@gemeentenijmegen/utils,@types/aws-lambda,@types/jsonwebtoken,dotenv,jose,jsonwebtoken,zod"
+            "--filter=@types/jest,@types/node,aws-sdk-client-mock,esbuild,eslint-import-resolver-typescript,eslint-plugin-import,jest,projen,ts-jest,ts-node,typescript,@aws-lambda-powertools/logger,@aws-sdk/client-dynamodb,@aws-sdk/client-s3,@aws-sdk/client-ses,@aws-sdk/client-sfn,@aws-sdk/client-sns,@aws-sdk/client-sqs,@aws-sdk/lib-dynamodb,@aws-sdk/lib-storage,@gemeentenijmegen/apigateway-http,@gemeentenijmegen/aws-constructs,@gemeentenijmegen/design-tokens,@gemeentenijmegen/modules-zgw-client,@gemeentenijmegen/projen-project-type,@gemeentenijmegen/utils,@types/aws-lambda,@types/jsonwebtoken,dotenv,jose,jsonwebtoken,zod"
           ]
         },
         {
@@ -989,6 +989,7 @@
             "@aws-sdk/client-sfn",
             "@aws-sdk/client-sns",
             "@aws-sdk/client-sqs",
+            "@aws-sdk/lib-dynamodb",
             "@aws-sdk/lib-storage",
             "@gemeentenijmegen/apigateway-http",
             "@gemeentenijmegen/aws-constructs",

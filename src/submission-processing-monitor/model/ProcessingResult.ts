@@ -16,6 +16,7 @@ export interface ProcessingResult {
   objectUuid: string;
   objectIndex: number;
   objectType: string;
+  registrationAt: string;
   reference?: string;
   clientNumber?: string;
   esfStatus?: EsfStatus;
