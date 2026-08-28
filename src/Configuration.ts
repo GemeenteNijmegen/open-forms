@@ -84,7 +84,7 @@ const EnvironmentConfigurations: { [key: string]: Configuration } = {
     deploymentEnvironment: Statics.gnOpenFormsProd,
     criticality: new Criticality('high'),
     logLevel: 'INFO',
-    submissionProcessingMonitorReportEnabled: false,
+    submissionProcessingMonitorReportEnabled: true,
     urlSubscriptions: [
       {
         appId: 'APV',
