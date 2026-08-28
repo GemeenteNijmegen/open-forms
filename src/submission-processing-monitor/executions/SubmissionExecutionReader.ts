@@ -2,6 +2,9 @@ import { Logger } from '@aws-lambda-powertools/logger';
 import { DescribeExecutionCommand, ListExecutionsCommand, SFNClient } from '@aws-sdk/client-sfn';
 import type { MatchableExecution } from './ExecutionMatcher';
 import { amsterdamMidnightUtc, ProcessingPeriod } from '../model/ProcessingPeriod';
+import { RuntimeBudget } from '../RuntimeBudget';
+
+const DEFAULT_DESCRIBE_EXECUTION_CONCURRENCY = 5;
 
 export interface SubmissionExecution {
   executionArn: string;
@@ -28,6 +31,17 @@ export interface ExecutionDetails {
   redriveDate?: Date;
 }
 
+export interface SubmissionExecutionScanResult {
+  executions: SubmissionExecution[];
+  /** False when the runtime budget ran out before every relevant page was read. */
+  complete: boolean;
+}
+
+export interface MatchableExecutionScanResult {
+  executions: MatchableExecution[];
+  complete: boolean;
+}
+
 /**
  * Read-only reader for the existing submission-forwarder Step Function. Only lists and describes
  * executions, never starts, stops or redrives them - that stays the receiver/resubmit lambda's job.
@@ -35,10 +49,12 @@ export interface ExecutionDetails {
 export class SubmissionExecutionReader {
   private readonly client: SFNClient;
   private readonly logger: Logger;
+  private readonly describeExecutionConcurrency: number;
 
-  constructor(private readonly stateMachineArn: string, options: { logger?: Logger } = {}) {
+  constructor(private readonly stateMachineArn: string, options: { logger?: Logger; describeExecutionConcurrency?: number } = {}) {
     this.client = new SFNClient();
     this.logger = options.logger ?? new Logger({ serviceName: 'SubmissionExecutionReader' });
+    this.describeExecutionConcurrency = options.describeExecutionConcurrency ?? DEFAULT_DESCRIBE_EXECUTION_CONCURRENCY;
   }
 
   async listExecutionsPage(nextToken?: string): Promise<SubmissionExecutionsPage> {
@@ -72,13 +88,23 @@ export class SubmissionExecutionReader {
    * execution is provably older than period.from, every execution after it is too and paging
    * can stop.
    */
-  async listExecutionsInPeriod(period: ProcessingPeriod, monitorRunStartedAt: Date): Promise<SubmissionExecution[]> {
+  async listExecutionsInPeriod(
+    period: ProcessingPeriod,
+    monitorRunStartedAt: Date,
+    runtimeBudget?: RuntimeBudget,
+  ): Promise<SubmissionExecutionScanResult> {
     const fromInstant = amsterdamMidnightUtc(period.from);
     const results: SubmissionExecution[] = [];
     let nextToken: string | undefined;
     let pagesFetched = 0;
+    let complete = true;
 
     do {
+      if (runtimeBudget && !runtimeBudget.hasTimeRemaining()) {
+        complete = false;
+        this.logger.debug('Execution list scan stopped: runtime budget exhausted', { pagesFetched, executionsFoundSoFar: results.length, remainingMs: runtimeBudget.remainingMs() });
+        break;
+      }
       const pageResult = await this.listExecutionsPage(nextToken);
       pagesFetched += 1;
 
@@ -99,19 +125,41 @@ export class SubmissionExecutionReader {
       nextToken = pageResult.nextToken;
     } while (nextToken);
 
-    this.logger.debug('Listed submission-forwarder executions in period', { period, monitorRunStartedAt, pagesFetched, executionsFound: results.length });
-    return results;
+    this.logger.debug('Listed submission-forwarder executions in period', { period, monitorRunStartedAt, pagesFetched, executionsFound: results.length, complete });
+    return { executions: results, complete };
   }
 
-  /** Combines listExecutionsInPeriod with a describeExecution call per execution, for matching against object records. */
-  async listExecutionsWithMetadata(period: ProcessingPeriod, monitorRunStartedAt: Date): Promise<MatchableExecution[]> {
-    const executions = await this.listExecutionsInPeriod(period, monitorRunStartedAt);
+  /**
+   * Combines listExecutionsInPeriod with a describeExecution call per execution, for matching
+   * against object records. DescribeExecution calls run in small concurrent batches rather than
+   * one unbounded Promise.all, with a runtime check before each batch.
+   */
+  async listExecutionsWithMetadata(
+    period: ProcessingPeriod,
+    monitorRunStartedAt: Date,
+    runtimeBudget?: RuntimeBudget,
+  ): Promise<MatchableExecutionScanResult> {
+    const listResult = await this.listExecutionsInPeriod(period, monitorRunStartedAt, runtimeBudget);
     const withMetadata: MatchableExecution[] = [];
-    for (const execution of executions) {
-      const details = await this.describeExecution(execution.executionArn);
-      withMetadata.push({ ...execution, objectUuid: details.objectUuid });
+    let complete = listResult.complete;
+
+    for (let i = 0; i < listResult.executions.length; i += this.describeExecutionConcurrency) {
+      if (!complete) {
+        break;
+      }
+      if (runtimeBudget && !runtimeBudget.hasTimeRemaining()) {
+        complete = false;
+        this.logger.debug('DescribeExecution scan stopped: runtime budget exhausted', { describedSoFar: withMetadata.length, totalExecutions: listResult.executions.length, remainingMs: runtimeBudget.remainingMs() });
+        break;
+      }
+      const batch = listResult.executions.slice(i, i + this.describeExecutionConcurrency);
+      const detailsBatch = await Promise.all(batch.map(execution => this.describeExecution(execution.executionArn)));
+      batch.forEach((execution, index) => withMetadata.push({ ...execution, objectUuid: detailsBatch[index].objectUuid }));
+      this.logger.debug('DescribeExecution batch completed', { batchSize: batch.length, describedSoFar: withMetadata.length, totalExecutions: listResult.executions.length });
     }
-    return withMetadata;
+
+    this.logger.info('Listed submission-forwarder executions with metadata', { executionsFound: withMetadata.length, complete });
+    return { executions: withMetadata, complete };
   }
 
   /**

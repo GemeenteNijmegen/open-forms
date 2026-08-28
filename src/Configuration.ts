@@ -50,6 +50,13 @@ export interface Configuration {
    */
   urlSubscriptions?: { url: string; appId: string }[];
 
+  /**
+   * Whether the submission-processing-monitor sends its morning report by e-mail. Also set as a
+   * plain Lambda environment variable, so it can be flipped without going through this config.
+   * @default true
+   */
+  submissionProcessingMonitorReportEnabled?: boolean;
+
 }
 
 const EnvironmentConfigurations: { [key: string]: Configuration } = {
@@ -59,6 +66,7 @@ const EnvironmentConfigurations: { [key: string]: Configuration } = {
     deploymentEnvironment: Statics.gnOpenFormsAccp,
     criticality: new Criticality('medium'),
     logLevel: 'DEBUG',
+    submissionProcessingMonitorReportEnabled: true,
     urlSubscriptions: [
       {
         appId: 'APV',
@@ -76,6 +84,7 @@ const EnvironmentConfigurations: { [key: string]: Configuration } = {
     deploymentEnvironment: Statics.gnOpenFormsProd,
     criticality: new Criticality('high'),
     logLevel: 'INFO',
+    submissionProcessingMonitorReportEnabled: false,
     urlSubscriptions: [
       {
         appId: 'APV',

@@ -32,6 +32,7 @@
     "src/submission-forwarder/tribe/TribeProcessor-function.ts",
     "src/submission-forwarder/vip-transformation-lambda/vip-transformation-function.ts",
     "src/submission-forwarder/zgw-registration-lambda/zgw-registration-function.ts",
+    "src/submission-processing-monitor/monitor-lambda/monitor-function.ts",
     "test/tsconfig.json",
     "tsconfig.json"
   ],

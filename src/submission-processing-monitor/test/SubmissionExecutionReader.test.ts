@@ -1,6 +1,11 @@
 import { DescribeExecutionCommand, ExecutionStatus, ListExecutionsCommand, SFNClient } from '@aws-sdk/client-sfn';
 import { mockClient } from 'aws-sdk-client-mock';
 import { SubmissionExecutionReader } from '../executions/SubmissionExecutionReader';
+import { RuntimeBudget } from '../RuntimeBudget';
+
+function exhaustedBudget(): RuntimeBudget {
+  return new RuntimeBudget(() => 0);
+}
 
 const STATE_MACHINE_ARN = 'arn:aws:states:eu-central-1:123456789012:stateMachine:submission-forwarder-orchestrator';
 
@@ -115,7 +120,7 @@ describe('SubmissionExecutionReader', () => {
       });
 
       const reader = new SubmissionExecutionReader(STATE_MACHINE_ARN);
-      const executions = await reader.listExecutionsInPeriod(period, monitorRunStartedAt);
+      const { executions } = await reader.listExecutionsInPeriod(period, monitorRunStartedAt);
 
       expect(executions.map(e => e.executionArn)).toEqual(['arn:after-period-to']);
     });
@@ -126,7 +131,7 @@ describe('SubmissionExecutionReader', () => {
       });
 
       const reader = new SubmissionExecutionReader(STATE_MACHINE_ARN);
-      const executions = await reader.listExecutionsInPeriod(period, monitorRunStartedAt);
+      const { executions } = await reader.listExecutionsInPeriod(period, monitorRunStartedAt);
 
       expect(executions).toHaveLength(0);
     });
@@ -141,7 +146,7 @@ describe('SubmissionExecutionReader', () => {
       });
 
       const reader = new SubmissionExecutionReader(STATE_MACHINE_ARN);
-      const executions = await reader.listExecutionsInPeriod(period, monitorRunStartedAt);
+      const { executions } = await reader.listExecutionsInPeriod(period, monitorRunStartedAt);
 
       expect(executions.map(e => e.executionArn)).toEqual(['arn:in-period']);
       expect(sfnMock.commandCalls(ListExecutionsCommand)).toHaveLength(1);
@@ -159,7 +164,7 @@ describe('SubmissionExecutionReader', () => {
         });
 
       const reader = new SubmissionExecutionReader(STATE_MACHINE_ARN);
-      const executions = await reader.listExecutionsInPeriod(period, monitorRunStartedAt);
+      const { executions } = await reader.listExecutionsInPeriod(period, monitorRunStartedAt);
 
       expect(executions.map(e => e.executionArn).sort()).toEqual(['arn:page-1', 'arn:page-2']);
     });
@@ -174,8 +179,53 @@ describe('SubmissionExecutionReader', () => {
     });
 
     const reader = new SubmissionExecutionReader(STATE_MACHINE_ARN);
-    const executions = await reader.listExecutionsWithMetadata({ from: '2026-08-26', to: '2026-08-27' }, new Date('2026-08-27T04:00:00Z'));
+    const { executions, complete } = await reader.listExecutionsWithMetadata({ from: '2026-08-26', to: '2026-08-27' }, new Date('2026-08-27T04:00:00Z'));
 
     expect(executions).toEqual([expect.objectContaining({ executionArn: 'arn:exec:1', objectUuid: '714eb3e8-2db1-4da2-bacd-c2c08187ceaf' })]);
+    expect(complete).toBe(true);
+  });
+
+  describe('runtime budget and DescribeExecution concurrency', () => {
+    const period = { from: '2026-08-26', to: '2026-08-27' };
+    const monitorRunStartedAt = new Date('2026-08-27T04:00:00Z');
+
+    test('listExecutionsInPeriod reports complete: false and stops paging once the runtime budget runs out', async () => {
+      sfnMock.on(ListExecutionsCommand).resolvesOnce({
+        executions: [executionListItem('arn:page-1', 'SUCCEEDED', '2026-08-26T20:00:00Z')],
+        nextToken: 'page-2', // must never be requested
+      });
+
+      const reader = new SubmissionExecutionReader(STATE_MACHINE_ARN);
+      const result = await reader.listExecutionsInPeriod(period, monitorRunStartedAt, exhaustedBudget());
+
+      expect(result).toEqual({ executions: [], complete: false });
+      expect(sfnMock.commandCalls(ListExecutionsCommand)).toHaveLength(0);
+    });
+
+    test('listExecutionsWithMetadata calls DescribeExecution in bounded batches and stops once the runtime budget runs out mid-scan', async () => {
+      sfnMock.on(ListExecutionsCommand).resolvesOnce({
+        executions: [
+          executionListItem('arn:exec:1', 'SUCCEEDED', '2026-08-26T20:00:00Z'),
+          executionListItem('arn:exec:2', 'SUCCEEDED', '2026-08-26T19:00:00Z'),
+          executionListItem('arn:exec:3', 'SUCCEEDED', '2026-08-26T18:00:00Z'),
+        ],
+      });
+      sfnMock.on(DescribeExecutionCommand).resolves({});
+
+      // concurrency 2: batch 1 = [exec:1, exec:2], batch 2 = [exec:3]
+      const reader = new SubmissionExecutionReader(STATE_MACHINE_ARN, { describeExecutionConcurrency: 2 });
+      let calls = 0;
+      const runtimeBudget = new RuntimeBudget(() => {
+        calls += 1;
+        // Time remains for the list call and the first DescribeExecution batch, runs out right after.
+        return calls <= 2 ? 300_000 : 0;
+      });
+
+      const result = await reader.listExecutionsWithMetadata(period, monitorRunStartedAt, runtimeBudget);
+
+      expect(result.complete).toBe(false);
+      expect(result.executions.map(e => e.executionArn)).toEqual(['arn:exec:1', 'arn:exec:2']);
+      expect(sfnMock.commandCalls(DescribeExecutionCommand)).toHaveLength(2);
+    });
   });
 });

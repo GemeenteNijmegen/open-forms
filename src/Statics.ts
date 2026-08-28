@@ -52,6 +52,8 @@ export class Statics {
   // Submission Processing Monitor SSM parameter names
   static readonly ssmSubmissionProcessingMonitorObjectsApiBaseUrl = '/open-forms/submission-processing-monitor/objects-api-base-url';
   static readonly ssmSubmissionProcessingMonitorObjectsApiToken = '/open-forms/submission-processing-monitor/objects-api-token';
+  static readonly ssmSubmissionProcessingMonitorReportRecipients = '/open-forms/submission-processing-monitor/report-recipients';
+  static readonly ssmSubmissionProcessingMonitorEsfReportRecipients = '/open-forms/submission-processing-monitor/esf-report-recipients';
 
   /**
    * Shared params

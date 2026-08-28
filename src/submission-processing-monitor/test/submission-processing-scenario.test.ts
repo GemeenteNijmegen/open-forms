@@ -59,7 +59,7 @@ describe('submission processing scenario - normal day', () => {
     ]);
     const objectsClient = new ObjectsApiClient({ baseUrl: 'https://mijn-services.example.nl/objects/api/v2', apiKey: 'test-token' });
     const objectRecordReader = new ObjectRecordReader(objectsClient, rules);
-    const records = await objectRecordReader.findRecordsInPeriod(PERIOD);
+    const { records } = await objectRecordReader.findRecordsInPeriod(PERIOD);
 
     sfnMock.on(ListExecutionsCommand).resolves({
       executions: executionsList.map(e => ({
@@ -74,7 +74,7 @@ describe('submission processing scenario - normal day', () => {
       return { input: details ? JSON.stringify(details) : undefined };
     });
     const executionReader = new SubmissionExecutionReader(STATE_MACHINE_ARN);
-    const executions = await executionReader.listExecutionsWithMetadata(PERIOD, MONITOR_RUN_STARTED_AT);
+    const { executions } = await executionReader.listExecutionsWithMetadata(PERIOD, MONITOR_RUN_STARTED_AT);
 
     const results = checkProcessing(records, executions);
 
@@ -132,7 +132,7 @@ describe('submission processing scenario - ambiguous day', () => {
     ]);
     const objectsClient = new ObjectsApiClient({ baseUrl: 'https://mijn-services.example.nl/objects/api/v2', apiKey: 'test-token' });
     const objectRecordReader = new ObjectRecordReader(objectsClient, rules);
-    const records = await objectRecordReader.findRecordsInPeriod(PERIOD);
+    const { records } = await objectRecordReader.findRecordsInPeriod(PERIOD);
 
     sfnMock.on(ListExecutionsCommand).resolves({
       executions: ambiguousExecutionsList.map(e => ({
@@ -147,7 +147,7 @@ describe('submission processing scenario - ambiguous day', () => {
       return { input: details ? JSON.stringify(details) : undefined };
     });
     const executionReader = new SubmissionExecutionReader(STATE_MACHINE_ARN);
-    const executions = await executionReader.listExecutionsWithMetadata(PERIOD, MONITOR_RUN_STARTED_AT);
+    const { executions } = await executionReader.listExecutionsWithMetadata(PERIOD, MONITOR_RUN_STARTED_AT);
 
     const results = checkProcessing(records, executions);
 

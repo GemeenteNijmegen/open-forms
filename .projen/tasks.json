@@ -112,6 +112,9 @@
           "spawn": "bundle:submission-forwarder/zgw-registration-lambda/zgw-registration.lambda"
         },
         {
+          "spawn": "bundle:submission-processing-monitor/monitor-lambda/monitor.lambda"
+        },
+        {
           "spawn": "bundle:api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda"
         }
       ]
@@ -627,6 +630,43 @@
             "--target=node24",
             "--platform=node",
             "--outfile=assets/submission-forwarder/zgw-registration-lambda/zgw-registration.lambda/index.js",
+            "--tsconfig=test/tsconfig.json",
+            "--external:@aws-sdk/*",
+            "--watch"
+          ]
+        }
+      ]
+    },
+    "bundle:submission-processing-monitor/monitor-lambda/monitor.lambda": {
+      "name": "bundle:submission-processing-monitor/monitor-lambda/monitor.lambda",
+      "description": "Create a JavaScript bundle from src/submission-processing-monitor/monitor-lambda/monitor.lambda.ts",
+      "steps": [
+        {
+          "execArgs": [
+            "esbuild",
+            "--bundle",
+            "src/submission-processing-monitor/monitor-lambda/monitor.lambda.ts",
+            "--target=node24",
+            "--platform=node",
+            "--outfile=assets/submission-processing-monitor/monitor-lambda/monitor.lambda/index.js",
+            "--tsconfig=test/tsconfig.json",
+            "--external:@aws-sdk/*"
+          ]
+        }
+      ]
+    },
+    "bundle:submission-processing-monitor/monitor-lambda/monitor.lambda:watch": {
+      "name": "bundle:submission-processing-monitor/monitor-lambda/monitor.lambda:watch",
+      "description": "Continuously update the JavaScript bundle from src/submission-processing-monitor/monitor-lambda/monitor.lambda.ts",
+      "steps": [
+        {
+          "execArgs": [
+            "esbuild",
+            "--bundle",
+            "src/submission-processing-monitor/monitor-lambda/monitor.lambda.ts",
+            "--target=node24",
+            "--platform=node",
+            "--outfile=assets/submission-processing-monitor/monitor-lambda/monitor.lambda/index.js",
             "--tsconfig=test/tsconfig.json",
             "--external:@aws-sdk/*",
             "--watch"

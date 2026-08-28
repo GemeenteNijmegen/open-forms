@@ -27,7 +27,8 @@ export class MonitorRunsTable extends Construct {
     return this.table.tableName;
   }
 
-  grantReadWriteData(grantee: IGrantable): void {
-    this.table.grantReadWriteData(grantee);
+  /** Narrower than Table.grantReadWriteData(): MonitorRunRepository only ever writes a run once, via PutItem. */
+  grantWrite(grantee: IGrantable): void {
+    this.table.grant(grantee, 'dynamodb:PutItem');
   }
 }

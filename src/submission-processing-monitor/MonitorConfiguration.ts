@@ -9,6 +9,8 @@ export class MonitorConfiguration extends Construct {
   public readonly objectsApiToken: Secret;
   public readonly submissionForwarderStateMachineArn: IStringParameter;
   public readonly objectTypes: IStringParameter;
+  public readonly reportRecipients: StringParameter;
+  public readonly esfReportRecipients: StringParameter;
 
   constructor(scope: Construct, id: string) {
     super(scope, id);
@@ -18,6 +20,18 @@ export class MonitorConfiguration extends Construct {
       stringValue: '-',
       description: 'Base URL used by submission-processing-monitor to reach the Objects API, without trailing slash, '
         + 'e.g. https://domein.nl/objects/api/v2',
+    });
+
+    this.reportRecipients = new StringParameter(this, 'report-recipients-processing-monitor', {
+      parameterName: Statics.ssmSubmissionProcessingMonitorReportRecipients,
+      stringValue: '-',
+      description: 'Comma-separated e-mail addresses that receive the submission-processing-monitor morning report, e.g. persoon-a@nijmegen.nl,persoon-b@nijmegen.nl',
+    });
+
+    this.esfReportRecipients = new StringParameter(this, 'esf-report-recipients-processing-monitor', {
+      parameterName: Statics.ssmSubmissionProcessingMonitorEsfReportRecipients,
+      stringValue: '-',
+      description: 'Comma-separated e-mail addresses that receive the submission-processing-monitor ESF report, e.g. persoon-a@nijmegen.nl,persoon-b@nijmegen.nl',
     });
 
     this.objectsApiToken = new Secret(this, 'objects-api-token-processing-monitor', {

@@ -32,7 +32,8 @@ export class ProcessingIssuesTable extends Construct {
     return this.table.tableName;
   }
 
-  grantReadWriteData(grantee: IGrantable): void {
-    this.table.grantReadWriteData(grantee);
+  /** Narrower than Table.grantReadWriteData(): ProcessingIssueRepository only ever writes via UpdateItem, its conditional checks run server-side inside that call. */
+  grantUpdate(grantee: IGrantable): void {
+    this.table.grant(grantee, 'dynamodb:UpdateItem');
   }
 }

@@ -33,6 +33,8 @@
     "bundle:submission-forwarder/vip-transformation-lambda/vip-transformation.lambda:watch": "projen bundle:submission-forwarder/vip-transformation-lambda/vip-transformation.lambda:watch",
     "bundle:submission-forwarder/zgw-registration-lambda/zgw-registration.lambda": "projen bundle:submission-forwarder/zgw-registration-lambda/zgw-registration.lambda",
     "bundle:submission-forwarder/zgw-registration-lambda/zgw-registration.lambda:watch": "projen bundle:submission-forwarder/zgw-registration-lambda/zgw-registration.lambda:watch",
+    "bundle:submission-processing-monitor/monitor-lambda/monitor.lambda": "projen bundle:submission-processing-monitor/monitor-lambda/monitor.lambda",
+    "bundle:submission-processing-monitor/monitor-lambda/monitor.lambda:watch": "projen bundle:submission-processing-monitor/monitor-lambda/monitor.lambda:watch",
     "cfn-lint": "projen cfn-lint",
     "clobber": "projen clobber",
     "compile": "projen compile",

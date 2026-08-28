@@ -1,9 +1,14 @@
 import { ObjectProcessingRules } from '../objects/ObjectProcessingRules';
 import { ObjectRecordReader } from '../objects/ObjectRecordReader';
 import { ObjectListItem, ObjectListRecord, ObjectsApiClient, ObjectsPage } from '../objects/ObjectsApiClient';
+import { RuntimeBudget } from '../RuntimeBudget';
 import esfTaakAfgerond from './samples/esf-taak/afgerond.json';
 import esfTaakOpen from './samples/esf-taak/open.json';
 import esfTaakVerwerkt from './samples/esf-taak/verwerkt.json';
+
+function exhaustedBudget(): RuntimeBudget {
+  return new RuntimeBudget(() => 0);
+}
 
 const SUBMISSION_TYPE_UUID = 'd3713c2b-307c-4c07-8eaa-c2c6d75869cf';
 const ESF_TYPE_UUID = '6df21057-e07c-4909-8933-d70b79cfd15e';
@@ -78,7 +83,7 @@ describe('ObjectRecordReader', () => {
     });
 
     const reader = new ObjectRecordReader(client, rules);
-    const records = await reader.findRecordsInPeriod({ from: '2026-08-27', to: '2026-08-28' });
+    const { records } = await reader.findRecordsInPeriod({ from: '2026-08-27', to: '2026-08-28' });
 
     expect(records).toHaveLength(1);
     expect(records[0]).toMatchObject({
@@ -98,7 +103,7 @@ describe('ObjectRecordReader', () => {
     });
 
     const reader = new ObjectRecordReader(client, rules);
-    const records = await reader.findRecordsInPeriod({ from: '2026-08-27', to: '2026-08-28' });
+    const { records } = await reader.findRecordsInPeriod({ from: '2026-08-27', to: '2026-08-28' });
 
     expect(records).toHaveLength(0);
   });
@@ -120,7 +125,7 @@ describe('ObjectRecordReader', () => {
     });
 
     const reader = new ObjectRecordReader(client, rules);
-    const records = await reader.findRecordsInPeriod({ from: '2026-08-27', to: '2026-08-28' });
+    const { records } = await reader.findRecordsInPeriod({ from: '2026-08-27', to: '2026-08-28' });
 
     expect(records).toHaveLength(1);
     expect(records[0].objectUuid).toBe(newerUuid);
@@ -141,7 +146,7 @@ describe('ObjectRecordReader', () => {
     });
 
     const reader = new ObjectRecordReader(client, rules);
-    const records = await reader.findRecordsInPeriod({ from: '2026-08-27', to: '2026-08-28' });
+    const { records } = await reader.findRecordsInPeriod({ from: '2026-08-27', to: '2026-08-28' });
 
     expect(records.map(r => r.objectUuid).sort()).toEqual([firstUuid, secondUuid].sort());
   });
@@ -159,7 +164,7 @@ describe('ObjectRecordReader', () => {
     });
 
     const reader = new ObjectRecordReader(client, rules);
-    const records = await reader.findRecordsInPeriod({ from: '2026-08-26', to: '2026-08-28' });
+    const { records } = await reader.findRecordsInPeriod({ from: '2026-08-26', to: '2026-08-28' });
 
     expect(records.map(r => r.objectIndex).sort()).toEqual([4, 5]);
   });
@@ -174,7 +179,7 @@ describe('ObjectRecordReader', () => {
     });
 
     const reader = new ObjectRecordReader(client, rules);
-    const records = await reader.findRecordsInPeriod({ from: '2026-08-27', to: '2026-08-28' });
+    const { records } = await reader.findRecordsInPeriod({ from: '2026-08-27', to: '2026-08-28' });
 
     expect(records).toHaveLength(0);
   });
@@ -193,12 +198,63 @@ describe('ObjectRecordReader', () => {
     });
 
     const reader = new ObjectRecordReader(client, rules);
-    const records = await reader.findRecordsInPeriod({ from: '2026-08-25', to: '2026-08-28' });
+    const { records } = await reader.findRecordsInPeriod({ from: '2026-08-25', to: '2026-08-28' });
 
     expect(records).toHaveLength(3);
     const byIndex = Object.fromEntries(records.map(r => [r.objectIndex, r]));
     expect(byIndex[1]).toMatchObject({ esfStatus: 'open', expectedProcessing: false, reference: undefined, clientNumber: '32668' });
     expect(byIndex[2]).toMatchObject({ esfStatus: 'afgerond', expectedProcessing: true, reference: 'ESF-OF-P47KAS-96547-202510', clientNumber: '32668' });
     expect(byIndex[3]).toMatchObject({ esfStatus: 'verwerkt', expectedProcessing: false, reference: 'ESF-OF-P47KAS-96547-202510', clientNumber: '32668' });
+  });
+
+  test('reports complete: true when no runtime budget is given', async () => {
+    const uuid = 'aaaaaaaa-1111-0000-0000-000000000001';
+    const client = stubClient({
+      objectsPages: [page([objectListItem(uuid, 1, '2026-08-27')])],
+      historyPagesByUuid: { [uuid]: [page([historyRecord(1, '2026-08-27')])] },
+    });
+
+    const reader = new ObjectRecordReader(client, rules);
+    const result = await reader.findRecordsInPeriod({ from: '2026-08-27', to: '2026-08-28' });
+
+    expect(result.complete).toBe(true);
+  });
+
+  test('stops before the first discovery page and reports complete: false when the runtime budget is already exhausted', async () => {
+    const client = stubClient({ objectsPages: [], historyPagesByUuid: {} });
+    const reader = new ObjectRecordReader(client, rules);
+
+    const result = await reader.findRecordsInPeriod({ from: '2026-08-27', to: '2026-08-28' }, exhaustedBudget());
+
+    expect(result).toEqual({ records: [], objectsScanned: 0, complete: false });
+  });
+
+  test('stops before fetching a candidate\'s history once the runtime budget runs out, without losing records already found', async () => {
+    const firstUuid = 'bbbbbbbb-2222-0000-0000-000000000002';
+    const secondUuid = 'cccccccc-3333-0000-0000-000000000003';
+    const client = stubClient({
+      objectsPages: [page([
+        objectListItem(firstUuid, 1, '2026-08-27'),
+        objectListItem(secondUuid, 1, '2026-08-27'),
+      ])],
+      historyPagesByUuid: {
+        [firstUuid]: [page([historyRecord(1, '2026-08-27')])],
+        [secondUuid]: [page([historyRecord(1, '2026-08-27')])],
+      },
+    });
+    const reader = new ObjectRecordReader(client, rules);
+
+    let calls = 0;
+    const runtimeBudget = new RuntimeBudget(() => {
+      calls += 1;
+      // Time remains for discovery and the first candidate's history, runs out right after.
+      return calls <= 2 ? 300_000 : 0;
+    });
+
+    const result = await reader.findRecordsInPeriod({ from: '2026-08-27', to: '2026-08-28' }, runtimeBudget);
+
+    expect(result.complete).toBe(false);
+    expect(result.records).toHaveLength(1);
+    expect(result.records[0].objectUuid).toBe(firstUuid);
   });
 });
