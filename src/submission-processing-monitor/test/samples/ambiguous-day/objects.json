@@ -1,0 +1,45 @@
+{
+  "count": 3,
+  "next": null,
+  "results": [
+    {
+      "url": "https://mijn-services.example.nl/objects/api/v2/objects/11111111-0000-0000-0000-000000000101",
+      "uuid": "11111111-0000-0000-0000-000000000101",
+      "type": "https://example.com/objecttypes/api/v2/objecttypes/d3713c2b-307c-4c07-8eaa-c2c6d75869cf",
+      "record": {
+        "index": 2,
+        "typeVersion": 1,
+        "data": { "reference": "OF-M0001" },
+        "startAt": "2026-08-27",
+        "endAt": null,
+        "registrationAt": "2026-08-27"
+      }
+    },
+    {
+      "url": "https://mijn-services.example.nl/objects/api/v2/objects/22222222-0000-0000-0000-000000000102",
+      "uuid": "22222222-0000-0000-0000-000000000102",
+      "type": "https://example.com/objecttypes/api/v2/objecttypes/d3713c2b-307c-4c07-8eaa-c2c6d75869cf",
+      "record": {
+        "index": 1,
+        "typeVersion": 1,
+        "data": { "reference": "OF-N0001" },
+        "startAt": "2026-08-27",
+        "endAt": null,
+        "registrationAt": "2026-08-27"
+      }
+    },
+    {
+      "url": "https://mijn-services.example.nl/objects/api/v2/objects/33333333-0000-0000-0000-000000000103",
+      "uuid": "33333333-0000-0000-0000-000000000103",
+      "type": "https://example.com/objecttypes/api/v2/objecttypes/d3713c2b-307c-4c07-8eaa-c2c6d75869cf",
+      "record": {
+        "index": 1,
+        "typeVersion": 1,
+        "data": { "reference": "OF-P0001" },
+        "startAt": "2026-08-27",
+        "endAt": null,
+        "registrationAt": "2026-08-27"
+      }
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "arn:aws:states:eu-central-1:123456789012:execution:submission-forwarder-orchestrator:OF-M0001-A": {
+    "objectUUID": "11111111-0000-0000-0000-000000000101",
+    "reference": "OF-M0001"
+  },
+  "arn:aws:states:eu-central-1:123456789012:execution:submission-forwarder-orchestrator:OF-N0001-A": {
+    "objectUUID": "22222222-0000-0000-0000-000000000102",
+    "reference": "OF-N0001"
+  },
+  "arn:aws:states:eu-central-1:123456789012:execution:submission-forwarder-orchestrator:OF-N0001-B": {
+    "objectUUID": "22222222-0000-0000-0000-000000000102",
+    "reference": "OF-N0001"
+  },
+  "arn:aws:states:eu-central-1:123456789012:execution:submission-forwarder-orchestrator:OF-P0001-A": {
+    "objectUUID": "33333333-0000-0000-0000-000000000103",
+    "reference": "OF-P0001"
+  }
+}
