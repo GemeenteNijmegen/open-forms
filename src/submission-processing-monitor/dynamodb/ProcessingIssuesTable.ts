@@ -1,12 +1,7 @@
 import { RemovalPolicy } from 'aws-cdk-lib';
 import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { IGrantable } from 'aws-cdk-lib/aws-iam';
-import { IKey } from 'aws-cdk-lib/aws-kms';
 import { Construct } from 'constructs';
-
-export interface ProcessingIssuesTableProps {
-  key: IKey;
-}
 
 /**
  * Durable ProcessingIssue records, keyed on PK = OBJECT#<uuid>, SK = INDEX#<zero-padded-index>.
@@ -15,14 +10,13 @@ export interface ProcessingIssuesTableProps {
 export class ProcessingIssuesTable extends Construct {
   private readonly table: Table;
 
-  constructor(scope: Construct, id: string, props: ProcessingIssuesTableProps) {
+  constructor(scope: Construct, id: string) {
     super(scope, id);
     this.table = new Table(this, 'processing-issues-table', {
       partitionKey: { name: 'PK', type: AttributeType.STRING },
       sortKey: { name: 'SK', type: AttributeType.STRING },
       billingMode: BillingMode.PAY_PER_REQUEST,
       timeToLiveAttribute: 'ttl',
-      encryptionKey: props.key,
       pointInTimeRecoverySpecification: { pointInTimeRecoveryEnabled: true },
       removalPolicy: RemovalPolicy.RETAIN,
     });

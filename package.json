@@ -117,7 +117,8 @@
   "jest": {
     "coverageProvider": "v8",
     "setupFiles": [
-      "dotenv/config"
+      "dotenv/config",
+      "<rootDir>/test/jest.setup.ts"
     ],
     "testMatch": [
       "<rootDir>/@(src|test)/**/*(*.)@(spec|test).ts?(x)",

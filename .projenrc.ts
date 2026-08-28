@@ -31,7 +31,7 @@ const project = new GemeenteNijmegenCdkApp({
   ],
   jestOptions: {
     jestConfig: {
-      setupFiles: ['dotenv/config'],
+      setupFiles: ['dotenv/config', '<rootDir>/test/jest.setup.ts'],
     },
   },
   gitignore: [

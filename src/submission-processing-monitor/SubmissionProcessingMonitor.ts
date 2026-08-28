@@ -1,8 +1,11 @@
-import { Duration } from 'aws-cdk-lib';
+import { Duration, TimeZone } from 'aws-cdk-lib';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
+import { Schedule, ScheduleExpression, ScheduleTargetInput, TimeWindow } from 'aws-cdk-lib/aws-scheduler';
+import { LambdaInvoke } from 'aws-cdk-lib/aws-scheduler-targets';
+import { IQueue, Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 import { Configurable } from '../Configuration';
@@ -12,6 +15,7 @@ import { ProcessingIssuesTable } from './dynamodb/ProcessingIssuesTable';
 import { ForwarderStateMachine } from './executions/ForwarderStateMachine';
 import { MonitorFunction } from './monitor-lambda/monitor-function';
 import { MonitorConfiguration } from './MonitorConfiguration';
+import { MonitorAlarms } from './monitoring/MonitorAlarms';
 
 export interface SubmissionProcessingMonitorProps extends Configurable {
   /** Shared KMS key, also used by SubmissionForwarder's state machine execution data. */
@@ -24,6 +28,8 @@ export class SubmissionProcessingMonitor extends Construct {
   public readonly monitorRunsTable: MonitorRunsTable;
   public readonly processingIssuesTable: ProcessingIssuesTable;
   public readonly monitorFunction: IFunction;
+  public readonly monitorLogGroup: LogGroup;
+  public readonly schedulerDeadLetterQueue: IQueue;
 
   constructor(scope: Construct, id: string, private readonly props: SubmissionProcessingMonitorProps) {
     super(scope, id);
@@ -33,9 +39,21 @@ export class SubmissionProcessingMonitor extends Construct {
       key: props.key,
     });
     // With tables for the UI connection later on and maybe retries of notifications.
-    this.monitorRunsTable = new MonitorRunsTable(this, 'monitor-runs-table', { key: props.key });
-    this.processingIssuesTable = new ProcessingIssuesTable(this, 'processing-issues-table', { key: props.key });
+    this.monitorRunsTable = new MonitorRunsTable(this, 'monitor-runs-table');
+    this.processingIssuesTable = new ProcessingIssuesTable(this, 'processing-issues-table');
+    this.monitorLogGroup = new LogGroup(this, 'monitor-logs', {
+      encryptionKey: props.key,
+      retention: RetentionDays.SIX_MONTHS,
+    });
     this.monitorFunction = this.setupMonitorLambda();
+    this.schedulerDeadLetterQueue = this.setupScheduler();
+
+    new MonitorAlarms(this, 'alarms', {
+      monitorFunction: this.monitorFunction,
+      monitorLogGroup: this.monitorLogGroup,
+      schedulerDeadLetterQueue: this.schedulerDeadLetterQueue,
+      criticality: props.configuration.criticality,
+    });
   }
 
   private setupMonitorLambda(): IFunction {
@@ -45,10 +63,7 @@ export class SubmissionProcessingMonitor extends Construct {
       description: 'Nightly submission-processing-monitor run',
       timeout: Duration.minutes(15),
       memorySize: 512,
-      logGroup: new LogGroup(this, 'monitor-logs', {
-        encryptionKey: this.props.key,
-        retention: RetentionDays.SIX_MONTHS,
-      }),
+      logGroup: this.monitorLogGroup,
       environment: {
         POWERTOOLS_LOG_LEVEL: this.props.configuration.logLevel ?? 'INFO',
         OBJECTS_API_BASE_URL: this.configuration.objectsApiBaseUrl.stringValue,
@@ -74,5 +89,33 @@ export class SubmissionProcessingMonitor extends Construct {
     }));
 
     return monitorFunction;
+  }
+
+  /**
+   * The Scheduler itself needs no Objects/Step Functions/KMS/DynamoDB configuration - it only ever
+   * calls the monitor Lambda. SQS-managed encryption, not the shared CMK: EventBridge Scheduler's
+   * auto-created target role only gets sqs:SendMessage, never a KMS grant, so a CMK-encrypted DLQ
+   * would silently fail to receive the very failures it exists to catch. The queue only ever holds
+   * the scheduler event ({"mode":"PREVIOUS_DAY"}), nothing privacy-sensitive.
+   */
+  private setupScheduler(): IQueue {
+    const deadLetterQueue = new Queue(this, 'scheduler-dlq', {
+      encryption: QueueEncryption.SQS_MANAGED,
+      retentionPeriod: Duration.days(14),
+    });
+
+    new Schedule(this, 'schedule', {
+      description: 'Daily submission-processing-monitor run',
+      schedule: ScheduleExpression.cron({ minute: '0', hour: '6', timeZone: TimeZone.of('Europe/Amsterdam') }),
+      timeWindow: TimeWindow.off(),
+      target: new LambdaInvoke(this.monitorFunction, {
+        input: ScheduleTargetInput.fromObject({ mode: 'PREVIOUS_DAY' }),
+        deadLetterQueue,
+        retryAttempts: 2,
+        maxEventAge: Duration.minutes(30),
+      }),
+    });
+
+    return deadLetterQueue;
   }
 }
