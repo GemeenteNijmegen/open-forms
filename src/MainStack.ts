@@ -13,6 +13,7 @@ import { PrefillDemo } from './prefill-demo/PrefillDemoConstruct';
 import { StaticFormDefinitions } from './static-form-definitions/StaticFormDefinitions';
 import { Statics } from './Statics';
 import { SubmissionForwarder } from './submission-forwarder/SubmissionForwarder';
+import { SubmissionProcessingMonitor } from './submission-processing-monitor/SubmissionProcessingMonitor';
 
 interface MainStackProps extends StackProps, Configurable { }
 
@@ -55,6 +56,7 @@ export class MainStack extends Stack {
     });
 
     this.setupStaticFromDefinitions([this.api, api.restApi]);
+    this.setupSubmissionProcessingMonitor();
 
   }
 
@@ -65,6 +67,16 @@ export class MainStack extends Stack {
     new StaticFormDefinitions(this, 'static-form-definitions', {
       apis,
       logLevel: this.props.configuration.logLevel ?? 'INFO',
+    });
+  }
+
+  /**
+   *  Independently monitors whether the submission forwarder processed objects successfully.
+   * API endpoints might be aded later on to retrieve data for open-forms-management UI
+   */
+  private setupSubmissionProcessingMonitor() {
+    new SubmissionProcessingMonitor(this, 'submission-processing-monitor', {
+      configuration: this.props.configuration,
     });
   }
 

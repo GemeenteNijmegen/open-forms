@@ -32,6 +32,7 @@ export class ParameterStack extends Stack {
     Tags.of(this).add('Project', Statics.projectName);
 
     this.addSnsSubscriptionUrlParameters();
+    this.addObjectTypesParameter();
   }
 
 
@@ -45,6 +46,16 @@ export class ParameterStack extends Stack {
       parameterName: Statics.ssmSNSSubscriptionUrlJZ4ALL,
       stringValue: '-',
       description: 'SNS Topic Subscription URL for JZ4ALL Woweb',
+    });
+  }
+
+  private addObjectTypesParameter() {
+    new StringParameter(this, 'ssm-object-types-1', {
+      parameterName: Statics.ssmObjectTypes,
+      stringValue: '-',
+      description: 'name##objecttype-uuid pairs (semicolon-separated), same values as the submission-forwarder objectTypes '
+        + 'parameter. Two parameters exist right now: the receiver Lambda reads objectTypes, submission-processing-monitor '
+        + 'reads this one. objectTypes will be removed once the receiver Lambda reads object types from this parameter instead.',
     });
   }
 }
