@@ -10,4 +10,6 @@ export interface ObjectRecord {
   clientNumber?: string;
   esfStatus?: EsfStatus;
   expectedProcessing: boolean;
+  /** False when the record's data couldn't be classified reliably, e.g. an ESF taak with a missing or unknown status. */
+  dataValid: boolean;
 }

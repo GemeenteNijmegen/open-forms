@@ -1,0 +1,77 @@
+{
+  "aaaaaaaa-0000-0000-0000-000000000001": [
+    { "index": 1, "typeVersion": 1, "data": { "reference": "OF-A0001" }, "startAt": "2026-08-27", "endAt": null, "registrationAt": "2026-08-27" }
+  ],
+  "bbbbbbbb-0000-0000-0000-000000000002": [
+    { "index": 2, "typeVersion": 1, "data": { "reference": "OF-B0002" }, "startAt": "2026-08-27", "endAt": null, "registrationAt": "2026-08-27" },
+    { "index": 1, "typeVersion": 1, "data": { "reference": "OF-B0002-OLD" }, "startAt": "2026-08-20", "endAt": "2026-08-27", "registrationAt": "2026-08-20" }
+  ],
+  "cccccccc-0000-0000-0000-000000000003": [
+    { "index": 2, "typeVersion": 1, "data": { "reference": "OF-C0003-NEW" }, "startAt": "2026-08-28", "endAt": null, "registrationAt": "2026-08-28" },
+    { "index": 1, "typeVersion": 1, "data": { "reference": "OF-C0003" }, "startAt": "2026-08-27", "endAt": "2026-08-28", "registrationAt": "2026-08-27" }
+  ],
+  "dddddddd-0000-0000-0000-000000000004": [
+    { "index": 1, "typeVersion": 1, "data": { "reference": "OF-DUP01" }, "startAt": "2026-08-27", "endAt": null, "registrationAt": "2026-08-27" }
+  ],
+  "eeeeeeee-0000-0000-0000-000000000005": [
+    { "index": 1, "typeVersion": 1, "data": { "reference": "OF-DUP01" }, "startAt": "2026-08-27", "endAt": null, "registrationAt": "2026-08-27" }
+  ],
+  "f1111111-0000-0000-0000-000000000006": [
+    {
+      "index": 1,
+      "typeVersion": 1,
+      "data": { "status": "open", "formtaak": { "data": { "clientnummer": "10001", "dossiernummer": "DOS1", "periodenummer": "PER1" } } },
+      "startAt": "2026-08-27",
+      "endAt": null,
+      "registrationAt": "2026-08-27"
+    }
+  ],
+  "22222222-0000-0000-0000-000000000007": [
+    {
+      "index": 1,
+      "typeVersion": 1,
+      "data": {
+        "status": "verwerkt",
+        "formtaak": {
+          "data": { "clientnummer": "10002", "dossiernummer": "DOS2", "periodenummer": "PER2" },
+          "verzonden_data": { "formulierreferentie": "OF-ESFG1" }
+        }
+      },
+      "startAt": "2026-08-27",
+      "endAt": null,
+      "registrationAt": "2026-08-27"
+    }
+  ],
+  "33333333-0000-0000-0000-000000000008": [
+    {
+      "index": 1,
+      "typeVersion": 1,
+      "data": {
+        "status": "gesloten",
+        "formtaak": {
+          "data": { "clientnummer": "10003", "dossiernummer": "DOS3", "periodenummer": "PER3" },
+          "verzonden_data": { "formulierreferentie": "OF-ESFH1" }
+        }
+      },
+      "startAt": "2026-08-27",
+      "endAt": null,
+      "registrationAt": "2026-08-27"
+    }
+  ],
+  "44444444-0000-0000-0000-000000000009": [
+    {
+      "index": 1,
+      "typeVersion": 1,
+      "data": {
+        "status": "afgerond",
+        "formtaak": {
+          "data": { "clientnummer": "10004", "dossiernummer": "DOS4", "periodenummer": "PER4" },
+          "verzonden_data": { "formulierreferentie": "OF-ESFI1" }
+        }
+      },
+      "startAt": "2026-08-27",
+      "endAt": null,
+      "registrationAt": "2026-08-27"
+    }
+  ]
+}

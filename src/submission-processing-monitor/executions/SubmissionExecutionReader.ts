@@ -1,5 +1,6 @@
 import { Logger } from '@aws-lambda-powertools/logger';
 import { DescribeExecutionCommand, ListExecutionsCommand, SFNClient } from '@aws-sdk/client-sfn';
+import type { MatchableExecution } from './ExecutionMatcher';
 import { amsterdamMidnightUtc, ProcessingPeriod } from '../model/ProcessingPeriod';
 
 export interface SubmissionExecution {
@@ -100,6 +101,17 @@ export class SubmissionExecutionReader {
 
     this.logger.debug('Listed submission-forwarder executions in period', { period, pagesFetched, executionsFound: results.length });
     return results;
+  }
+
+  /** Combines listExecutionsInPeriod with a describeExecution call per execution, for matching against object records. */
+  async listExecutionsWithMetadata(period: ProcessingPeriod): Promise<MatchableExecution[]> {
+    const executions = await this.listExecutionsInPeriod(period);
+    const withMetadata: MatchableExecution[] = [];
+    for (const execution of executions) {
+      const details = await this.describeExecution(execution.executionArn);
+      withMetadata.push({ ...execution, objectUuid: details.objectUuid });
+    }
+    return withMetadata;
   }
 
   /**

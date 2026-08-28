@@ -1,0 +1,57 @@
+[
+  {
+    "objectUuid": "44444444-0000-0000-0000-000000000009",
+    "objectIndex": 1,
+    "objectType": "https://example.com/objecttypes/api/v2/objecttypes/6df21057-e07c-4909-8933-d70b79cfd15e",
+    "reference": "ESF-OF-ESFI1-DOS4-PER4",
+    "clientNumber": "10004",
+    "esfStatus": "afgerond",
+    "status": "SUCCEEDED",
+    "matchType": "UNIQUE",
+    "executionArn": "arn:aws:states:eu-central-1:123456789012:execution:submission-forwarder-orchestrator:ESF-OF-ESFI1-1"
+  },
+  {
+    "objectUuid": "aaaaaaaa-0000-0000-0000-000000000001",
+    "objectIndex": 1,
+    "objectType": "https://example.com/objecttypes/api/v2/objecttypes/d3713c2b-307c-4c07-8eaa-c2c6d75869cf",
+    "reference": "OF-A0001",
+    "status": "SUCCEEDED",
+    "matchType": "UNIQUE",
+    "executionArn": "arn:aws:states:eu-central-1:123456789012:execution:submission-forwarder-orchestrator:OF-A0001-1"
+  },
+  {
+    "objectUuid": "bbbbbbbb-0000-0000-0000-000000000002",
+    "objectIndex": 2,
+    "objectType": "https://example.com/objecttypes/api/v2/objecttypes/d3713c2b-307c-4c07-8eaa-c2c6d75869cf",
+    "reference": "OF-B0002",
+    "status": "FAILED",
+    "matchType": "UNIQUE",
+    "executionArn": "arn:aws:states:eu-central-1:123456789012:execution:submission-forwarder-orchestrator:OF-B0002-1"
+  },
+  {
+    "objectUuid": "cccccccc-0000-0000-0000-000000000003",
+    "objectIndex": 1,
+    "objectType": "https://example.com/objecttypes/api/v2/objecttypes/d3713c2b-307c-4c07-8eaa-c2c6d75869cf",
+    "reference": "OF-C0003",
+    "status": "MISSING",
+    "matchType": "MISSING"
+  },
+  {
+    "objectUuid": "dddddddd-0000-0000-0000-000000000004",
+    "objectIndex": 1,
+    "objectType": "https://example.com/objecttypes/api/v2/objecttypes/d3713c2b-307c-4c07-8eaa-c2c6d75869cf",
+    "reference": "OF-DUP01",
+    "status": "SUCCEEDED",
+    "matchType": "UNIQUE",
+    "executionArn": "arn:aws:states:eu-central-1:123456789012:execution:submission-forwarder-orchestrator:OF-DUP01-D-1"
+  },
+  {
+    "objectUuid": "eeeeeeee-0000-0000-0000-000000000005",
+    "objectIndex": 1,
+    "objectType": "https://example.com/objecttypes/api/v2/objecttypes/d3713c2b-307c-4c07-8eaa-c2c6d75869cf",
+    "reference": "OF-DUP01",
+    "status": "SUCCEEDED",
+    "matchType": "UNIQUE",
+    "executionArn": "arn:aws:states:eu-central-1:123456789012:execution:submission-forwarder-orchestrator:OF-DUP01-E-1"
+  }
+]

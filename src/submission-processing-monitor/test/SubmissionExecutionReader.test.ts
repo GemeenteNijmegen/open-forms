@@ -138,4 +138,18 @@ describe('SubmissionExecutionReader', () => {
       expect(executions.map(e => e.executionArn).sort()).toEqual(['arn:page-1', 'arn:page-2']);
     });
   });
+
+  test('listExecutionsWithMetadata attaches the objectUuid from each execution\'s describeExecution call', async () => {
+    sfnMock.on(ListExecutionsCommand).resolvesOnce({
+      executions: [executionListItem('arn:exec:1', 'SUCCEEDED', '2026-08-26T12:00:00Z')],
+    });
+    sfnMock.on(DescribeExecutionCommand, { executionArn: 'arn:exec:1' }).resolves({
+      input: JSON.stringify({ objectUUID: '714eb3e8-2db1-4da2-bacd-c2c08187ceaf', reference: 'OF-XN6DEA' }),
+    });
+
+    const reader = new SubmissionExecutionReader(STATE_MACHINE_ARN);
+    const executions = await reader.listExecutionsWithMetadata({ from: '2026-08-26', to: '2026-08-27' });
+
+    expect(executions).toEqual([expect.objectContaining({ executionArn: 'arn:exec:1', objectUuid: '714eb3e8-2db1-4da2-bacd-c2c08187ceaf' })]);
+  });
 });

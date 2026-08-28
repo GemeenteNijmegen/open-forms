@@ -112,7 +112,24 @@ describe('ObjectProcessingRules.normalize', () => {
       },
     });
 
-    expect(record).toMatchObject({ esfStatus: 'open', expectedProcessing: false, reference: undefined, clientNumber: '32668' });
+    expect(record).toMatchObject({ esfStatus: 'open', expectedProcessing: false, dataValid: true, reference: undefined, clientNumber: '32668' });
+  });
+
+  test('reports invalid data for an ESF taak with a missing or unknown status, instead of silently treating it as not-expected', () => {
+    const record = rules.normalize({
+      objectUuid: 'uuid-invalid',
+      objectType: ESF_TYPE_URL,
+      record: {
+        index: 1,
+        typeVersion: 1,
+        registrationAt: '2026-08-27',
+        startAt: '2026-08-27',
+        endAt: null,
+        data: { formtaak: { data: { clientnummer: '32668' }, verzonden_data: {} } },
+      },
+    });
+
+    expect(record).toMatchObject({ dataValid: false, expectedProcessing: false, esfStatus: undefined });
   });
 
   test('normalizes real open, verwerkt and afgerond ESF taak samples, keeping the client number in all three', () => {

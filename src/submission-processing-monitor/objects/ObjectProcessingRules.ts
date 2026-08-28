@@ -69,9 +69,10 @@ export class ObjectProcessingRules {
         clientNumber: extractEsfClientNumber(candidate.record.data),
         esfStatus: esf?.esfStatus,
         expectedProcessing: esf?.expectedProcessing ?? false,
+        dataValid: esf !== undefined,
       };
     }
 
-    return { ...base, expectedProcessing: true };
+    return { ...base, expectedProcessing: true, dataValid: true };
   }
 }
