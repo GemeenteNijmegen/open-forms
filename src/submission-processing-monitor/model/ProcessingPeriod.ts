@@ -37,3 +37,24 @@ export function resolveProcessingPeriod(input: ProcessingPeriodInput, now: Date 
   const today = amsterdamDateString(now);
   return { from: previousCalendarDay(today), to: today };
 }
+
+/**
+ * The exact UTC instant of Amsterdam midnight for a YYYY-MM-DD date, DST-aware. Needed to compare
+ * a period boundary against a real timestamp (e.g. a Step Functions execution's startDate).
+ */
+export function amsterdamMidnightUtc(dateString: string): Date {
+  // Sample the offset at the UTC-midnight probe itself, not at noon: on the spring-forward day
+  // the transition happens at 01:00 UTC, so by noon the offset would already reflect the wrong
+  // (post-transition) side of that same calendar day.
+  const probeUtc = new Date(`${dateString}T00:00:00.000Z`);
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: AMSTERDAM_TIMEZONE,
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: false,
+  }).formatToParts(probeUtc);
+  const hour = Number(parts.find(part => part.type === 'hour')?.value);
+  const minute = Number(parts.find(part => part.type === 'minute')?.value);
+  const offsetMinutes = hour * 60 + minute;
+  return new Date(probeUtc.valueOf() - offsetMinutes * 60_000);
+}

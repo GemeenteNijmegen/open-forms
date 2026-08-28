@@ -6,7 +6,7 @@ const DEFAULT_TIMEOUT_MS = 29_000;
 export interface ObjectsApiClientOptions {
   baseUrl: string;
   apiKey: string;
-  /** @default 10000 */
+  /** @default DEFAULT_TIMEOUT_MS */
   timeoutMs?: number;
   logger?: Logger;
 }
@@ -55,12 +55,9 @@ export class ObjectsApiClient {
   }
 
   /**
-   * One page of objects, sorted by newest current registration first (-record__registrationAt),
-   * so discovery can stop once a page's objects are provably older than the requested period.
-   *
-   * No server-side object type filter: the Objecttypes API is a separate service with its own base
-   * URL we don't have configured, so matching on object type happens client-side against object.type
-   * instead (same approach as the receiver's matchesObjectType in ObjectParser.ts).
+   * One page of objects, sorted by newest current registration first (-record__registrationAt).
+   * No server-side type filter: the Objecttypes API has its own base URL we don't have, so type
+   * matching happens client-side against object.type instead.
    */
   async listObjectsPage(params: { page: number; pageSize: number }): Promise<ObjectsPage<ObjectListItem>> {
     const url = new URL('objects', this.baseUrlWithTrailingSlash());

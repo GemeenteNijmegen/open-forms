@@ -1,4 +1,4 @@
-import { resolveProcessingPeriod } from '../model/ProcessingPeriod';
+import { amsterdamMidnightUtc, resolveProcessingPeriod } from '../model/ProcessingPeriod';
 
 describe('resolveProcessingPeriod', () => {
   test('resolves PREVIOUS_DAY as the previous Dutch calendar day on a normal day', () => {
@@ -22,5 +22,20 @@ describe('resolveProcessingPeriod', () => {
   test('passes an explicit PERIOD through unchanged', () => {
     const period = resolveProcessingPeriod({ mode: 'PERIOD', from: '2026-08-01', to: '2026-08-08' });
     expect(period).toEqual({ from: '2026-08-01', to: '2026-08-08' });
+  });
+});
+
+describe('amsterdamMidnightUtc', () => {
+  test('returns the UTC instant of local midnight in summer time (CEST, UTC+2)', () => {
+    expect(amsterdamMidnightUtc('2026-08-27')).toEqual(new Date('2026-08-26T22:00:00.000Z'));
+  });
+
+  test('returns the UTC instant of local midnight in winter time (CET, UTC+1)', () => {
+    expect(amsterdamMidnightUtc('2026-01-15')).toEqual(new Date('2026-01-14T23:00:00.000Z'));
+  });
+
+  test('uses the correct offset on the day of the DST spring-forward transition itself', () => {
+    // 2026-03-29 is the day clocks move from CET to CEST; midnight that day is still CET (UTC+1).
+    expect(amsterdamMidnightUtc('2026-03-29')).toEqual(new Date('2026-03-28T23:00:00.000Z'));
   });
 });
