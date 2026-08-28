@@ -1,7 +1,7 @@
 {
   "bsn": "111111110",
   "kvk": "",
-  "pdf": "https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/00000000-0000-0000-0000-000000000003",
+  "pdf": "https://domein.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/00000000-0000-0000-0000-000000000003",
   "client": {
     "Geslacht": "man",
     "Achternaam": "Testpersoon",

@@ -67,7 +67,7 @@ describe('SubmissionExecutionReader', () => {
       input: JSON.stringify({
         objectUUID: '714eb3e8-2db1-4da2-bacd-c2c08187ceaf',
         reference: 'OF-XN6DEA',
-        pdf: 'https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/00000000-0000-0000-0000-000000000001',
+        pdf: 'https://domein.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/00000000-0000-0000-0000-000000000001',
         attachments: [],
       }),
     });
