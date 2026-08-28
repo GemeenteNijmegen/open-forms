@@ -3,7 +3,7 @@ import type { CandidateObjectRecord } from './ObjectRecordReader';
 import { extractEsfClientNumber, extractReference } from './ReferenceExtractor';
 import { ObjectRecord } from '../model/ObjectRecord';
 
-export const ESF_OBJECT_TYPE_NAME = 'esftaak';
+export const ESF_OBJECT_TYPE_NAME = 'esfTaak';
 
 export interface ConfiguredObjectType {
   name: string;

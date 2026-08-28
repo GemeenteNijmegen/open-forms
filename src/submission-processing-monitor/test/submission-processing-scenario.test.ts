@@ -55,7 +55,7 @@ describe('submission processing scenario - normal day', () => {
   test('checks a normal day with new/updated objects, multiple indexes, reference repetition, all ESF statuses and processing failures', async () => {
     const rules = new ObjectProcessingRules([
       { name: 'submission', uuid: SUBMISSION_TYPE_UUID },
-      { name: 'esftaak', uuid: ESF_TYPE_UUID },
+      { name: 'esfTaak', uuid: ESF_TYPE_UUID },
     ]);
     const objectsClient = new ObjectsApiClient({ baseUrl: 'https://mijn-services.example.nl/objects/api/v2', apiKey: 'test-token' });
     const objectRecordReader = new ObjectRecordReader(objectsClient, rules);

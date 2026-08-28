@@ -18,7 +18,7 @@ const UNRELATED_TYPE_URL = 'https://example.com/objecttypes/api/v2/objecttypes/0
 
 const rules = new ObjectProcessingRules([
   { name: 'submission', uuid: SUBMISSION_TYPE_UUID },
-  { name: 'esftaak', uuid: ESF_TYPE_UUID },
+  { name: 'esfTaak', uuid: ESF_TYPE_UUID },
 ]);
 
 function objectListItem(uuid: string, index: number, registrationAt: string, typeUrl = SUBMISSION_TYPE_URL): ObjectListItem {

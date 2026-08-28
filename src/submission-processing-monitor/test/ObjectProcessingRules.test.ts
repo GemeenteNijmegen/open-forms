@@ -14,7 +14,7 @@ const AANVRAAG_SOCIAAL_DOMEIN_TYPE_URL = `https://example.com/objecttypes/api/v2
 
 const rules = new ObjectProcessingRules([
   { name: 'submission', uuid: SUBMISSION_TYPE_UUID },
-  { name: 'esftaak', uuid: ESF_TYPE_UUID },
+  { name: 'esfTaak', uuid: ESF_TYPE_UUID },
   { name: 'aanvraagsociaaldomein', uuid: AANVRAAG_SOCIAAL_DOMEIN_TYPE_UUID },
 ]);
 
