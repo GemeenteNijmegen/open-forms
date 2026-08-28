@@ -57,6 +57,13 @@ export interface Configuration {
    */
   submissionProcessingMonitorReportEnabled?: boolean;
 
+  /**
+   * Temporary config value to be able to deploy step function arn param
+   * Without also deploying the submission-processing-monitor
+   * Leads to pipeline cloudformation prepare errors bootstrap issues
+   */
+  submissionProcessingMonitorEnabled?: boolean;
+
 }
 
 const EnvironmentConfigurations: { [key: string]: Configuration } = {
@@ -85,6 +92,8 @@ const EnvironmentConfigurations: { [key: string]: Configuration } = {
     criticality: new Criticality('high'),
     logLevel: 'INFO',
     submissionProcessingMonitorReportEnabled: true,
+    // Remove after first prod deploy
+    submissionProcessingMonitorEnabled: false,
     urlSubscriptions: [
       {
         appId: 'APV',

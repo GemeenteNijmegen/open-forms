@@ -56,7 +56,9 @@ export class MainStack extends Stack {
     });
 
     this.setupStaticFromDefinitions([this.api, api.restApi]);
-    this.setupSubmissionProcessingMonitor(this.key);
+    if (this.props.configuration.submissionProcessingMonitorEnabled) {
+      this.setupSubmissionProcessingMonitor(this.key);
+    }
 
   }
 
