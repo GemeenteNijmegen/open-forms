@@ -1,0 +1,10 @@
+{
+  "csv": "https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/00000000-0000-0000-0000-000000000001",
+  "pdf": "https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/00000000-0000-0000-0000-000000000002",
+  "formName": "Aanmelden sportactiviteit",
+  "reference": "OF-XN6DEA",
+  "attachments": [],
+  "networkShare": "//fileserver/webdata/Webformulieren/TEST/sport-middenzuid-sp3",
+  "monitoringNetworkShare": "",
+  "internalNotificationEmails": ["example@invalid.invalid"]
+}

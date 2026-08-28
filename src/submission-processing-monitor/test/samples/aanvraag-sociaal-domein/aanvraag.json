@@ -1,0 +1,33 @@
+{
+  "bsn": "111111110",
+  "kvk": "",
+  "pdf": "https://mijn-services.accp.nijmegen.nl/open-zaak/documenten/api/v1/enkelvoudiginformatieobjecten/00000000-0000-0000-0000-000000000003",
+  "client": {
+    "Geslacht": "man",
+    "Achternaam": "Testpersoon",
+    "Voorletters": "P.",
+    "Geboortedatum": "1990-01-01",
+    "BurgerServiceNr": "111111110",
+    "EMailAdresClient": "example@invalid.invalid",
+    "Correspondentieadres": {
+      "Postcode": "1234AB",
+      "Huisnummer": "1",
+      "Straatnaam": "Voorbeeldstraat",
+      "Gemeentenaam": "Nijmegen",
+      "Woonplaatsnaam": "Nijmegen"
+    }
+  },
+  "formName": "Individuele inkomenstoeslag aanvragen",
+  "bsnNamens": "",
+  "reference": "OF-XNCBEA",
+  "attachments": [],
+  "inlogmiddel": "bsn",
+  "networkShare": "//fileserver/webdata/Webformulieren/TEST/",
+  "datumAanvraag": "2026-08-27",
+  "bsnOrKvkToFile": true,
+  "aanvragerGegevens": { "email": "", "bewindvoering": false },
+  "sociaalDomeinRegeling": "IIT",
+  "zaaktypeIdentificatie": "INDIVIDUELE-INKOMENSTOESLAG",
+  "monitoringNetworkShare": "//fileserver/webdata/Webformulieren/TEST/a spatie map",
+  "internalNotificationEmails": ["example@invalid.invalid"]
+}
