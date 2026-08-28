@@ -104,24 +104,50 @@ describe('SubmissionExecutionReader', () => {
   });
 
   describe('listExecutionsInPeriod', () => {
-    test('skips executions newer than the period, keeps ones inside it, and stops once older than the period, without fetching further pages', async () => {
+    // period.to is a calendar date, not the scan window's upper bound: an object registered just
+    // before period.to can have its execution start seconds later, already past period.to.
+    const period = { from: '2026-08-26', to: '2026-08-27' };
+    const monitorRunStartedAt = new Date('2026-08-27T04:00:00Z'); // e.g. the 06:00 Europe/Amsterdam scheduled run
+
+    test('includes an execution that starts after period.to but before the monitor run started', async () => {
+      sfnMock.on(ListExecutionsCommand).resolvesOnce({
+        executions: [executionListItem('arn:after-period-to', 'SUCCEEDED', '2026-08-27T00:30:00Z')],
+      });
+
+      const reader = new SubmissionExecutionReader(STATE_MACHINE_ARN);
+      const executions = await reader.listExecutionsInPeriod(period, monitorRunStartedAt);
+
+      expect(executions.map(e => e.executionArn)).toEqual(['arn:after-period-to']);
+    });
+
+    test('excludes an execution that starts after the monitor run started', async () => {
+      sfnMock.on(ListExecutionsCommand).resolvesOnce({
+        executions: [executionListItem('arn:after-run-start', 'SUCCEEDED', '2026-08-27T05:00:00Z')],
+      });
+
+      const reader = new SubmissionExecutionReader(STATE_MACHINE_ARN);
+      const executions = await reader.listExecutionsInPeriod(period, monitorRunStartedAt);
+
+      expect(executions).toHaveLength(0);
+    });
+
+    test('stops paging once an execution is provably older than period.from, without fetching further pages', async () => {
       sfnMock.on(ListExecutionsCommand).resolvesOnce({
         executions: [
-          executionListItem('arn:today', 'SUCCEEDED', '2026-08-27T23:00:00Z'), // newer than the period, skip
-          executionListItem('arn:in-period', 'SUCCEEDED', '2026-08-26T12:00:00Z'), // inside the period, keep
-          executionListItem('arn:too-old', 'SUCCEEDED', '2026-08-20T12:00:00Z'), // older than the period, stop here
+          executionListItem('arn:in-period', 'SUCCEEDED', '2026-08-26T12:00:00Z'),
+          executionListItem('arn:too-old', 'SUCCEEDED', '2026-08-20T12:00:00Z'),
         ],
         nextToken: 'page-2', // must never be requested
       });
 
       const reader = new SubmissionExecutionReader(STATE_MACHINE_ARN);
-      const executions = await reader.listExecutionsInPeriod({ from: '2026-08-26', to: '2026-08-27' });
+      const executions = await reader.listExecutionsInPeriod(period, monitorRunStartedAt);
 
       expect(executions.map(e => e.executionArn)).toEqual(['arn:in-period']);
       expect(sfnMock.commandCalls(ListExecutionsCommand)).toHaveLength(1);
     });
 
-    test('follows pagination across multiple pages while every execution is still in or after the period', async () => {
+    test('follows pagination across multiple pages while every execution is still within the scan window', async () => {
       sfnMock
         .on(ListExecutionsCommand)
         .resolvesOnce({
@@ -133,7 +159,7 @@ describe('SubmissionExecutionReader', () => {
         });
 
       const reader = new SubmissionExecutionReader(STATE_MACHINE_ARN);
-      const executions = await reader.listExecutionsInPeriod({ from: '2026-08-26', to: '2026-08-27' });
+      const executions = await reader.listExecutionsInPeriod(period, monitorRunStartedAt);
 
       expect(executions.map(e => e.executionArn).sort()).toEqual(['arn:page-1', 'arn:page-2']);
     });
@@ -148,7 +174,7 @@ describe('SubmissionExecutionReader', () => {
     });
 
     const reader = new SubmissionExecutionReader(STATE_MACHINE_ARN);
-    const executions = await reader.listExecutionsWithMetadata({ from: '2026-08-26', to: '2026-08-27' });
+    const executions = await reader.listExecutionsWithMetadata({ from: '2026-08-26', to: '2026-08-27' }, new Date('2026-08-27T04:00:00Z'));
 
     expect(executions).toEqual([expect.objectContaining({ executionArn: 'arn:exec:1', objectUuid: '714eb3e8-2db1-4da2-bacd-c2c08187ceaf' })]);
   });

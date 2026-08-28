@@ -16,6 +16,7 @@ const SUBMISSION_TYPE_UUID = 'd3713c2b-307c-4c07-8eaa-c2c6d75869cf';
 const ESF_TYPE_UUID = '6df21057-e07c-4909-8933-d70b79cfd15e';
 const STATE_MACHINE_ARN = 'arn:aws:states:eu-central-1:123456789012:stateMachine:submission-forwarder-orchestrator';
 const PERIOD = { from: '2026-08-27', to: '2026-08-28' };
+const MONITOR_RUN_STARTED_AT = new Date('2026-08-28T04:00:00Z'); // 06:00 Europe/Amsterdam scheduled run, the morning after
 
 const historiesByUuid: Record<string, unknown[]> = histories;
 const executionInputsByArn: Record<string, unknown> = executionsDetail;
@@ -68,7 +69,7 @@ describe('submission processing scenario - normal day', () => {
       return { input: details ? JSON.stringify(details) : undefined };
     });
     const executionReader = new SubmissionExecutionReader(STATE_MACHINE_ARN);
-    const executions = await executionReader.listExecutionsWithMetadata(PERIOD);
+    const executions = await executionReader.listExecutionsWithMetadata(PERIOD, MONITOR_RUN_STARTED_AT);
 
     const results = checkProcessing(records, executions);
 

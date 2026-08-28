@@ -65,15 +65,15 @@ export class SubmissionExecutionReader {
   }
 
   /**
-   * Lists every execution in a period. ListExecutions returns executions newest-startDate-first
-   * (documented AWS behaviour), so once a page's execution is provably older than period.from,
-   * every execution after it is too and paging can stop. Never stops on period.to: newer
-   * executions are simply skipped, not used as a stop condition, since we're scanning from
-   * newest to oldest and still need to reach the older ones inside the period.
+   * Lists every execution from the start of period up to monitorRunStartedAt - not period.to.
+   * An object registered just before period.to can have its execution start seconds later,
+   * already past period.to, so period.to is not a valid upper bound for executions. ListExecutions
+   * returns executions newest-startDate-first (documented AWS behaviour), so once a page's
+   * execution is provably older than period.from, every execution after it is too and paging
+   * can stop.
    */
-  async listExecutionsInPeriod(period: ProcessingPeriod): Promise<SubmissionExecution[]> {
+  async listExecutionsInPeriod(period: ProcessingPeriod, monitorRunStartedAt: Date): Promise<SubmissionExecution[]> {
     const fromInstant = amsterdamMidnightUtc(period.from);
-    const toInstant = amsterdamMidnightUtc(period.to);
     const results: SubmissionExecution[] = [];
     let nextToken: string | undefined;
     let pagesFetched = 0;
@@ -88,7 +88,7 @@ export class SubmissionExecutionReader {
           reachedOlderThanPeriod = true;
           break;
         }
-        if (execution.startDate < toInstant) {
+        if (execution.startDate <= monitorRunStartedAt) {
           results.push(execution);
         }
       }
@@ -99,13 +99,13 @@ export class SubmissionExecutionReader {
       nextToken = pageResult.nextToken;
     } while (nextToken);
 
-    this.logger.debug('Listed submission-forwarder executions in period', { period, pagesFetched, executionsFound: results.length });
+    this.logger.debug('Listed submission-forwarder executions in period', { period, monitorRunStartedAt, pagesFetched, executionsFound: results.length });
     return results;
   }
 
   /** Combines listExecutionsInPeriod with a describeExecution call per execution, for matching against object records. */
-  async listExecutionsWithMetadata(period: ProcessingPeriod): Promise<MatchableExecution[]> {
-    const executions = await this.listExecutionsInPeriod(period);
+  async listExecutionsWithMetadata(period: ProcessingPeriod, monitorRunStartedAt: Date): Promise<MatchableExecution[]> {
+    const executions = await this.listExecutionsInPeriod(period, monitorRunStartedAt);
     const withMetadata: MatchableExecution[] = [];
     for (const execution of executions) {
       const details = await this.describeExecution(execution.executionArn);
