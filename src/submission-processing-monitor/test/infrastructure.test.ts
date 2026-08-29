@@ -85,4 +85,17 @@ describe('SubmissionProcessingMonitor infrastructure', () => {
     expect(templateJson).not.toContain('states:StopExecution');
     expect(templateJson).not.toContain('states:RedriveExecution');
   });
+
+  test('has CloudWatch status metrics and alarms for INCOMPLETE, FAILED and REPORT_FAILED runs, next to the native Lambda Errors alarm', () => {
+    template.resourceCountIs('AWS::Logs::MetricFilter', 3);
+    expect(templateJson).toContain('"MetricName":"MonitorIncomplete"');
+    expect(templateJson).toContain('"MetricName":"MonitorFailed"');
+    expect(templateJson).toContain('"MetricName":"MonitorReportFailed"');
+
+    template.resourceCountIs('AWS::CloudWatch::Alarm', 6);
+    expect(templateJson).toContain('submission-processing-monitor-incomplete');
+    expect(templateJson).toContain('submission-processing-monitor-failed');
+    expect(templateJson).toContain('submission-processing-monitor-report-failed');
+    expect(templateJson).toContain('submission-processing-monitor-errors');
+  });
 });

@@ -31,7 +31,7 @@ describe('MonitorRunRepository', () => {
       objectRecordsFound: 9,
       executionsScanned: 5,
       regularCounters: { total: 5, succeeded: 3, problem: 2 },
-      esfCounters: { open: 1, verwerkt: 1, gesloten: 1, afgerond: 1, afgerondSucceeded: 1, afgerondProblem: 0 },
+      esfCounters: { open: 1, verwerkt: 1, gesloten: 1, afgerond: 1, afgerondSucceeded: 1, afgerondProblem: 0, invalid: 0 },
       problemCount: 2,
     };
 
@@ -58,7 +58,7 @@ describe('MonitorRunRepository', () => {
       objectRecordsFound: 9,
       executionsScanned: 0,
       regularCounters: { total: 0, succeeded: 0, problem: 0 },
-      esfCounters: { open: 0, verwerkt: 0, gesloten: 0, afgerond: 0, afgerondSucceeded: 0, afgerondProblem: 0 },
+      esfCounters: { open: 0, verwerkt: 0, gesloten: 0, afgerond: 0, afgerondSucceeded: 0, afgerondProblem: 0, invalid: 0 },
       problemCount: 0,
     };
 

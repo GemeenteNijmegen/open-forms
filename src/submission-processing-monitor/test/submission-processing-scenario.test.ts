@@ -81,17 +81,17 @@ describe('submission processing scenario - normal day', () => {
     expect([...results].sort((a, b) => a.objectUuid.localeCompare(b.objectUuid))).toEqual(expectedResults);
 
     // Regular (non-ESF) records: 5 expect processing, 3 succeeded, 2 problems (FAILED + MISSING).
-    const regularResults = results.filter(r => !r.esfStatus);
+    const regularResults = results.filter(r => r.processingKind === 'REGULAR');
     expect(regularResults).toHaveLength(5);
     expect(regularResults.filter(r => r.status === 'SUCCEEDED')).toHaveLength(3);
     expect(regularResults.filter(r => r.status !== 'SUCCEEDED')).toHaveLength(2);
 
     // ESF status counters come from the full record set, not just the processing results:
     // open/verwerkt/gesloten don't expect processing and produce no result of their own.
-    const esfRecords = records.filter(r => r.esfStatus);
+    const esfRecords = records.filter(r => r.processingKind === 'ESF');
     expect(esfRecords.map(r => r.esfStatus).sort()).toEqual(['afgerond', 'gesloten', 'open', 'verwerkt']);
 
-    const esfResults = results.filter(r => r.esfStatus);
+    const esfResults = results.filter(r => r.processingKind === 'ESF');
     expect(esfResults).toHaveLength(1);
     expect(esfResults[0]).toMatchObject({ esfStatus: 'afgerond', status: 'SUCCEEDED' });
   });

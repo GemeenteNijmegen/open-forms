@@ -9,6 +9,7 @@ const NINETY_DAYS_SECONDS = 90 * 24 * 60 * 60;
 function problemResult(overrides: Partial<ProcessingResult> & { objectUuid: string; objectIndex: number }): ProcessingResult {
   return {
     objectType: 'https://example.com/objecttypes/api/v2/objecttypes/d3713c2b-307c-4c07-8eaa-c2c6d75869cf',
+    processingKind: 'REGULAR',
     registrationAt: '2026-08-27',
     status: 'FAILED',
     matchType: 'UNIQUE',

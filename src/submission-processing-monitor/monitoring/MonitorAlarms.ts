@@ -69,5 +69,51 @@ export class MonitorAlarms extends Construct {
       evaluationPeriods: 1,
       treatMissingData: TreatMissingData.NOT_BREACHING,
     });
+
+    /**
+     * MonitorHandler catches technical failures itself (FAILED) and a failed report send
+     * REPORT_FAILED, then returns normally and the Lambda invocation succeeds, so the native
+     * Errors metric never trips. These two status metrics are the alarmable signal for that.
+     * If these prove to be too much, we can easily delete them.
+     */
+    const failedRunsMetric = new MetricFilter(this, 'failed-runs-filter', {
+      logGroup: props.monitorLogGroup,
+      metricNamespace: 'SubmissionProcessingMonitor',
+      metricName: 'MonitorFailed',
+      filterPattern: FilterPattern.all(
+        FilterPattern.stringValue('$.message', '=', 'Monitor run finished'),
+        FilterPattern.stringValue('$.status', '=', 'FAILED'),
+      ),
+      metricValue: '1',
+    });
+
+    new Alarm(this, 'failed', {
+      alarmName: `submission-processing-monitor-failed${suffix}`,
+      alarmDescription: 'A submission-processing-monitor run failed.',
+      metric: failedRunsMetric.metric({ statistic: 'sum', period: Duration.hours(1) }),
+      threshold: 1,
+      evaluationPeriods: 1,
+      treatMissingData: TreatMissingData.NOT_BREACHING,
+    });
+
+    const reportFailedRunsMetric = new MetricFilter(this, 'report-failed-runs-filter', {
+      logGroup: props.monitorLogGroup,
+      metricNamespace: 'SubmissionProcessingMonitor',
+      metricName: 'MonitorReportFailed',
+      filterPattern: FilterPattern.all(
+        FilterPattern.stringValue('$.message', '=', 'Monitor run finished'),
+        FilterPattern.stringValue('$.status', '=', 'REPORT_FAILED'),
+      ),
+      metricValue: '1',
+    });
+
+    new Alarm(this, 'report-failed', {
+      alarmName: `submission-processing-monitor-report-failed${suffix}`,
+      alarmDescription: 'A submission-processing-monitor run completed but its report could not be sent.',
+      metric: reportFailedRunsMetric.metric({ statistic: 'sum', period: Duration.hours(1) }),
+      threshold: 1,
+      evaluationPeriods: 1,
+      treatMissingData: TreatMissingData.NOT_BREACHING,
+    });
   }
 }

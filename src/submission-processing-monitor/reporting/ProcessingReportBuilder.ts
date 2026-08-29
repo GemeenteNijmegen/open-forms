@@ -30,7 +30,7 @@ export function buildProcessingReport(monitorRun: MonitorRun, completeness: Scan
     ...base,
     regularCounters: monitorRun.regularCounters,
     problems: results
-      .filter(result => !result.esfStatus && result.status !== 'SUCCEEDED')
+      .filter(result => result.processingKind === 'REGULAR' && result.status !== 'SUCCEEDED')
       .map(result => ({
         objectUuid: result.objectUuid,
         objectIndex: result.objectIndex,
@@ -41,7 +41,10 @@ export function buildProcessingReport(monitorRun: MonitorRun, completeness: Scan
   };
 }
 
-/** Builds the ESF-specific morning report, sent separately from buildProcessingReport's regular report. */
+/**
+ * Builds the ESF-specific morning report, sent separately from buildProcessingReport. A
+ * malformed ESF taak (INVALID_OBJECT_DATA) lands here too, not in the regular report.
+ */
 export function buildEsfProcessingReport(monitorRun: MonitorRun, completeness: ScanCompleteness, results?: ProcessingResult[]): EsfProcessingReport {
   const base = reportBase(monitorRun, completeness);
 
@@ -53,7 +56,7 @@ export function buildEsfProcessingReport(monitorRun: MonitorRun, completeness: S
     ...base,
     esfCounters: monitorRun.esfCounters,
     problems: results
-      .filter(result => result.esfStatus === 'afgerond' && result.status !== 'SUCCEEDED')
+      .filter(result => result.processingKind === 'ESF' && result.status !== 'SUCCEEDED')
       .map(result => ({
         reference: result.reference,
         clientNumber: result.clientNumber,

@@ -55,6 +55,7 @@ describe('ObjectProcessingRules.normalize', () => {
       objectUuid: 'uuid-1',
       objectIndex: 3,
       objectType: SUBMISSION_TYPE_URL,
+      processingKind: 'REGULAR',
       registrationAt: '2026-08-27',
       reference: 'OF-XN6DEA',
       expectedProcessing: true,
@@ -92,6 +93,7 @@ describe('ObjectProcessingRules.normalize', () => {
     });
 
     expect(record).toMatchObject({
+      processingKind: 'ESF',
       esfStatus: 'afgerond',
       expectedProcessing: true,
       reference: 'ESF-FORM-1-DOS-1-PER-1',
@@ -115,7 +117,7 @@ describe('ObjectProcessingRules.normalize', () => {
     expect(record).toMatchObject({ esfStatus: 'open', expectedProcessing: false, dataValid: true, reference: undefined, clientNumber: '32668' });
   });
 
-  test('reports invalid data for an ESF taak with a missing or unknown status, instead of silently treating it as not-expected', () => {
+  test('reports invalid data for an ESF taak with a missing or unknown status, but keeps processingKind ESF - identity comes from the configured object type, not esfStatus', () => {
     const record = rules.normalize({
       objectUuid: 'uuid-invalid',
       objectType: ESF_TYPE_URL,
@@ -129,7 +131,7 @@ describe('ObjectProcessingRules.normalize', () => {
       },
     });
 
-    expect(record).toMatchObject({ dataValid: false, expectedProcessing: false, esfStatus: undefined });
+    expect(record).toMatchObject({ processingKind: 'ESF', dataValid: false, expectedProcessing: false, esfStatus: undefined });
   });
 
   test('normalizes real open, verwerkt and afgerond ESF taak samples, keeping the client number in all three', () => {

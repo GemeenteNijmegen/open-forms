@@ -25,7 +25,7 @@ function completedEsfReport(overrides: Partial<EsfProcessingReport> = {}): EsfPr
     periodTo: '2026-08-28',
     objectsScanComplete: true,
     executionsScanComplete: true,
-    esfCounters: { open: 1, verwerkt: 1, gesloten: 1, afgerond: 1, afgerondSucceeded: 0, afgerondProblem: 1 },
+    esfCounters: { open: 1, verwerkt: 1, gesloten: 1, afgerond: 1, afgerondSucceeded: 0, afgerondProblem: 1, invalid: 0 },
     problems: [{ reference: 'ESF-1', clientNumber: '12345', status: 'FAILED' }],
     ...overrides,
   };

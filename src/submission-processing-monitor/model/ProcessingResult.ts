@@ -1,4 +1,4 @@
-import { EsfStatus } from './ObjectRecord';
+import { EsfStatus, ProcessingKind } from './ObjectRecord';
 
 export type ProcessingStatus =
   | 'SUCCEEDED'
@@ -16,6 +16,7 @@ export interface ProcessingResult {
   objectUuid: string;
   objectIndex: number;
   objectType: string;
+  processingKind: ProcessingKind;
   registrationAt: string;
   reference?: string;
   clientNumber?: string;

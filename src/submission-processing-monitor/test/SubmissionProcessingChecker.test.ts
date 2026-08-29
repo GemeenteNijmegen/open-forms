@@ -5,6 +5,7 @@ import { checkProcessing } from '../processing/SubmissionProcessingChecker';
 function objectRecord(overrides: Partial<ObjectRecord> & { objectUuid: string; objectIndex: number }): ObjectRecord {
   return {
     objectType: 'https://example.com/objecttypes/api/v2/objecttypes/submission',
+    processingKind: 'REGULAR',
     registrationAt: '2026-08-27',
     expectedProcessing: true,
     dataValid: true,
@@ -61,6 +62,15 @@ describe('checkProcessing', () => {
     const results = checkProcessing([record], [execution('uuid-5', 'SUCCEEDED')]);
 
     expect(results).toEqual([expect.objectContaining({ objectUuid: 'uuid-5', status: 'INVALID_OBJECT_DATA' })]);
+  });
+
+  test('carries processingKind ESF through for a malformed ESF taak, instead of treating it as regular', () => {
+    const record = objectRecord({
+      objectUuid: 'uuid-esf-malformed', objectIndex: 1, processingKind: 'ESF', expectedProcessing: false, dataValid: false,
+    });
+    const results = checkProcessing([record], []);
+
+    expect(results).toEqual([expect.objectContaining({ status: 'INVALID_OBJECT_DATA', processingKind: 'ESF' })]);
   });
 
   test('does not produce a result for a valid record that does not expect processing', () => {

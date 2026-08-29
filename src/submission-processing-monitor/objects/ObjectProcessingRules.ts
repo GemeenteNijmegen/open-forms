@@ -66,6 +66,7 @@ export class ObjectProcessingRules {
       const esf = classifyEsfTaak(candidate.record.data);
       return {
         ...base,
+        processingKind: 'ESF',
         clientNumber: extractEsfClientNumber(candidate.record.data),
         esfStatus: esf?.esfStatus,
         expectedProcessing: esf?.expectedProcessing ?? false,
@@ -73,6 +74,6 @@ export class ObjectProcessingRules {
       };
     }
 
-    return { ...base, expectedProcessing: true, dataValid: true };
+    return { ...base, processingKind: 'REGULAR', expectedProcessing: true, dataValid: true };
   }
 }

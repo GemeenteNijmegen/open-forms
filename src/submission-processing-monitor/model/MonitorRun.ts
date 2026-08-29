@@ -13,6 +13,8 @@ export interface EsfProcessingCounters {
   afgerond: number;
   afgerondSucceeded: number;
   afgerondProblem: number;
+  /** ESF taak with a missing or unrecognisable status - stays processingKind ESF, never regular. */
+  invalid: number;
 }
 
 /** One compact summary per monitor run. No Object, execution or result staging. */

@@ -8,13 +8,9 @@ export interface MonitorRunCounters {
   problemCount: number;
 }
 
-/**
- * Regular vs ESF is determined by esfStatus presence on the result, same split the checker's own
- * scenario tests already use - an ESF taak with unrecognisable status (esfStatus undefined,
- * INVALID_OBJECT_DATA) ends up counted as regular, matching that established behaviour.
- */
+/** Split is by processingKind, not esfStatus - a malformed ESF taak has no esfStatus but still counts as ESF (invalid), never regular. */
 export function buildMonitorRunCounters(records: ObjectRecord[], results: ProcessingResult[]): MonitorRunCounters {
-  const regularResults = results.filter(r => !r.esfStatus);
+  const regularResults = results.filter(r => r.processingKind === 'REGULAR');
   const regularSucceeded = regularResults.filter(r => r.status === 'SUCCEEDED').length;
   const regularCounters: RegularProcessingCounters = {
     total: regularResults.length,
@@ -22,7 +18,7 @@ export function buildMonitorRunCounters(records: ObjectRecord[], results: Proces
     problem: regularResults.length - regularSucceeded,
   };
 
-  const esfRecords = records.filter(r => r.esfStatus);
+  const esfRecords = records.filter(r => r.processingKind === 'ESF');
   const afgerondResults = results.filter(r => r.esfStatus === 'afgerond');
   const afgerondSucceeded = afgerondResults.filter(r => r.status === 'SUCCEEDED').length;
   const esfCounters: EsfProcessingCounters = {
@@ -32,6 +28,7 @@ export function buildMonitorRunCounters(records: ObjectRecord[], results: Proces
     afgerond: esfRecords.filter(r => r.esfStatus === 'afgerond').length,
     afgerondSucceeded,
     afgerondProblem: afgerondResults.length - afgerondSucceeded,
+    invalid: esfRecords.filter(r => !r.dataValid).length,
   };
 
   return {

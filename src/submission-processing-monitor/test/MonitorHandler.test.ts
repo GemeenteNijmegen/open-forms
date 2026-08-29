@@ -12,6 +12,7 @@ function objectRecord(overrides: Partial<ObjectRecord> & { objectUuid: string })
   return {
     objectIndex: 1,
     objectType: 'https://example.com/objecttypes/api/v2/objecttypes/submission',
+    processingKind: 'REGULAR',
     registrationAt: '2026-08-27',
     expectedProcessing: true,
     dataValid: true,

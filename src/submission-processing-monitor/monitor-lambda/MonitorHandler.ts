@@ -15,7 +15,9 @@ import { ProcessingReportSender } from '../reporting/ProcessingReportSender';
 import { RuntimeBudget } from '../RuntimeBudget';
 
 const EMPTY_REGULAR_COUNTERS: RegularProcessingCounters = { total: 0, succeeded: 0, problem: 0 };
-const EMPTY_ESF_COUNTERS: EsfProcessingCounters = { open: 0, verwerkt: 0, gesloten: 0, afgerond: 0, afgerondSucceeded: 0, afgerondProblem: 0 };
+const EMPTY_ESF_COUNTERS: EsfProcessingCounters = {
+  open: 0, verwerkt: 0, gesloten: 0, afgerond: 0, afgerondSucceeded: 0, afgerondProblem: 0, invalid: 0,
+};
 
 export interface MonitorHandlerOptions {
   /** @default new Date() */
@@ -164,6 +166,7 @@ export class MonitorHandler {
       failedRun = await this.sendReport(failedRun, { objectsScanComplete: false, executionsScanComplete: false });
     }
 
+    this.logger.info('Monitor run finished', { status: failedRun.status, durationMs: Date.now() - context.monitorRunStartedAt.getTime() });
     return failedRun;
   }
 

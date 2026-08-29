@@ -5,6 +5,7 @@ import { ProcessingResult } from '../model/ProcessingResult';
 function result(overrides: Partial<ProcessingResult> & { objectUuid: string; objectIndex: number; status: ProcessingResult['status'] }): ProcessingResult {
   return {
     objectType: 'https://example.com/objecttypes/api/v2/objecttypes/d3713c2b-307c-4c07-8eaa-c2c6d75869cf',
+    processingKind: 'REGULAR',
     registrationAt: '2026-08-27',
     ...overrides,
   };
