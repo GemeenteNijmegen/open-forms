@@ -74,6 +74,7 @@ const EnvironmentConfigurations: { [key: string]: Configuration } = {
     criticality: new Criticality('medium'),
     logLevel: 'DEBUG',
     submissionProcessingMonitorReportEnabled: true,
+    submissionProcessingMonitorEnabled: true,
     urlSubscriptions: [
       {
         appId: 'APV',

@@ -3,7 +3,7 @@ import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
 import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
-import { Schedule, ScheduleExpression, ScheduleTargetInput, TimeWindow } from 'aws-cdk-lib/aws-scheduler';
+import { Schedule, ScheduleExpression, ScheduleTargetInput } from 'aws-cdk-lib/aws-scheduler';
 import { LambdaInvoke } from 'aws-cdk-lib/aws-scheduler-targets';
 import { IQueue, Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
@@ -91,13 +91,6 @@ export class SubmissionProcessingMonitor extends Construct {
     return monitorFunction;
   }
 
-  /**
-   * The Scheduler itself needs no Objects/Step Functions/KMS/DynamoDB configuration - it only ever
-   * calls the monitor Lambda. SQS-managed encryption, not the shared CMK: EventBridge Scheduler's
-   * auto-created target role only gets sqs:SendMessage, never a KMS grant, so a CMK-encrypted DLQ
-   * would silently fail to receive the very failures it exists to catch. The queue only ever holds
-   * the scheduler event ({"mode":"PREVIOUS_DAY"}), nothing privacy-sensitive.
-   */
   private setupScheduler(): IQueue {
     const deadLetterQueue = new Queue(this, 'scheduler-dlq', {
       encryption: QueueEncryption.SQS_MANAGED,
@@ -107,7 +100,6 @@ export class SubmissionProcessingMonitor extends Construct {
     new Schedule(this, 'schedule', {
       description: 'Daily submission-processing-monitor run',
       schedule: ScheduleExpression.cron({ minute: '0', hour: '6', timeZone: TimeZone.of('Europe/Amsterdam') }),
-      timeWindow: TimeWindow.off(),
       target: new LambdaInvoke(this.monitorFunction, {
         input: ScheduleTargetInput.fromObject({ mode: 'PREVIOUS_DAY' }),
         deadLetterQueue,
