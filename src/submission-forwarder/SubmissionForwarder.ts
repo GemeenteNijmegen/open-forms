@@ -1,5 +1,5 @@
 import { Criticality, DeadLetterQueue, ErrorMonitoringAlarm, QueueWithDlq, QueueWithDlqProps } from '@gemeentenijmegen/aws-constructs';
-import { Duration } from 'aws-cdk-lib';
+import { Duration, Tags } from 'aws-cdk-lib';
 import { LambdaIntegration, Resource } from 'aws-cdk-lib/aws-apigateway';
 import { ComparisonOperator, Stats, TreatMissingData } from 'aws-cdk-lib/aws-cloudwatch';
 import { AccessKey, Effect, PolicyStatement, Role, User } from 'aws-cdk-lib/aws-iam';
@@ -14,6 +14,7 @@ import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { CustomerManagedEncryptionConfiguration, DefinitionBody, LogLevel, StateMachine } from 'aws-cdk-lib/aws-stepfunctions';
 import { Construct } from 'constructs';
 import { IamUserWithRoleAccess } from '../shared/IAMUserWithRoleAccess';
+import { SubmissionLogGroupTag } from '../shared/submission-logging/SubmissionLogging';
 import { Statics } from '../Statics';
 import { DeliveryQueue } from './DeliveryQueue';
 import { DocumentsToS3StorageFunction } from './documentsToS3Storage/documentsToS3Storage-function';
@@ -238,12 +239,19 @@ export class SubmissionForwarder extends Construct {
       throw Error('Parameters should be created first');
     }
 
+    const receiverLogGroup = new LogGroup(this, 'receiver-logs', {
+      encryptionKey: this.options.key,
+      retention: RetentionDays.SIX_MONTHS,
+    });
+
+    Tags.of(receiverLogGroup).add(
+      SubmissionLogGroupTag.KEY,
+      SubmissionLogGroupTag.RECEIVER,
+    );
+
     // Create a receiver lambda (listens to the endpoint and publishes to internal queue)
     const receiver = new ReceiverFunction(this, 'receiver', {
-      logGroup: new LogGroup(this, 'receiver-logs', {
-        encryptionKey: this.options.key,
-        retention: RetentionDays.SIX_MONTHS,
-      }),
+      logGroup: receiverLogGroup,
       timeout: Duration.seconds(6),
       description: 'Submission-forwarder receiver endpoint',
       environment: {
@@ -387,6 +395,11 @@ export class SubmissionForwarder extends Construct {
     const logGroup = new LogGroup(this, 'orchestrator-logs', {
       encryptionKey: this.options.key,
     });
+
+    Tags.of(logGroup).add(
+      SubmissionLogGroupTag.KEY,
+      SubmissionLogGroupTag.ORCHESTRATOR,
+    );
 
     const stepfunction = new StateMachine(this, 'orchestrator', {
       comment: 'Orchestrates handling of the open-forms submissions',
