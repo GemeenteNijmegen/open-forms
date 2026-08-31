@@ -31,7 +31,7 @@ We willen al een log hebben zodra een notificatie binnenkomt. Als daarna het oph
 
 ```mermaid
 flowchart LR
-    N[Notificatie] --> O[Object ophalen]
+    N[Open Notificatie] --> O[Object ophalen]
     O --> D[Forward / ignore]
     D --> S[Step Function gelukt of niet]
     N -.-> L[CloudWatch]
