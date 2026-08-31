@@ -5,6 +5,7 @@ export const ObjectSchema = z.object({
   url: z.string().url(),
   uuid: z.string().uuid(),
   record: z.object({
+    index: z.number().optional(),
     data: z.object({}).passthrough(),
   }).passthrough(),
 });

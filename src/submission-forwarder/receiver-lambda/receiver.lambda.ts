@@ -3,6 +3,7 @@ import { Response } from '@gemeentenijmegen/apigateway-http/lib/V1/Response';
 import { authenticate, environmentVariables } from '@gemeentenijmegen/utils';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { ReceiverHandler } from './Handler';
+import { setReceiverCorrelationId } from './ReceiverLogging';
 import { ZgwClientFactory } from '../shared/ZgwClientFactory';
 
 const logger = new Logger();
@@ -29,6 +30,7 @@ function getZgwClientFactory() {
 }
 
 export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+  setReceiverCorrelationId(logger, event.requestContext.requestId);
   logger.debug('event', { event });
 
   try {
@@ -39,6 +41,7 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
   }
 
   const receiverHandler = new ReceiverHandler({
+    logger,
     zgwClientFactory: getZgwClientFactory(),
     topicArn: env.TOPIC_ARN,
     orchestratorArn: env.ORCHESTRATOR_ARN,
