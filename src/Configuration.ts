@@ -50,20 +50,6 @@ export interface Configuration {
    */
   urlSubscriptions?: { url: string; appId: string }[];
 
-  /**
-   * Whether the submission-processing-monitor sends its morning report by e-mail. Also set as a
-   * plain Lambda environment variable, so it can be flipped without going through this config.
-   * @default true
-   */
-  submissionProcessingMonitorReportEnabled?: boolean;
-
-  /**
-   * Temporary config value to be able to deploy step function arn param
-   * Without also deploying the submission-processing-monitor
-   * Leads to pipeline cloudformation prepare errors bootstrap issues
-   */
-  submissionProcessingMonitorEnabled?: boolean;
-
 }
 
 const EnvironmentConfigurations: { [key: string]: Configuration } = {
@@ -73,8 +59,6 @@ const EnvironmentConfigurations: { [key: string]: Configuration } = {
     deploymentEnvironment: Statics.gnOpenFormsAccp,
     criticality: new Criticality('medium'),
     logLevel: 'DEBUG',
-    submissionProcessingMonitorReportEnabled: true,
-    submissionProcessingMonitorEnabled: true,
     urlSubscriptions: [
       {
         appId: 'APV',
@@ -92,9 +76,6 @@ const EnvironmentConfigurations: { [key: string]: Configuration } = {
     deploymentEnvironment: Statics.gnOpenFormsProd,
     criticality: new Criticality('high'),
     logLevel: 'INFO',
-    submissionProcessingMonitorReportEnabled: true,
-    // Remove after first prod deploy
-    submissionProcessingMonitorEnabled: false,
     urlSubscriptions: [
       {
         appId: 'APV',

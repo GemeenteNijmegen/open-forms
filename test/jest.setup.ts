@@ -1,1 +1,0 @@
-process.env.POWERTOOLS_LOG_LEVEL ??= 'SILENT';

@@ -125,12 +125,6 @@ export class SubmissionForwarder extends Construct {
     );
     this.setupReceiverLambda(orchestrator);
     this.setupResubmitLambda(orchestrator);
-
-    new StringParameter(this, 'state-machine-arn-submission-forwarder', {
-      parameterName: Statics.ssmSubmissionStateMachineArn,
-      stringValue: orchestrator.stateMachineArn,
-      description: 'ARN of the submission-forwarder orchestration Step Function, published read-only for submission-processing-monitor',
-    });
   }
 
   private setupESF(esbRole: Role) {
@@ -714,16 +708,9 @@ class ForwarderParameters extends Construct {
   constructor(scope: Construct, id: string) {
     super(scope, id);
     this.supportedObjectTypes = this.addForwarderParameters();
-    // this.supportedObjectTypes = this.getObjectTypesParameters();
   }
 
-  // TODO: replace with a parameter fetcher once Statics.ssmObjectTypes (ParameterStage.ts) holds the
-  // same production values as this parameter. This method then no longer creates a parameter, it reads one:
-  // getObjectTypesParameter() {
-  //   return StringParameter.fromStringParameterName(this, 'objectTypes', Statics.ssmObjectTypes);
-  // }
   addForwarderParameters() {
-    // Superseded by Statics.ssmObjectTypes (see ParameterStage.ts).
     return new StringParameter(this, 'objectTypes', {
       stringValue:
         'submission##https://example.com/objecttypes/api/v2/objecttypes/d3713c2b-307c-4c07-8eaa-c2c6d75869cf;esftaak##https://example.com/objecttypes/api/v2/objecttypes/6df21057-e07c-4909-8933-d70b79cfd15e',

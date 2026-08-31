@@ -49,16 +49,4 @@ export class Statics {
   static readonly ssmSNSSubscriptionUrlVIP = '/sns/subscriptionurl/vip';
   static readonly ssmSNSSubscriptionUrlJZ4ALL = '/sns/subscriptionurl/jz4all';
 
-  // Submission Processing Monitor SSM parameter names
-  static readonly ssmSubmissionProcessingMonitorObjectsApiBaseUrl = '/open-forms/submission-processing-monitor/objects-api-base-url';
-  static readonly ssmSubmissionProcessingMonitorObjectsApiToken = '/open-forms/submission-processing-monitor/objects-api-token';
-  static readonly ssmSubmissionProcessingMonitorReportRecipients = '/open-forms/submission-processing-monitor/report-recipients';
-  static readonly ssmSubmissionProcessingMonitorEsfReportRecipients = '/open-forms/submission-processing-monitor/esf-report-recipients';
-
-  /**
-   * Shared params
-   */
-  static readonly ssmObjectTypes = '/open-forms/object-types';
-  static readonly ssmSubmissionStateMachineArn = '/open-forms/submission-forwarder-state-machine-arn';
-
 }

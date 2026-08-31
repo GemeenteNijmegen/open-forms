@@ -20,7 +20,6 @@ const project = new GemeenteNijmegenCdkApp({
     '@aws-sdk/client-sns',
     '@aws-sdk/client-sfn',
     '@aws-sdk/client-ses',
-    '@aws-sdk/lib-dynamodb',
     '@aws-lambda-powertools/logger',
     'zod',
     '@gemeentenijmegen/modules-zgw-client',
@@ -31,7 +30,7 @@ const project = new GemeenteNijmegenCdkApp({
   ],
   jestOptions: {
     jestConfig: {
-      setupFiles: ['dotenv/config', '<rootDir>/test/jest.setup.ts'],
+      setupFiles: ['dotenv/config'],
     },
   },
   gitignore: [

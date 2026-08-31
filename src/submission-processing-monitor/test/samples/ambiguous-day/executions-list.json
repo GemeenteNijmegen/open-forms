@@ -1,6 +1,0 @@
-[
-  { "executionArn": "arn:aws:states:eu-central-1:123456789012:execution:submission-forwarder-orchestrator:OF-M0001-A", "name": "OF-M0001-A", "status": "SUCCEEDED", "startDate": "2026-08-27T09:00:00Z" },
-  { "executionArn": "arn:aws:states:eu-central-1:123456789012:execution:submission-forwarder-orchestrator:OF-N0001-A", "name": "OF-N0001-A", "status": "SUCCEEDED", "startDate": "2026-08-27T09:05:00Z" },
-  { "executionArn": "arn:aws:states:eu-central-1:123456789012:execution:submission-forwarder-orchestrator:OF-N0001-B", "name": "OF-N0001-B", "status": "FAILED", "startDate": "2026-08-27T09:10:00Z" },
-  { "executionArn": "arn:aws:states:eu-central-1:123456789012:execution:submission-forwarder-orchestrator:OF-P0001-A", "name": "OF-P0001-A", "status": "SUCCEEDED", "startDate": "2026-08-27T09:15:00Z" }
-]

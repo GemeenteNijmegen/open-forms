@@ -112,9 +112,6 @@
           "spawn": "bundle:submission-forwarder/zgw-registration-lambda/zgw-registration.lambda"
         },
         {
-          "spawn": "bundle:submission-processing-monitor/monitor-lambda/monitor.lambda"
-        },
-        {
           "spawn": "bundle:api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda"
         }
       ]
@@ -637,43 +634,6 @@
         }
       ]
     },
-    "bundle:submission-processing-monitor/monitor-lambda/monitor.lambda": {
-      "name": "bundle:submission-processing-monitor/monitor-lambda/monitor.lambda",
-      "description": "Create a JavaScript bundle from src/submission-processing-monitor/monitor-lambda/monitor.lambda.ts",
-      "steps": [
-        {
-          "execArgs": [
-            "esbuild",
-            "--bundle",
-            "src/submission-processing-monitor/monitor-lambda/monitor.lambda.ts",
-            "--target=node24",
-            "--platform=node",
-            "--outfile=assets/submission-processing-monitor/monitor-lambda/monitor.lambda/index.js",
-            "--tsconfig=test/tsconfig.json",
-            "--external:@aws-sdk/*"
-          ]
-        }
-      ]
-    },
-    "bundle:submission-processing-monitor/monitor-lambda/monitor.lambda:watch": {
-      "name": "bundle:submission-processing-monitor/monitor-lambda/monitor.lambda:watch",
-      "description": "Continuously update the JavaScript bundle from src/submission-processing-monitor/monitor-lambda/monitor.lambda.ts",
-      "steps": [
-        {
-          "execArgs": [
-            "esbuild",
-            "--bundle",
-            "src/submission-processing-monitor/monitor-lambda/monitor.lambda.ts",
-            "--target=node24",
-            "--platform=node",
-            "--outfile=assets/submission-processing-monitor/monitor-lambda/monitor.lambda/index.js",
-            "--tsconfig=test/tsconfig.json",
-            "--external:@aws-sdk/*",
-            "--watch"
-          ]
-        }
-      ]
-    },
     "cfn-lint": {
       "name": "cfn-lint",
       "description": "Lint synthesized CloudFormation templates",
@@ -994,7 +954,7 @@
             "--peer",
             "--no-deprecated",
             "--dep=dev,prod,peer,optional",
-            "--filter=@types/jest,@types/node,aws-sdk-client-mock,esbuild,eslint-import-resolver-typescript,eslint-plugin-import,jest,projen,ts-jest,ts-node,typescript,@aws-lambda-powertools/logger,@aws-sdk/client-dynamodb,@aws-sdk/client-s3,@aws-sdk/client-ses,@aws-sdk/client-sfn,@aws-sdk/client-sns,@aws-sdk/client-sqs,@aws-sdk/lib-dynamodb,@aws-sdk/lib-storage,@gemeentenijmegen/apigateway-http,@gemeentenijmegen/aws-constructs,@gemeentenijmegen/design-tokens,@gemeentenijmegen/modules-zgw-client,@gemeentenijmegen/projen-project-type,@gemeentenijmegen/utils,@types/aws-lambda,@types/jsonwebtoken,dotenv,jose,jsonwebtoken,zod"
+            "--filter=@types/jest,@types/node,aws-sdk-client-mock,esbuild,eslint-import-resolver-typescript,eslint-plugin-import,jest,projen,ts-jest,ts-node,typescript,@aws-lambda-powertools/logger,@aws-sdk/client-dynamodb,@aws-sdk/client-s3,@aws-sdk/client-ses,@aws-sdk/client-sfn,@aws-sdk/client-sns,@aws-sdk/client-sqs,@aws-sdk/lib-storage,@gemeentenijmegen/apigateway-http,@gemeentenijmegen/aws-constructs,@gemeentenijmegen/design-tokens,@gemeentenijmegen/modules-zgw-client,@gemeentenijmegen/projen-project-type,@gemeentenijmegen/utils,@types/aws-lambda,@types/jsonwebtoken,dotenv,jose,jsonwebtoken,zod"
           ]
         },
         {
@@ -1029,7 +989,6 @@
             "@aws-sdk/client-sfn",
             "@aws-sdk/client-sns",
             "@aws-sdk/client-sqs",
-            "@aws-sdk/lib-dynamodb",
             "@aws-sdk/lib-storage",
             "@gemeentenijmegen/apigateway-http",
             "@gemeentenijmegen/aws-constructs",
