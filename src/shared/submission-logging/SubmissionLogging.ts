@@ -53,6 +53,7 @@ export const SubmissionLogField = {
   EXECUTION_ARN: 'execution_arn',
   REASON: 'reason',
   RESOURCE_URL: 'resourceUrl',
+  CORRELATION_ID: 'correlationId',
 } as const;
 
 export type SubmissionLogEventValue =

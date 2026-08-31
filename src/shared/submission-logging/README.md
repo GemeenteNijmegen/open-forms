@@ -143,6 +143,7 @@ esfStatus
 execution_arn
 reason
 resourceUrl
+correlationId
 ```
 
 objectUuid en objectIndex samen wijzen naar één specifieke versie van een Object.
