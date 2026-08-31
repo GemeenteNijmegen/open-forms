@@ -56,5 +56,11 @@ project.eslint?.addOverride({
   files: ['*.ts'],
 });
 
+/**
+ * silent is not part of the typed JestConfigOptions
+ * Surpresses console logs in the build
+ */
+project.jest!.config.silent = true;
+
 
 project.synth();

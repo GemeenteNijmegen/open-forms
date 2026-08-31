@@ -49,4 +49,11 @@ export class Statics {
   static readonly ssmSNSSubscriptionUrlVIP = '/sns/subscriptionurl/vip';
   static readonly ssmSNSSubscriptionUrlJZ4ALL = '/sns/subscriptionurl/jz4all';
 
+  // Shared objecttypes. Will be used by monitor and later receiver as well.
+  // Now receiver makes the param without a name
+  static readonly ssmObjectTypes = '/open-forms/object-types';
+  // Submission processing monitor
+  static readonly ssmSubmissionProcessingMonitorObjectsApiBaseUrl = '/open-forms/submission-processing-monitor/objects-api-base-url';
+  static readonly ssmSubmissionProcessingMonitorObjectsApiToken = '/open-forms/submission-processing-monitor/objects-api-token';
+
 }

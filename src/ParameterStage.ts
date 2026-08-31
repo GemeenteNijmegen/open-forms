@@ -32,6 +32,8 @@ export class ParameterStack extends Stack {
     Tags.of(this).add('Project', Statics.projectName);
 
     this.addSnsSubscriptionUrlParameters();
+    this.addObjectTypesParameter();
+    this.addSubmissionProcessingMonitorParameters();
   }
 
 
@@ -45,6 +47,28 @@ export class ParameterStack extends Stack {
       parameterName: Statics.ssmSNSSubscriptionUrlJZ4ALL,
       stringValue: '-',
       description: 'SNS Topic Subscription URL for JZ4ALL Woweb',
+    });
+  }
+
+  private addObjectTypesParameter() {
+    new StringParameter(this, 'open-forms-object-types', {
+      parameterName: Statics.ssmObjectTypes,
+      stringValue: '-',
+      description: 'Object types used for Open Forms submission processing',
+    });
+  }
+
+  private addSubmissionProcessingMonitorParameters() {
+    new StringParameter(this, 'submission-processing-monitor-objects-api-base-url', {
+      parameterName: Statics.ssmSubmissionProcessingMonitorObjectsApiBaseUrl,
+      stringValue: '-',
+      description: 'Objects API base URL for the submission processing monitor',
+    });
+
+    new StringParameter(this, 'submission-processing-monitor-objects-api-token', {
+      parameterName: Statics.ssmSubmissionProcessingMonitorObjectsApiToken,
+      stringValue: '-',
+      description: 'Objects API token for the submission processing monitor',
     });
   }
 }
