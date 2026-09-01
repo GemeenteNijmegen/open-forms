@@ -12,13 +12,14 @@ export class StepFunction {
     this.logger = options?.logger ?? new Logger();
   }
 
-  async startExecution(input: EnrichedZgwObjectData) {
+  async startExecution(input: EnrichedZgwObjectData): Promise<string | undefined> {
     const execution = await this.client.send(new StartExecutionCommand({
       stateMachineArn: this.stepfunctionArn,
       input: JSON.stringify(input),
       name: this.sanitizeExecutionId(`${input.reference}-${Date.now()}`),
     }));
     this.logger.info('Started orchestrator', { executionArn: execution.executionArn });
+    return execution.executionArn;
   }
 
   sanitizeExecutionId(input: string): string {

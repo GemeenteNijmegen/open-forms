@@ -20,12 +20,14 @@ export const SubmissionLogGroupTag = {
  */
 export const SubmissionLogEvent = {
   NOTIFICATION_RECEIVED: 'submission.notification.received',
+  NOTIFICATION_PARSE_FAILED: 'submission.notification.parse.failed',
 
   OBJECT_FETCH_STARTED: 'submission.object.fetch.started',
   OBJECT_FETCH_SUCCEEDED: 'submission.object.fetch.succeeded',
   OBJECT_FETCH_FAILED: 'submission.object.fetch.failed',
 
   OBJECT_PARSED: 'submission.object.parsed',
+  OBJECT_PARSE_FAILED: 'submission.object.parse.failed',
   OBJECT_IGNORED: 'submission.object.ignored',
 
   EXECUTION_STARTING: 'submission.execution.starting',

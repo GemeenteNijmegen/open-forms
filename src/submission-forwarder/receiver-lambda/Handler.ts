@@ -5,15 +5,19 @@ import { ZodError } from 'zod';
 import { InvalidStateError, ParseError, SendMessageError, UnknownObjectError } from './ErrorTypes';
 import { NotificationEventParser } from './NotificationEventParser';
 import { ObjectParser } from './ObjectParser';
+import { logReceiverEvent } from './ReceiverLogging';
 import { StepFunction } from './StepFunction';
+import { SubmissionLogEvent } from '../../shared/submission-logging/SubmissionLogging';
+import { EnrichedZgwObjectData } from '../shared/EnrichedZgwObjectData';
+import { Notification } from '../shared/Notification';
 import { trace } from '../shared/trace';
 import { ZgwClientFactory } from '../shared/ZgwClientFactory';
-import { ObjectSchema } from '../shared/ZgwObject';
+import { ObjectSchema, ZgwObject } from '../shared/ZgwObject';
 
 const HANDLER_ID = 'receiver';
-const logger = new Logger();
 
 interface ReceiverHandlerOptions {
+  logger: Logger;
   zgwClientFactory: ZgwClientFactory;
   topicArn: string;
   orchestratorArn: string;
@@ -23,13 +27,16 @@ interface ReceiverHandlerOptions {
 export class ReceiverHandler {
   private objectParser: ObjectParser;
   private stepFunction: StepFunction;
+  private logger: Logger;
 
   constructor(private readonly options: ReceiverHandlerOptions) {
+    this.logger = options.logger;
     this.objectParser = new ObjectParser(options.supportedObjectTypes);
-    this.stepFunction = new StepFunction(this.options.orchestratorArn );
+    this.stepFunction = new StepFunction(this.options.orchestratorArn, { logger: this.logger });
   }
 
   async handle(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+    const logger = this.logger;
     try {
       const notification = NotificationEventParser.parse(event, logger);
       logger.debug('Parsed notification', { notification });
@@ -41,26 +48,37 @@ export class ReceiverHandler {
       }
 
       if (notification.resource == 'object') {
-        // Get the object from the object api
-        const objectClient = await this.options.zgwClientFactory.getObjectsApiClient();
-        const zgwObjectResponse = await objectClient.getObject(notification.resourceUrl);
-        logger.debug(zgwObjectResponse);
-        const zgwObject = ObjectSchema.parse(zgwObjectResponse);
-        try {
-          const result = this.objectParser.parse(zgwObject);
-          // const submission = SubmissionSchema.parse(object.record.data);
-          logger.debug('Retrieved object', { result });
+        logReceiverEvent(logger, SubmissionLogEvent.OBJECT_FETCH_STARTED, { notification });
 
-          await this.stepFunction.startExecution(result);
-          await trace(result.reference, HANDLER_ID, 'OK');
+        const zgwObject = await this.fetchObject(logger, notification);
+        logReceiverEvent(logger, SubmissionLogEvent.OBJECT_FETCH_SUCCEEDED, { notification, zgwObject });
+
+        try {
+          const enrichedObject = this.objectParser.parse(zgwObject);
+          logger.debug('Retrieved object', { result: enrichedObject });
+          logReceiverEvent(logger, SubmissionLogEvent.OBJECT_PARSED, { notification, zgwObject, enrichedObject });
+
+          logReceiverEvent(logger, SubmissionLogEvent.EXECUTION_STARTING, { notification, zgwObject, enrichedObject });
+          const executionArn = await this.startExecution(logger, notification, zgwObject, enrichedObject);
+          logReceiverEvent(logger, SubmissionLogEvent.EXECUTION_STARTED, {
+            notification, zgwObject, enrichedObject, executionArn,
+          });
+
+          await trace(enrichedObject.reference, HANDLER_ID, 'OK');
           return Response.ok();
         } catch (err) {
           if (err instanceof UnknownObjectError) {
             logger.info('Not a recognized object type.', err.message);
+            logReceiverEvent(logger, SubmissionLogEvent.OBJECT_IGNORED, { notification, zgwObject, error: err });
             return Response.ok();
           } else if (err instanceof InvalidStateError) {
             logger.info('Object not in a valid state for processing.', err.message);
+            logReceiverEvent(logger, SubmissionLogEvent.OBJECT_IGNORED, { notification, zgwObject, error: err });
             return Response.ok();
+          } else if (err instanceof ZodError) {
+            logger.info('Received data failed schema validation', { error: err });
+            logReceiverEvent(logger, SubmissionLogEvent.OBJECT_PARSE_FAILED, { notification, zgwObject, error: err });
+            return Response.error(400, 'Received data failed schema validation');
           } else {
             throw err;
           }
@@ -86,6 +104,34 @@ export class ReceiverHandler {
         message = error.message;
       }
       return Response.error(500, message);
+    }
+  }
+
+  private async fetchObject(logger: Logger, notification: Notification): Promise<ZgwObject> {
+    try {
+      const objectClient = await this.options.zgwClientFactory.getObjectsApiClient();
+      const zgwObjectResponse = await objectClient.getObject(notification.resourceUrl);
+      logger.debug(zgwObjectResponse);
+      return ObjectSchema.parse(zgwObjectResponse);
+    } catch (error) {
+      logReceiverEvent(logger, SubmissionLogEvent.OBJECT_FETCH_FAILED, { notification, error });
+      throw error;
+    }
+  }
+
+  private async startExecution(
+    logger: Logger,
+    notification: Notification,
+    zgwObject: ZgwObject,
+    enrichedObject: EnrichedZgwObjectData,
+  ): Promise<string | undefined> {
+    try {
+      return await this.stepFunction.startExecution(enrichedObject);
+    } catch (error) {
+      logReceiverEvent(logger, SubmissionLogEvent.EXECUTION_START_FAILED, {
+        notification, zgwObject, enrichedObject, error,
+      });
+      throw error;
     }
   }
 }
