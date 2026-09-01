@@ -1,3 +1,4 @@
+import { Logger } from '@aws-lambda-powertools/logger';
 import { DynamoDBClient, PutItemCommand } from '@aws-sdk/client-dynamodb';
 import { SFNClient, StartExecutionCommand } from '@aws-sdk/client-sfn';
 import { mockClient } from 'aws-sdk-client-mock';
@@ -56,6 +57,7 @@ describe('receiver', () => {
   test('Initalization', () => {
 
     new ReceiverHandler({
+      logger: new Logger(),
       zgwClientFactory: fakeZgwClientFactory as any,
       topicArn: 'arn:topci:aws:somewhere',
       orchestratorArn: 'arn:topci:aws:somewhere',
@@ -66,6 +68,7 @@ describe('receiver', () => {
 
   test('Handle event', async () => {
     const handler = new ReceiverHandler({
+      logger: new Logger(),
       zgwClientFactory: fakeZgwClientFactory as any,
       topicArn: 'arn:topci:aws:somewhere',
       orchestratorArn: 'arn:topci:aws:somewhere',

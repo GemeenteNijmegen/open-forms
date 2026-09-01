@@ -1,3 +1,4 @@
+import { Logger } from '@aws-lambda-powertools/logger';
 import { DynamoDBClient, PutItemCommand } from '@aws-sdk/client-dynamodb';
 import { SFNClient, StartExecutionCommand } from '@aws-sdk/client-sfn';
 import { mockClient } from 'aws-sdk-client-mock';
@@ -40,6 +41,7 @@ describe('receiver - ESF taak e-mail validation', () => {
       getCatalogiClient: jest.fn().mockResolvedValue({}),
     };
     return new ReceiverHandler({
+      logger: new Logger(),
       zgwClientFactory: zgwClientFactory as any,
       topicArn: 'arn:aws:sns:eu-central-1:123456789012:topic',
       orchestratorArn: 'arn:aws:states:eu-central-1:123456789012:stateMachine:orchestrator',

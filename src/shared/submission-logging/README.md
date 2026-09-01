@@ -120,7 +120,9 @@ flowchart TD
 Er zijn ook vaste events voor andere uitkomsten:
 
 ```
+submission.notification.parse.failed
 submission.object.fetch.failed
+submission.object.parse.failed
 submission.object.ignored
 submission.execution.start.failed
 ```
