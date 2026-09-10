@@ -62,9 +62,17 @@ export const zaaktypeConfig: ZaaktypeConfig[] = [
   {
     zaaktypeVariable: 'exploitatieVergunningAanvragen',
     formName: 'exploitatievergunningAanvragen',
-    option: '',
+    option: 'drogeHorecaDefault',
     accUUID: '43d2464d-697c-44af-86cb-343ca2cb435b',
     prodUUID: '43d2464d-697c-44af-86cb-343ca2cb435b',
+    appId: 'APV',
+  },
+  {
+    zaaktypeVariable: 'exploitatieVergunningAanvragenSeks',
+    formName: 'exploitatievergunningAanvragen',
+    option: 'seksbedrijf',
+    accUUID: 'f9c7e0f8-d350-4911-8fae-7d121345a2f2',
+    prodUUID: 'f9c7e0f8-d350-4911-8fae-7d121345a2f2',
     appId: 'APV',
   },
 
