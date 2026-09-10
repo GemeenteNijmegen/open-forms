@@ -56,6 +56,7 @@ export const VIPJZSubmissionSchema = z
         'toestemmingTijdelijkAlcoholSchenken',
         'leidingAlcoholVergunningAanpassen',
         'exploitatieVergunningAanvragen',
+        'exploitatieVergunningAanvragenSeks',
         'objectVergunningAanvragen',
         'alcoholVergunningAanvragen',
         'kansspelAutomaatAanwezigheid',
