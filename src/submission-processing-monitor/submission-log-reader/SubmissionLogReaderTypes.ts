@@ -34,7 +34,10 @@ export interface SubmissionReceiverLogEvent {
   event?: SubmissionLogEventValue;
   objectUuid?: string;
   objectIndex?: number;
+
+  // No current log source; only objectTypeUrl is populated today.
   objectType?: string;
+
   objectTypeUrl?: string;
   reference?: string;
   formName?: string;
