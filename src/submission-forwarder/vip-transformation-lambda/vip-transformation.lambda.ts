@@ -56,7 +56,13 @@ async function publishOnSnsTopic(message: any) {
       AppId: { DataType: 'String', StringValue: message.appId },
     },
   });
-  await sns.send(command);
+
+  const publishSnsMessage = await sns.send(command);
+
+  logger.info('Published message to SNS topic', {
+    messageId: publishSnsMessage.MessageId,
+    appId: message.appId,
+  });
 }
 
 
