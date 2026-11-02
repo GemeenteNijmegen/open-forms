@@ -43,6 +43,12 @@ export class OpenFormsSubmissionsTopic extends Construct {
       },
     );
     this.dlq = dlqSetup.dlq;
+    // Allow SNS to write failed deliveries to the KMS-encrypted DLQ.
+    props.kmsKey.grant(
+      new ServicePrincipal('sns.amazonaws.com'),
+      'kms:GenerateDataKey',
+      'kms:Decrypt',
+    );
 
     for (const urlSubscription of props.urlSubscriptions) {
       const subscription = new UrlSubscription(urlSubscription.url, {
