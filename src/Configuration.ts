@@ -73,6 +73,10 @@ const EnvironmentConfigurations: { [key: string]: Configuration } = {
       },
       {
         appId: 'JUR',
+        url: 'https://jz4all.test.woweb.app/api/sns-receiver',
+      },
+      {
+        appId: 'JUR',
         url: 'https://jz4all.woweb.app/api/sns-receiver',
       },
     ],
