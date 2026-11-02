@@ -3,7 +3,7 @@ import { CloudWatchLogsClient } from '@aws-sdk/client-cloudwatch-logs';
 export interface CloudWatchSubmissionLogReaderOptions {
   cloudWatchLogsClient?: CloudWatchLogsClient;
 
-  /** Functional code must not depend on diagnostics being present. */
+  // Functional code must not depend on diagnostics being present.
   diagnostics?: boolean;
 }
 

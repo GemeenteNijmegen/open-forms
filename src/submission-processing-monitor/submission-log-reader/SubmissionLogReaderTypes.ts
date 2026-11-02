@@ -5,9 +5,9 @@ import { SubmissionLogEventValue, SubmissionExecutionEventValue } from '../../sh
  * fromInclusive is part of the range, toExclusive is not. Both are absolute timestamps; the
  * reader itself does not convert timezones or calendar days.
  *
- * Example: `fromInclusive = 2026-01-01T00:00:00Z`, `toExclusive = 2026-01-02T00:00:00Z` matches
+ * Example: fromInclusive = 2026-01-01T00:00:00Z, toExclusive = 2026-01-02T00:00:00Z matches
  * everything from that midnight up to, but not including, the next one. An event logged exactly
- * at `2026-01-02T00:00:00Z` falls outside this range.
+ * at 2026-01-02T00:00:00Z falls outside this range.
  *
  * Might be important when a group of logs is just around the ranges edges. Part in, part out.
  */
@@ -27,7 +27,7 @@ export interface FindSubmissionLogsByVersionOptions {
   range: AbsoluteTimeRange;
 }
 
-/** Field names mirror `SubmissionLogField` in the shared logging contract exactly. */
+// Field names mirror SubmissionLogField in the shared logging contract exactly.
 export interface SubmissionReceiverLogEvent {
   timestamp: Date;
   ingestionTime?: Date;
@@ -44,7 +44,7 @@ export interface SubmissionReceiverLogEvent {
   resourceUrl?: string;
 
   /**
-   * CWLI's `@ptr` value for this log line. Pass it to the CloudWatch Logs `GetLogRecord` call
+   * CWLI's @ptr value for this log line. Pass it to the CloudWatch Logs GetLogRecord call
    * to fetch the full original log record on demand, so we don't have to store it here.
    */
   logRecordPointer?: string;
@@ -62,12 +62,12 @@ export interface SubmissionExecutionLogEvent {
 export interface SubmissionExecutionTrace {
   execution_arn: string;
 
-  /** An empty array is valid data: the ARN was known, but no execution events were found. */
+  // An empty array is valid data: the ARN was known, but no execution events were found.
   events: SubmissionExecutionLogEvent[];
 }
 
 export interface SubmissionLogTrace {
-  /** Same name as in the structured logging. */
+  // Same name as in the structured logging.
   correlation_id: string;
 
   objectUuid: string;
@@ -121,7 +121,7 @@ export interface SubmissionLogReaderDiagnostics {
   executionQuery?: CwliQueryDiagnostics;
 }
 
-/** Composes our own query context with the SDK's own statistics shape instead of copying its fields. */
+// Composes our own query context with the SDK's own statistics shape instead of copying its fields.
 export interface CwliQueryDiagnostics {
   queryId: string;
   sourceLogGroups: string[];
