@@ -60,6 +60,13 @@ const EnvironmentConfigurations: { [key: string]: Configuration } = {
     criticality: new Criticality('medium'),
     logLevel: 'DEBUG',
     urlSubscriptions: [
+      // https://docs.aws.amazon.com/prescriptive-guidance/latest/modernization-integrating-microservices/sns.html
+      // Amazon SNS enables services to fan out widely, which means that a single message can be delivered to a potentially large number of subscribers
+      // The message will go to both urls
+      {
+        appId: 'APV',
+        url: 'https://vip.test.woweb.app/api/sns-receiver',
+      },
       {
         appId: 'APV',
         url: 'https://vip.woweb.app/api/sns-receiver',
