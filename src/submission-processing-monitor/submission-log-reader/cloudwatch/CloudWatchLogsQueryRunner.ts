@@ -89,7 +89,6 @@ export class CloudWatchLogsQueryRunner {
 
       // Running, Scheduled or Unknown: keep polling until the local deadline passes.
       if (Date.now() >= deadline) {
-        // Makes sure the query stops in the background
         await this.stopQuerySilently(queryId);
         throw new CloudWatchSubmissionLogReaderError(
           'QUERY_TIMEOUT',
@@ -144,7 +143,10 @@ export class CloudWatchLogsQueryRunner {
     }
   }
 
-  // nextToken after a Complete status means there are more result pages; a failure here means we can't vouch for completeness, so we never return the partial rows we already have.
+  /**
+   * nextToken after a Complete status means there are more result pages; a failure here means we can't
+   * vouch for completeness, so we never return the partial rows we already have.
+   */
   private async collectRemainingPages(
     queryId: string,
     request: CwliQueryRequest,

@@ -1,5 +1,5 @@
 import { CloudWatchSubmissionLogReaderError } from '../../errors/CloudWatchSubmissionLogReaderError';
-import { buildReceiverTraces } from '../SubmissionTraceBuilder';
+import { attachExecutions, buildReceiverTraces, collectExecutionArns } from '../SubmissionTraceBuilder';
 
 function row(overrides: Partial<Record<string, string>> = {}): Record<string, string> {
   return {
@@ -92,5 +92,78 @@ describe('buildReceiverTraces', () => {
   test('throws QUERY_RESULT_MAPPING_FAILED for a row without correlation_id', () => {
     const rows = [row({ correlation_id: '' })];
     expect(() => buildReceiverTraces(rows, 'abc-123', 'query-1')).toThrow(CloudWatchSubmissionLogReaderError);
+  });
+});
+
+const executionArn = 'arn:aws:states:eu-central-1:123456789012:execution:orchestrator:OF-TEST-1767261600000';
+
+function executionRow(overrides: Partial<Record<string, string>> = {}): Record<string, string> {
+  return {
+    '@timestamp': '2026-01-01 10:00:00.000',
+    '@ptr': 'ptr-1',
+    '@message': '{"details":{}}',
+    'type': 'ExecutionStarted',
+    'id': '1',
+    'previous_event_id': '0',
+    'event_timestamp': '1767261600000',
+    'execution_arn': executionArn,
+    'redrive_count': '0',
+    ...overrides,
+  };
+}
+
+describe('collectExecutionArns / attachExecutions', () => {
+  test('collects the execution_arn values found across all traces', () => {
+    const traces = buildReceiverTraces([row({ execution_arn: executionArn })], 'abc-123', 'query-1');
+    expect(collectExecutionArns(traces)).toEqual([executionArn]);
+  });
+
+  test('leaves executions empty for a trace with no execution_arn', () => {
+    const traces = buildReceiverTraces([row()], 'abc-123', 'query-1');
+    expect(collectExecutionArns(traces)).toEqual([]);
+    expect(attachExecutions(traces, [])[0].executions).toEqual([]);
+  });
+
+  test('attaches matching execution events, sorted by id instead of timestamp', () => {
+    const traces = buildReceiverTraces([row({ execution_arn: executionArn })], 'abc-123', 'query-1');
+
+    // Identical event_timestamp on purpose: proves the sort uses id, not the tied timestamp.
+    const executionRows = [
+      executionRow({ id: '2', previous_event_id: '1', type: 'PassStateEntered' }),
+      executionRow({ id: '1', previous_event_id: '0', type: 'ExecutionStarted' }),
+    ];
+
+    const [trace] = attachExecutions(traces, executionRows);
+
+    expect(trace.executions).toHaveLength(1);
+    expect(trace.executions[0].execution_arn).toEqual(executionArn);
+    expect(trace.executions[0].events.map(e => e.type)).toEqual(['ExecutionStarted', 'PassStateEntered']);
+  });
+
+  test('keeps a known execution_arn with zero matching execution rows as an empty events array', () => {
+    const traces = buildReceiverTraces([row({ execution_arn: executionArn })], 'abc-123', 'query-1');
+    const [trace] = attachExecutions(traces, []);
+
+    expect(trace.executions).toEqual([{ execution_arn: executionArn, events: [] }]);
+  });
+
+  test('maps details, redriveCount, id and previousEventId from the native Step Functions fields', () => {
+    const traces = buildReceiverTraces([row({ execution_arn: executionArn })], 'abc-123', 'query-1');
+    const executionRows = [executionRow({
+      '@message': '{"details":{"name":"Success"}}', 'redrive_count': '1', 'id': '3', 'previous_event_id': '2',
+    })];
+
+    const [trace] = attachExecutions(traces, executionRows);
+    const [event] = trace.executions[0].events;
+
+    expect(event.details).toEqual({ name: 'Success' });
+    expect(event.redriveCount).toEqual(1);
+    expect(event.id).toEqual(3);
+    expect(event.previousEventId).toEqual(2);
+  });
+
+  test('throws QUERY_RESULT_MAPPING_FAILED for an execution row without execution_arn', () => {
+    const executionRows = [executionRow({ execution_arn: '' })];
+    expect(() => attachExecutions([], executionRows)).toThrow(CloudWatchSubmissionLogReaderError);
   });
 });

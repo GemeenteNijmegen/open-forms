@@ -58,6 +58,7 @@ export interface SubmissionExecutionLogEvent {
   type: SubmissionExecutionEventValue | string;
   id?: number;
   previousEventId?: number;
+  redriveCount?: number;
   details?: unknown;
   logRecordPointer?: string;
 }
