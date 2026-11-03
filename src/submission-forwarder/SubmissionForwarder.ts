@@ -643,6 +643,7 @@ export class SubmissionForwarder extends Construct {
   private setupVipTransformationLambda() {
     const vipTransformationLambda = new VipTransformationFunction(this, 'vip-transformation-function', {
       description: 'VIP JZ4ALL output from transformed open forms submissions',
+      memorySize: 256,
       environment: {
         POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'INFO',
         TOPIC_ARN: this.submissionTopic.topicArn,

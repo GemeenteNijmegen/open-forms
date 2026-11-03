@@ -1,7 +1,6 @@
 import { Criticality, DeadLetterQueue } from '@gemeentenijmegen/aws-constructs';
-import { PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import { Role, ServicePrincipal, ManagedPolicy } from 'aws-cdk-lib/aws-iam';
 import { IKey } from 'aws-cdk-lib/aws-kms';
-import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { LoggingConfig, LoggingProtocol, SubscriptionFilter, SubscriptionProtocol, Topic } from 'aws-cdk-lib/aws-sns';
 import { UrlSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
@@ -44,6 +43,12 @@ export class OpenFormsSubmissionsTopic extends Construct {
       },
     );
     this.dlq = dlqSetup.dlq;
+    // Allow SNS to write failed deliveries to the KMS-encrypted DLQ.
+    props.kmsKey.grant(
+      new ServicePrincipal('sns.amazonaws.com'),
+      'kms:GenerateDataKey',
+      'kms:Decrypt',
+    );
 
     for (const urlSubscription of props.urlSubscriptions) {
       const subscription = new UrlSubscription(urlSubscription.url, {
@@ -61,35 +66,18 @@ export class OpenFormsSubmissionsTopic extends Construct {
   }
 
   private createLoggingConfig(): LoggingConfig {
-    const deliveryLogGroup = new LogGroup(
-      this,
-      'sns-submissiontopic-delivery-status-loggroup',
-      {
-        retention: RetentionDays.SIX_MONTHS,
-        // No kms encryption because only the messageId is traceable and visible
-      },
-    );
-
     const loggingRole = new Role(this, 'sns-submission-delivery-status-role', {
       assumedBy: new ServicePrincipal('sns.amazonaws.com'),
+      managedPolicies: [
+        ManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonSNSRole'),
+      ],
     });
-    loggingRole.addToPolicy(
-      new PolicyStatement({
-        actions: ['logs:CreateLogStream', 'logs:PutLogEvents'],
-        resources: [
-          deliveryLogGroup.logGroupArn,
-          `${deliveryLogGroup.logGroupArn}:*`,
-        ],
-      }),
-    );
 
-    const config: LoggingConfig = {
+    return {
       protocol: LoggingProtocol.HTTP,
       failureFeedbackRole: loggingRole,
       successFeedbackRole: loggingRole,
       successFeedbackSampleRate: 100,
     };
-
-    return config;
   }
 }
