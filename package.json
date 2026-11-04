@@ -87,7 +87,7 @@
     "@aws-sdk/client-sqs": "3.1161.0",
     "@aws-sdk/lib-storage": "3.1161.0",
     "@gemeentenijmegen/apigateway-http": "^0.0.41",
-    "@gemeentenijmegen/aws-constructs": "^0.0.56",
+    "@gemeentenijmegen/aws-constructs": "^0.0.57",
     "@gemeentenijmegen/design-tokens": "^0.1.14",
     "@gemeentenijmegen/modules-zgw-client": "^0.0.8",
     "@gemeentenijmegen/projen-project-type": "^1.16.3",
