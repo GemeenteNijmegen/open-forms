@@ -43,7 +43,7 @@ export function esfWijzigingen(taak: EsfTaak, reference: string): string {
 
 function compare(label: string, oud: string | undefined, nieuw: string | undefined, normalize: (value: string) => string) {
   if (normalize(oud ?? '') === normalize(nieuw ?? '')) {
-    return [`${label}: geen wijzigingen`];
+    return [`${label}: niet gewijzigd`];
   }
   return [
     `${label}:`,
