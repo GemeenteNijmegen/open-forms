@@ -45,7 +45,7 @@ describe('orchestration.asl.json', () => {
   test('existing non-Tribe routes out of "Tribe or Networkshare ESF VIP or Sociaal" are unchanged (statusformulier, VIP/JZ4ALL, Sociaal, networkshare)', () => {
     const choices: any[] = (asl as any).States['Tribe or Networkshare ESF VIP or Sociaal'].Choices;
     const byComment = Object.fromEntries(choices.map(c => [c.Comment, c.Next]));
-    expect(byComment['has statusformulier URL']).toBe('ESF ESB Queue');
+    expect(byComment['has statusformulier URL']).toBe('ESF processing');
     expect(byComment['VIP/JZ4ALL']).toBe('VIP/JZ4ALL forward');
     expect(byComment['Sociaal Domein Aanvraag']).toBe('Sociaal To ESB Folder?');
     expect(byComment['contains networkshare / monitoring']).toBe('ESB Forwarder');
@@ -99,6 +99,26 @@ describe('orchestration.asl.json', () => {
     expect((asl as any).States['Has notification email?'].Default).toBe('Success');
     expect((asl as any).States['Notification email'].Next).toBe('Success');
     expect((asl as any).States['Sociaal notification email?'].Default).toBe('Sociaal SQS SendMessage');
+  });
+
+  test('"ESF processing" invokes ESF_PROCESSING_LAMBDA_ARN with standard retry and continues to the ESF queue', () => {
+    const esfProcessing: any = (asl as any).States['ESF processing'];
+    expect(esfProcessing.Type).toBe('Task');
+    expect(esfProcessing.Resource).toBe('arn:aws:states:::lambda:invoke');
+    expect(esfProcessing.Arguments.FunctionName).toBe('${ESF_PROCESSING_LAMBDA_ARN}');
+    expect(esfProcessing.Arguments.Payload).toBe('{% $states.input %}');
+    expect(esfProcessing.Retry).toEqual(STANDARD_RETRY);
+    expect(esfProcessing.Output).toBe('{% $states.result.Payload %}');
+    expect(esfProcessing.Next).toBe('ESF ESB Queue');
+  });
+
+  test('a failing "ESF processing" still delivers the original input to the ESF queue', () => {
+    const esfProcessing: any = (asl as any).States['ESF processing'];
+    expect(esfProcessing.Catch).toEqual([{
+      ErrorEquals: ['States.ALL'],
+      Next: 'ESF ESB Queue',
+      Output: '{% $states.input %}',
+    }]);
   });
 
   test('the full state machine matches the recorded baseline snapshot', () => {

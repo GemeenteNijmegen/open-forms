@@ -25,6 +25,7 @@
     "src/static-form-definitions/formio-login/login-mock-function.ts",
     "src/static-form-definitions/lambda/StaticFormDefinitions-function.ts",
     "src/submission-forwarder/documentsToS3Storage/documentsToS3Storage-function.ts",
+    "src/submission-forwarder/esf-processing-lambda/esf-processing-function.ts",
     "src/submission-forwarder/forwarder-lambda/forwarder-function.ts",
     "src/submission-forwarder/internal-notification-mail-lambda/internalNotificationMail-function.ts",
     "src/submission-forwarder/receiver-lambda/receiver-function.ts",
