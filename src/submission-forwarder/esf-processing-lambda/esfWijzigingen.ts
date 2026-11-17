@@ -62,5 +62,5 @@ function normalizeTelefoon(value: string) {
 
 function valueLabel(value: unknown) {
   const text = String(value ?? '');
-  return VALUE_LABELS[text] ?? text;
+  return Object.hasOwn(VALUE_LABELS, text) ? VALUE_LABELS[text] : text;
 }

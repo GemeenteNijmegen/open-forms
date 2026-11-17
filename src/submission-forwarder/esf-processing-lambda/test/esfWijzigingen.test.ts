@@ -123,6 +123,32 @@ describe('esfWijzigingen', () => {
     expect(text).toContain('Aanpassing vrijwilligerswerk: Ja, gestopt met vrijwilligerswerk');
   });
 
+  test('shows missing submitted telefoon as empty', () => {
+    const text = esfWijzigingen(taak({
+      verzonden_data: { telefoon: '' },
+    }), 'ref');
+    expect(text).toContain([
+      'Telefoon:',
+      '    oud: 06123123123',
+      '    nieuw: (leeg)',
+    ].join('\n'));
+  });
+
+  test('treats telefoon missing in both prefill and submission as unchanged', () => {
+    const text = esfWijzigingen(taak({
+      data: { telefoon: undefined },
+      verzonden_data: { telefoon: '' },
+    }), 'ref');
+    expect(text).toContain('Telefoon: geen wijzigingen');
+  });
+
+  test('does not label answers that match built-in object properties', () => {
+    const text = esfWijzigingen(taak({
+      verzonden_data: { toelichtingingevuld: 'constructor' },
+    }), 'ref');
+    expect(text).toContain('Toelichting ingevuld: constructor');
+  });
+
   test('prints unknown answer values as-is', () => {
     const text = esfWijzigingen(taak({
       verzonden_data: { toelichtingingevuld: 'Ik ben verhuisd' },
