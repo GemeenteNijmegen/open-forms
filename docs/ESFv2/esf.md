@@ -96,11 +96,45 @@ sequenceDiagram
     activate S3
     S3-->>AWS: Bevestiging
     deactivate S3
+    AWS->>S3: Save overzicht wijzigingen
+    activate S3
+    S3-->>AWS: Bevestiging
+    deactivate S3
     AWS->>AWS Queue: Taak on queue
     activate AWS Queue
     AWS Queue-->>AWS: Bevestiging
     deactivate AWS Queue
     deactivate AWS
+```
+
+### Overzicht wijzigingen
+Voordat de taak op de queue gaat, maakt de `esf-processing-lambda` een tekstbestand `<reference>-wijzigingen.txt` aan in S3, naast de PDF.
+Hierin staat wat de inwoner heeft gewijzigd ten opzichte van de prefill (`formtaak.data` vs. `formtaak.verzonden_data`) en welke
+antwoorden zijn gegeven. Het bestand staat als `attachment` in `filePaths` en `fileObjects`, zodat de ESB het samen met de andere documenten
+in Corsa opslaat voor de medewerkers.
+
+- Email wordt vergeleken zonder hoofdletters en spaties rondom, telefoonnummer zonder spaties en streepjes.
+- Mislukt deze stap, dan gaat de taak zonder het overzicht alsnog op de queue.
+
+Voorbeeld:
+```
+Wijzigingen statusformulier ESF-OF-123456-12345678-202510
+Dossiernummer: 12345678
+Periodenummer: 202510
+Clientnummer: 12345
+Inkhef: NEE
+
+Email: niet gewijzigd
+Telefoon:
+    oud: 06123123123
+    nieuw: 0632132131
+Aanpassing inkomen: Ja
+Aanpassing wonen: Nee
+Aanpassing vakantie: Nee
+Aanpassing studie: Ja, gestart met studie
+Aanpassing vrijwilligerswerk: Nee
+Aanpassing vermogen: Nee
+Toelichting ingevuld: Nee
 ```
 
 <details>
@@ -159,13 +193,21 @@ sequenceDiagram
     }
   },
   "filePaths": [
-    "s3://bucketnaam/ESF-dossier-test-1-202506/ESF-dossier-test-1-202506.pdf"
+    "s3://bucketnaam/ESF-dossier-test-1-202506/ESF-dossier-test-1-202506.pdf",
+    "s3://bucketnaam/ESF-dossier-test-1-202506/ESF-dossier-test-1-202506-wijzigingen.txt"
   ],
   "fileObjects": [
     {
       "bucket": "bucketnaam",
       "objectKey": "ESF-dossier-test-1-202506/ESF-dossier-test-1-202506.pdf",
-      "fileName": "ESF-dossier-test-1-202506.pdf"
+      "fileName": "ESF-dossier-test-1-202506.pdf",
+      "objectType": "submission"
+    },
+    {
+      "bucket": "bucketnaam",
+      "objectKey": "ESF-dossier-test-1-202506/ESF-dossier-test-1-202506-wijzigingen.txt",
+      "fileName": "ESF-dossier-test-1-202506-wijzigingen.txt",
+      "objectType": "attachment"
     }
   ]
 }
@@ -176,7 +218,7 @@ sequenceDiagram
 De ESB pakt de inzending op (afh. van keuze, ofwel van queue of adhv notificatie vanuit taak) en verwerkt deze. De **beslisservice** bepaalt of de 
 uitkering kan worden gedeblokkeerd, adhv. antwoorden. Dit bepaalt wat in suite/corsa moet worden aangemaakt. (Gelijk aan oude opzet). Hierbij:
 - Moeten documenten opgehaald (uit S3 of ZGW documenten)
-- Moet gecontroleerd worden of contactinfo gewijzigd is (email/telefoonnr)
+- Moet gecontroleerd worden of contactinfo gewijzigd is (email/telefoonnr), zie het [overzicht wijzigingen](#overzicht-wijzigingen)
 - Moet de taakstatus aangepast naar 'verwerkt' (TODO: Check naamgeving statussen)
 ```mermaid
 sequenceDiagram

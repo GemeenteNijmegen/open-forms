@@ -98,7 +98,7 @@
         },
         {
           "Comment": "has statusformulier URL",
-          "Next": "ESF ESB Queue",
+          "Next": "ESF processing",
           "Condition": "{% ($contains($states.input.enrichedObject.taak.formtaak.formulier.value, \"nijmegen.nl/statusformulier\") and $exists($states.input.enrichedObject.taak.formtaak.formulier.value)) %}"
         },
         {
@@ -210,6 +210,40 @@
       },
       "Comment": "Sociaal SQS",
       "Next": "Success"
+    },
+    "ESF processing": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Arguments": {
+        "FunctionName": "${ESF_PROCESSING_LAMBDA_ARN}",
+        "Payload": "{% $states.input %}"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2,
+          "JitterStrategy": "FULL"
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "ESF ESB Queue",
+          "Output": "{% $states.input %}"
+        }
+      ],
+      "Output": "{% $states.result.Payload %}",
+      "Next": "ESF ESB Queue",
+      "Comment": "Add an overview of the changes compared to the prefill to the submission files"
     },
     "ESF ESB Queue": {
       "Type": "Task",

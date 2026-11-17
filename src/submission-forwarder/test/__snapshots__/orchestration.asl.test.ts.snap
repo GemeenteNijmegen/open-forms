@@ -50,6 +50,40 @@ exports[`orchestration.asl.json the full state machine matches the recorded base
       "Resource": "arn:aws:states:::sqs:sendMessage",
       "Type": "Task",
     },
+    "ESF processing": {
+      "Arguments": {
+        "FunctionName": "\${ESF_PROCESSING_LAMBDA_ARN}",
+        "Payload": "{% $states.input %}",
+      },
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL",
+          ],
+          "Next": "ESF ESB Queue",
+          "Output": "{% $states.input %}",
+        },
+      ],
+      "Comment": "Add an overview of the changes compared to the prefill to the submission files",
+      "Next": "ESF ESB Queue",
+      "Output": "{% $states.result.Payload %}",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Retry": [
+        {
+          "BackoffRate": 2,
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException",
+          ],
+          "IntervalSeconds": 1,
+          "JitterStrategy": "FULL",
+          "MaxAttempts": 3,
+        },
+      ],
+      "Type": "Task",
+    },
     "Files to S3?": {
       "Choices": [
         {
@@ -282,7 +316,7 @@ exports[`orchestration.asl.json the full state machine matches the recorded base
         {
           "Comment": "has statusformulier URL",
           "Condition": "{% ($contains($states.input.enrichedObject.taak.formtaak.formulier.value, "nijmegen.nl/statusformulier") and $exists($states.input.enrichedObject.taak.formtaak.formulier.value)) %}",
-          "Next": "ESF ESB Queue",
+          "Next": "ESF processing",
         },
         {
           "Comment": "VIP/JZ4ALL",
@@ -411,6 +445,40 @@ exports[`orchestration.asl.json the full state machine matches the recorded base
         },
         "Next": "Success",
         "Resource": "arn:aws:states:::sqs:sendMessage",
+        "Type": "Task",
+      },
+      "ESF processing": {
+        "Arguments": {
+          "FunctionName": "\${ESF_PROCESSING_LAMBDA_ARN}",
+          "Payload": "{% $states.input %}",
+        },
+        "Catch": [
+          {
+            "ErrorEquals": [
+              "States.ALL",
+            ],
+            "Next": "ESF ESB Queue",
+            "Output": "{% $states.input %}",
+          },
+        ],
+        "Comment": "Add an overview of the changes compared to the prefill to the submission files",
+        "Next": "ESF ESB Queue",
+        "Output": "{% $states.result.Payload %}",
+        "Resource": "arn:aws:states:::lambda:invoke",
+        "Retry": [
+          {
+            "BackoffRate": 2,
+            "ErrorEquals": [
+              "Lambda.ServiceException",
+              "Lambda.AWSLambdaException",
+              "Lambda.SdkClientException",
+              "Lambda.TooManyRequestsException",
+            ],
+            "IntervalSeconds": 1,
+            "JitterStrategy": "FULL",
+            "MaxAttempts": 3,
+          },
+        ],
         "Type": "Task",
       },
       "Files to S3?": {
@@ -645,7 +713,7 @@ exports[`orchestration.asl.json the full state machine matches the recorded base
           {
             "Comment": "has statusformulier URL",
             "Condition": "{% ($contains($states.input.enrichedObject.taak.formtaak.formulier.value, "nijmegen.nl/statusformulier") and $exists($states.input.enrichedObject.taak.formtaak.formulier.value)) %}",
-            "Next": "ESF ESB Queue",
+            "Next": "ESF processing",
           },
           {
             "Comment": "VIP/JZ4ALL",
