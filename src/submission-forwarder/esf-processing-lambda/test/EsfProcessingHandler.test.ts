@@ -79,7 +79,7 @@ describe('EsfProcessingHandler', () => {
     expect(formaat).toBe('text/plain; charset=utf-8');
     expect(s3SubFolder).toBeUndefined();
     const text = data.toString();
-    expect(text).toContain('Email: geen wijzigingen');
+    expect(text).toContain('Email: niet gewijzigd');
     expect(text).toContain('    nieuw: 0632132131');
     expect(text).toContain('Aanpassing inkomen: Ja');
   });

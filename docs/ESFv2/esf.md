@@ -123,7 +123,7 @@ Dossiernummer: 12345678
 Periodenummer: 202510
 Clientnummer: 12345
 
-Email: geen wijzigingen
+Email: niet gewijzigd
 Telefoon:
     oud: 06123123123
     nieuw: 0632132131

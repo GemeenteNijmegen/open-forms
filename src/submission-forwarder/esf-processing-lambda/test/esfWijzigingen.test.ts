@@ -58,8 +58,8 @@ describe('esfWijzigingen', () => {
       'Periodenummer: 202510',
       'Clientnummer: 12345',
       '',
-      'Email: geen wijzigingen',
-      'Telefoon: geen wijzigingen',
+      'Email: niet gewijzigd',
+      'Telefoon: niet gewijzigd',
       'Aanpassing inkomen: Nee',
       'Aanpassing wonen: Nee',
       'Aanpassing vakantie: Nee',
@@ -89,14 +89,14 @@ describe('esfWijzigingen', () => {
     const text = esfWijzigingen(taak({
       data: { email: ' Info@Example.com ' },
     }), 'ref');
-    expect(text).toContain('Email: geen wijzigingen');
+    expect(text).toContain('Email: niet gewijzigd');
   });
 
   test('ignores spaces and dashes in telefoon', () => {
     const text = esfWijzigingen(taak({
       data: { telefoon: '06-123 123 123' },
     }), 'ref');
-    expect(text).toContain('Telefoon: geen wijzigingen');
+    expect(text).toContain('Telefoon: niet gewijzigd');
   });
 
   test('shows missing prefill telefoon as empty', () => {
@@ -139,7 +139,7 @@ describe('esfWijzigingen', () => {
       data: { telefoon: undefined },
       verzonden_data: { telefoon: '' },
     }), 'ref');
-    expect(text).toContain('Telefoon: geen wijzigingen');
+    expect(text).toContain('Telefoon: niet gewijzigd');
   });
 
   test('does not label answers that match built-in object properties', () => {
