@@ -57,6 +57,7 @@ describe('esfWijzigingen', () => {
       'Dossiernummer: 12345678',
       'Periodenummer: 202510',
       'Clientnummer: 12345',
+      'Inkhef: NEE',
       '',
       'Email: niet gewijzigd',
       'Telefoon: niet gewijzigd',

@@ -33,6 +33,7 @@ export function esfWijzigingen(taak: EsfTaak, reference: string): string {
     `Dossiernummer: ${data.dossiernummer}`,
     `Periodenummer: ${data.periodenummer}`,
     `Clientnummer: ${data.clientnummer}`,
+    `Inkhef: ${data.inkhef}`,
     '',
     ...compare('Email', data.email, verzonden.email, normalizeEmail),
     ...compare('Telefoon', data.telefoon, verzonden.telefoon, normalizeTelefoon),
