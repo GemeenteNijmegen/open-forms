@@ -79,6 +79,22 @@ describe('CloudWatchSubmissionLogReader.findByObjectUuid', () => {
     expect(cloudWatchLogsMock.commandCalls(StartQueryCommand)).toHaveLength(2);
   });
 
+  test('keeps queryRange and an event timestamp close to the range boundary as-is, with no boundary rule applied', async () => {
+    cloudWatchLogsMock.on(GetQueryResultsCommand).resolves({
+      status: 'Complete',
+      results: [[
+        { field: '@timestamp', value: '2026-01-01 23:59:59.999' },
+        { field: 'correlation_id', value: 'correlation-a' },
+        { field: 'event', value: 'submission.notification.received' },
+      ]],
+    });
+
+    const result = await reader().findByObjectUuid({ objectUuid: 'abc-123', range });
+
+    expect(result.queryRange).toEqual(range);
+    expect(result.traces[0].firstSeen.getTime()).toEqual(Date.UTC(2026, 0, 1, 23, 59, 59, 999));
+  });
+
   test('rejects an invalid range before querying CloudWatch', async () => {
     const invalidRange = { fromInclusive: range.toExclusive, toExclusive: range.fromInclusive };
 

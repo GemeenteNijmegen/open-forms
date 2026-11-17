@@ -3,8 +3,11 @@ import { CloudWatchLogsQueryRunner } from './cloudwatch/CloudWatchLogsQueryRunne
 import { CloudWatchSubmissionLogReaderError } from './errors/CloudWatchSubmissionLogReaderError';
 import { buildExecutionQuery } from './queries/SubmissionExecutionCwliQuery';
 import { buildReceiverQuery } from './queries/SubmissionReceiverCwliQuery';
-import { AbsoluteTimeRange, FindSubmissionLogsByUuidOptions, SubmissionLogTrace, SubmissionLogUuidResult } from './SubmissionLogReaderTypes';
-import { attachExecutions, buildReceiverTraces, collectExecutionArns } from './traces/SubmissionTraceBuilder';
+import {
+  AbsoluteTimeRange, FindSubmissionLogsByUuidOptions, FindSubmissionLogsByVersionOptions,
+  SubmissionLogTrace, SubmissionLogUuidResult, SubmissionLogVersionResult,
+} from './SubmissionLogReaderTypes';
+import { attachExecutions, buildReceiverTraces, categorizeTracesByObjectIndex, collectExecutionArns } from './traces/SubmissionTraceBuilder';
 
 export interface CloudWatchSubmissionLogReaderOptions {
   cloudWatchLogsClient?: CloudWatchLogsClient;
@@ -39,6 +42,21 @@ export class CloudWatchSubmissionLogReader {
       lookup: { objectUuid: options.objectUuid },
       queryRange: options.range,
       traces: await this.withExecutions(traces, options.range),
+    };
+  }
+
+  /**
+   * Reuses findByObjectUuid for the same UUID and range, then categorizes the result against the
+   * requested objectIndex. Not a fallback: a trace without a found index is never matched to the
+   * requested index just because nothing else fits.
+   */
+  async findByObjectVersion(options: FindSubmissionLogsByVersionOptions): Promise<SubmissionLogVersionResult> {
+    const uuidResult = await this.findByObjectUuid({ objectUuid: options.objectUuid, range: options.range });
+
+    return {
+      lookup: { objectUuid: options.objectUuid, objectIndex: options.objectIndex },
+      queryRange: uuidResult.queryRange,
+      ...categorizeTracesByObjectIndex(uuidResult.traces, options.objectIndex),
     };
   }
 

@@ -1,5 +1,6 @@
 import { CloudWatchSubmissionLogReaderError } from '../../errors/CloudWatchSubmissionLogReaderError';
-import { attachExecutions, buildReceiverTraces, collectExecutionArns } from '../SubmissionTraceBuilder';
+import { SubmissionLogTrace } from '../../SubmissionLogReaderTypes';
+import { attachExecutions, buildReceiverTraces, categorizeTracesByObjectIndex, collectExecutionArns } from '../SubmissionTraceBuilder';
 
 function row(overrides: Partial<Record<string, string>> = {}): Record<string, string> {
   return {
@@ -165,5 +166,113 @@ describe('collectExecutionArns / attachExecutions', () => {
   test('throws QUERY_RESULT_MAPPING_FAILED for an execution row without execution_arn', () => {
     const executionRows = [executionRow({ execution_arn: '' })];
     expect(() => attachExecutions([], executionRows)).toThrow(CloudWatchSubmissionLogReaderError);
+  });
+});
+
+function traceWithIndexes(correlationId: string, objectIndexes: number[]): SubmissionLogTrace {
+  return {
+    correlation_id: correlationId,
+    objectUuid: 'abc-123',
+    objectIndexes,
+    firstSeen: new Date('2026-01-01T10:00:00Z'),
+    lastSeen: new Date('2026-01-01T10:00:00Z'),
+    receiverEvents: [],
+    executions: [],
+  };
+}
+
+describe('categorizeTracesByObjectIndex', () => {
+  test('splits traces into requested, without-index, other-index and otherTraces categories', () => {
+    const traces = [
+      traceWithIndexes('A', [1]),
+      traceWithIndexes('B', [2]),
+      traceWithIndexes('C', []),
+      traceWithIndexes('D', [3]),
+      traceWithIndexes('E', [3]),
+    ];
+
+    const result = categorizeTracesByObjectIndex(traces, 3);
+
+    expect(result.tracesForRequestedIndex.map(t => t.correlation_id)).toEqual(['D', 'E']);
+    expect(result.tracesWithoutObjectIndex.map(t => t.correlation_id)).toEqual(['C']);
+    expect(result.tracesForOtherIndexes.map(t => t.correlation_id)).toEqual(['A', 'B']);
+    expect(result.otherTraces).toEqual([]);
+  });
+
+  test('puts a trace with multiple distinct objectIndexes in otherTraces, even if one of them matches', () => {
+    const traces = [traceWithIndexes('A', [3, 4])];
+    const result = categorizeTracesByObjectIndex(traces, 3);
+
+    expect(result.otherTraces.map(t => t.correlation_id)).toEqual(['A']);
+    expect(result.tracesForRequestedIndex).toEqual([]);
+  });
+});
+
+describe('known failure and unexpected traces', () => {
+  test('keeps a fetch failure before objectIndex is known as a full trace, with the reason', () => {
+    const rows = [
+      row({ event: 'submission.object.fetch.started' }),
+      row({ event: 'submission.object.fetch.failed', reason: 'ZGW object not found' }),
+    ];
+
+    const [trace] = buildReceiverTraces(rows, 'abc-123', 'query-1');
+
+    expect(trace.objectIndexes).toEqual([]);
+    expect(trace.executions).toEqual([]);
+    expect(trace.receiverEvents).toHaveLength(2);
+    expect(trace.receiverEvents[1].reason).toEqual('ZGW object not found');
+  });
+
+  test('keeps an ignored object as a full trace, with the reason', () => {
+    const rows = [row({ event: 'submission.object.ignored', reason: 'Not a recognized object type.' })];
+    const [trace] = buildReceiverTraces(rows, 'abc-123', 'query-1');
+
+    expect(trace.receiverEvents[0].reason).toEqual('Not a recognized object type.');
+    expect(trace.executions).toEqual([]);
+  });
+
+  test('keeps receiver events when execution start failed before an execution_arn was ever logged', () => {
+    const rows = [
+      row({ event: 'submission.execution.starting', objectIndex: '3' }),
+      row({ event: 'submission.execution.start.failed', objectIndex: '3', reason: 'StepFunctions throttled' }),
+    ];
+
+    const traces = buildReceiverTraces(rows, 'abc-123', 'query-1');
+
+    expect(collectExecutionArns(traces)).toEqual([]);
+    expect(traces[0].executions).toEqual([]);
+  });
+
+  test('does not reorder or validate an unexpected lifecycle sequence, only sorts on @timestamp', () => {
+    const rows = [
+      row({ '@timestamp': '2026-01-01 10:00:00.000', 'event': 'submission.execution.started' }),
+      row({ '@timestamp': '2026-01-01 10:00:01.000', 'event': 'submission.object.fetch.started' }),
+    ];
+
+    const [trace] = buildReceiverTraces(rows, 'abc-123', 'query-1');
+
+    expect(trace.receiverEvents.map(e => e.event)).toEqual([
+      'submission.execution.started',
+      'submission.object.fetch.started',
+    ]);
+  });
+
+  test('attaches events for every distinct execution_arn found within one correlation_id', () => {
+    const firstArn = 'arn:aws:states:eu-central-1:123456789012:execution:orchestrator:OF-FIRST-1';
+    const secondArn = 'arn:aws:states:eu-central-1:123456789012:execution:orchestrator:OF-SECOND-2';
+
+    const traces = buildReceiverTraces([
+      row({ event: 'submission.execution.started', execution_arn: firstArn }),
+      row({ event: 'submission.execution.started', execution_arn: secondArn }),
+    ], 'abc-123', 'query-1');
+
+    expect(collectExecutionArns(traces)).toEqual([firstArn, secondArn]);
+
+    const [trace] = attachExecutions(traces, [
+      executionRow({ execution_arn: firstArn }),
+      executionRow({ execution_arn: secondArn }),
+    ]);
+
+    expect(trace.executions.map(e => e.execution_arn)).toEqual([firstArn, secondArn]);
   });
 });

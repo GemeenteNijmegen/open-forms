@@ -1,6 +1,8 @@
 import { SubmissionLogField } from '../../../shared/submission-logging/SubmissionLogging';
 import { CloudWatchSubmissionLogReaderError } from '../errors/CloudWatchSubmissionLogReaderError';
-import { SubmissionExecutionLogEvent, SubmissionLogTrace, SubmissionReceiverLogEvent } from '../SubmissionLogReaderTypes';
+import {
+  SubmissionExecutionLogEvent, SubmissionLogTrace, SubmissionLogVersionCategories, SubmissionReceiverLogEvent,
+} from '../SubmissionLogReaderTypes';
 
 /**
  * Groups raw receiver rows by correlation_id into traces. A row without a correlation_id can't be grouped
@@ -55,6 +57,34 @@ export function attachExecutions(traces: SubmissionLogTrace[], executionRows: Re
       events: eventsByArn.get(executionArn) ?? [],
     })),
   }));
+}
+
+/**
+ * Splits traces by how their own objectIndexes relate to the requested objectIndex. A trace is never
+ * matched to the requested index unless it's the only index actually found in that trace; an empty or
+ * multi-value objectIndexes never falls back to tracesForRequestedIndex.
+ */
+export function categorizeTracesByObjectIndex(traces: SubmissionLogTrace[], objectIndex: number): SubmissionLogVersionCategories {
+  const categories: SubmissionLogVersionCategories = {
+    tracesForRequestedIndex: [],
+    tracesWithoutObjectIndex: [],
+    tracesForOtherIndexes: [],
+    otherTraces: [],
+  };
+
+  for (const trace of traces) {
+    if (trace.objectIndexes.length === 0) {
+      categories.tracesWithoutObjectIndex.push(trace);
+    } else if (trace.objectIndexes.length > 1) {
+      categories.otherTraces.push(trace);
+    } else if (trace.objectIndexes[0] === objectIndex) {
+      categories.tracesForRequestedIndex.push(trace);
+    } else {
+      categories.tracesForOtherIndexes.push(trace);
+    }
+  }
+
+  return categories;
 }
 
 function buildTrace(correlationId: string, rows: Record<string, string>[], objectUuid: string): SubmissionLogTrace {
