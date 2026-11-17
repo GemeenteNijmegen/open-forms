@@ -19,6 +19,8 @@
     "bundle:static-form-definitions/lambda/StaticFormDefinitions.lambda:watch": "projen bundle:static-form-definitions/lambda/StaticFormDefinitions.lambda:watch",
     "bundle:submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda": "projen bundle:submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda",
     "bundle:submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda:watch": "projen bundle:submission-forwarder/documentsToS3Storage/documentsToS3Storage.lambda:watch",
+    "bundle:submission-forwarder/esf-processing-lambda/esf-processing.lambda": "projen bundle:submission-forwarder/esf-processing-lambda/esf-processing.lambda",
+    "bundle:submission-forwarder/esf-processing-lambda/esf-processing.lambda:watch": "projen bundle:submission-forwarder/esf-processing-lambda/esf-processing.lambda:watch",
     "bundle:submission-forwarder/forwarder-lambda/forwarder.lambda": "projen bundle:submission-forwarder/forwarder-lambda/forwarder.lambda",
     "bundle:submission-forwarder/forwarder-lambda/forwarder.lambda:watch": "projen bundle:submission-forwarder/forwarder-lambda/forwarder.lambda:watch",
     "bundle:submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda": "projen bundle:submission-forwarder/internal-notification-mail-lambda/internalNotificationMail.lambda",

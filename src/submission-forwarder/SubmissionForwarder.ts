@@ -18,6 +18,7 @@ import { SubmissionLogGroupTag } from '../shared/submission-logging/SubmissionLo
 import { Statics } from '../Statics';
 import { DeliveryQueue } from './DeliveryQueue';
 import { DocumentsToS3StorageFunction } from './documentsToS3Storage/documentsToS3Storage-function';
+import { EsfProcessingFunction } from './esf-processing-lambda/esf-processing-function';
 import { ForwarderFunction } from './forwarder-lambda/forwarder-function';
 import { InternalNotificationMailFunction } from './internal-notification-mail-lambda/internalNotificationMail-function';
 import { SubmissionForwarderStepFunctionDashboard } from './monitoring/submissionforwarder-stepfunction-dashboard';
@@ -113,6 +114,7 @@ export class SubmissionForwarder extends Construct {
     const zgw = this.setupZgwRegistrationLambda();
     const vipTranslation = this.setupVipTransformationLambda();
     const tribeProcessor = this.setupTribeProcessorLambda();
+    const esfProcessing = this.setupEsfProcessingLambda();
 
     const orchestrator = this.setupOrchestrationStepFunction(
       documentStorage,
@@ -121,6 +123,7 @@ export class SubmissionForwarder extends Construct {
       zgw,
       vipTranslation,
       tribeProcessor,
+      esfProcessing,
       esfQueue.queue,
       sociaalQueue.queue,
     );
@@ -335,6 +338,31 @@ export class SubmissionForwarder extends Construct {
     return s3StorageFunction;
   }
 
+  private setupEsfProcessingLambda() {
+    const esfProcessingFunction = new EsfProcessingFunction(this, 'esf-processing', {
+      logGroup: new LogGroup(this, 'esf-processing-logs', {
+        encryptionKey: this.options.key,
+        retention: RetentionDays.SIX_MONTHS,
+      }),
+      description: 'ESF processing lambda',
+      timeout: Duration.seconds(30),
+      environment: {
+        POWERTOOLS_LOG_LEVEL: this.options.logLevel ?? 'INFO',
+        SUBMISSION_BUCKET_NAME: this.bucket.bucketName,
+      },
+    });
+
+    this.bucket.grantPut(esfProcessingFunction);
+    this.options.key.grantEncryptDecrypt(esfProcessingFunction);
+
+    new ErrorMonitoringAlarm(this, 'esfprocessingalarm', {
+      criticality: this.options.criticality,
+      lambda: esfProcessingFunction,
+    });
+
+    return esfProcessingFunction;
+  }
+
   private setupEsbForwarderLambda() {
     if (!this.parameters) {
       throw Error('Parameters should be created first');
@@ -389,6 +417,7 @@ export class SubmissionForwarder extends Construct {
     zgwLambda: Function,
     vipTransformation: Function,
     tribeProcessorLambda: Function,
+    esfProcessingLambda: Function,
     esfQueue: Queue,
     sociaalQueue: Queue,
   ) {
@@ -415,6 +444,7 @@ export class SubmissionForwarder extends Construct {
         ZGW_REGISTRATION_LAMBDA_ARN: zgwLambda.functionArn,
         VIP_TRANSFORMATION_LAMBDA_ARN: vipTransformation.functionArn,
         TRIBE_PROCESSOR_LAMBDA_ARN: tribeProcessorLambda.functionArn,
+        ESF_PROCESSING_LAMBDA_ARN: esfProcessingLambda.functionArn,
         ESF_QUEUE_URL: esfQueue.queueUrl,
         SOCIAAL_QUEUE_URL: sociaalQueue.queueUrl,
       },
@@ -434,6 +464,7 @@ export class SubmissionForwarder extends Construct {
     notificationEmailLambda.grantInvoke(stepfunction);
     vipTransformation.grantInvoke(stepfunction);
     tribeProcessorLambda.grantInvoke(stepfunction);
+    esfProcessingLambda.grantInvoke(stepfunction);
     esfQueue.grantSendMessages(stepfunction);
     sociaalQueue.grantSendMessages(stepfunction);
     this.backupBucket.grantWrite(stepfunction);
