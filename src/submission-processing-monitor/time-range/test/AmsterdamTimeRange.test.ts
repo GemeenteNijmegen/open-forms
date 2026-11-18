@@ -1,4 +1,22 @@
-import { amsterdamCalendarDayToAbsoluteTimeRange } from '../AmsterdamTimeRange';
+import { amsterdamCalendarDayToAbsoluteTimeRange, previousAmsterdamCalendarDay } from '../AmsterdamTimeRange';
+
+describe('previousAmsterdamCalendarDay', () => {
+  test('just after midnight in Amsterdam, while it is still the evening before in UTC', () => {
+    // 00:30 on 16 July in Amsterdam (CEST)
+    expect(previousAmsterdamCalendarDay(new Date('2026-07-15T22:30:00Z'))).toEqual('2026-07-15');
+  });
+
+  test('the day after the clock goes forward or back', () => {
+    // 00:30 on 30 March in Amsterdam, the day after the 23-hour day
+    expect(previousAmsterdamCalendarDay(new Date('2026-03-29T22:30:00Z'))).toEqual('2026-03-29');
+    // 00:30 on 26 October in Amsterdam, the day after the 25-hour day
+    expect(previousAmsterdamCalendarDay(new Date('2026-10-25T23:30:00Z'))).toEqual('2026-10-25');
+  });
+
+  test('a year boundary', () => {
+    expect(previousAmsterdamCalendarDay(new Date('2027-01-01T08:00:00Z'))).toEqual('2026-12-31');
+  });
+});
 
 describe('amsterdamCalendarDayToAbsoluteTimeRange', () => {
   test('a normal winter day (CET, UTC+1)', () => {
