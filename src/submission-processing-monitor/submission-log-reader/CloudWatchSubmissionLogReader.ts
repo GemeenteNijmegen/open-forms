@@ -1,5 +1,5 @@
 import { CloudWatchLogsClient } from '@aws-sdk/client-cloudwatch-logs';
-import { CloudWatchLogsQueryRunner } from './cloudwatch/CloudWatchLogsQueryRunner';
+import { CloudWatchLogsQueryRunner, CwliQueryResult } from './cloudwatch/CloudWatchLogsQueryRunner';
 import { CloudWatchSubmissionLogReaderError } from './errors/CloudWatchSubmissionLogReaderError';
 import { buildExecutionQuery } from './queries/SubmissionExecutionCwliQuery';
 import { buildReceiverQuery } from './queries/SubmissionReceiverCwliQuery';
@@ -16,7 +16,7 @@ const EXECUTION_QUERY_EXTRA_MS = 60 * 60 * 1000;
 export interface CloudWatchSubmissionLogReaderOptions {
   cloudWatchLogsClient?: CloudWatchLogsClient;
 
-  // Functional code must not depend on diagnostics being present.
+  // Adds the queryId and CloudWatch statistics of each query to the result. Functional code must not depend on it.
   diagnostics?: boolean;
 }
 
@@ -53,13 +53,27 @@ export class CloudWatchSubmissionLogReader {
       stage: 'receiver-query',
     });
 
-    const traces = buildReceiverTraces(receiverResult.rows, options.objectUuid, receiverResult.queryId);
+    const receiverTraces = buildReceiverTraces(receiverResult.rows, options.objectUuid, receiverResult.queryId);
 
-    return {
+    const executionResult = await this.runExecutionQuery(receiverTraces, options.range);
+    const traces = executionResult
+      ? attachExecutions(receiverTraces, executionResult.rows, executionResult.queryId)
+      : receiverTraces;
+
+    const result: SubmissionLogUuidResult = {
       lookup: { objectUuid: options.objectUuid },
       queryRange: options.range,
-      traces: await this.addExecutionEvents(traces, options.range),
+      traces,
     };
+
+    if (this.diagnostics) {
+      result.diagnostics = {
+        receiverQuery: { queryId: receiverResult.queryId, statistics: receiverResult.statistics },
+        executionQuery: executionResult ? { queryId: executionResult.queryId, statistics: executionResult.statistics } : undefined,
+      };
+    }
+
+    return result;
   }
 
   /**
@@ -78,15 +92,16 @@ export class CloudWatchSubmissionLogReader {
     return {
       lookup: { objectUuid: options.objectUuid, objectIndex: options.objectIndex },
       queryRange: uuidResult.queryRange,
+      diagnostics: uuidResult.diagnostics,
       ...categorizeTracesByObjectIndex(uuidResult.traces, options.objectIndex),
     };
   }
 
   // No execution_arn found means no execution query, instead of one with an empty in [] filter.
-  private async addExecutionEvents(traces: SubmissionLogTrace[], range: AbsoluteTimeRange): Promise<SubmissionLogTrace[]> {
+  private async runExecutionQuery(traces: SubmissionLogTrace[], range: AbsoluteTimeRange): Promise<CwliQueryResult | undefined> {
     const executionArns = collectExecutionArns(traces);
     if (executionArns.length === 0) {
-      return traces;
+      return undefined;
     }
 
     const executionRange = {
@@ -94,13 +109,11 @@ export class CloudWatchSubmissionLogReader {
       toExclusive: new Date(range.toExclusive.getTime() + EXECUTION_QUERY_EXTRA_MS),
     };
 
-    const executionResult = await this.queryRunner.run({
+    return this.queryRunner.run({
       queryString: buildExecutionQuery(executionArns),
       range: executionRange,
       stage: 'execution-query',
     });
-
-    return attachExecutions(traces, executionResult.rows);
   }
 }
 
