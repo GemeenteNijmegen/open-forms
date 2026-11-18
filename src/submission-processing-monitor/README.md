@@ -130,12 +130,11 @@ De volledige eerdere te grote staat nog op feat/submission-processing-full. Daar
 
 ## Parameters
 
-Voor de monitor reserveren we:
+Voor de monitor reserveren we een parameter en een secret:
 
 ```
-objects-api-base-url
-objects-api-token
-
+objects-api-base-url (SSM-parameter)
+objects-api-token (secret)
 ```
 
 Voor het geheel:
