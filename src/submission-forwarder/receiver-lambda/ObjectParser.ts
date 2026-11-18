@@ -48,6 +48,19 @@ export class ObjectParser {
     }
   }
 
+  findObjectTypeName(objectType: string): string | undefined {
+    const type = this.objectTypes.find(configured => matchesObjectType(configured.objectTypeUrl, objectType));
+    if (!type) {
+      return undefined;
+    }
+    for (const [name, parser] of Object.entries(this.supportedObjectTypes)) {
+      if (parser === type.parser) {
+        return name;
+      }
+    }
+    return undefined;
+  }
+
   parse(object: ZgwObject): EnrichedZgwObjectData {
     const type = this.objectTypes.find(objectType => matchesObjectType(objectType.objectTypeUrl, object.type));
     if (!type) {

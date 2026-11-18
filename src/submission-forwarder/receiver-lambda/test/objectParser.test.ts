@@ -174,6 +174,25 @@ describe('UUID-only object type matching', () => {
     expect(parser.parse(taak)).toBeTruthy();
   });
 });
+
+describe('Finding the configured name of an object type', () => {
+  const parser = new ObjectParser(`esfTaak##${esfTaakUuid};submission##${submissionTaakUrl}`);
+
+  test('A configured URL matches the same URL', () => {
+    expect(parser.findObjectTypeName(submissionTaakUrl)).toBe('submission');
+  });
+
+  test('A configured UUID matches a URL ending in that UUID, on any domain', () => {
+    expect(parser.findObjectTypeName(esfTaakUrl)).toBe('esfTaak');
+    expect(parser.findObjectTypeName(`https://new-domain.example.com/objecttypes/api/v2/objecttypes/${esfTaakUuid}`)).toBe('esfTaak');
+  });
+
+  test('An unconfigured type, or a configured URL on another domain, does not match', () => {
+    expect(parser.findObjectTypeName(tribeVerzoekUrl)).toBeUndefined();
+    expect(parser.findObjectTypeName(`https://new-domain.example.com/objecttypes/api/v2/objecttypes/${submissionUuid}`)).toBeUndefined();
+  });
+});
+
 describe('Adding optional s3SubFolderObject to enrichedZGWObject', () => {
   test('Parsing JUR vipjzVerzoek adds s3SubFolder', () => {
     const parsedObject = objectParser.parse(vipjzVerzoek);
