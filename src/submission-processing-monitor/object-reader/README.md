@@ -13,8 +13,11 @@ const yesterday = await reader.findVersions();
 
 Dagen worden geschreven zoals in de Objects API, in Amsterdamse tijd. Beide dagen horen erbij. Zonder periode is het de vorige dag.
 
-Per versie komt terug: objectUuid, objectType, index, registrationAt, en de status uit data als die er is (bij ESF-taken).
-Alleen objecttypes die de receiver ook verwerkt (ssmObjectTypes) tellen mee.
+Per versie komt terug: objectUuid, objectType (de URL), objectTypeName (de naam uit ssmObjectTypes, zoals esfTaak), index, registrationAt, en de
+status uit data als die er is (bij ESF-taken). Alleen objecttypes die de receiver ook verwerkt (ssmObjectTypes) tellen mee.
+
+Een powertools Logger meegeven kan met new ObjectReader({ logger }); zonder logger maakt de reader er zelf een. Elke API-call wordt op debug
+gelogd met pad, queryparameters en status. Een mislukte call staat op error met de reden.
 
 ## Hoe
 
