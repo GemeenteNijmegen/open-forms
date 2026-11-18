@@ -57,7 +57,8 @@ De receiver en orchestrator krijgen vaste CloudWatch Log Group-namen via `Static
 
 ## Daarna de controle
 
-Als de logging op orde is, kan de monitor de Objects van de vorige dag naast de logs leggen.
+Als de logging op orde is, kan de monitor de Objects van de vorige dag naast de logs leggen. De Objects komen uit de [object reader](object-reader/README.md), de logs uit de
+[submission log reader](submission-log-reader/README.md).
 
 ```mermaid
 flowchart LR
