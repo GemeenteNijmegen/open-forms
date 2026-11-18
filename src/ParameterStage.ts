@@ -1,5 +1,6 @@
 import { PermissionsBoundaryAspect } from '@gemeentenijmegen/aws-constructs';
 import { Stack, Tags, Stage, StageProps, Aspects } from 'aws-cdk-lib';
+import { Secret } from 'aws-cdk-lib/aws-secretsmanager';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { Construct } from 'constructs';
 import { Configurable } from './Configuration';
@@ -65,9 +66,8 @@ export class ParameterStack extends Stack {
       description: 'Objects API base URL for the submission processing monitor',
     });
 
-    new StringParameter(this, 'submission-processing-monitor-objects-api-token', {
-      parameterName: Statics.ssmSubmissionProcessingMonitorObjectsApiToken,
-      stringValue: '-',
+    new Secret(this, 'submission-processing-monitor-objects-api-token-secret', {
+      secretName: Statics.secretSubmissionProcessingMonitorObjectsApiToken,
       description: 'Objects API token for the submission processing monitor',
     });
   }

@@ -54,6 +54,6 @@ export class Statics {
   static readonly ssmObjectTypes = '/open-forms/object-types';
   // Submission processing monitor
   static readonly ssmSubmissionProcessingMonitorObjectsApiBaseUrl = '/open-forms/submission-processing-monitor/objects-api-base-url';
-  static readonly ssmSubmissionProcessingMonitorObjectsApiToken = '/open-forms/submission-processing-monitor/objects-api-token';
+  static readonly secretSubmissionProcessingMonitorObjectsApiToken = '/open-forms/submission-processing-monitor/objects-api-token';
 
 }
