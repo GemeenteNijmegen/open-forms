@@ -1,15 +1,9 @@
 import { SubmissionLogField, SubmissionLogGroupTag } from '../../../shared/submission-logging/SubmissionLogging';
 
 /**
- * Reads receiver (lambda) logging through the shared OpenFormsLog/submission-forwarder-receiver tag, so a redeploy
- * that changes the physical Log Group name doesn't break this query.
- *
- * Filters on objectUuid instead of objectIndex: the earliest receiver events (notification received, object
- * fetch started) are logged before an objectIndex is known, so an objectIndex filter would miss them.
- *
- * Selects the compact structured fields plus @timestamp, @ingestionTime and @ptr. @message is left out;
- * @ptr lets a caller fetch the full record later with GetLogRecord if needed. The time range itself is not
- * part of this query string, StartQuery takes that separately.
+ * Selects the receiver log groups by tag, so a redeploy with a new log group name keeps working.
+ * Filters on objectUuid, not objectIndex: the first receiver events are logged before the index is known.
+ * @message is left out, @ptr is enough to fetch the full record later. The time range goes to StartQuery.
  */
 export function buildReceiverQuery(objectUuid: string): string {
   const fields = [

@@ -1,8 +1,20 @@
 import type { QueryStatistics } from '@aws-sdk/client-cloudwatch-logs';
 import { SubmissionLogEventValue, SubmissionExecutionEventValue } from '../../shared/submission-logging/SubmissionLogging';
-import type { AbsoluteTimeRange } from '../time-range/AmsterdamTimeRange';
 
-export type { AbsoluteTimeRange };
+/**
+ * fromInclusive is part of the range, toExclusive is not. Both are absolute timestamps; the
+ * reader itself does not convert timezones or calendar days.
+ *
+ * Example: fromInclusive = 2026-01-01T00:00:00Z, toExclusive = 2026-01-02T00:00:00Z matches
+ * everything from that midnight up to, but not including, the next one. An event logged exactly
+ * at 2026-01-02T00:00:00Z falls outside this range.
+ *
+ * Might be important when a group of logs is just around the ranges edges. Part in, part out.
+ */
+export interface AbsoluteTimeRange {
+  fromInclusive: Date;
+  toExclusive: Date;
+}
 
 export interface FindSubmissionLogsByUuidOptions {
   objectUuid: string;

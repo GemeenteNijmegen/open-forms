@@ -69,5 +69,10 @@ describe('happy flow (real accp sample data)', () => {
     expect(succeeded.type).toEqual('ExecutionSucceeded');
     expect(succeeded.previousEventId).toEqual(24);
     expect(succeeded.details).toEqual({});
+
+    // The execution query runs one hour past toExclusive, so an execution that crosses the boundary keeps its last events.
+    const executionQuery = cloudWatchLogsMock.commandCalls(StartQueryCommand)[1].args[0].input;
+    expect(executionQuery.endTime).toEqual(Date.parse('2026-11-03T01:00:00Z') / 1000 - 1);
+    expect(result.queryRange).toEqual(range);
   });
 });

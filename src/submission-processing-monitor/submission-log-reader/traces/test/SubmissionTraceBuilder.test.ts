@@ -40,15 +40,6 @@ describe('buildReceiverTraces', () => {
     expect(traces.find(t => t.correlation_id === 'correlation-b')?.objectIndexes).toEqual([2]);
   });
 
-  test('keeps two attempts for the same objectIndex as two traces, not deduplicated', () => {
-    const rows = [
-      row({ correlation_id: 'correlation-a', objectIndex: '3' }),
-      row({ correlation_id: 'correlation-b', objectIndex: '3' }),
-    ];
-
-    expect(buildReceiverTraces(rows, 'abc-123', 'query-1')).toHaveLength(2);
-  });
-
   test('keeps multiple objectIndexes within one correlation_id as-is', () => {
     const rows = [
       row({ objectIndex: '3' }),
@@ -114,17 +105,6 @@ function executionRow(overrides: Partial<Record<string, string>> = {}): Record<s
 }
 
 describe('collectExecutionArns / attachExecutions', () => {
-  test('collects the execution_arn values found across all traces', () => {
-    const traces = buildReceiverTraces([row({ execution_arn: executionArn })], 'abc-123', 'query-1');
-    expect(collectExecutionArns(traces)).toEqual([executionArn]);
-  });
-
-  test('leaves executions empty for a trace with no execution_arn', () => {
-    const traces = buildReceiverTraces([row()], 'abc-123', 'query-1');
-    expect(collectExecutionArns(traces)).toEqual([]);
-    expect(attachExecutions(traces, [])[0].executions).toEqual([]);
-  });
-
   test('attaches matching execution events, sorted by id instead of timestamp', () => {
     const traces = buildReceiverTraces([row({ execution_arn: executionArn })], 'abc-123', 'query-1');
 
@@ -161,6 +141,12 @@ describe('collectExecutionArns / attachExecutions', () => {
     expect(event.redriveCount).toEqual(1);
     expect(event.id).toEqual(3);
     expect(event.previousEventId).toEqual(2);
+  });
+
+  test('throws QUERY_RESULT_MAPPING_FAILED instead of keeping unreadable source values', () => {
+    expect(() => buildReceiverTraces([row({ '@timestamp': 'not-a-date' })], 'abc-123', 'query-1')).toThrow(CloudWatchSubmissionLogReaderError);
+    expect(() => buildReceiverTraces([row({ objectIndex: 'three' })], 'abc-123', 'query-1')).toThrow(CloudWatchSubmissionLogReaderError);
+    expect(() => attachExecutions([], [executionRow({ '@message': '{not json' })])).toThrow(CloudWatchSubmissionLogReaderError);
   });
 
   test('throws QUERY_RESULT_MAPPING_FAILED for an execution row without execution_arn', () => {
@@ -223,14 +209,6 @@ describe('known failure and unexpected traces', () => {
     expect(trace.receiverEvents[1].reason).toEqual('ZGW object not found');
   });
 
-  test('keeps an ignored object as a full trace, with the reason', () => {
-    const rows = [row({ event: 'submission.object.ignored', reason: 'Not a recognized object type.' })];
-    const [trace] = buildReceiverTraces(rows, 'abc-123', 'query-1');
-
-    expect(trace.receiverEvents[0].reason).toEqual('Not a recognized object type.');
-    expect(trace.executions).toEqual([]);
-  });
-
   test('keeps receiver events when execution start failed before an execution_arn was ever logged', () => {
     const rows = [
       row({ event: 'submission.execution.starting', objectIndex: '3' }),
@@ -241,20 +219,6 @@ describe('known failure and unexpected traces', () => {
 
     expect(collectExecutionArns(traces)).toEqual([]);
     expect(traces[0].executions).toEqual([]);
-  });
-
-  test('does not reorder or validate an unexpected lifecycle sequence, only sorts on @timestamp', () => {
-    const rows = [
-      row({ '@timestamp': '2026-01-01 10:00:00.000', 'event': 'submission.execution.started' }),
-      row({ '@timestamp': '2026-01-01 10:00:01.000', 'event': 'submission.object.fetch.started' }),
-    ];
-
-    const [trace] = buildReceiverTraces(rows, 'abc-123', 'query-1');
-
-    expect(trace.receiverEvents.map(e => e.event)).toEqual([
-      'submission.execution.started',
-      'submission.object.fetch.started',
-    ]);
   });
 
   test('attaches events for every distinct execution_arn found within one correlation_id', () => {

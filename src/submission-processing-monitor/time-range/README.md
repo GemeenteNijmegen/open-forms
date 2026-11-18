@@ -1,17 +1,21 @@
 # Time range
 
-Zet een lokale Europe/Amsterdam-kalenderdag om naar de AbsoluteTimeRange die de reader accepteert. De reader zelf doet geen tijdzoneconversie, dat gebeurt hier.
+Zet een kalenderdag in Europe/Amsterdam om naar de AbsoluteTimeRange die de submission log reader accepteert.
+De reader zelf rekent niet met tijdzones.
 
-Een kalenderdag is { year, month, day }, middernacht tot middernacht in Amsterdamse tijd, niet in UTC. Een AbsoluteTimeRange is half-open: fromInclusive hoort erbij, toExclusive niet. De toExclusive van dag N is daardoor exact de fromInclusive van dag N+1.
+```ts
+import { amsterdamCalendarDayToAbsoluteTimeRange } from '../time-range/AmsterdamTimeRange';
 
-Amsterdam wisselt tussen CET en CEST. Die overgang gebeurt om 02:00 of 03:00 lokale tijd, nooit om middernacht, dus de omzetting van middernacht zelf is altijd eenduidig.
+const range = amsterdamCalendarDayToAbsoluteTimeRange({ year: 2026, month: 3, day: 29 });
+// fromInclusive 2026-03-28T23:00:00Z, toExclusive 2026-03-29T22:00:00Z
+```
 
-Objects-timestamps zijn nog niet uitgewerkt. Er is nu geen Objects API-client in deze repo, dus het formaat en de tijdzone daarvan staan nog niet vast.
+Een dag loopt van middernacht tot middernacht in Amsterdamse tijd. fromInclusive hoort bij de dag, toExclusive niet,
+dus de toExclusive van de ene dag is precies de fromInclusive van de volgende. Op de dag dat de klok vooruit gaat
+duurt een dag 23 uur, op de dag dat hij terug gaat 25 uur. De klok verspringt om 02:00 of 03:00, dus middernacht is
+altijd eenduidig. De omzetting gebruikt Intl en heeft geen extra dependency nodig.
 
-## Hoe de omzetting werkt
+De tests in test/AmsterdamTimeRange.test.ts dekken een winterdag, een zomerdag, beide overgangsdagen en de maand- en jaargrens.
 
-De kalendercijfers worden eerst behandeld alsof ze al UTC waren, en dat gok wordt daarna gecorrigeerd met de echte Amsterdam-offset op dat moment (via Intl, geen extra dependency nodig). Zie AmsterdamTimeRange.ts voor de twee functies die dat doen.
-
-## Scenario's
-
-Winterdag, zomerdag, de 23-uursdag (voorjaar, klok een uur vooruit) en de 25-uursdag (najaar, klok een uur terug), plus maand- en jaargrens. Staat allemaal in test/AmsterdamTimeRange.test.ts, met de verwachte waarden vooraf gecontroleerd via een los Node-scriptje, niet alleen met de hand uitgerekend.
+Objects-timestamps zijn nog niet uitgewerkt. Er is nu geen Objects API-client in deze repo, dus het formaat en de
+tijdzone daarvan staan nog niet vast.

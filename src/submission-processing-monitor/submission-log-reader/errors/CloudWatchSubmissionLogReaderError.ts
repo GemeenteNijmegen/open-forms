@@ -1,15 +1,19 @@
 import { QueryStatistics } from '@aws-sdk/client-cloudwatch-logs';
 import { AbsoluteTimeRange } from '../SubmissionLogReaderTypes';
 
+/**
+ * The monitor handles every code the same way: the check is incomplete. queryStatus, awsRequestId and the message say what went wrong.
+ *
+ * INVALID_TIME_RANGE: the range is empty or reversed. Nothing was sent to CloudWatch.
+ * QUERY_FAILED: the query did not start, ended with a status other than Complete, ran past the local timeout,
+ * or its first results could not be fetched.
+ * QUERY_RESULTS_INCOMPLETE: a later result page failed, or the row count reached the limit.
+ * QUERY_RESULT_MAPPING_FAILED: a result row does not have the expected shape.
+ */
 export type CloudWatchSubmissionLogReaderErrorCode =
   | 'INVALID_TIME_RANGE'
-  | 'QUERY_START_FAILED'
   | 'QUERY_FAILED'
-  | 'QUERY_CANCELLED'
-  | 'QUERY_TIMEOUT'
-  | 'QUERY_RESULTS_FAILED'
   | 'QUERY_RESULTS_INCOMPLETE'
-  | 'QUERY_RESULT_LIMIT_REACHED'
   | 'QUERY_RESULT_MAPPING_FAILED';
 
 export type CloudWatchSubmissionLogReaderStage =
@@ -27,11 +31,7 @@ export interface CloudWatchSubmissionLogReaderErrorContext {
   awsRequestId?: string;
 }
 
-/**
- * Thrown for a technically unreliable CloudWatch read. The caller never gets a partial normal
- * result alongside this error, only the error itself. Never carries raw @message content, full
- * result rows or tokens; the context is limited to what's needed to trace the failing query.
- */
+// The caller never gets a partial result next to this error. The context holds no @message content or result rows.
 export class CloudWatchSubmissionLogReaderError extends Error {
   constructor(
     public readonly code: CloudWatchSubmissionLogReaderErrorCode,

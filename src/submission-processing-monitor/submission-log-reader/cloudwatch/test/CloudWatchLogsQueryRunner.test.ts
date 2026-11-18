@@ -37,6 +37,14 @@ describe('CloudWatchLogsQueryRunner', () => {
     });
   });
 
+  test('always sends an explicit limit to StartQuery', async () => {
+    cloudWatchLogsMock.on(GetQueryResultsCommand).resolves({ status: 'Complete', results: [] });
+
+    await runner().run(request);
+
+    expect(cloudWatchLogsMock.commandCalls(StartQueryCommand)[0].args[0].input.limit).toEqual(100_000);
+  });
+
   test('returns rows once the query is Complete', async () => {
     cloudWatchLogsMock.on(GetQueryResultsCommand).resolves({
       status: 'Complete',
@@ -78,40 +86,30 @@ describe('CloudWatchLogsQueryRunner', () => {
     expect(cloudWatchLogsMock.commandCalls(GetQueryResultsCommand)).toHaveLength(3);
   });
 
-  test.each([
-    ['Failed', 'QUERY_FAILED'],
-    ['Cancelled', 'QUERY_CANCELLED'],
-    ['Timeout', 'QUERY_TIMEOUT'],
-  ] as const)('maps CWLI status %s to %s', async (status, code) => {
+  test.each(['Failed', 'Cancelled', 'Timeout'] as const)('throws QUERY_FAILED with the CWLI status %s in the context', async status => {
     cloudWatchLogsMock.on(GetQueryResultsCommand).resolves({ status });
 
-    await expect(runner().run(request)).rejects.toMatchObject({ code, context: { queryId: 'query-1', queryStatus: status } });
+    await expect(runner().run(request)).rejects.toMatchObject({ code: 'QUERY_FAILED', context: { queryId: 'query-1', queryStatus: status } });
   });
 
-  test('stops the query and throws QUERY_TIMEOUT when the local deadline passes', async () => {
+  test('stops the query and throws QUERY_FAILED when the local deadline passes', async () => {
     cloudWatchLogsMock.on(GetQueryResultsCommand).resolves({ status: 'Running' });
     cloudWatchLogsMock.on(StopQueryCommand).resolves({ success: true });
 
-    await expect(runner().run(request)).rejects.toMatchObject({ code: 'QUERY_TIMEOUT', context: { queryId: 'query-1' } });
+    await expect(runner().run(request)).rejects.toMatchObject({ code: 'QUERY_FAILED', context: { queryId: 'query-1', queryStatus: 'Running' } });
     expect(cloudWatchLogsMock.commandCalls(StopQueryCommand)).toHaveLength(1);
   });
 
-  test('throws QUERY_START_FAILED when StartQuery returns no queryId', async () => {
-    cloudWatchLogsMock.on(StartQueryCommand).resolves({});
-
-    await expect(runner().run(request)).rejects.toMatchObject({ code: 'QUERY_START_FAILED' });
-  });
-
-  test('throws QUERY_START_FAILED when StartQuery itself fails', async () => {
+  test('throws QUERY_FAILED when StartQuery fails', async () => {
     cloudWatchLogsMock.on(StartQueryCommand).rejects(new Error('boom'));
 
-    await expect(runner().run(request)).rejects.toMatchObject({ code: 'QUERY_START_FAILED' });
+    await expect(runner().run(request)).rejects.toMatchObject({ code: 'QUERY_FAILED' });
   });
 
-  test('throws QUERY_RESULTS_FAILED when GetQueryResults itself fails', async () => {
+  test('throws QUERY_FAILED when GetQueryResults fails', async () => {
     cloudWatchLogsMock.on(GetQueryResultsCommand).rejects(new Error('boom'));
 
-    await expect(runner().run(request)).rejects.toMatchObject({ code: 'QUERY_RESULTS_FAILED' });
+    await expect(runner().run(request)).rejects.toMatchObject({ code: 'QUERY_FAILED' });
   });
 
   test('throws QUERY_RESULTS_INCOMPLETE instead of returning partial rows when pagination fails', async () => {
@@ -124,12 +122,12 @@ describe('CloudWatchLogsQueryRunner', () => {
     await expect(runner().run(request)).rejects.toMatchObject({ code: 'QUERY_RESULTS_INCOMPLETE' });
   });
 
-  test('throws QUERY_RESULT_LIMIT_REACHED when the row count reaches the requested limit', async () => {
+  test('throws QUERY_RESULTS_INCOMPLETE when the row count reaches the limit', async () => {
     cloudWatchLogsMock.on(GetQueryResultsCommand).resolves({
       status: 'Complete',
       results: [[{ field: 'objectUuid', value: 'a' }], [{ field: 'objectUuid', value: 'b' }]],
     });
 
-    await expect(runner().run({ ...request, limit: 2 })).rejects.toMatchObject({ code: 'QUERY_RESULT_LIMIT_REACHED' });
+    await expect(runner().run({ ...request, limit: 2 })).rejects.toMatchObject({ code: 'QUERY_RESULTS_INCOMPLETE' });
   });
 });

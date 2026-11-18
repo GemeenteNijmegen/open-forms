@@ -4,21 +4,14 @@ import {
   SubmissionExecutionLogEvent, SubmissionLogTrace, SubmissionLogVersionCategories, SubmissionReceiverLogEvent,
 } from '../SubmissionLogReaderTypes';
 
-/**
- * Groups raw receiver rows by correlation_id into traces. A row without a correlation_id can't be grouped
- * reliably, so that's a mapping failure rather than a silently dropped row.
- */
+// One trace per correlation_id. A row without correlation_id cannot be placed, so it fails instead of being dropped.
 export function buildReceiverTraces(rows: Record<string, string>[], objectUuid: string, queryId: string): SubmissionLogTrace[] {
   const rowsByCorrelationId = new Map<string, Record<string, string>[]>();
 
   for (const row of rows) {
     const correlationId = row[SubmissionLogField.CORRELATION_ID];
     if (!correlationId) {
-      throw new CloudWatchSubmissionLogReaderError(
-        'QUERY_RESULT_MAPPING_FAILED',
-        'Receiver row is missing correlation_id',
-        { stage: 'result-mapping', queryId },
-      );
+      throw mappingFailed('Receiver row is missing correlation_id', queryId);
     }
 
     const group = rowsByCorrelationId.get(correlationId) ?? [];
@@ -26,12 +19,13 @@ export function buildReceiverTraces(rows: Record<string, string>[], objectUuid: 
     rowsByCorrelationId.set(correlationId, group);
   }
 
-  return Array.from(rowsByCorrelationId.entries()).map(
-    ([correlationId, correlationRows]) => buildTrace(correlationId, correlationRows, objectUuid),
-  );
+  const traces: SubmissionLogTrace[] = [];
+  for (const [correlationId, correlationRows] of rowsByCorrelationId) {
+    traces.push(buildTrace(correlationId, correlationRows, objectUuid, queryId));
+  }
+  return traces;
 }
 
-// All execution_arn values found across every trace's receiverEvents, for the caller to run the execution query on.
 export function collectExecutionArns(traces: SubmissionLogTrace[]): string[] {
   const arns = new Set<string>();
   for (const trace of traces) {
@@ -42,11 +36,7 @@ export function collectExecutionArns(traces: SubmissionLogTrace[]): string[] {
   return Array.from(arns);
 }
 
-/**
- * Attaches execution events to each trace by the execution_arn values found in its own receiverEvents. A
- * known execution_arn with zero matching execution rows still gets an entry with an empty events array,
- * that's valid data (see the module README), not something this function treats as an error.
- */
+// A known execution_arn without execution rows keeps an entry with empty events. That is valid data, not an error.
 export function attachExecutions(traces: SubmissionLogTrace[], executionRows: Record<string, string>[]): SubmissionLogTrace[] {
   const eventsByArn = groupExecutionEventsByArn(executionRows);
 
@@ -59,11 +49,7 @@ export function attachExecutions(traces: SubmissionLogTrace[], executionRows: Re
   }));
 }
 
-/**
- * Splits traces by how their own objectIndexes relate to the requested objectIndex. A trace is never
- * matched to the requested index unless it's the only index actually found in that trace; an empty or
- * multi-value objectIndexes never falls back to tracesForRequestedIndex.
- */
+// Only a trace whose one and only index is the requested index counts as that index.
 export function categorizeTracesByObjectIndex(traces: SubmissionLogTrace[], objectIndex: number): SubmissionLogVersionCategories {
   const categories: SubmissionLogVersionCategories = {
     tracesForRequestedIndex: [],
@@ -87,9 +73,9 @@ export function categorizeTracesByObjectIndex(traces: SubmissionLogTrace[], obje
   return categories;
 }
 
-function buildTrace(correlationId: string, rows: Record<string, string>[], objectUuid: string): SubmissionLogTrace {
-  // Equal @timestamp values keep CloudWatch's own row order here, which is not a guaranteed lifecycle order.
-  const receiverEvents = rows.map(receiverRowToEvent).sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+function buildTrace(correlationId: string, rows: Record<string, string>[], objectUuid: string, queryId: string): SubmissionLogTrace {
+  // Equal timestamps keep CloudWatch's row order, which is not a guaranteed lifecycle order.
+  const receiverEvents = rows.map(row => receiverRowToEvent(row, queryId)).sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
 
   return {
     correlation_id: correlationId,
@@ -102,10 +88,7 @@ function buildTrace(correlationId: string, rows: Record<string, string>[], objec
   };
 }
 
-/**
- * Found as-is, in the order first observed. Multiple distinct values are unexpected data, not an error
- * the reader resolves on the caller's behalf.
- */
+// More than one index is unexpected, but it is returned as found. The reader does not pick one.
 function distinctObjectIndexes(events: SubmissionReceiverLogEvent[]): number[] {
   const indexes: number[] = [];
   for (const event of events) {
@@ -116,7 +99,6 @@ function distinctObjectIndexes(events: SubmissionReceiverLogEvent[]): number[] {
   return indexes;
 }
 
-// Found as-is, in the order first observed within this trace's own receiverEvents. Normally one value.
 function distinctExecutionArns(trace: SubmissionLogTrace): string[] {
   const arns: string[] = [];
   for (const event of trace.receiverEvents) {
@@ -127,25 +109,31 @@ function distinctExecutionArns(trace: SubmissionLogTrace): string[] {
   return arns;
 }
 
-/**
- * CWLI returns @timestamp/@ingestionTime as "2026-01-01 10:00:00.000", in UTC but without a timezone
- * marker. new Date(...) on that exact format reads it as local time instead of UTC. Replacing the space
- * with a T and appending Z turns it into "2026-01-01T10:00:00.000Z", which new Date(...) does read as UTC.
- */
+// CWLI gives "2026-01-01 10:00:00.000" in UTC without a timezone. Without the T and Z, new Date() reads it as local time.
 function cwliTimestampToUtcDate(value: string): Date {
   return new Date(`${value.replace(' ', 'T')}Z`);
 }
 
-function receiverRowToEvent(row: Record<string, string>): SubmissionReceiverLogEvent {
-  const objectIndex = row[SubmissionLogField.OBJECT_INDEX];
+function receiverRowToEvent(row: Record<string, string>, queryId: string): SubmissionReceiverLogEvent {
+  const timestamp = cwliTimestampToUtcDate(row['@timestamp']);
+  if (Number.isNaN(timestamp.getTime())) {
+    throw mappingFailed('Receiver row has an unreadable @timestamp', queryId);
+  }
+
+  const objectIndexValue = row[SubmissionLogField.OBJECT_INDEX];
+  const objectIndex = objectIndexValue ? Number(objectIndexValue) : undefined;
+  if (objectIndex !== undefined && !Number.isInteger(objectIndex)) {
+    throw mappingFailed('Receiver row has an objectIndex that is not a whole number', queryId);
+  }
+
   const ingestionTime = row['@ingestionTime'];
 
   return {
-    timestamp: cwliTimestampToUtcDate(row['@timestamp']),
+    timestamp,
     ingestionTime: ingestionTime ? cwliTimestampToUtcDate(ingestionTime) : undefined,
     event: row[SubmissionLogField.EVENT] as SubmissionReceiverLogEvent['event'],
     objectUuid: row[SubmissionLogField.OBJECT_UUID],
-    objectIndex: objectIndex ? Number(objectIndex) : undefined,
+    objectIndex,
     objectTypeUrl: row[SubmissionLogField.OBJECT_TYPE_URL],
     reference: row[SubmissionLogField.REFERENCE],
     formName: row[SubmissionLogField.FORMNAME],
@@ -157,22 +145,14 @@ function receiverRowToEvent(row: Record<string, string>): SubmissionReceiverLogE
   };
 }
 
-/**
- * Groups by execution_arn and sorts each group by Step Functions' own id rather than by timestamp. id is
- * a strictly increasing sequence per execution, unlike @timestamp/event_timestamp, which can tie for
- * events recorded in the same instant and would then leave the order CloudWatch happened to return them in.
- */
+// Sorted on the Step Functions id: it goes up per execution, while timestamps can be equal.
 function groupExecutionEventsByArn(rows: Record<string, string>[]): Map<string, SubmissionExecutionLogEvent[]> {
   const eventsByArn = new Map<string, SubmissionExecutionLogEvent[]>();
 
   for (const row of rows) {
     const executionArn = row[SubmissionLogField.EXECUTION_ARN];
     if (!executionArn) {
-      throw new CloudWatchSubmissionLogReaderError(
-        'QUERY_RESULT_MAPPING_FAILED',
-        'Execution row is missing execution_arn',
-        { stage: 'result-mapping' },
-      );
+      throw mappingFailed('Execution row is missing execution_arn');
     }
 
     const events = eventsByArn.get(executionArn) ?? [];
@@ -187,17 +167,19 @@ function groupExecutionEventsByArn(rows: Record<string, string>[]): Map<string, 
   return eventsByArn;
 }
 
-/**
- * event_timestamp is Step Functions' own epoch-millisecond event clock, already absolute, so unlike the
- * receiver's @timestamp it needs no UTC rewriting before new Date(...) reads it correctly.
- */
+// event_timestamp is the Step Functions clock in epoch milliseconds, not the CloudWatch @timestamp.
 function executionRowToEvent(row: Record<string, string>): SubmissionExecutionLogEvent {
   const id = row.id;
   const previousEventId = row.previous_event_id;
   const redriveCount = row.redrive_count;
 
+  const timestamp = new Date(Number(row.event_timestamp));
+  if (Number.isNaN(timestamp.getTime())) {
+    throw mappingFailed('Execution row has an unreadable event_timestamp');
+  }
+
   return {
-    timestamp: new Date(Number(row.event_timestamp)),
+    timestamp,
     type: row.type,
     id: id ? Number(id) : undefined,
     previousEventId: previousEventId ? Number(previousEventId) : undefined,
@@ -207,10 +189,19 @@ function executionRowToEvent(row: Record<string, string>): SubmissionExecutionLo
   };
 }
 
-/**
- * details is a nested object in the log line; CWLI's fields command can't return it directly (see
- * buildExecutionQuery), so it's read from the full @message JSON instead.
- */
+// fields returns details empty because it is a nested object, so it is read from @message.
 function detailsFromMessage(message: string | undefined): unknown {
-  return message ? JSON.parse(message).details : undefined;
+  if (!message) {
+    return undefined;
+  }
+
+  try {
+    return JSON.parse(message).details;
+  } catch (cause) {
+    throw mappingFailed('Execution row has an @message that is not valid JSON', undefined, cause);
+  }
+}
+
+function mappingFailed(message: string, queryId?: string, cause?: unknown): CloudWatchSubmissionLogReaderError {
+  return new CloudWatchSubmissionLogReaderError('QUERY_RESULT_MAPPING_FAILED', message, { stage: 'result-mapping', queryId }, { cause });
 }
