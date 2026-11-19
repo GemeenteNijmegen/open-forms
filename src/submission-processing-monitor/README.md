@@ -57,7 +57,8 @@ De receiver en orchestrator krijgen vaste CloudWatch Log Group-namen via `Static
 
 ## Daarna de controle
 
-Als de logging op orde is, kan de monitor de Objects van de vorige dag naast de logs leggen.
+Als de logging op orde is, kan de monitor de Objects van de vorige dag naast de logs leggen. De Objects komen uit de [object reader](object-reader/README.md), de logs uit de
+[submission log reader](submission-log-reader/README.md).
 
 ```mermaid
 flowchart LR
@@ -129,12 +130,11 @@ De volledige eerdere te grote staat nog op feat/submission-processing-full. Daar
 
 ## Parameters
 
-Voor de monitor reserveren we:
+Voor de monitor reserveren we een parameter en een secret:
 
 ```
-objects-api-base-url
-objects-api-token
-
+objects-api-base-url (SSM-parameter)
+objects-api-token (secret)
 ```
 
 Voor het geheel:

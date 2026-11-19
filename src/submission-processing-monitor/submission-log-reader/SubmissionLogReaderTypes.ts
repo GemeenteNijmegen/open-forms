@@ -120,6 +120,7 @@ export interface SubmissionLogVersionResult extends SubmissionLogVersionCategori
   };
 
   queryRange: AbsoluteTimeRange;
+  diagnostics?: SubmissionLogReaderDiagnostics;
 }
 
 export interface SubmissionLogReaderDiagnostics {
@@ -127,9 +128,9 @@ export interface SubmissionLogReaderDiagnostics {
   executionQuery?: CwliQueryDiagnostics;
 }
 
-// Composes our own query context with the SDK's own statistics shape instead of copying its fields.
+// statistics is the SDK's own type. bytesScanned in it is what CloudWatch charges for.
 export interface CwliQueryDiagnostics {
   queryId: string;
-  sourceLogGroups: string[];
+  sourceLogGroups?: string[];
   statistics?: QueryStatistics;
 }
