@@ -21,6 +21,16 @@ interface Judgement {
 
 const ONE_HOUR_IN_MS = 60 * 60 * 1000;
 
+// The registration day in Amsterdam plus one hour: the receiver handles a notification within seconds, also for a version of 23:59.
+export function registrationDayPlusOneHour(registrationAt: string): AbsoluteTimeRange {
+  const [year, month, day] = registrationAt.split('-').map(Number);
+  const registrationDay = amsterdamCalendarDayToAbsoluteTimeRange({ year, month, day });
+  return {
+    fromInclusive: registrationDay.fromInclusive,
+    toExclusive: new Date(registrationDay.toExclusive.getTime() + ONE_HOUR_IN_MS),
+  };
+}
+
 export function findVersionOutcome(versionTraces: VersionTraces): VersionOutcome {
   const judgement = judgeVersion(versionTraces);
   return {
@@ -109,7 +119,12 @@ function judgeTrace(trace: SubmissionLogTrace): Judgement {
       judgements.push(judgeExecution(execution));
     }
     for (const judgement of judgements) {
-      if (judgement.outcome === 'PROCESSED' || judgement.outcome === 'PROCESSED_AFTER_REDRIVE') {
+      if (judgement.outcome === 'PROCESSED') {
+        return judgement;
+      }
+    }
+    for (const judgement of judgements) {
+      if (judgement.outcome === 'PROCESSED_AFTER_REDRIVE') {
         return judgement;
       }
     }
@@ -179,9 +194,8 @@ function judgeExecution(execution: SubmissionExecutionTrace): Judgement {
 }
 
 function coversRegistrationDay(queryRange: AbsoluteTimeRange, registrationAt: string): boolean {
-  const [year, month, day] = registrationAt.split('-').map(Number);
-  const registrationDay = amsterdamCalendarDayToAbsoluteTimeRange({ year, month, day });
+  const registrationDay = registrationDayPlusOneHour(registrationAt);
   const startsInTime = queryRange.fromInclusive.getTime() <= registrationDay.fromInclusive.getTime();
-  const endsLateEnough = queryRange.toExclusive.getTime() >= registrationDay.toExclusive.getTime() + ONE_HOUR_IN_MS;
+  const endsLateEnough = queryRange.toExclusive.getTime() >= registrationDay.toExclusive.getTime();
   return startsInTime && endsLateEnough;
 }

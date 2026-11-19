@@ -1,11 +1,11 @@
-import { findVersionOutcome } from './findVersionOutcome';
+import { findVersionOutcome, registrationDayPlusOneHour } from './findVersionOutcome';
 import { ObjectVersion } from '../object-reader/ObjectReader';
 import { SubmissionLogTrace, SubmissionLogUuidResult } from '../submission-log-reader/SubmissionLogReaderTypes';
 import { categorizeTracesByObjectIndex } from '../submission-log-reader/traces/SubmissionTraceBuilder';
 
 export interface SubmissionProcessingMatcherInput {
   versions: ObjectVersion[];
-  // One result per objectUuid whose logs were read. findOutcomes throws when an objectUuid appears twice.
+  // One result per objectUuid whose logs were read. findOutcomes throws when an objectUuid appears twice, or also in objectUuidsWithUnreadLogs.
   logs: SubmissionLogUuidResult[];
   // objectUuids for which the log reader threw. Their versions become UNCERTAIN with LOGS_NOT_READ.
   objectUuidsWithUnreadLogs: string[];
@@ -74,6 +74,9 @@ export class SubmissionProcessingMatcher {
       if (objectUuidsWithLogs.has(logs.lookup.objectUuid)) {
         throw new Error(`Logs for objectUuid ${logs.lookup.objectUuid} appear more than once`);
       }
+      if (input.objectUuidsWithUnreadLogs.includes(logs.lookup.objectUuid)) {
+        throw new Error(`objectUuid ${logs.lookup.objectUuid} has logs and is also in objectUuidsWithUnreadLogs`);
+      }
       objectUuidsWithLogs.add(logs.lookup.objectUuid);
     }
 
@@ -109,7 +112,13 @@ export class SubmissionProcessingMatcher {
         const traces = [...categories.tracesForRequestedIndex];
         const ambiguousTraces: SubmissionLogTrace[] = [];
 
+        // A trace without index that started outside the registration day plus one hour belongs to another version, for example one of today.
+        const registrationDay = registrationDayPlusOneHour(version.registrationAt);
         for (const trace of categories.tracesWithoutObjectIndex) {
+          const startedOnRegistrationDay = trace.firstSeen >= registrationDay.fromInclusive && trace.firstSeen < registrationDay.toExclusive;
+          if (!startedOnRegistrationDay) {
+            continue;
+          }
           if (versionsOfObject.length === 1) {
             traces.push(trace);
           } else {
@@ -166,5 +175,8 @@ function compareTraces(a: SubmissionLogTrace, b: SubmissionLogTrace): number {
   if (a.firstSeen.getTime() !== b.firstSeen.getTime()) {
     return a.firstSeen.getTime() - b.firstSeen.getTime();
   }
-  return a.correlation_id < b.correlation_id ? -1 : 1;
+  if (a.correlation_id !== b.correlation_id) {
+    return a.correlation_id < b.correlation_id ? -1 : 1;
+  }
+  return 0;
 }

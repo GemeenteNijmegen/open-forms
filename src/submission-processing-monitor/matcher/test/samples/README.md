@@ -19,6 +19,7 @@ Alle data is verzonnen, behalve echte-inzending-geslaagd.ts: die gebruikt de ech
 | tijdvak-te-kort.ts | UNCERTAIN, LOGS_TIME_RANGE_TOO_SHORT |
 | ophalen-mislukt-een-versie.ts | PROBLEM, OBJECT_FETCH_FAILED |
 | ophalen-mislukt-twee-versies.ts | PROCESSED en UNCERTAIN, TRACE_FITS_MULTIPLE_VERSIONS |
+| ophalen-mislukt-van-latere-versie.ts | PROBLEM, NO_NOTIFICATION, en de trace in tracesWithoutVersion |
 | trace-van-latere-versie.ts | PROCESSED, en een trace in tracesWithoutVersion |
 | logs-niet-gelezen.ts | UNCERTAIN, LOGS_NOT_READ |
 | onzekere-poging-daarna-mislukt.ts | UNCERTAIN, EXECUTION_EVENTS_NOT_FOUND, met beide pogingen |
