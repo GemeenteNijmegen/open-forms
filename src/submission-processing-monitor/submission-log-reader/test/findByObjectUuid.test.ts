@@ -46,6 +46,26 @@ describe('CloudWatchSubmissionLogReader.findByObjectUuid', () => {
     expect(cloudWatchLogsMock.commandCalls(StartQueryCommand)).toHaveLength(1);
   });
 
+  test('adds the query statistics only when diagnostics is on', async () => {
+    cloudWatchLogsMock.on(GetQueryResultsCommand).resolves({
+      status: 'Complete',
+      results: [[
+        { field: '@timestamp', value: '2026-01-01 10:00:00.000' },
+        { field: 'correlation_id', value: 'correlation-a' },
+      ]],
+      statistics: { bytesScanned: 308, recordsScanned: 1 },
+    });
+
+    const withDiagnostics = new CloudWatchSubmissionLogReader({ cloudWatchLogsClient: new CloudWatchLogsClient({}), diagnostics: true });
+    const result = await withDiagnostics.findByObjectUuid({ objectUuid: 'abc-123', range });
+
+    expect(result.diagnostics).toEqual({
+      receiverQuery: { queryId: 'query-1', statistics: { bytesScanned: 308, recordsScanned: 1 } },
+      executionQuery: undefined,
+    });
+    expect((await reader().findByObjectUuid({ objectUuid: 'abc-123', range })).diagnostics).toBeUndefined();
+  });
+
   test('rejects an invalid range before querying CloudWatch', async () => {
     const invalidRange = { fromInclusive: range.toExclusive, toExclusive: range.fromInclusive };
 

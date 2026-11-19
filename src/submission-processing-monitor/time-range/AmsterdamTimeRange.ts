@@ -29,6 +29,25 @@ export function amsterdamCalendarDayToAbsoluteTimeRange(day: AmsterdamCalendarDa
   };
 }
 
+/**
+ * Gives the day before today in Europe/Amsterdam, written as the Objects API writes dates.
+ * One calendar day is subtracted, not 24 hours, because a day can last 23 or 25 hours.
+ *
+ * @param now The moment that counts as now. Only a test passes it.
+ * @returns The previous Amsterdam calendar day as 'YYYY-MM-DD'.
+ * @example
+ * import { previousAmsterdamCalendarDay } from '../time-range/AmsterdamTimeRange';
+ * const day = previousAmsterdamCalendarDay(new Date('2026-11-18T08:00:00Z'));
+ * // '2026-11-17'
+ */
+export function previousAmsterdamCalendarDay(now: Date = new Date()): string {
+  // en-CA writes a date as YYYY-MM-DD. A date without a time is read as UTC midnight, and UTC has no daylight saving time.
+  const today = new Intl.DateTimeFormat('en-CA', { timeZone: TIME_ZONE }).format(now);
+  const yesterday = new Date(today);
+  yesterday.setUTCDate(yesterday.getUTCDate() - 1);
+  return yesterday.toISOString().slice(0, 10);
+}
+
 // Date.UTC turns day 32 or month 13 into the next month or year, leap years included.
 function nextDay(day: AmsterdamCalendarDay): AmsterdamCalendarDay {
   const utc = new Date(Date.UTC(day.year, day.month - 1, day.day + 1));

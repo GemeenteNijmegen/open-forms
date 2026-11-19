@@ -114,7 +114,7 @@ describe('collectExecutionArns / attachExecutions', () => {
       executionRow({ id: '1', previous_event_id: '0', type: 'ExecutionStarted' }),
     ];
 
-    const [trace] = attachExecutions(traces, executionRows);
+    const [trace] = attachExecutions(traces, executionRows, 'query-2');
 
     expect(trace.executions).toHaveLength(1);
     expect(trace.executions[0].execution_arn).toEqual(executionArn);
@@ -123,7 +123,7 @@ describe('collectExecutionArns / attachExecutions', () => {
 
   test('keeps a known execution_arn with zero matching execution rows as an empty events array', () => {
     const traces = buildReceiverTraces([row({ execution_arn: executionArn })], 'abc-123', 'query-1');
-    const [trace] = attachExecutions(traces, []);
+    const [trace] = attachExecutions(traces, [], 'query-2');
 
     expect(trace.executions).toEqual([{ execution_arn: executionArn, events: [] }]);
   });
@@ -134,7 +134,7 @@ describe('collectExecutionArns / attachExecutions', () => {
       '@message': '{"details":{"name":"Success"}}', 'redrive_count': '1', 'id': '3', 'previous_event_id': '2',
     })];
 
-    const [trace] = attachExecutions(traces, executionRows);
+    const [trace] = attachExecutions(traces, executionRows, 'query-2');
     const [event] = trace.executions[0].events;
 
     expect(event.details).toEqual({ name: 'Success' });
@@ -146,12 +146,12 @@ describe('collectExecutionArns / attachExecutions', () => {
   test('throws QUERY_RESULT_MAPPING_FAILED instead of keeping unreadable source values', () => {
     expect(() => buildReceiverTraces([row({ '@timestamp': 'not-a-date' })], 'abc-123', 'query-1')).toThrow(CloudWatchSubmissionLogReaderError);
     expect(() => buildReceiverTraces([row({ objectIndex: 'three' })], 'abc-123', 'query-1')).toThrow(CloudWatchSubmissionLogReaderError);
-    expect(() => attachExecutions([], [executionRow({ '@message': '{not json' })])).toThrow(CloudWatchSubmissionLogReaderError);
+    expect(() => attachExecutions([], [executionRow({ '@message': '{not json' })], 'query-2')).toThrow(CloudWatchSubmissionLogReaderError);
   });
 
   test('throws QUERY_RESULT_MAPPING_FAILED for an execution row without execution_arn', () => {
     const executionRows = [executionRow({ execution_arn: '' })];
-    expect(() => attachExecutions([], executionRows)).toThrow(CloudWatchSubmissionLogReaderError);
+    expect(() => attachExecutions([], executionRows, 'query-2')).toThrow(CloudWatchSubmissionLogReaderError);
   });
 });
 
@@ -235,7 +235,7 @@ describe('known failure and unexpected traces', () => {
     const [trace] = attachExecutions(traces, [
       executionRow({ execution_arn: firstArn }),
       executionRow({ execution_arn: secondArn }),
-    ]);
+    ], 'query-2');
 
     expect(trace.executions.map(e => e.execution_arn)).toEqual([firstArn, secondArn]);
   });

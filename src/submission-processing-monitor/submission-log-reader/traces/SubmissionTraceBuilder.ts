@@ -37,8 +37,8 @@ export function collectExecutionArns(traces: SubmissionLogTrace[]): string[] {
 }
 
 // A known execution_arn without execution rows keeps an entry with empty events. That is valid data, not an error.
-export function attachExecutions(traces: SubmissionLogTrace[], executionRows: Record<string, string>[]): SubmissionLogTrace[] {
-  const eventsByArn = groupExecutionEventsByArn(executionRows);
+export function attachExecutions(traces: SubmissionLogTrace[], executionRows: Record<string, string>[], queryId: string): SubmissionLogTrace[] {
+  const eventsByArn = groupExecutionEventsByArn(executionRows, queryId);
 
   return traces.map(trace => ({
     ...trace,
@@ -146,17 +146,17 @@ function receiverRowToEvent(row: Record<string, string>, queryId: string): Submi
 }
 
 // Sorted on the Step Functions id: it goes up per execution, while timestamps can be equal.
-function groupExecutionEventsByArn(rows: Record<string, string>[]): Map<string, SubmissionExecutionLogEvent[]> {
+function groupExecutionEventsByArn(rows: Record<string, string>[], queryId: string): Map<string, SubmissionExecutionLogEvent[]> {
   const eventsByArn = new Map<string, SubmissionExecutionLogEvent[]>();
 
   for (const row of rows) {
     const executionArn = row[SubmissionLogField.EXECUTION_ARN];
     if (!executionArn) {
-      throw mappingFailed('Execution row is missing execution_arn');
+      throw mappingFailed('Execution row is missing execution_arn', queryId);
     }
 
     const events = eventsByArn.get(executionArn) ?? [];
-    events.push(executionRowToEvent(row));
+    events.push(executionRowToEvent(row, queryId));
     eventsByArn.set(executionArn, events);
   }
 
@@ -168,14 +168,14 @@ function groupExecutionEventsByArn(rows: Record<string, string>[]): Map<string, 
 }
 
 // event_timestamp is the Step Functions clock in epoch milliseconds, not the CloudWatch @timestamp.
-function executionRowToEvent(row: Record<string, string>): SubmissionExecutionLogEvent {
+function executionRowToEvent(row: Record<string, string>, queryId: string): SubmissionExecutionLogEvent {
   const id = row.id;
   const previousEventId = row.previous_event_id;
   const redriveCount = row.redrive_count;
 
   const timestamp = new Date(Number(row.event_timestamp));
   if (Number.isNaN(timestamp.getTime())) {
-    throw mappingFailed('Execution row has an unreadable event_timestamp');
+    throw mappingFailed('Execution row has an unreadable event_timestamp', queryId);
   }
 
   return {
@@ -184,13 +184,13 @@ function executionRowToEvent(row: Record<string, string>): SubmissionExecutionLo
     id: id ? Number(id) : undefined,
     previousEventId: previousEventId ? Number(previousEventId) : undefined,
     redriveCount: redriveCount ? Number(redriveCount) : undefined,
-    details: detailsFromMessage(row['@message']),
+    details: detailsFromMessage(row['@message'], queryId),
     logRecordPointer: row['@ptr'],
   };
 }
 
 // fields returns details empty because it is a nested object, so it is read from @message.
-function detailsFromMessage(message: string | undefined): unknown {
+function detailsFromMessage(message: string | undefined, queryId: string): unknown {
   if (!message) {
     return undefined;
   }
@@ -198,10 +198,10 @@ function detailsFromMessage(message: string | undefined): unknown {
   try {
     return JSON.parse(message).details;
   } catch (cause) {
-    throw mappingFailed('Execution row has an @message that is not valid JSON', undefined, cause);
+    throw mappingFailed('Execution row has an @message that is not valid JSON', queryId, cause);
   }
 }
 
-function mappingFailed(message: string, queryId?: string, cause?: unknown): CloudWatchSubmissionLogReaderError {
+function mappingFailed(message: string, queryId: string, cause?: unknown): CloudWatchSubmissionLogReaderError {
   return new CloudWatchSubmissionLogReaderError('QUERY_RESULT_MAPPING_FAILED', message, { stage: 'result-mapping', queryId }, { cause });
 }
