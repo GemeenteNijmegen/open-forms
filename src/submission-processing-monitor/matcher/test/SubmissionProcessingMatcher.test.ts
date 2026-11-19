@@ -16,7 +16,7 @@ import { scenario as stepFunctionMislukt } from './samples/step-function-mislukt
 import { scenario as tijdvakTeKort } from './samples/tijdvak-te-kort';
 import { scenario as traceVanLatereVersie } from './samples/trace-van-latere-versie';
 
-// One scenario per file in samples/, see samples/README.md. A new sample file needs an import and an entry here.
+// One scenario per file in samples/. A new sample file needs an import and an entry here.
 const scenarios = [
   echteInzendingGeslaagd,
   esfTaakOnbekendeStatus,

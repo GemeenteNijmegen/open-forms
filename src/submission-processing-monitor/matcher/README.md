@@ -17,7 +17,7 @@ flowchart LR
 ## Gebruik
 
 Het contract staat in SubmissionProcessingMatcher.ts, de beoordeling van één versie in findVersionOutcome.ts. Voorbeelden van invoer en uitkomst
-staan per scenario in [test/samples](test/samples/README.md); de test voert ze allemaal uit.
+staan per scenario in [test/samples](test/samples); de test voert ze allemaal uit.
 
 ```ts
 import { SubmissionProcessingMatcher } from './matcher/SubmissionProcessingMatcher';
