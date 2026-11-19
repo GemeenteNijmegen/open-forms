@@ -31,8 +31,8 @@ const outcomes = matcher.findOutcomes({
 ```
 
 De aanroeper haalt de logs per objectUuid op. Gooit de log reader voor een Object, dan zet de aanroeper die uuid in objectUuidsWithUnreadLogs;
-de versies van dat Object worden dan onzeker. Elke objectUuid uit versions moet in logs of in objectUuidsWithUnreadLogs staan, anders gooit
-findOutcomes. Er komt één uitkomst per versie terug (versions) en een lijst traces die bij geen versie horen
+de versies van dat Object worden dan onzeker. Elke objectUuid uit versions moet in logs of in objectUuidsWithUnreadLogs staan, en in logs maar
+één keer; anders gooit findOutcomes. Er komt één uitkomst per versie terug (versions) en een lijst traces die bij geen versie horen
 (tracesWithoutVersion). In een uitkomst staan de versie zelf, de uitkomst, de reden en de traces waarop hij gebaseerd is.
 
 ## Uitkomst per versie
@@ -96,8 +96,8 @@ PROBLEM: in plaats van een probleem wordt het onzeker. Traces met een index die 
 apart in het resultaat.
 
 Open Notificaties stuurt een notificatie niet opnieuw als de receiver een fout geeft. Een mislukte poging herstelt zich dus niet vanzelf. Is er voor
-een versie toch ook een geslaagde Step Function, dan is die goed verwerkt en staat de mislukte poging erbij. Zijn er alleen mislukte pogingen, dan
-telt de reden van de laatste.
+een versie toch ook een geslaagde Step Function, dan is die goed verwerkt en staat de mislukte poging erbij. Is een poging onzeker, dan is de versie
+onzeker: een latere mislukte poging zegt niet dat de eerdere niet geslaagd is. Zijn er alleen mislukte pogingen, dan telt de reden van de laatste.
 
 ## Herstel met de hand
 
@@ -129,7 +129,7 @@ OBJECT_TYPE_UNKNOWN_AT_RECEIVER (genegeerd terwijl verwerking verwacht werd), EX
 EXECUTION_TIMED_OUT of EXECUTION_ABORTED.
 
 Bij UNCERTAIN: LOGS_NOT_READ (de log reader gooide), LOGS_TIME_RANGE_TOO_SHORT (zie Tijd), TRACE_FITS_MULTIPLE_VERSIONS, UNKNOWN_ESF_STATUS of
-EXECUTION_EVENTS_NOT_FOUND (wel een execution_arn, maar geen events van de Step Function).
+EXECUTION_EVENTS_NOT_FOUND (de receiver logde een gestarte Step Function, maar er zijn geen events van gevonden).
 
 ## Tijd
 
