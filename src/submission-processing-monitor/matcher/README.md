@@ -95,7 +95,8 @@ PROBLEM: in plaats van een probleem wordt het onzeker. Traces met een index die 
 apart in het resultaat.
 
 Open Notificaties stuurt een notificatie niet opnieuw als de receiver een fout geeft. Een mislukte poging herstelt zich dus niet vanzelf. Is er voor
-een versie toch ook een geslaagde Step Function, dan is die goed verwerkt en staat de mislukte poging erbij.
+een versie toch ook een geslaagde Step Function, dan is die goed verwerkt en staat de mislukte poging erbij. Zijn er alleen mislukte pogingen, dan
+telt de reden van de laatste.
 
 ## Herstel met de hand
 
