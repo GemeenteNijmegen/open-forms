@@ -1,5 +1,7 @@
+import { findVersionOutcome } from './findVersionOutcome';
 import { ObjectVersion } from '../object-reader/ObjectReader';
 import { SubmissionLogTrace, SubmissionLogUuidResult } from '../submission-log-reader/SubmissionLogReaderTypes';
+import { categorizeTracesByObjectIndex } from '../submission-log-reader/traces/SubmissionTraceBuilder';
 
 export interface SubmissionProcessingMatcherInput {
   versions: ObjectVersion[];
@@ -66,8 +68,95 @@ export class SubmissionProcessingMatcher {
    * @param input All versions of the period, the logs per objectUuid, and the objectUuids whose logs could not be read.
    * @returns One outcome per version, plus the traces that belong to no version.
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   findOutcomes(input: SubmissionProcessingMatcherInput): SubmissionProcessingOutcomes {
-    throw new Error('SubmissionProcessingMatcher.findOutcomes is not implemented');
+    const sortedVersions = [...input.versions].sort(compareVersions);
+
+    // Map keeps insertion order, so the objects stay sorted on objectUuid.
+    const versionsByObjectUuid = new Map<string, ObjectVersion[]>();
+    for (const version of sortedVersions) {
+      const versionsOfObject = versionsByObjectUuid.get(version.objectUuid) ?? [];
+      versionsOfObject.push(version);
+      versionsByObjectUuid.set(version.objectUuid, versionsOfObject);
+    }
+
+    const outcomes: VersionOutcome[] = [];
+    const tracesWithoutVersion: SubmissionLogTrace[] = [];
+
+    for (const [objectUuid, versionsOfObject] of versionsByObjectUuid) {
+      if (input.objectUuidsWithUnreadLogs.includes(objectUuid)) {
+        for (const version of versionsOfObject) {
+          outcomes.push({ version, outcome: 'UNCERTAIN', reason: 'LOGS_NOT_READ', traces: [] });
+        }
+        continue;
+      }
+
+      const logs = input.logs.find(result => result.lookup.objectUuid === objectUuid);
+      if (!logs) {
+        throw new Error(`No logs for objectUuid ${objectUuid}, and it is not in objectUuidsWithUnreadLogs`);
+      }
+
+      const coupledCorrelationIds = new Set<string>();
+      for (const version of versionsOfObject) {
+        const categories = categorizeTracesByObjectIndex(logs.traces, version.index);
+        const traces = [...categories.tracesForRequestedIndex];
+        const ambiguousTraces: SubmissionLogTrace[] = [];
+
+        for (const trace of categories.tracesWithoutObjectIndex) {
+          if (versionsOfObject.length === 1) {
+            traces.push(trace);
+          } else {
+            ambiguousTraces.push(trace);
+          }
+        }
+        for (const trace of categories.otherTraces) {
+          if (trace.objectIndexes.includes(version.index)) {
+            ambiguousTraces.push(trace);
+          }
+        }
+
+        for (const trace of [...traces, ...ambiguousTraces]) {
+          coupledCorrelationIds.add(trace.correlation_id);
+        }
+
+        outcomes.push(findVersionOutcome({
+          version,
+          traces: traces.sort(compareTraces),
+          ambiguousTraces: ambiguousTraces.sort(compareTraces),
+          queryRange: logs.queryRange,
+        }));
+      }
+
+      for (const trace of logs.traces) {
+        if (!coupledCorrelationIds.has(trace.correlation_id)) {
+          tracesWithoutVersion.push(trace);
+        }
+      }
+    }
+
+    for (const logs of input.logs) {
+      if (!versionsByObjectUuid.has(logs.lookup.objectUuid)) {
+        tracesWithoutVersion.push(...logs.traces);
+      }
+    }
+
+    return { versions: outcomes, tracesWithoutVersion: tracesWithoutVersion.sort(compareTraces) };
   }
+}
+
+function compareVersions(a: ObjectVersion, b: ObjectVersion): number {
+  if (a.objectUuid !== b.objectUuid) {
+    return a.objectUuid < b.objectUuid ? -1 : 1;
+  }
+  return a.index - b.index;
+}
+
+// Sorting on objectUuid and correlation_id after firstSeen keeps the order the same when two traces start at the same moment.
+function compareTraces(a: SubmissionLogTrace, b: SubmissionLogTrace): number {
+  if (a.objectUuid !== b.objectUuid) {
+    return a.objectUuid < b.objectUuid ? -1 : 1;
+  }
+  if (a.firstSeen.getTime() !== b.firstSeen.getTime()) {
+    return a.firstSeen.getTime() - b.firstSeen.getTime();
+  }
+  return a.correlation_id < b.correlation_id ? -1 : 1;
 }
