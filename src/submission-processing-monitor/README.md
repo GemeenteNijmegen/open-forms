@@ -58,7 +58,8 @@ De receiver en orchestrator krijgen vaste CloudWatch Log Group-namen via `Static
 ## Daarna de controle
 
 Als de logging op orde is, kan de monitor de Objects van de vorige dag naast de logs leggen. De Objects komen uit de [object reader](object-reader/README.md), de logs uit de
-[submission log reader](submission-log-reader/README.md).
+[submission log reader](submission-log-reader/README.md). De [matcher](matcher/README.md) legt ze naast elkaar en zegt per versie wat er gebeurd is.
+De [processing check](processing-check/README.md) is de Lambda die dat voor een periode doet en de uitkomsten opslaat.
 
 ```mermaid
 flowchart LR
