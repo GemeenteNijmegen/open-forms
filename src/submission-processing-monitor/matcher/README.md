@@ -31,8 +31,8 @@ const outcomes = matcher.findOutcomes({
 ```
 
 De aanroeper haalt de logs per objectUuid op. Gooit de log reader voor een Object, dan zet de aanroeper die uuid in objectUuidsWithUnreadLogs;
-de versies van dat Object worden dan onzeker. Elke objectUuid uit versions moet in logs of in objectUuidsWithUnreadLogs staan, en in logs maar
-één keer; anders gooit findOutcomes. Er komt één uitkomst per versie terug (versions) en een lijst traces die bij geen versie horen
+de versies van dat Object worden dan onzeker. Elke objectUuid uit versions moet in logs of in objectUuidsWithUnreadLogs staan, niet in allebei, en in
+logs maar één keer; anders gooit findOutcomes. Er komt één uitkomst per versie terug (versions) en een lijst traces die bij geen versie horen
 (tracesWithoutVersion). In een uitkomst staan de versie zelf, de uitkomst, de reden en de traces waarop hij gebaseerd is.
 
 ## Uitkomst per versie
@@ -90,8 +90,9 @@ sequenceDiagram
 
 Trace 1 hoort bij versie 2 en trace 2 bij versie 3. Voor de versie met afgerond is de vraag: is er een geslaagde Step Function voor die index?
 
-Een trace zonder index (het ophalen mislukte) koppelt de matcher alleen als het Object maar één versie in de periode heeft. Anders is het onzeker en
-staat de trace erbij. Een trace met meer dan één index hoort bij elke versie met een van die indexen, maar maakt geen van die versies PROCESSED of
+Een trace zonder index (het ophalen mislukte) hoort alleen bij een versie als hij begon op de registratiedag of in het uur erna. Heeft het Object
+dan maar één versie in de periode, dan koppelt de matcher hem; anders is het onzeker en staat de trace erbij. Een latere trace zonder index, zoals
+van een versie van vandaag, komt apart in het resultaat. Een trace met meer dan één index hoort bij elke versie met een van die indexen, maar maakt geen van die versies PROCESSED of
 PROBLEM: in plaats van een probleem wordt het onzeker. Traces met een index die niet in de versies zit, bijvoorbeeld van een versie van vandaag, gooit de matcher niet weg: ze komen
 apart in het resultaat.
 
