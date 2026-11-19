@@ -9,7 +9,8 @@ export interface SubmissionProcessingMatcherInput {
   objectUuidsWithUnreadLogs: string[];
 }
 
-export type ProcessingOutcome = 'PROCESSED' | 'IGNORED' | 'PROBLEM' | 'IN_PROGRESS' | 'UNCERTAIN';
+// PROCESSED_AFTER_REDRIVE: the execution failed, was redriven from the console and then succeeded. Reported apart so someone can check it.
+export type ProcessingOutcome = 'PROCESSED' | 'PROCESSED_AFTER_REDRIVE' | 'IGNORED' | 'PROBLEM' | 'IN_PROGRESS' | 'UNCERTAIN';
 
 export type ProcessingReason =
   // PROBLEM
