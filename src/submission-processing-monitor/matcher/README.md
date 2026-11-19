@@ -16,7 +16,8 @@ flowchart LR
 
 ## Gebruik
 
-Het contract staat in SubmissionProcessingMatcher.ts. findOutcomes gooit nog een fout: de beoordeling is nog niet gebouwd.
+Het contract staat in SubmissionProcessingMatcher.ts, de beoordeling van één versie in findVersionOutcome.ts. Voorbeelden van invoer en uitkomst
+staan per scenario in [test/samples](test/samples/README.md); de test voert ze allemaal uit.
 
 ```ts
 import { SubmissionProcessingMatcher } from './matcher/SubmissionProcessingMatcher';
