@@ -5,7 +5,7 @@ import { categorizeTracesByObjectIndex } from '../submission-log-reader/traces/S
 
 export interface SubmissionProcessingMatcherInput {
   versions: ObjectVersion[];
-  // One result per objectUuid whose logs were read.
+  // One result per objectUuid whose logs were read. findOutcomes throws when an objectUuid appears twice.
   logs: SubmissionLogUuidResult[];
   // objectUuids for which the log reader threw. Their versions become UNCERTAIN with LOGS_NOT_READ.
   objectUuidsWithUnreadLogs: string[];
@@ -69,6 +69,14 @@ export class SubmissionProcessingMatcher {
    * @returns One outcome per version, plus the traces that belong to no version.
    */
   findOutcomes(input: SubmissionProcessingMatcherInput): SubmissionProcessingOutcomes {
+    const objectUuidsWithLogs = new Set<string>();
+    for (const logs of input.logs) {
+      if (objectUuidsWithLogs.has(logs.lookup.objectUuid)) {
+        throw new Error(`Logs for objectUuid ${logs.lookup.objectUuid} appear more than once`);
+      }
+      objectUuidsWithLogs.add(logs.lookup.objectUuid);
+    }
+
     const sortedVersions = [...input.versions].sort(compareVersions);
 
     // Map keeps insertion order, so the objects stay sorted on objectUuid.

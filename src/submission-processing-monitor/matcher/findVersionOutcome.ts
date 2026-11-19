@@ -72,7 +72,7 @@ function judgeVersion(versionTraces: VersionTraces): Judgement {
   return judgement;
 }
 
-// One success is enough. Otherwise a running execution, otherwise the last trace on firstSeen decides.
+// One success is enough. Otherwise a running execution, otherwise an uncertain trace (it may have succeeded), otherwise the last trace on firstSeen.
 function judgeTraces(traces: SubmissionLogTrace[]): Judgement {
   const judgements: Judgement[] = [];
   for (const trace of traces) {
@@ -94,6 +94,11 @@ function judgeTraces(traces: SubmissionLogTrace[]): Judgement {
       return judgement;
     }
   }
+  for (const judgement of judgements) {
+    if (judgement.outcome === 'UNCERTAIN') {
+      return judgement;
+    }
+  }
   return judgements[judgements.length - 1];
 }
 
@@ -110,6 +115,11 @@ function judgeTrace(trace: SubmissionLogTrace): Judgement {
     }
     for (const judgement of judgements) {
       if (judgement.outcome === 'IN_PROGRESS') {
+        return judgement;
+      }
+    }
+    for (const judgement of judgements) {
+      if (judgement.outcome === 'UNCERTAIN') {
         return judgement;
       }
     }
@@ -136,6 +146,10 @@ function judgeTrace(trace: SubmissionLogTrace): Judgement {
   }
   if (events.includes(SubmissionLogEvent.EXECUTION_START_FAILED)) {
     return { outcome: 'PROBLEM', reason: 'EXECUTION_START_FAILED' };
+  }
+  // The receiver started the execution but logged no execution_arn, so its events cannot be found.
+  if (events.includes(SubmissionLogEvent.EXECUTION_STARTED)) {
+    return { outcome: 'UNCERTAIN', reason: 'EXECUTION_EVENTS_NOT_FOUND' };
   }
   return { outcome: 'PROBLEM', reason: 'EXECUTION_NOT_STARTED' };
 }

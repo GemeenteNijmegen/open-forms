@@ -21,3 +21,5 @@ Alle data is verzonnen, behalve echte-inzending-geslaagd.ts: die gebruikt de ech
 | ophalen-mislukt-twee-versies.ts | PROCESSED en UNCERTAIN, TRACE_FITS_MULTIPLE_VERSIONS |
 | trace-van-latere-versie.ts | PROCESSED, en een trace in tracesWithoutVersion |
 | logs-niet-gelezen.ts | UNCERTAIN, LOGS_NOT_READ |
+| onzekere-poging-daarna-mislukt.ts | UNCERTAIN, EXECUTION_EVENTS_NOT_FOUND, met beide pogingen |
+| gestart-zonder-execution-arn.ts | UNCERTAIN, EXECUTION_EVENTS_NOT_FOUND |
