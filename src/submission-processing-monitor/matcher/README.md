@@ -35,11 +35,12 @@ de versies van dat Object worden dan onzeker. Er komt één uitkomst per versie 
 
 ## Uitkomst per versie
 
-Elke versie krijgt precies één uitkomst.
+Elke versie krijgt precies één uitkomst. Van een Step Function telt het laatste eindevent.
 
 | Uitkomst | Code | Betekenis |
 |---|---|---|
 | Goed verwerkt | PROCESSED | Moest verwerkt worden en de Step Function eindigde met ExecutionSucceeded |
+| Gelukt na redrive | PROCESSED_AFTER_REDRIVE | De Step Function mislukte, is vanuit de console geredrived en slaagde daarna. Even nakijken |
 | Genegeerd | IGNORED | Hoefde volgens de regels niet verwerkt te worden, zoals een ESF-taak met status open |
 | Probleem | PROBLEM | Er is aantoonbaar iets misgegaan |
 | Nog bezig | IN_PROGRESS | Wel ExecutionStarted, nog geen eindevent |
@@ -94,6 +95,15 @@ apart in het resultaat.
 Open Notificaties stuurt een notificatie niet opnieuw als de receiver een fout geeft. Een mislukte poging herstelt zich dus niet vanzelf. Is er voor
 een versie toch ook een geslaagde Step Function, dan is die goed verwerkt en staat de mislukte poging erbij.
 
+## Herstel met de hand
+
+Een mislukte Step Function wordt meestal vanuit de AWS-console hersteld. De matcher ziet maar een van de twee manieren:
+
+- Redrive van de mislukte stap: dezelfde execution_arn loopt verder, de nieuwe events hebben redriveCount 1 of hoger. Slaagt hij daarna, dan is de
+  uitkomst PROCESSED_AFTER_REDRIVE. Mislukt hij opnieuw, dan blijft het PROBLEM.
+- Een nieuwe execution starten (of de resubmit-lambda): die krijgt een nieuwe execution_arn die in geen enkele receiver-trace staat. De log reader
+  haalt hem niet op, dus de matcher ziet hem niet. De versie blijft PROBLEM met de reden van de eerste, mislukte execution.
+
 ## Beoordeling
 
 ```mermaid
@@ -104,7 +114,7 @@ flowchart TD
     B -->|ja| C{Logs compleet?}
     C -->|nee| U
     C -->|ja| D{Step Function geslaagd?}
-    D -->|ja| OK[Goed verwerkt]
+    D -->|ja| OK[Goed verwerkt of<br/>gelukt na redrive]
     D -->|nee| E{Loopt nog?}
     E -->|ja| L[Nog bezig]
     E -->|nee| P[Probleem met reden]
@@ -120,9 +130,12 @@ EXECUTION_EVENTS_NOT_FOUND (wel een execution_arn, maar geen events van de Step 
 ## Tijd
 
 De Objects API kent per versie alleen een datum, geen tijd. Een versie van 23:59 kan zijn notificatie en Step Function pas na middernacht hebben.
-Lees de logs daarom vanaf het begin van de registratiedag tot ruim erna, niet alleen over die dag. De matcher kijkt naar het gelezen tijdvak
-(queryRange in het resultaat van de log reader). Is dat te kort, dan is een ontbrekende notificatie geen PROBLEM maar UNCERTAIN met
-LOGS_TIME_RANGE_TOO_SHORT.
+Lees de logs daarom vanaf het begin van de registratiedag tot minstens een uur na het einde ervan, bijvoorbeeld tot het moment van de ochtendrun.
+De matcher kijkt naar het gelezen tijdvak (queryRange in het resultaat van de log reader). Begint dat na de registratiedag of eindigt het minder dan
+een uur erna, dan is een ontbrekende notificatie of start geen PROBLEM maar UNCERTAIN met LOGS_TIME_RANGE_TOO_SHORT.
+
+Dat uur is alleen voor de receiver, die een notificatie normaal binnen seconden afhandelt. Een Step Function die daarna nog loopt, is IN_PROGRESS.
+Voor de Step Function-events leest de log reader zelf al een uur verder dan queryRange.
 
 ## Wat de matcher niet doet
 
