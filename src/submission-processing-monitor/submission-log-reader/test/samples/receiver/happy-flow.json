@@ -1,0 +1,60 @@
+[
+  {
+    "@timestamp": "2026-11-02 22:42:27.244",
+    "correlation_id": "a0a9fd58-8f0f-4c95-b7cf-7a555142c651",
+    "event": "submission.notification.received",
+    "objectUuid": "37119935-86ce-4fdf-8f4d-cddf9f232068",
+    "resourceUrl": "https://mijn-services.accp.nijmegen.nl/objects/api/v2/objects/37119935-86ce-4fdf-8f4d-cddf9f232068"
+  },
+  {
+    "@timestamp": "2026-11-02 22:42:27.301",
+    "correlation_id": "a0a9fd58-8f0f-4c95-b7cf-7a555142c651",
+    "event": "submission.object.fetch.started",
+    "objectUuid": "37119935-86ce-4fdf-8f4d-cddf9f232068",
+    "resourceUrl": "https://mijn-services.accp.nijmegen.nl/objects/api/v2/objects/37119935-86ce-4fdf-8f4d-cddf9f232068"
+  },
+  {
+    "@timestamp": "2026-11-02 22:42:29.142",
+    "correlation_id": "a0a9fd58-8f0f-4c95-b7cf-7a555142c651",
+    "event": "submission.object.fetch.succeeded",
+    "objectUuid": "37119935-86ce-4fdf-8f4d-cddf9f232068",
+    "objectIndex": "1",
+    "objectTypeUrl": "https://mijn-services.accp.nijmegen.nl/objects/api/v2/objecttypes/167e0aec-e416-46fa-9868-e35f11f3f151",
+    "formName": "Bingo melden of loterijvergunning aanvragen",
+    "resourceUrl": "https://mijn-services.accp.nijmegen.nl/objects/api/v2/objects/37119935-86ce-4fdf-8f4d-cddf9f232068"
+  },
+  {
+    "@timestamp": "2026-11-02 22:42:29.143",
+    "correlation_id": "a0a9fd58-8f0f-4c95-b7cf-7a555142c651",
+    "event": "submission.object.parsed",
+    "objectUuid": "37119935-86ce-4fdf-8f4d-cddf9f232068",
+    "objectIndex": "1",
+    "objectTypeUrl": "https://mijn-services.accp.nijmegen.nl/objects/api/v2/objecttypes/167e0aec-e416-46fa-9868-e35f11f3f151",
+    "reference": "OF-9DNFG3",
+    "formName": "Bingo melden of loterijvergunning aanvragen",
+    "resourceUrl": "https://mijn-services.accp.nijmegen.nl/objects/api/v2/objects/37119935-86ce-4fdf-8f4d-cddf9f232068"
+  },
+  {
+    "@timestamp": "2026-11-02 22:42:29.143",
+    "correlation_id": "a0a9fd58-8f0f-4c95-b7cf-7a555142c651",
+    "event": "submission.execution.starting",
+    "objectUuid": "37119935-86ce-4fdf-8f4d-cddf9f232068",
+    "objectIndex": "1",
+    "objectTypeUrl": "https://mijn-services.accp.nijmegen.nl/objects/api/v2/objecttypes/167e0aec-e416-46fa-9868-e35f11f3f151",
+    "reference": "OF-9DNFG3",
+    "formName": "Bingo melden of loterijvergunning aanvragen",
+    "resourceUrl": "https://mijn-services.accp.nijmegen.nl/objects/api/v2/objects/37119935-86ce-4fdf-8f4d-cddf9f232068"
+  },
+  {
+    "@timestamp": "2026-11-02 22:42:29.682",
+    "correlation_id": "a0a9fd58-8f0f-4c95-b7cf-7a555142c651",
+    "event": "submission.execution.started",
+    "objectUuid": "37119935-86ce-4fdf-8f4d-cddf9f232068",
+    "objectIndex": "1",
+    "objectTypeUrl": "https://mijn-services.accp.nijmegen.nl/objects/api/v2/objecttypes/167e0aec-e416-46fa-9868-e35f11f3f151",
+    "reference": "OF-9DNFG3",
+    "formName": "Bingo melden of loterijvergunning aanvragen",
+    "execution_arn": "arn:aws:states:eu-central-1:043309345347:execution:submissionforwarderorchestrator37E6B69F-UmkEyx4HnJf9:OF-9DNFG3-1793659349144",
+    "resourceUrl": "https://mijn-services.accp.nijmegen.nl/objects/api/v2/objects/37119935-86ce-4fdf-8f4d-cddf9f232068"
+  }
+]
