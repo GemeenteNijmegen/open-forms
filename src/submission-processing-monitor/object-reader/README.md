@@ -21,7 +21,10 @@ De reader haalt zelf de base URL en de objecttypes uit SSM en het token uit Secr
 of waarin lastDay voor firstDay ligt, geeft een fout.
 
 Een powertools Logger meegeven kan met new ObjectReader({ logger }); zonder logger maakt de reader er zelf een. Elke API-call wordt op debug
-gelogd met pad, queryparameters en status. Een mislukte call staat op error met de reden.
+gelogd met pad, queryparameters en status. Een mislukte call staat op error met de reden. Op info staan de namen van de geconfigureerde
+objecttypes en aan het eind hoeveel Objects bekeken zijn, hoeveel een onbekend type hadden, de registratiedatum van het eerste Object in de
+lijst (de nieuwste, als de API sorteert zoals gevraagd) en die van het Object waar de lijst stopte. Een onbekend type staat één keer als warn
+met de type-url, zodat je hem naast de parameter kunt leggen.
 
 ## Hoe
 
