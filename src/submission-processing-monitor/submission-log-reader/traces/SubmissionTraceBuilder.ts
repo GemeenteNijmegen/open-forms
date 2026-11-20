@@ -26,6 +26,31 @@ export function buildReceiverTraces(rows: Record<string, string>[], objectUuid: 
   return traces;
 }
 
+/**
+ * Splits the rows of one receiver query over the objectUuids it looked for. Every objectUuid gets an entry, also without rows.
+ * With one objectUuid every row belongs to it: the query filters on it. With more, a row without objectUuid cannot be placed and fails.
+ */
+export function groupReceiverRowsByObjectUuid(
+  rows: Record<string, string>[],
+  objectUuids: string[],
+  queryId: string,
+): Map<string, Record<string, string>[]> {
+  const rowsByObjectUuid = new Map<string, Record<string, string>[]>();
+  for (const objectUuid of objectUuids) {
+    rowsByObjectUuid.set(objectUuid, []);
+  }
+
+  for (const row of rows) {
+    const objectUuid = objectUuids.length === 1 ? objectUuids[0] : row[SubmissionLogField.OBJECT_UUID];
+    const rowsOfObject = rowsByObjectUuid.get(objectUuid);
+    if (!rowsOfObject) {
+      throw mappingFailed('Receiver row has no objectUuid that was asked for', queryId);
+    }
+    rowsOfObject.push(row);
+  }
+  return rowsByObjectUuid;
+}
+
 export function collectExecutionArns(traces: SubmissionLogTrace[]): string[] {
   const arns = new Set<string>();
   for (const trace of traces) {

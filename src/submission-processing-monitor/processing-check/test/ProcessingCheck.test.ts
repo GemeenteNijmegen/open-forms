@@ -11,6 +11,7 @@ import { RunScenario } from './samples/RunScenario';
 import { scenario as tijdOpHalverwege } from './samples/tijd-op-halverwege';
 import { ObjectReader } from '../../object-reader/ObjectReader';
 import { CloudWatchSubmissionLogReader } from '../../submission-log-reader/CloudWatchSubmissionLogReader';
+import { SubmissionLogUuidsResult } from '../../submission-log-reader/SubmissionLogReaderTypes';
 import { ProcessingCheck, ProcessingCheckEvent } from '../ProcessingCheck';
 import { ProcessingCheckResultsRepository } from '../store/ProcessingCheckResultsRepository';
 
@@ -56,15 +57,25 @@ function prepareReaders(scenario: RunScenario) {
     const days = Object.keys(scenario.objectReaderVersionsPerDay).filter((day) => day >= period!.firstDay && day <= period!.lastDay);
     return days.flatMap((day) => scenario.objectReaderVersionsPerDay[day]);
   });
-  jest.spyOn(CloudWatchSubmissionLogReader.prototype, 'findByObjectUuid').mockImplementation(async (options) => {
-    if (scenario.logReadFailsFor.includes(options.objectUuid)) {
-      throw new Error('CloudWatch query failed');
+  // Reads the objects in order and checks shouldStop before each one, like the reader does before each group.
+  jest.spyOn(CloudWatchSubmissionLogReader.prototype, 'findByObjectUuids').mockImplementation(async (options) => {
+    const reads: SubmissionLogUuidsResult = { logs: [], failedReads: [], diagnostics: [], stopped: false };
+    for (const objectUuid of options.objectUuids) {
+      if (options.shouldStop()) {
+        reads.stopped = true;
+        return reads;
+      }
+      if (scenario.logReadFailsFor.includes(objectUuid)) {
+        reads.failedReads.push({ objectUuid, error: new Error('CloudWatch query failed') });
+        continue;
+      }
+      const logs = scenario.logReaderResults.find((result) => result.lookup.objectUuid === objectUuid);
+      if (!logs) {
+        throw new Error(`The scenario has no logs for ${objectUuid}`);
+      }
+      reads.logs.push(logs);
     }
-    const logs = scenario.logReaderResults.find((result) => result.lookup.objectUuid === options.objectUuid);
-    if (!logs) {
-      throw new Error(`The scenario has no logs for ${options.objectUuid}`);
-    }
-    return logs;
+    return reads;
   });
 }
 

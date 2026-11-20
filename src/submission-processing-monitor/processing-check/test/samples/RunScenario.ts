@@ -14,9 +14,9 @@ export interface RunScenario {
   objectReaderVersionsPerDay: Record<string, ObjectVersion[]>;
   // When true, findVersions throws.
   objectsApiFails: boolean;
-  // What new CloudWatchSubmissionLogReader().findByObjectUuid({ objectUuid, range }) returns per objectUuid.
+  // What the log reader returns per objectUuid, as findByObjectUuid({ objectUuid, range }) gives it.
   logReaderResults: SubmissionLogUuidResult[];
-  // objectUuids for which findByObjectUuid throws.
+  // objectUuids whose logs cannot be read.
   logReadFailsFor: string[];
   // Lambda time left at each call to getRemainingTimeInMillis, in order. The last value repeats.
   remainingTimeInMillis: number[];

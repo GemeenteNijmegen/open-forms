@@ -24,7 +24,7 @@ export interface FindSubmissionLogsByUuidOptions {
 export interface FindSubmissionLogsByUuidsOptions {
   objectUuids: string[];
   range: AbsoluteTimeRange;
-  // Checked before each objectUuid. When it returns true, the remaining objectUuids are not read.
+  // Checked before each group, and before each objectUuid when a failed group is read one by one. True stops the reads.
   shouldStop: () => boolean;
 }
 
@@ -109,8 +109,11 @@ export interface SubmissionLogUuidResult {
 }
 
 export interface SubmissionLogUuidsResult {
+  // Without diagnostics per objectUuid: one query covers a whole group, so its statistics are in diagnostics below.
   logs: SubmissionLogUuidResult[];
   failedReads: { objectUuid: string; error: unknown }[];
+  // One entry per receiver query, with its execution query. Only filled when the reader runs with diagnostics.
+  diagnostics: SubmissionLogReaderDiagnostics[];
   // True when shouldStop ended the reads; the objectUuids that were not read are in neither list.
   stopped: boolean;
 }
