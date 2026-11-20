@@ -17,6 +17,10 @@ const EXECUTION_QUERY_EXTRA_MS = 60 * 60 * 1000;
 // findByObjectUuids logs its progress at info after every this many objects.
 const LOG_PROGRESS_EVERY = 25;
 
+// StartQuery and GetQueryResults may each be called 10 times per second per account, shared with the console and other users. Each read
+// polls once per second, so 6 reads at the same time stay around 5 calls per second.
+const READS_AT_THE_SAME_TIME = 6;
+
 export interface CloudWatchSubmissionLogReaderOptions {
   cloudWatchLogsClient?: CloudWatchLogsClient;
 
@@ -85,7 +89,7 @@ export class CloudWatchSubmissionLogReader {
   }
 
   /**
-   * Reads the logs of several object UUIDs, at most three at the same time. A read that throws does not stop the others.
+   * Reads the logs of several object UUIDs, at most six at the same time. A read that throws does not stop the others.
    *
    * @param options The object UUIDs, the range, and shouldStop, which is checked before each object UUID.
    * @returns The logs that were read, the reads that threw, and whether shouldStop ended the reads early.
@@ -124,7 +128,11 @@ export class CloudWatchSubmissionLogReader {
       }
     };
 
-    await Promise.all([readUntilListIsDone(), readUntilListIsDone(), readUntilListIsDone()]);
+    const workers: Promise<void>[] = [];
+    for (let worker = 0; worker < READS_AT_THE_SAME_TIME; worker++) {
+      workers.push(readUntilListIsDone());
+    }
+    await Promise.all(workers);
     this.logger.info('Log reads finished', {
       read: result.logs.length,
       failed: result.failedReads.length,
