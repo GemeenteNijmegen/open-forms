@@ -23,6 +23,13 @@ flowchart LR
 
 De monitor verandert zelf niets aan Objects en start geen verwerkingen opnieuw. Hij controleert alleen wat er gebeurd is.
 
+## Indeling
+
+Begin bij de [processing check](processing-check/README.md): dat is de Lambda die een periode controleert en de resultaten opslaat. De andere
+mappen zijn de onderdelen die hij gebruikt. De [object reader](object-reader/README.md) haalt de Object-versies van een dag op, de
+[submission log reader](submission-log-reader/README.md) per object de logs uit CloudWatch, en de [matcher](matcher/README.md) bepaalt daaruit
+per versie de uitkomst. In [time-range](time-range/README.md) staan de Amsterdamse dagen, en in infrastructure de CDK van de monitor.
+
 ## Eerst zorgen dat de logging klopt
 
 Voordat we de monitor bouwen, moet de bestaande submission-forwarder goed genoeg te volgen zijn. En de log groups moeten gemakkelijk door de monitor opgehaald worden (naam uit statics)
