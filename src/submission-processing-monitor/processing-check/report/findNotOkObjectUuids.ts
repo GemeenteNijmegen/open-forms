@@ -1,14 +1,7 @@
 import { VersionOutcome } from '../../matcher/SubmissionProcessingMatcher';
 
-// Each objectUuid once, in the order of the outcomes.
+// Each objectUuid once, in the order of the outcomes. Unlike OK_OUTCOMES a redrive is not ok here: someone had to step in, so it is reported.
 export function findNotOkObjectUuids(versionOutcomes: VersionOutcome[]): string[] {
-  const notOkObjectUuids: string[] = [];
-  for (const versionOutcome of versionOutcomes) {
-    const isOk = versionOutcome.outcome === 'PROCESSED' || versionOutcome.outcome === 'IGNORED';
-    const objectUuid = versionOutcome.version.objectUuid;
-    if (!isOk && !notOkObjectUuids.includes(objectUuid)) {
-      notOkObjectUuids.push(objectUuid);
-    }
-  }
-  return notOkObjectUuids;
+  const notOkOutcomes = versionOutcomes.filter((versionOutcome) => versionOutcome.outcome !== 'PROCESSED' && versionOutcome.outcome !== 'IGNORED');
+  return [...new Set(notOkOutcomes.map((versionOutcome) => versionOutcome.version.objectUuid))];
 }
