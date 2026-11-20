@@ -61,8 +61,12 @@ voor ontbrekende notificaties UNCERTAIN, omdat de logs de dag dan nog niet helem
 
 ## Logging
 
-De Lambda logt de start, per dag de aantallen en de duur, en aan het eind het rapport. In de log staan alleen cijfers; welke objecten misgingen,
-staat in DynamoDB. Met diagnostics aan komen de kosten erbij. Diagnostics staan per omgeving aan of uit in src/Configuration.ts.
+Zo volg je een run in de log. Op info: de start van de run, per dag het begin, hoeveel versies de Objects API gaf, het begin van de log-reads
+met het aantal objecten, elke 25 objecten de voortgang, het einde van de log-reads, het opslaan, en het einde van de dag met de aantallen en de
+duur. Aan het eind van de run het rapport. Een mislukte log-read is een warn met de objectUuid en de fout, en als de tijd op is, staat er een
+warn met hoeveel objecten niet meer gecontroleerd zijn. Op debug (zo staat acceptance) komt per object de log-read erbij en per versie die
+niet PROCESSED of IGNORED is de uitkomst en de reden. Met diagnostics aan komen de kosten erbij. Logniveau en diagnostics staan per omgeving in
+src/Configuration.ts.
 
 ## Code
 
