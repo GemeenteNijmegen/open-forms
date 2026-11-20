@@ -99,7 +99,7 @@ describe('ProcessingCheck scenarios in test/samples', () => {
     { firstDay: '2026-11-18' },
     { firstDay: '2026-02-30', lastDay: '2026-03-01' },
     { firstDay: '2026-11-19', lastDay: '2026-11-18' },
-    { firstDay: '2026-10-01', lastDay: '2026-11-18' },
+    { firstDay: '2025-01-01', lastDay: '2026-11-18' },
   ])('een fout event %j geeft een fout en schrijft niets in de tabel', async (event) => {
     await expect(runCheck(event, [600_000])).rejects.toThrow();
     expect(table.size).toBe(0);

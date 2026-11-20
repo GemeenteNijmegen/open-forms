@@ -12,8 +12,8 @@ import { CloudWatchSubmissionLogReader } from '../submission-log-reader/CloudWat
 import { SubmissionLogReaderDiagnostics, SubmissionLogUuidResult } from '../submission-log-reader/SubmissionLogReaderTypes';
 import { amsterdamCalendarDayToAbsoluteTimeRange, amsterdamCalendarDaysFromTo, previousAmsterdamCalendarDay } from '../time-range/AmsterdamTimeRange';
 
-// A longer period does not fit in one Lambda run, and a typo in a year should not start years of checks.
-const MAX_DAYS = 31;
+// A typo in a year should not start years of checks. Days that do not fit in one Lambda run end as OUT_OF_TIME.
+const MAX_DAYS = 366;
 
 // The test event from the Lambda console. Both days or neither; neither means yesterday in Amsterdam.
 const processingCheckEventSchema = z.object({ firstDay: z.string().date().optional(), lastDay: z.string().date().optional() })
