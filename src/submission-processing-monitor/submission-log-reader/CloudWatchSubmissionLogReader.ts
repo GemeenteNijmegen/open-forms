@@ -4,8 +4,8 @@ import { CloudWatchSubmissionLogReaderError } from './errors/CloudWatchSubmissio
 import { buildExecutionQuery } from './queries/SubmissionExecutionCwliQuery';
 import { buildReceiverQuery } from './queries/SubmissionReceiverCwliQuery';
 import {
-  AbsoluteTimeRange, FindSubmissionLogsByUuidOptions, FindSubmissionLogsByVersionOptions,
-  SubmissionLogTrace, SubmissionLogUuidResult, SubmissionLogVersionResult,
+  AbsoluteTimeRange, FindSubmissionLogsByUuidOptions, FindSubmissionLogsByUuidsOptions, FindSubmissionLogsByVersionOptions,
+  SubmissionLogTrace, SubmissionLogUuidResult, SubmissionLogUuidsResult, SubmissionLogVersionResult,
 } from './SubmissionLogReaderTypes';
 import { attachExecutions, buildReceiverTraces, categorizeTracesByObjectIndex, collectExecutionArns } from './traces/SubmissionTraceBuilder';
 
@@ -73,6 +73,39 @@ export class CloudWatchSubmissionLogReader {
       };
     }
 
+    return result;
+  }
+
+  /**
+   * Reads the logs of several object UUIDs, at most three at the same time. A read that throws does not stop the others.
+   *
+   * @param options The object UUIDs, the range, and shouldStop, which is checked before each object UUID.
+   * @returns The logs that were read, the reads that threw, and whether shouldStop ended the reads early.
+   * @example
+   * const reads = await reader.findByObjectUuids({ objectUuids, range, shouldStop: () => context.getRemainingTimeInMillis() < 120_000 });
+   */
+  async findByObjectUuids(options: FindSubmissionLogsByUuidsOptions): Promise<SubmissionLogUuidsResult> {
+    const result: SubmissionLogUuidsResult = { logs: [], failedReads: [], stopped: false };
+    let nextPosition = 0;
+
+    // Each worker takes the next objectUuid from the same list.
+    const readUntilListIsDone = async () => {
+      while (nextPosition < options.objectUuids.length) {
+        if (options.shouldStop()) {
+          result.stopped = true;
+          return;
+        }
+        const objectUuid = options.objectUuids[nextPosition];
+        nextPosition++;
+        try {
+          result.logs.push(await this.findByObjectUuid({ objectUuid, range: options.range }));
+        } catch (error) {
+          result.failedReads.push({ objectUuid, error });
+        }
+      }
+    };
+
+    await Promise.all([readUntilListIsDone(), readUntilListIsDone(), readUntilListIsDone()]);
     return result;
   }
 

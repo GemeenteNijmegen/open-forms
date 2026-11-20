@@ -21,6 +21,13 @@ export interface FindSubmissionLogsByUuidOptions {
   range: AbsoluteTimeRange;
 }
 
+export interface FindSubmissionLogsByUuidsOptions {
+  objectUuids: string[];
+  range: AbsoluteTimeRange;
+  // Checked before each objectUuid. When it returns true, the remaining objectUuids are not read.
+  shouldStop: () => boolean;
+}
+
 export interface FindSubmissionLogsByVersionOptions {
   objectUuid: string;
   objectIndex: number;
@@ -99,6 +106,13 @@ export interface SubmissionLogUuidResult {
   queryRange: AbsoluteTimeRange;
   traces: SubmissionLogTrace[];
   diagnostics?: SubmissionLogReaderDiagnostics;
+}
+
+export interface SubmissionLogUuidsResult {
+  logs: SubmissionLogUuidResult[];
+  failedReads: { objectUuid: string; error: unknown }[];
+  // True when shouldStop ended the reads; the objectUuids that were not read are in neither list.
+  stopped: boolean;
 }
 
 export interface SubmissionLogVersionCategories {

@@ -7,7 +7,6 @@ Haalt alleen op en geeft gestructureerd terug.
 
 
 Voor nu buiten scope:
-- Batch logs ophalen
 - Met de diagnostics omgaan
 - Conclusies trekken of een oordeel hebben over de logs
 
@@ -59,6 +58,9 @@ Voor één Object zijn twee publieke zoekvormen voorzien.
 findByObjectUuid haalt alle traces voor de UUID op.
 
 findByObjectVersion zoekt op dezelfde UUID, maar deelt het resultaat daarna technisch in ten opzichte van de gevraagde objectIndex.
+
+findByObjectUuids doet findByObjectUuid voor een lijst UUID's, drie tegelijk. Een read die gooit, stopt de andere niet en komt in failedReads.
+Voor elke UUID vraagt hij shouldStop; de processing check stopt zo als de Lambda bijna geen tijd meer heeft.
 
 ```mermaid
 flowchart TD
