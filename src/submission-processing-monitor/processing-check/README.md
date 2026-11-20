@@ -66,7 +66,8 @@ staat in DynamoDB. Met diagnostics aan komen de kosten erbij. Diagnostics staan 
 ## Code
 
 Begin bij ProcessingCheck.ts: de run en de controle per dag. In historyAfterCheckingDay.ts staat hoe de geschiedenis van een inzending verandert na de controle van een dag. De map report bouwt het rapport. De
-repository in [store](store/README.md) leest en schrijft beide.
+repository in [store](store/README.md) leest en schrijft beide. De tests in test/samples zijn per scenario een hele run, met DynamoDB en de
+readers nagebootst.
 
 ## Beperkingen
 
