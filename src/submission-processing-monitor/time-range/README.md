@@ -4,7 +4,7 @@ Rekent met kalenderdagen in Europe/Amsterdam. De monitor controleert per Amsterd
 datum zonder tijd, CloudWatch zoekt in een absoluut tijdvak. De readers zelf rekenen niet met tijdzones.
 
 JavaScript Date kent alleen UTC en de lokale tijd van de machine, daarom werkt deze code met Intl en ziet het er nog steeds zo omslachtig uit. Vanaf Node.js 26 zit Temporal standaard in
-Node.js. Als het project en de Lambda-runtime daarop zitten, kunnen beide functies beter naar Temporal omgebouwd worden. Het doel, de invoer en de
+Node.js. Als het project en de Lambda-runtime daarop zitten, kunnen de functies beter naar Temporal omgebouwd worden. Het doel, de invoer en de
 uitvoer hieronder blijven dan gelijk, en de tests in test/AmsterdamTimeRange.test.ts moeten ongewijzigd blijven slagen.
 
 ```ts
