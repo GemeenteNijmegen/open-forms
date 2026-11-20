@@ -24,7 +24,7 @@ Amsterdamse tijd:
 { "firstDay": "2026-11-16", "lastDay": "2026-11-18" }
 ```
 
-Een leeg event controleert gisteren. Met maar één dag, een datum die niet bestaat, een eerste dag na de laatste of een periode van meer dan 31
+Een leeg event controleert gisteren. Met maar één dag, een datum die niet bestaat, een eerste dag na de laatste of een periode van meer dan 366
 dagen geeft de Lambda een fout en doet hij niets. Het antwoord is het rapport van de run; de details staan in DynamoDB.
 
 ## Wat een run doet
