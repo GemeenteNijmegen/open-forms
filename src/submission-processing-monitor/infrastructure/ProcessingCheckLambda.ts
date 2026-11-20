@@ -50,8 +50,13 @@ export class ProcessingCheckLambda extends Construct {
     // The queries find the receiver and orchestrator log groups by tag (SOURCE logGroupTags), so the log groups are not named here.
     const stack = Stack.of(this);
     processingCheck.addToRolePolicy(new PolicyStatement({
-      actions: ['logs:StartQuery', 'logs:GetQueryResults', 'logs:DescribeLogGroups'],
+      actions: ['logs:StartQuery', 'logs:GetQueryResults'],
       resources: [`arn:aws:logs:${stack.region}:${stack.account}:log-group:*`],
+    }));
+    // StartQuery calls DescribeLogGroups for SOURCE logGroupTags, on arn:aws:logs:<region>:<account>:*:*, not on log-group:*.
+    processingCheck.addToRolePolicy(new PolicyStatement({
+      actions: ['logs:DescribeLogGroups'],
+      resources: [`arn:aws:logs:${stack.region}:${stack.account}:*`],
     }));
     processingCheck.addToRolePolicy(new PolicyStatement({
       actions: ['logs:StopQuery'],
