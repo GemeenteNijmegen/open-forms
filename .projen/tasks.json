@@ -115,6 +115,9 @@
           "spawn": "bundle:submission-forwarder/zgw-registration-lambda/zgw-registration.lambda"
         },
         {
+          "spawn": "bundle:submission-processing-monitor/processing-check/processing-check.lambda"
+        },
+        {
           "spawn": "bundle:api/form-prefill/standplaatsvergunning/standplaatsvergunning.lambda"
         }
       ]
@@ -696,6 +699,45 @@
             "--target=node24",
             "--platform=node",
             "--outfile=assets/submission-forwarder/zgw-registration-lambda/zgw-registration.lambda/index.js",
+            "--packages=bundle",
+            "--tsconfig=test/tsconfig.json",
+            "--external:@aws-sdk/*",
+            "--watch"
+          ]
+        }
+      ]
+    },
+    "bundle:submission-processing-monitor/processing-check/processing-check.lambda": {
+      "name": "bundle:submission-processing-monitor/processing-check/processing-check.lambda",
+      "description": "Create a JavaScript bundle from src/submission-processing-monitor/processing-check/processing-check.lambda.ts",
+      "steps": [
+        {
+          "execArgs": [
+            "esbuild",
+            "--bundle",
+            "src/submission-processing-monitor/processing-check/processing-check.lambda.ts",
+            "--target=node24",
+            "--platform=node",
+            "--outfile=assets/submission-processing-monitor/processing-check/processing-check.lambda/index.js",
+            "--packages=bundle",
+            "--tsconfig=test/tsconfig.json",
+            "--external:@aws-sdk/*"
+          ]
+        }
+      ]
+    },
+    "bundle:submission-processing-monitor/processing-check/processing-check.lambda:watch": {
+      "name": "bundle:submission-processing-monitor/processing-check/processing-check.lambda:watch",
+      "description": "Continuously update the JavaScript bundle from src/submission-processing-monitor/processing-check/processing-check.lambda.ts",
+      "steps": [
+        {
+          "execArgs": [
+            "esbuild",
+            "--bundle",
+            "src/submission-processing-monitor/processing-check/processing-check.lambda.ts",
+            "--target=node24",
+            "--platform=node",
+            "--outfile=assets/submission-processing-monitor/processing-check/processing-check.lambda/index.js",
             "--packages=bundle",
             "--tsconfig=test/tsconfig.json",
             "--external:@aws-sdk/*",
