@@ -23,8 +23,7 @@ const ONE_HOUR_IN_MS = 60 * 60 * 1000;
 
 // The registration day in Amsterdam plus one hour: the receiver handles a notification within seconds, also for a version of 23:59.
 export function registrationDayPlusOneHour(registrationAt: string): AbsoluteTimeRange {
-  const [year, month, day] = registrationAt.split('-').map(Number);
-  const registrationDay = amsterdamCalendarDayToAbsoluteTimeRange({ year, month, day });
+  const registrationDay = amsterdamCalendarDayToAbsoluteTimeRange(registrationAt);
   return {
     fromInclusive: registrationDay.fromInclusive,
     toExclusive: new Date(registrationDay.toExclusive.getTime() + ONE_HOUR_IN_MS),

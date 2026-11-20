@@ -14,6 +14,11 @@ export interface SubmissionProcessingMatcherInput {
 // PROCESSED_AFTER_REDRIVE: the execution failed, was redriven from the console and then succeeded. Reported apart so someone can check it.
 export type ProcessingOutcome = 'PROCESSED' | 'PROCESSED_AFTER_REDRIVE' | 'IGNORED' | 'PROBLEM' | 'IN_PROGRESS' | 'UNCERTAIN';
 
+export const OUTCOMES_WORST_FIRST: ProcessingOutcome[] = ['PROBLEM', 'UNCERTAIN', 'IN_PROGRESS', 'PROCESSED_AFTER_REDRIVE', 'PROCESSED', 'IGNORED'];
+
+// Processed in the end, also when a redrive was needed: a problem with one of these outcomes is resolved.
+export const RESOLVED_OUTCOMES: ProcessingOutcome[] = ['PROCESSED', 'PROCESSED_AFTER_REDRIVE', 'IGNORED'];
+
 export type ProcessingReason =
   // PROBLEM
   | 'NO_NOTIFICATION'
@@ -39,6 +44,9 @@ export interface VersionOutcome {
   reason?: ProcessingReason;
   // The traces the outcome is based on, with their correlation_id, receiver events and executions.
   traces: SubmissionLogTrace[];
+  // From the receiver logs of traces with only this version's index, so they certainly belong to this version.
+  reference?: string;
+  formName?: string;
 }
 
 export interface SubmissionProcessingOutcomes {
@@ -135,12 +143,18 @@ export class SubmissionProcessingMatcher {
           coupledCorrelationIds.add(trace.correlation_id);
         }
 
-        outcomes.push(findVersionOutcome({
+        const versionOutcome = findVersionOutcome({
           version,
           traces: traces.sort(compareTraces),
           ambiguousTraces: ambiguousTraces.sort(compareTraces),
           queryRange: logs.queryRange,
-        }));
+        });
+        const receiverEvents = categories.tracesForRequestedIndex.flatMap(trace => trace.receiverEvents);
+        outcomes.push({
+          ...versionOutcome,
+          reference: receiverEvents.find(event => event.reference)?.reference,
+          formName: receiverEvents.find(event => event.formName)?.formName,
+        });
       }
 
       for (const trace of logs.traces) {
