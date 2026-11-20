@@ -88,6 +88,7 @@
     "@aws-sdk/client-sns": "3.1161.0",
     "@aws-sdk/client-sqs": "3.1161.0",
     "@aws-sdk/lib-storage": "3.1161.0",
+    "@aws-sdk/util-dynamodb": "^3.996.9",
     "@gemeentenijmegen/apigateway-http": "^0.0.41",
     "@gemeentenijmegen/aws-constructs": "^0.0.57",
     "@gemeentenijmegen/design-tokens": "^0.1.14",
