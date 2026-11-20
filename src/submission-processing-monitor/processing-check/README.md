@@ -17,7 +17,8 @@ flowchart LR
 
 ## Aanroepen
 
-Handmatig vanuit de Lambda-console, met een test-event. Beide dagen tellen mee, in Amsterdamse tijd:
+Handmatig vanuit de Lambda-console, met een test-event. De functienaam staat in de outputs van de stack. Beide dagen tellen mee, in
+Amsterdamse tijd:
 
 ```json
 { "firstDay": "2026-11-16", "lastDay": "2026-11-18" }
