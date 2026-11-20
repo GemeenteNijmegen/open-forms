@@ -59,7 +59,8 @@ findByObjectUuid haalt alle traces voor de UUID op.
 
 findByObjectVersion zoekt op dezelfde UUID, maar deelt het resultaat daarna technisch in ten opzichte van de gevraagde objectIndex.
 
-findByObjectUuids doet findByObjectUuid voor een lijst UUID's, drie tegelijk. Een read die gooit, stopt de andere niet en komt in failedReads.
+findByObjectUuids doet findByObjectUuid voor een lijst UUID's, zes tegelijk. StartQuery en GetQueryResults mogen elk 10 keer per seconde
+per account, gedeeld met de console; met zes tegelijk en één keer per seconde kijken blijft het rond de 5. Een read die gooit, stopt de andere niet en komt in failedReads.
 Voor elke UUID vraagt hij shouldStop; de processing check stopt zo als de Lambda bijna geen tijd meer heeft. Met een logger in de options
 logt hij het begin, elke 25 objecten de voortgang en het einde op info, een mislukte read als warn met de objectUuid en de fout, en per
 object de read op debug.
