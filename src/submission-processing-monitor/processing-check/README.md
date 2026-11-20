@@ -24,14 +24,14 @@ Amsterdamse tijd:
 { "firstDay": "2026-11-16", "lastDay": "2026-11-18" }
 ```
 
-Een leeg event controleert gisteren. Met maar één dag, een datum die niet bestaat, een eerste dag na de laatste of een periode van meer dan 31
+Een leeg event controleert gisteren. Met maar één dag, een datum die niet bestaat, een eerste dag na de laatste of een periode van meer dan 366
 dagen geeft de Lambda een fout en doet hij niets. Het antwoord is het rapport van de run; de details staan in DynamoDB.
 
 ## Wat een run doet
 
 De run maakt eerst zijn rapport aan met status RUNNING en haalt dan in één keer de versies van de hele periode op. Per dag apart zou de
 Objects API steeds dezelfde nieuwere Objects opnieuw geven. Daarna gaat hij de dagen na elkaar af. Per dag leest hij per object de logs van het
-begin van die dag tot nu (zes objecten tegelijk), laat hij de matcher de uitkomsten bepalen en werkt hij de geschiedenis van elke inzending
+begin van die dag tot nu (in groepen van 25 per query), laat hij de matcher de uitkomsten bepalen en werkt hij de geschiedenis van elke inzending
 bij. Aan het eind krijgt het rapport de totalen. Mislukt dag 3, dan blijven dag 1 en 2 gewoon staan. Hij stopt met een nieuw object of een
 nieuwe dag als er minder dan 3 minuten over zijn, zodat het opslaan nog past.
 
