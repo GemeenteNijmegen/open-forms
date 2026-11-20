@@ -77,7 +77,7 @@ export class ProcessingCheck {
     this.diagnostics = options.diagnostics;
     this.logger = options.logger ? options.logger.createChild() : new Logger({ serviceName: 'ProcessingCheck' });
     this.objectReader = new ObjectReader({ logger: this.logger });
-    this.logReader = new CloudWatchSubmissionLogReader({ diagnostics: options.diagnostics });
+    this.logReader = new CloudWatchSubmissionLogReader({ diagnostics: options.diagnostics, logger: this.logger });
     this.matcher = new SubmissionProcessingMatcher();
   }
 
@@ -100,7 +100,7 @@ export class ProcessingCheck {
       totals: {},
       notOkObjectUuids: [],
     };
-    this.logger.info('Processing check started', { runId: run.runId, firstDay: report.firstDay, lastDay: report.lastDay });
+    this.logger.info('Processing check started', { runId: run.runId, firstDay: report.firstDay, lastDay: report.lastDay, days: days.length });
     await this.resultsRepository.putReport(report);
 
     const allVersionOutcomes: VersionOutcome[] = [];
@@ -113,6 +113,7 @@ export class ProcessingCheck {
         outOfTime = true;
       }
       if (outOfTime) {
+        this.logger.info('Day skipped, out of time', { runId: run.runId, day });
         report.days.push({ day, status: 'INCOMPLETE', reason: 'OUT_OF_TIME' });
         continue;
       }
@@ -178,11 +179,16 @@ export class ProcessingCheck {
       range,
       shouldStop: () => run.getRemainingTimeInMillis() < MIN_REMAINING_MS,
     });
-    for (const failedRead of logReads.failedReads) {
-      this.logger.warn('Log read failed', { runId: run.runId, day, error: failedRead.error });
-    }
     const objectUuidsWithUnreadLogs = logReads.failedReads.map((failedRead) => failedRead.objectUuid);
     const logReadMs = Date.now() - logReadStartedAt;
+    if (logReads.stopped) {
+      this.logger.warn('Out of time, the rest of the day is not checked', {
+        runId: run.runId,
+        day,
+        objectsNotChecked: objectUuids.length - logReads.logs.length - logReads.failedReads.length,
+        remainingTimeInMillis: run.getRemainingTimeInMillis(),
+      });
+    }
 
     // After OUT_OF_TIME only the objectUuids that were read go to the matcher. The others are not checked, so they are not LOGS_NOT_READ either.
     const readObjectUuids = [...objectUuidsWithUnreadLogs, ...logReads.logs.map((logs) => logs.lookup.objectUuid)];
@@ -193,6 +199,20 @@ export class ProcessingCheck {
       objectUuidsWithUnreadLogs,
     });
 
+    for (const versionOutcome of outcomes.versions) {
+      // The same rule as notOkObjectUuids in the report: a redrive is shown too.
+      if (versionOutcome.outcome !== 'PROCESSED' && versionOutcome.outcome !== 'IGNORED') {
+        this.logger.debug('Version not ok', {
+          runId: run.runId,
+          objectUuid: versionOutcome.version.objectUuid,
+          index: versionOutcome.version.index,
+          outcome: versionOutcome.outcome,
+          reason: versionOutcome.reason,
+        });
+      }
+    }
+
+    this.logger.info('Saving histories', { runId: run.runId, day, objects: readObjectUuids.length });
     await this.updateSubmissionHistories(day, outcomes.versions, run.runId);
 
     let dayCheck: DayCheck = { day, status: 'COMPLETE' };

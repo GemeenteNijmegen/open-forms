@@ -1,3 +1,4 @@
+import { Logger } from '@aws-lambda-powertools/logger';
 import { CloudWatchLogsClient } from '@aws-sdk/client-cloudwatch-logs';
 import { CloudWatchLogsQueryRunner, CwliQueryResult } from './cloudwatch/CloudWatchLogsQueryRunner';
 import { CloudWatchSubmissionLogReaderError } from './errors/CloudWatchSubmissionLogReaderError';
@@ -13,19 +14,26 @@ import { attachExecutions, buildReceiverTraces, categorizeTracesByObjectIndex, c
 // Lambdas time out at 5 minutes with 3 retries per task, so one hour covers a full execution.
 const EXECUTION_QUERY_EXTRA_MS = 60 * 60 * 1000;
 
+// findByObjectUuids logs its progress at info after every this many objects.
+const LOG_PROGRESS_EVERY = 25;
+
 export interface CloudWatchSubmissionLogReaderOptions {
   cloudWatchLogsClient?: CloudWatchLogsClient;
 
   // Adds the queryId and CloudWatch statistics of each query to the result. Functional code must not depend on it.
   diagnostics?: boolean;
+
+  logger?: Logger;
 }
 
 export class CloudWatchSubmissionLogReader {
   private readonly diagnostics: boolean;
   private readonly queryRunner: CloudWatchLogsQueryRunner;
+  private readonly logger: Logger;
 
   constructor(options: CloudWatchSubmissionLogReaderOptions = {}) {
     this.diagnostics = options.diagnostics ?? false;
+    this.logger = options.logger ? options.logger.createChild() : new Logger({ serviceName: 'CloudWatchSubmissionLogReader' });
     this.queryRunner = new CloudWatchLogsQueryRunner({ cloudWatchLogsClient: options.cloudWatchLogsClient });
   }
 
@@ -85,27 +93,45 @@ export class CloudWatchSubmissionLogReader {
    * const reads = await reader.findByObjectUuids({ objectUuids, range, shouldStop: () => context.getRemainingTimeInMillis() < 120_000 });
    */
   async findByObjectUuids(options: FindSubmissionLogsByUuidsOptions): Promise<SubmissionLogUuidsResult> {
+    const startedAt = Date.now();
+    const total = options.objectUuids.length;
+    this.logger.info('Log reads started', { objects: total });
     const result: SubmissionLogUuidsResult = { logs: [], failedReads: [], stopped: false };
     let nextPosition = 0;
 
     // Each worker takes the next objectUuid from the same list.
     const readUntilListIsDone = async () => {
-      while (nextPosition < options.objectUuids.length) {
+      while (nextPosition < total) {
         if (options.shouldStop()) {
           result.stopped = true;
           return;
         }
         const objectUuid = options.objectUuids[nextPosition];
         nextPosition++;
+        const readStartedAt = Date.now();
         try {
-          result.logs.push(await this.findByObjectUuid({ objectUuid, range: options.range }));
+          const logs = await this.findByObjectUuid({ objectUuid, range: options.range });
+          result.logs.push(logs);
+          this.logger.debug('Logs read', { objectUuid, traces: logs.traces.length, durationMs: Date.now() - readStartedAt });
         } catch (error) {
+          this.logger.warn('Log read failed', { objectUuid, error });
           result.failedReads.push({ objectUuid, error });
+        }
+        const done = result.logs.length + result.failedReads.length;
+        if (done % LOG_PROGRESS_EVERY === 0) {
+          this.logger.info('Log reads progress', { done, failed: result.failedReads.length, total });
         }
       }
     };
 
     await Promise.all([readUntilListIsDone(), readUntilListIsDone(), readUntilListIsDone()]);
+    this.logger.info('Log reads finished', {
+      read: result.logs.length,
+      failed: result.failedReads.length,
+      notRead: total - result.logs.length - result.failedReads.length,
+      stopped: result.stopped,
+      durationMs: Date.now() - startedAt,
+    });
     return result;
   }
 
