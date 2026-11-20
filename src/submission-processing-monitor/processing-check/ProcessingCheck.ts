@@ -9,7 +9,7 @@ import { ProcessingCheckResultsRepository } from './store/ProcessingCheckResults
 import { SubmissionProcessingMatcher, VersionOutcome } from '../matcher/SubmissionProcessingMatcher';
 import { ObjectReader, ObjectVersion } from '../object-reader/ObjectReader';
 import { CloudWatchSubmissionLogReader } from '../submission-log-reader/CloudWatchSubmissionLogReader';
-import { SubmissionLogReaderDiagnostics } from '../submission-log-reader/SubmissionLogReaderTypes';
+import { SubmissionLogReaderDiagnostics, SubmissionLogUuidResult } from '../submission-log-reader/SubmissionLogReaderTypes';
 import { amsterdamCalendarDayToAbsoluteTimeRange, amsterdamCalendarDaysFromTo, previousAmsterdamCalendarDay } from '../time-range/AmsterdamTimeRange';
 
 // A longer period does not fit in one Lambda run, and a typo in a year should not start years of checks.
@@ -43,6 +43,15 @@ export interface ProcessingCheckRun {
 // saving the histories of the day and the report must still fit.
 const MIN_REMAINING_MS = 3 * 60 * 1000;
 
+interface LogsOfDay {
+  logs: SubmissionLogUuidResult[];
+  objectUuidsWithUnreadLogs: string[];
+  // Read or failed; after OUT_OF_TIME the rest of the day is in neither.
+  readObjectUuids: string[];
+  stopped: boolean;
+  durationMs: number;
+}
+
 interface DayResult {
   dayCheck: DayCheck;
   versionOutcomes: VersionOutcome[];
@@ -55,7 +64,8 @@ interface DayResult {
  * Checks per Amsterdam day of a period whether the submissions were processed, and stores the outcomes in DynamoDB.
  *
  * The object reader finds the versions of the whole period at once. Then per day the log reader reads the logs per objectUuid (from the
- * start of that day until now), and the matcher decides the outcome per version. The processing history of each submission is updated, and the run report (PK RUN) records per day COMPLETE or INCOMPLETE.
+ * start of that day until now), and the matcher decides the outcome per version. The processing history of each submission is updated, and
+ * the run report (PK RUN) records per day COMPLETE or INCOMPLETE.
  * Only looks; it changes nothing in the Objects API and restarts nothing.
  *
  * @example
@@ -91,72 +101,20 @@ export class ProcessingCheck {
    * @returns The stored report of the run. Throws before writing anything when the period is invalid, and when storing fails.
    */
   async run(run: ProcessingCheckRun): Promise<RunReport> {
-    const event = processingCheckEventSchema.parse(run.event);
-    const yesterday = previousAmsterdamCalendarDay();
-    const days = amsterdamCalendarDaysFromTo(event.firstDay ?? yesterday, event.lastDay ?? yesterday);
+    const days = daysToCheck(run.event);
     const runStartedAt = Date.now();
-    const report: RunReport = {
-      runId: run.runId,
-      firstDay: days[0],
-      lastDay: days[days.length - 1],
-      status: 'RUNNING',
-      startedAt: new Date(runStartedAt).toISOString(),
-      days: [],
-      totals: {},
-      notOkObjectUuids: [],
-    };
+    const report = startedReport(run.runId, days, runStartedAt);
     this.logger.info('Processing check started', { runId: run.runId, firstDay: report.firstDay, lastDay: report.lastDay, days: days.length });
     await this.resultsRepository.putReport(report);
 
-    const allVersionOutcomes: VersionOutcome[] = [];
-    const allDiagnostics: SubmissionLogReaderDiagnostics[] = [];
-    let logReadMs = 0;
-
-    // One read for the whole period: reading per day would list the newer Objects and their histories again for every day.
     const objectReadStartedAt = Date.now();
-    let versionsOfPeriod: ObjectVersion[] | undefined;
-    try {
-      versionsOfPeriod = await this.objectReader.findVersions({ firstDay: report.firstDay, lastDay: report.lastDay });
-    } catch (error) {
-      this.logger.error('Objects API read failed', { runId: run.runId, error });
-    }
+    const versionsOfPeriod = await this.findVersionsOfPeriod(report, run.runId);
     const objectReadMs = Date.now() - objectReadStartedAt;
 
-    let outOfTime = false;
-    for (const day of days) {
-      if (!versionsOfPeriod) {
-        report.days.push({ day, status: 'INCOMPLETE', reason: 'OBJECTS_API_FAILED' });
-        continue;
-      }
-      if (!outOfTime && run.getRemainingTimeInMillis() < MIN_REMAINING_MS) {
-        outOfTime = true;
-      }
-      if (outOfTime) {
-        this.logger.info('Day skipped, out of time', { runId: run.runId, day });
-        report.days.push({ day, status: 'INCOMPLETE', reason: 'OUT_OF_TIME' });
-        continue;
-      }
+    const checkedDays = await this.checkDays(days, versionsOfPeriod, report, run);
 
-      const versionsOfDay = versionsOfPeriod.filter((version) => version.registrationAt === day);
-      const dayResult = await this.checkDay(day, versionsOfDay, run);
-      report.days.push(dayResult.dayCheck);
-      allVersionOutcomes.push(...dayResult.versionOutcomes);
-      allDiagnostics.push(...dayResult.diagnostics);
-      logReadMs += dayResult.logReadMs;
-      outOfTime = dayResult.outOfTime;
-      await this.resultsRepository.putReport(report);
-    }
-
-    const allDaysComplete = report.days.every((dayCheck) => dayCheck.status === 'COMPLETE');
-    report.status = allDaysComplete ? 'COMPLETE' : 'INCOMPLETE';
-    report.totals = countTotals(allVersionOutcomes);
-    report.notOkObjectUuids = findNotOkObjectUuids(allVersionOutcomes);
-    if (this.diagnostics) {
-      report.cost = countRunCost({ diagnostics: allDiagnostics, objectReadMs, logReadMs, durationMs: Date.now() - runStartedAt });
-    }
-    report.finishedAt = new Date().toISOString();
+    this.addTotalsToReport(report, checkedDays, objectReadMs, runStartedAt);
     await this.resultsRepository.putReport(report);
-
     this.logger.info('Processing check finished', {
       runId: run.runId,
       status: report.status,
@@ -168,63 +126,73 @@ export class ProcessingCheck {
     return report;
   }
 
+  // Checks the days one after the other and saves the report after each day, so a later failure keeps the earlier days.
+  private async checkDays(days: string[], versionsOfPeriod: ObjectVersion[] | undefined, report: RunReport, run: ProcessingCheckRun) {
+    const checkedDays: DayResult[] = [];
+    let outOfTime = false;
+    for (const day of days) {
+      if (!versionsOfPeriod) {
+        report.days.push({ day, status: 'INCOMPLETE', reason: 'OBJECTS_API_FAILED' });
+        continue;
+      }
+      if (outOfTime || run.getRemainingTimeInMillis() < MIN_REMAINING_MS) {
+        outOfTime = true;
+        this.logger.info('Day skipped, out of time', { runId: run.runId, day });
+        report.days.push({ day, status: 'INCOMPLETE', reason: 'OUT_OF_TIME' });
+        continue;
+      }
+
+      const versionsOfDay = versionsOfPeriod.filter((version) => version.registrationAt === day);
+      const dayResult = await this.checkDay(day, versionsOfDay, run);
+      checkedDays.push(dayResult);
+      report.days.push(dayResult.dayCheck);
+      outOfTime = dayResult.outOfTime;
+      await this.resultsRepository.putReport(report);
+    }
+    return checkedDays;
+  }
+
+  private addTotalsToReport(report: RunReport, checkedDays: DayResult[], objectReadMs: number, runStartedAt: number) {
+    const versionOutcomes = checkedDays.flatMap((checkedDay) => checkedDay.versionOutcomes);
+    report.status = report.days.every((dayCheck) => dayCheck.status === 'COMPLETE') ? 'COMPLETE' : 'INCOMPLETE';
+    report.totals = countTotals(versionOutcomes);
+    report.notOkObjectUuids = findNotOkObjectUuids(versionOutcomes);
+    if (this.diagnostics) {
+      let logReadMs = 0;
+      for (const checkedDay of checkedDays) {
+        logReadMs += checkedDay.logReadMs;
+      }
+      const diagnostics = checkedDays.flatMap((checkedDay) => checkedDay.diagnostics);
+      report.cost = countRunCost({ diagnostics, objectReadMs, logReadMs, durationMs: Date.now() - runStartedAt });
+    }
+    report.finishedAt = new Date().toISOString();
+  }
+
+  // One read for the whole period: reading per day would list the newer Objects and their histories again for every day.
+  // undefined when the Objects API failed; then every day is OBJECTS_API_FAILED.
+  private async findVersionsOfPeriod(report: RunReport, runId: string): Promise<ObjectVersion[] | undefined> {
+    try {
+      return await this.objectReader.findVersions({ firstDay: report.firstDay, lastDay: report.lastDay });
+    } catch (error) {
+      this.logger.error('Objects API read failed', { runId, error });
+      return undefined;
+    }
+  }
+
   private async checkDay(day: string, versions: ObjectVersion[], run: ProcessingCheckRun): Promise<DayResult> {
     const dayStartedAt = Date.now();
     this.logger.info('Day check started', { runId: run.runId, day, versions: versions.length });
 
     const objectUuids = [...new Set(versions.map((version) => version.objectUuid))];
+    const logsOfDay = await this.readLogsOfDay(day, objectUuids, run);
+    const outcomes = this.findOutcomesOfReadObjects(versions, logsOfDay);
+    this.logVersionsNotOk(outcomes.versions, run.runId);
 
-    const logReadStartedAt = Date.now();
-    // From the start of the day until now, so the logs of an execution that ran after the day are included.
-    const range = { fromInclusive: amsterdamCalendarDayToAbsoluteTimeRange(day).fromInclusive, toExclusive: new Date() };
-    const logReads = await this.logReader.findByObjectUuids({
-      objectUuids,
-      range,
-      shouldStop: () => run.getRemainingTimeInMillis() < MIN_REMAINING_MS,
-    });
-    const objectUuidsWithUnreadLogs = logReads.failedReads.map((failedRead) => failedRead.objectUuid);
-    const logReadMs = Date.now() - logReadStartedAt;
-    if (logReads.stopped) {
-      this.logger.warn('Out of time, the rest of the day is not checked', {
-        runId: run.runId,
-        day,
-        objectsNotChecked: objectUuids.length - logReads.logs.length - logReads.failedReads.length,
-        remainingTimeInMillis: run.getRemainingTimeInMillis(),
-      });
-    }
-
-    // After OUT_OF_TIME only the objectUuids that were read go to the matcher. The others are not checked, so they are not LOGS_NOT_READ either.
-    const readObjectUuids = [...objectUuidsWithUnreadLogs, ...logReads.logs.map((logs) => logs.lookup.objectUuid)];
-    const readVersions = versions.filter((version) => readObjectUuids.includes(version.objectUuid));
-    const outcomes = this.matcher.findOutcomes({
-      versions: readVersions,
-      logs: logReads.logs,
-      objectUuidsWithUnreadLogs,
-    });
-
-    for (const versionOutcome of outcomes.versions) {
-      if (OUTCOMES_TO_REPORT.includes(versionOutcome.outcome)) {
-        this.logger.debug('Version not ok', {
-          runId: run.runId,
-          objectUuid: versionOutcome.version.objectUuid,
-          index: versionOutcome.version.index,
-          outcome: versionOutcome.outcome,
-          reason: versionOutcome.reason,
-        });
-      }
-    }
-
-    this.logger.info('Saving histories', { runId: run.runId, day, objects: readObjectUuids.length });
+    this.logger.info('Saving histories', { runId: run.runId, day, objects: logsOfDay.readObjectUuids.length });
     await this.updateSubmissionHistories(day, outcomes.versions, run.runId);
 
-    let dayCheck: DayCheck = { day, status: 'COMPLETE' };
-    if (logReads.stopped) {
-      dayCheck = { day, status: 'INCOMPLETE', reason: 'OUT_OF_TIME' };
-    } else if (objectUuidsWithUnreadLogs.length > 0) {
-      dayCheck = { day, status: 'INCOMPLETE', reason: 'LOGS_NOT_READ' };
-    }
-
-    const diagnostics = logReads.logs.map((logs) => logs.diagnostics).filter((logDiagnostics) => logDiagnostics !== undefined);
+    const dayCheck = dayCheckAfterLogReads(day, logsOfDay);
+    const diagnostics = logsOfDay.logs.map((logs) => logs.diagnostics).filter((logDiagnostics) => logDiagnostics !== undefined);
     const durationMs = Date.now() - dayStartedAt;
     this.logger.info('Day check finished', {
       runId: run.runId,
@@ -234,15 +202,59 @@ export class ProcessingCheck {
       objects: objectUuids.length,
       versions: versions.length,
       totals: countTotals(outcomes.versions),
-      logsRead: logReads.logs.length,
-      logsNotRead: objectUuidsWithUnreadLogs.length,
-      objectsNotChecked: objectUuids.length - readObjectUuids.length,
+      logsRead: logsOfDay.logs.length,
+      logsNotRead: logsOfDay.objectUuidsWithUnreadLogs.length,
+      objectsNotChecked: objectUuids.length - logsOfDay.readObjectUuids.length,
       tracesWithoutVersion: outcomes.tracesWithoutVersion.length,
       durationMs,
-      cost: this.diagnostics ? countRunCost({ diagnostics, objectReadMs: 0, logReadMs, durationMs }) : undefined,
+      cost: this.diagnostics ? countRunCost({ diagnostics, objectReadMs: 0, logReadMs: logsOfDay.durationMs, durationMs }) : undefined,
     });
 
-    return { dayCheck, versionOutcomes: outcomes.versions, diagnostics, logReadMs, outOfTime: logReads.stopped };
+    return { dayCheck, versionOutcomes: outcomes.versions, diagnostics, logReadMs: logsOfDay.durationMs, outOfTime: logsOfDay.stopped };
+  }
+
+  // From the start of the day until now, so the logs of an execution that ran after the day are included.
+  private async readLogsOfDay(day: string, objectUuids: string[], run: ProcessingCheckRun): Promise<LogsOfDay> {
+    const startedAt = Date.now();
+    const reads = await this.logReader.findByObjectUuids({
+      objectUuids,
+      range: { fromInclusive: amsterdamCalendarDayToAbsoluteTimeRange(day).fromInclusive, toExclusive: new Date() },
+      shouldStop: () => run.getRemainingTimeInMillis() < MIN_REMAINING_MS,
+    });
+    const objectUuidsWithUnreadLogs = reads.failedReads.map((failedRead) => failedRead.objectUuid);
+    const readObjectUuids = [...objectUuidsWithUnreadLogs, ...reads.logs.map((logs) => logs.lookup.objectUuid)];
+    if (reads.stopped) {
+      this.logger.warn('Out of time, the rest of the day is not checked', {
+        runId: run.runId,
+        day,
+        objectsNotChecked: objectUuids.length - readObjectUuids.length,
+        remainingTimeInMillis: run.getRemainingTimeInMillis(),
+      });
+    }
+    return { logs: reads.logs, objectUuidsWithUnreadLogs, readObjectUuids, stopped: reads.stopped, durationMs: Date.now() - startedAt };
+  }
+
+  // After OUT_OF_TIME only the objectUuids that were read go to the matcher. The others are not checked, so they are not LOGS_NOT_READ either.
+  private findOutcomesOfReadObjects(versions: ObjectVersion[], logsOfDay: LogsOfDay) {
+    return this.matcher.findOutcomes({
+      versions: versions.filter((version) => logsOfDay.readObjectUuids.includes(version.objectUuid)),
+      logs: logsOfDay.logs,
+      objectUuidsWithUnreadLogs: logsOfDay.objectUuidsWithUnreadLogs,
+    });
+  }
+
+  private logVersionsNotOk(versionOutcomes: VersionOutcome[], runId: string) {
+    for (const versionOutcome of versionOutcomes) {
+      if (OUTCOMES_TO_REPORT.includes(versionOutcome.outcome)) {
+        this.logger.debug('Version not ok', {
+          runId,
+          objectUuid: versionOutcome.version.objectUuid,
+          index: versionOutcome.version.index,
+          outcome: versionOutcome.outcome,
+          reason: versionOutcome.reason,
+        });
+      }
+    }
   }
 
   private async updateSubmissionHistories(day: string, versionOutcomes: VersionOutcome[], runId: string) {
@@ -261,4 +273,33 @@ export class ProcessingCheck {
       await this.resultsRepository.putSubmissionHistory(history);
     }
   }
+}
+
+function dayCheckAfterLogReads(day: string, logsOfDay: LogsOfDay): DayCheck {
+  if (logsOfDay.stopped) {
+    return { day, status: 'INCOMPLETE', reason: 'OUT_OF_TIME' };
+  }
+  if (logsOfDay.objectUuidsWithUnreadLogs.length > 0) {
+    return { day, status: 'INCOMPLETE', reason: 'LOGS_NOT_READ' };
+  }
+  return { day, status: 'COMPLETE' };
+}
+
+function daysToCheck(event: ProcessingCheckEvent): string[] {
+  const validEvent = processingCheckEventSchema.parse(event);
+  const yesterday = previousAmsterdamCalendarDay();
+  return amsterdamCalendarDaysFromTo(validEvent.firstDay ?? yesterday, validEvent.lastDay ?? yesterday);
+}
+
+function startedReport(runId: string, days: string[], runStartedAt: number): RunReport {
+  return {
+    runId,
+    firstDay: days[0],
+    lastDay: days[days.length - 1],
+    status: 'RUNNING',
+    startedAt: new Date(runStartedAt).toISOString(),
+    days: [],
+    totals: {},
+    notOkObjectUuids: [],
+  };
 }
