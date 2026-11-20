@@ -14,6 +14,7 @@ export interface CheckedDay {
 /**
  * Gives the history of one submission after one of its days is checked. It starts from what was stored before:
  * - The versions of the checked day are replaced by today's outcomes; versions of other days stay. Checking a day twice gives no duplicates.
+ *   When the logs could not be read (LOGS_NOT_READ), a version that an earlier check found stays as it was.
  * - objectOutcome is the worst outcome over all versions, so one failed version makes the whole submission PROBLEM.
  * - reference and formName come from this check, or stay as they were when this check found none.
  * - firstProblemAt is set the first time the submission is PROBLEM and never changes after that. resolvedAt is set when a submission with a
@@ -27,7 +28,15 @@ export function historyAfterCheckingDay(checkedDay: CheckedDay): SubmissionProce
   const firstVersion = checkedDay.versionOutcomes[0].version;
 
   const versionsOfOtherDays = (existingHistory?.versions ?? []).filter((version) => version.registrationAt !== checkedDay.day);
-  const versions = [...versionsOfOtherDays, ...checkedDay.versionOutcomes.map(toCheckedVersion)].sort((a, b) => a.index - b.index);
+  const versionsOfDay = checkedDay.versionOutcomes.map((versionOutcome) => {
+    const knownVersion = existingHistory?.versions.find((version) => version.index === versionOutcome.version.index);
+    // Logs that could not be read say nothing new, so what an earlier check found stays.
+    if (versionOutcome.reason === 'LOGS_NOT_READ' && knownVersion) {
+      return knownVersion;
+    }
+    return toCheckedVersion(versionOutcome);
+  });
+  const versions = [...versionsOfOtherDays, ...versionsOfDay].sort((a, b) => a.index - b.index);
 
   const reference = checkedDay.versionOutcomes.find((versionOutcome) => versionOutcome.reference)?.reference ?? existingHistory?.reference;
   const formName = checkedDay.versionOutcomes.find((versionOutcome) => versionOutcome.formName)?.formName ?? existingHistory?.formName;

@@ -3,6 +3,7 @@ import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { mockClient } from 'aws-sdk-client-mock';
 import { scenario as cloudwatchFout } from './samples/cloudwatch-fout';
 import { scenario as esfTaakOverTweeDagen } from './samples/esf-taak-over-twee-dagen';
+import { scenario as hercontroleMetCloudwatchFout } from './samples/hercontrole-met-cloudwatch-fout';
 import { scenario as hercontroleNaRedrive } from './samples/hercontrole-na-redrive';
 import { scenario as objectsApiFout } from './samples/objects-api-fout';
 import { scenario as ophalenMisluktZonderOfNummer } from './samples/ophalen-mislukt-zonder-of-nummer';
@@ -17,6 +18,7 @@ import { ProcessingCheckResultsRepository } from '../store/ProcessingCheckResult
 const scenarios = [
   cloudwatchFout,
   esfTaakOverTweeDagen,
+  hercontroleMetCloudwatchFout,
   hercontroleNaRedrive,
   objectsApiFout,
   ophalenMisluktZonderOfNummer,
@@ -48,10 +50,11 @@ afterEach(() => {
 
 function prepareReaders(scenario: RunScenario) {
   jest.spyOn(ObjectReader.prototype, 'findVersions').mockImplementation(async (period) => {
-    if (scenario.objectsApiFailsOn.includes(period!.firstDay)) {
+    if (scenario.objectsApiFails) {
       throw new Error('Objects API returned 500');
     }
-    return scenario.objectReaderVersionsPerDay[period!.firstDay] ?? [];
+    const days = Object.keys(scenario.objectReaderVersionsPerDay).filter((day) => day >= period!.firstDay && day <= period!.lastDay);
+    return days.flatMap((day) => scenario.objectReaderVersionsPerDay[day]);
   });
   jest.spyOn(CloudWatchSubmissionLogReader.prototype, 'findByObjectUuid').mockImplementation(async (options) => {
     if (scenario.logReadFailsFor.includes(options.objectUuid)) {
@@ -96,6 +99,7 @@ describe('ProcessingCheck scenarios in test/samples', () => {
     { firstDay: '2026-11-18' },
     { firstDay: '2026-02-30', lastDay: '2026-03-01' },
     { firstDay: '2026-11-19', lastDay: '2026-11-18' },
+    { firstDay: '2026-10-01', lastDay: '2026-11-18' },
   ])('een fout event %j geeft een fout en schrijft niets in de tabel', async (event) => {
     await expect(runCheck(event, [600_000])).rejects.toThrow();
     expect(table.size).toBe(0);

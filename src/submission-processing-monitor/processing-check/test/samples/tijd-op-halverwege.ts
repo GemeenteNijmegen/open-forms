@@ -2,7 +2,7 @@
  * De Lambda-tijd raakt op halverwege een dag.
  *
  * De run controleert 18 en 19 november; op 18 november zijn er twee inzendingen. Bij de eerste is er nog genoeg tijd. Voor de tweede zijn er
- * minder dan 2 minuten over, dus die wordt niet meer gelezen. Hij wordt ook niet UNCERTAIN, want hij is niet gecontroleerd. Beide dagen zijn
+ * minder dan 3 minuten over, dus die wordt niet meer gelezen. Hij wordt ook niet UNCERTAIN, want hij is niet gecontroleerd. Beide dagen zijn
  * INCOMPLETE met OUT_OF_TIME; 19 november is niet meer begonnen.
  */
 import { RunScenario } from './RunScenario';
@@ -68,7 +68,7 @@ export const scenario: RunScenario = {
   event: { firstDay: '2026-11-18', lastDay: '2026-11-19' },
   historiesBefore: [],
   objectReaderVersionsPerDay: { '2026-11-18': [versionInTime, versionTooLate] },
-  objectsApiFailsOn: [],
+  objectsApiFails: false,
   logReaderResults: [logReaderResult],
   logReadFailsFor: [],
   // Start van de dag, de eerste inzending, dan nog 1 minuut.

@@ -1,7 +1,10 @@
-import { VersionOutcome } from '../../matcher/SubmissionProcessingMatcher';
+import { ProcessingOutcome, VersionOutcome } from '../../matcher/SubmissionProcessingMatcher';
 
-// Each objectUuid once, in the order of the outcomes. Unlike OK_OUTCOMES a redrive is not ok here: someone had to step in, so it is reported.
+// Everything except PROCESSED and IGNORED. Unlike OK_OUTCOMES a redrive is reported: someone had to step in.
+export const OUTCOMES_TO_REPORT: ProcessingOutcome[] = ['PROBLEM', 'UNCERTAIN', 'IN_PROGRESS', 'PROCESSED_AFTER_REDRIVE'];
+
+// Each objectUuid once, in the order of the outcomes.
 export function findNotOkObjectUuids(versionOutcomes: VersionOutcome[]): string[] {
-  const notOkOutcomes = versionOutcomes.filter((versionOutcome) => versionOutcome.outcome !== 'PROCESSED' && versionOutcome.outcome !== 'IGNORED');
+  const notOkOutcomes = versionOutcomes.filter((versionOutcome) => OUTCOMES_TO_REPORT.includes(versionOutcome.outcome));
   return [...new Set(notOkOutcomes.map((versionOutcome) => versionOutcome.version.objectUuid))];
 }

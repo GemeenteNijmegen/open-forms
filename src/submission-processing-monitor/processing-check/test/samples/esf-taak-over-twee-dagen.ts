@@ -74,7 +74,7 @@ export const scenario: RunScenario = {
   event: { firstDay: '2026-11-17', lastDay: '2026-11-18' },
   historiesBefore: [],
   objectReaderVersionsPerDay: { '2026-11-17': [versionOf17November], '2026-11-18': [versionOf18November] },
-  objectsApiFailsOn: [],
+  objectsApiFails: false,
   logReaderResults: [logReaderResult],
   logReadFailsFor: [],
   remainingTimeInMillis: [600_000],

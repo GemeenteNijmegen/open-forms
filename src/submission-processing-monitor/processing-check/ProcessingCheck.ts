@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { historyAfterCheckingDay } from './historyAfterCheckingDay';
 import { countRunCost } from './report/countRunCost';
 import { countTotals } from './report/countTotals';
-import { findNotOkObjectUuids } from './report/findNotOkObjectUuids';
+import { findNotOkObjectUuids, OUTCOMES_TO_REPORT } from './report/findNotOkObjectUuids';
 import { DayCheck, RunReport } from './report/RunReport';
 import { ProcessingCheckResultsRepository } from './store/ProcessingCheckResultsRepository';
 import { SubmissionProcessingMatcher, VersionOutcome } from '../matcher/SubmissionProcessingMatcher';
@@ -12,10 +12,15 @@ import { CloudWatchSubmissionLogReader } from '../submission-log-reader/CloudWat
 import { SubmissionLogReaderDiagnostics } from '../submission-log-reader/SubmissionLogReaderTypes';
 import { amsterdamCalendarDayToAbsoluteTimeRange, amsterdamCalendarDaysFromTo, previousAmsterdamCalendarDay } from '../time-range/AmsterdamTimeRange';
 
+// A longer period does not fit in one Lambda run, and a typo in a year should not start years of checks.
+const MAX_DAYS = 31;
+
 // The test event from the Lambda console. Both days or neither; neither means yesterday in Amsterdam.
 const processingCheckEventSchema = z.object({ firstDay: z.string().date().optional(), lastDay: z.string().date().optional() })
   .refine((event) => (event.firstDay === undefined) === (event.lastDay === undefined), 'Give both firstDay and lastDay, or neither')
-  .refine((event) => !event.firstDay || !event.lastDay || event.firstDay <= event.lastDay, 'firstDay is after lastDay');
+  .refine((event) => !event.firstDay || !event.lastDay || event.firstDay <= event.lastDay, 'firstDay is after lastDay')
+  .refine((event) => !event.firstDay || !event.lastDay || amsterdamCalendarDaysFromTo(event.firstDay, event.lastDay).length <= MAX_DAYS,
+    `The period is at most ${MAX_DAYS} days`);
 
 export type ProcessingCheckEvent = z.infer<typeof processingCheckEventSchema>;
 
@@ -34,14 +39,14 @@ export interface ProcessingCheckRun {
   getRemainingTimeInMillis: () => number;
 }
 
-// The run stops before a new objectUuid or day when less time is left; writing the rows of the day and the report must still fit.
-const MIN_REMAINING_MS = 2 * 60 * 1000;
+// The run stops before a new objectUuid or day when less time is left. The reads that already run (each up to two queries of 30 seconds),
+// saving the histories of the day and the report must still fit.
+const MIN_REMAINING_MS = 3 * 60 * 1000;
 
 interface DayResult {
   dayCheck: DayCheck;
   versionOutcomes: VersionOutcome[];
   diagnostics: SubmissionLogReaderDiagnostics[];
-  objectReadMs: number;
   logReadMs: number;
   outOfTime: boolean;
 }
@@ -49,8 +54,8 @@ interface DayResult {
 /**
  * Checks per Amsterdam day of a period whether the submissions were processed, and stores the outcomes in DynamoDB.
  *
- * Per day: the object reader finds the versions, the log reader reads the logs per objectUuid (from the start of that day until now), and the
- * matcher decides the outcome per version. The processing history of each submission is updated, and the run report (PK RUN) records per day COMPLETE or INCOMPLETE.
+ * The object reader finds the versions of the whole period at once. Then per day the log reader reads the logs per objectUuid (from the
+ * start of that day until now), and the matcher decides the outcome per version. The processing history of each submission is updated, and the run report (PK RUN) records per day COMPLETE or INCOMPLETE.
  * Only looks; it changes nothing in the Objects API and restarts nothing.
  *
  * @example
@@ -105,10 +110,24 @@ export class ProcessingCheck {
 
     const allVersionOutcomes: VersionOutcome[] = [];
     const allDiagnostics: SubmissionLogReaderDiagnostics[] = [];
-    let objectReadMs = 0;
     let logReadMs = 0;
+
+    // One read for the whole period: reading per day would list the newer Objects and their histories again for every day.
+    const objectReadStartedAt = Date.now();
+    let versionsOfPeriod: ObjectVersion[] | undefined;
+    try {
+      versionsOfPeriod = await this.objectReader.findVersions({ firstDay: report.firstDay, lastDay: report.lastDay });
+    } catch (error) {
+      this.logger.error('Objects API read failed', { runId: run.runId, error });
+    }
+    const objectReadMs = Date.now() - objectReadStartedAt;
+
     let outOfTime = false;
     for (const day of days) {
+      if (!versionsOfPeriod) {
+        report.days.push({ day, status: 'INCOMPLETE', reason: 'OBJECTS_API_FAILED' });
+        continue;
+      }
       if (!outOfTime && run.getRemainingTimeInMillis() < MIN_REMAINING_MS) {
         outOfTime = true;
       }
@@ -118,11 +137,11 @@ export class ProcessingCheck {
         continue;
       }
 
-      const dayResult = await this.checkDay(day, run);
+      const versionsOfDay = versionsOfPeriod.filter((version) => version.registrationAt === day);
+      const dayResult = await this.checkDay(day, versionsOfDay, run);
       report.days.push(dayResult.dayCheck);
       allVersionOutcomes.push(...dayResult.versionOutcomes);
       allDiagnostics.push(...dayResult.diagnostics);
-      objectReadMs += dayResult.objectReadMs;
       logReadMs += dayResult.logReadMs;
       outOfTime = dayResult.outOfTime;
       await this.resultsRepository.putReport(report);
@@ -149,25 +168,9 @@ export class ProcessingCheck {
     return report;
   }
 
-  private async checkDay(day: string, run: ProcessingCheckRun): Promise<DayResult> {
+  private async checkDay(day: string, versions: ObjectVersion[], run: ProcessingCheckRun): Promise<DayResult> {
     const dayStartedAt = Date.now();
-    this.logger.info('Day check started', { runId: run.runId, day });
-
-    let versions: ObjectVersion[];
-    try {
-      versions = await this.objectReader.findVersions({ firstDay: day, lastDay: day });
-    } catch (error) {
-      this.logger.error('Objects API read failed', { runId: run.runId, day, error });
-      return {
-        dayCheck: { day, status: 'INCOMPLETE', reason: 'OBJECTS_API_FAILED' },
-        versionOutcomes: [],
-        diagnostics: [],
-        objectReadMs: Date.now() - dayStartedAt,
-        logReadMs: 0,
-        outOfTime: false,
-      };
-    }
-    const objectReadMs = Date.now() - dayStartedAt;
+    this.logger.info('Day check started', { runId: run.runId, day, versions: versions.length });
 
     const objectUuids = [...new Set(versions.map((version) => version.objectUuid))];
 
@@ -200,8 +203,7 @@ export class ProcessingCheck {
     });
 
     for (const versionOutcome of outcomes.versions) {
-      // The same rule as notOkObjectUuids in the report: a redrive is shown too.
-      if (versionOutcome.outcome !== 'PROCESSED' && versionOutcome.outcome !== 'IGNORED') {
+      if (OUTCOMES_TO_REPORT.includes(versionOutcome.outcome)) {
         this.logger.debug('Version not ok', {
           runId: run.runId,
           objectUuid: versionOutcome.version.objectUuid,
@@ -237,10 +239,10 @@ export class ProcessingCheck {
       objectsNotChecked: objectUuids.length - readObjectUuids.length,
       tracesWithoutVersion: outcomes.tracesWithoutVersion.length,
       durationMs,
-      cost: this.diagnostics ? countRunCost({ diagnostics, objectReadMs, logReadMs, durationMs }) : undefined,
+      cost: this.diagnostics ? countRunCost({ diagnostics, objectReadMs: 0, logReadMs, durationMs }) : undefined,
     });
 
-    return { dayCheck, versionOutcomes: outcomes.versions, diagnostics, objectReadMs, logReadMs, outOfTime: logReads.stopped };
+    return { dayCheck, versionOutcomes: outcomes.versions, diagnostics, logReadMs, outOfTime: logReads.stopped };
   }
 
   private async updateSubmissionHistories(day: string, versionOutcomes: VersionOutcome[], runId: string) {

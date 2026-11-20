@@ -10,10 +10,10 @@ export interface RunScenario {
   description: string;
   event: ProcessingCheckEvent;
   historiesBefore: SubmissionProcessingHistory[];
-  // What new ObjectReader().findVersions({ firstDay: day, lastDay: day }) returns per day.
+  // What new ObjectReader().findVersions({ firstDay, lastDay }) returns for the period, written per day.
   objectReaderVersionsPerDay: Record<string, ObjectVersion[]>;
-  // Days on which findVersions throws.
-  objectsApiFailsOn: string[];
+  // When true, findVersions throws.
+  objectsApiFails: boolean;
   // What new CloudWatchSubmissionLogReader().findByObjectUuid({ objectUuid, range }) returns per objectUuid.
   logReaderResults: SubmissionLogUuidResult[];
   // objectUuids for which findByObjectUuid throws.
