@@ -35,6 +35,17 @@ interface FoundObject {
   typeName: string;
 }
 
+interface ObjectList {
+  objects: FoundObject[];
+  // Objects changed on or after firstDay, also the ones with a type that is not configured.
+  objectsListed: number;
+  objectsWithUnknownType: number;
+  // registrationAt of the first Object in the list; should be the newest when the API sorts as asked.
+  newestRegistrationAt?: string;
+  // registrationAt of the Object the list stopped at, the first one from before the period.
+  stoppedAtRegistrationAt?: string;
+}
+
 export class ObjectReader {
   private readonly logger: Logger;
 
@@ -68,10 +79,12 @@ export class ObjectReader {
     const baseUrl = await AWS.getParameter(Statics.ssmSubmissionProcessingMonitorObjectsApiBaseUrl);
     const token = await AWS.getSecret(Statics.secretSubmissionProcessingMonitorObjectsApiToken);
     const objectTypes = await AWS.getParameter(Statics.ssmObjectTypes);
+    this.logger.info('Object types configured', { names: objectTypes.split(';').map((objectType) => objectType.split('##')[0]) });
     const client = new ObjectsApiClient({ baseUrl, token, logger: this.logger });
     const parser = new ObjectParser(objectTypes);
 
-    const objects = await this.findObjectsRegisteredSince(firstDay, client, parser);
+    const objectList = await this.findObjectsRegisteredSince(firstDay, client, parser);
+    const objects = objectList.objects;
 
     const versions: ObjectVersion[] = [];
     for (const object of objects) {
@@ -99,6 +112,10 @@ export class ObjectReader {
     this.logger.info('Object versions found', {
       firstDay,
       lastDay,
+      objectsListed: objectList.objectsListed,
+      objectsWithUnknownType: objectList.objectsWithUnknownType,
+      newestRegistrationAt: objectList.newestRegistrationAt,
+      stoppedAtRegistrationAt: objectList.stoppedAtRegistrationAt,
       objectsFound: objects.length,
       versionsFound: versions.length,
       durationMs: Date.now() - startedAt,
@@ -111,20 +128,29 @@ export class ObjectReader {
    * record is from before firstDay, that Object and every Object after it has no version in the period. The list never stops on lastDay:
    * an Object changed after the period can still have an older version in it.
    */
-  private async findObjectsRegisteredSince(firstDay: string, client: ObjectsApiClient, parser: ObjectParser): Promise<FoundObject[]> {
-    const objects: FoundObject[] = [];
+  private async findObjectsRegisteredSince(firstDay: string, client: ObjectsApiClient, parser: ObjectParser): Promise<ObjectList> {
+    const objectList: ObjectList = { objects: [], objectsListed: 0, objectsWithUnknownType: 0 };
+    const unknownTypes = new Set<string>();
     for await (const page of client.objectPagesNewestFirst()) {
       for (const object of page) {
+        objectList.newestRegistrationAt ??= object.record.registrationAt;
         if (object.record.registrationAt < firstDay) {
-          this.logger.trace('Reached an Object registered before the period, stop reading the list', { objectUuid: object.uuid });
-          return objects;
+          objectList.stoppedAtRegistrationAt = object.record.registrationAt;
+          return objectList;
         }
+        objectList.objectsListed++;
         const typeName = parser.findObjectTypeName(object.type);
         if (typeName) {
-          objects.push({ uuid: object.uuid, type: object.type, typeName });
+          objectList.objects.push({ uuid: object.uuid, type: object.type, typeName });
+        } else {
+          objectList.objectsWithUnknownType++;
+          if (!unknownTypes.has(object.type)) {
+            unknownTypes.add(object.type);
+            this.logger.warn('Object type not configured', { objectType: object.type });
+          }
         }
       }
     }
-    return objects;
+    return objectList;
   }
 }
