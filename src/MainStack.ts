@@ -13,6 +13,7 @@ import { PrefillDemo } from './prefill-demo/PrefillDemoConstruct';
 import { StaticFormDefinitions } from './static-form-definitions/StaticFormDefinitions';
 import { Statics } from './Statics';
 import { SubmissionForwarder } from './submission-forwarder/SubmissionForwarder';
+import { SubmissionProcessingMonitor } from './submission-processing-monitor/infrastructure/SubmissionProcessingMonitor';
 
 interface MainStackProps extends StackProps, Configurable { }
 
@@ -52,6 +53,11 @@ export class MainStack extends Stack {
       logLevel: props.configuration.logLevel ?? 'INFO',
       urlSubscriptions: props.configuration.urlSubscriptions,
       tribeDryRun: props.configuration.branch !== 'main',
+    });
+
+    new SubmissionProcessingMonitor(this, 'submission-processing-monitor', {
+      key: this.key,
+      configuration: props.configuration,
     });
 
     this.setupStaticFromDefinitions([this.api, api.restApi]);
