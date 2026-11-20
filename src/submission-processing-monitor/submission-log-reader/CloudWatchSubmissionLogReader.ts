@@ -41,7 +41,7 @@ export class CloudWatchSubmissionLogReader {
    * import { amsterdamCalendarDayToAbsoluteTimeRange } from '../time-range/AmsterdamTimeRange';
    *
    * const reader = new CloudWatchSubmissionLogReader();
-   * const range = amsterdamCalendarDayToAbsoluteTimeRange({ year: 2026, month: 11, day: 2 });
+   * const range = amsterdamCalendarDayToAbsoluteTimeRange('2026-11-02');
    * const { traces } = await reader.findByObjectUuid({ objectUuid, range });
    */
   async findByObjectUuid(options: FindSubmissionLogsByUuidOptions): Promise<SubmissionLogUuidResult> {
