@@ -16,8 +16,8 @@ export type ProcessingOutcome = 'PROCESSED' | 'PROCESSED_AFTER_REDRIVE' | 'IGNOR
 
 export const OUTCOMES_WORST_FIRST: ProcessingOutcome[] = ['PROBLEM', 'UNCERTAIN', 'IN_PROGRESS', 'PROCESSED_AFTER_REDRIVE', 'PROCESSED', 'IGNORED'];
 
-// Processed in the end, also when a redrive was needed.
-export const OK_OUTCOMES: ProcessingOutcome[] = ['PROCESSED', 'PROCESSED_AFTER_REDRIVE', 'IGNORED'];
+// Processed in the end, also when a redrive was needed: a problem with one of these outcomes is resolved.
+export const RESOLVED_OUTCOMES: ProcessingOutcome[] = ['PROCESSED', 'PROCESSED_AFTER_REDRIVE', 'IGNORED'];
 
 export type ProcessingReason =
   // PROBLEM

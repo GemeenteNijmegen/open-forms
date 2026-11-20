@@ -48,7 +48,7 @@ interface LogsOfDay {
   objectUuidsWithUnreadLogs: string[];
   // Read or failed; after OUT_OF_TIME the rest of the day is in neither.
   readObjectUuids: string[];
-  stopped: boolean;
+  outOfTime: boolean;
   durationMs: number;
 }
 
@@ -210,7 +210,7 @@ export class ProcessingCheck {
       cost: this.diagnostics ? countRunCost({ diagnostics, objectReadMs: 0, logReadMs: logsOfDay.durationMs, durationMs }) : undefined,
     });
 
-    return { dayCheck, versionOutcomes: outcomes.versions, diagnostics, logReadMs: logsOfDay.durationMs, outOfTime: logsOfDay.stopped };
+    return { dayCheck, versionOutcomes: outcomes.versions, diagnostics, logReadMs: logsOfDay.durationMs, outOfTime: logsOfDay.outOfTime };
   }
 
   // From the start of the day until now, so the logs of an execution that ran after the day are included.
@@ -231,7 +231,7 @@ export class ProcessingCheck {
         remainingTimeInMillis: run.getRemainingTimeInMillis(),
       });
     }
-    return { logs: reads.logs, objectUuidsWithUnreadLogs, readObjectUuids, stopped: reads.stopped, durationMs: Date.now() - startedAt };
+    return { logs: reads.logs, objectUuidsWithUnreadLogs, readObjectUuids, outOfTime: reads.stopped, durationMs: Date.now() - startedAt };
   }
 
   // After OUT_OF_TIME only the objectUuids that were read go to the matcher. The others are not checked, so they are not LOGS_NOT_READ either.
@@ -276,7 +276,7 @@ export class ProcessingCheck {
 }
 
 function dayCheckAfterLogReads(day: string, logsOfDay: LogsOfDay): DayCheck {
-  if (logsOfDay.stopped) {
+  if (logsOfDay.outOfTime) {
     return { day, status: 'INCOMPLETE', reason: 'OUT_OF_TIME' };
   }
   if (logsOfDay.objectUuidsWithUnreadLogs.length > 0) {

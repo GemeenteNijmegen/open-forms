@@ -1,6 +1,6 @@
 import { ProcessingOutcome, VersionOutcome } from '../../matcher/SubmissionProcessingMatcher';
 
-// Everything except PROCESSED and IGNORED. Unlike OK_OUTCOMES a redrive is reported: someone had to step in.
+// Everything except PROCESSED and IGNORED. Unlike RESOLVED_OUTCOMES a redrive is reported: someone had to step in.
 export const OUTCOMES_TO_REPORT: ProcessingOutcome[] = ['PROBLEM', 'UNCERTAIN', 'IN_PROGRESS', 'PROCESSED_AFTER_REDRIVE'];
 
 // Each objectUuid once, in the order of the outcomes.

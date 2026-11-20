@@ -1,5 +1,5 @@
 import { CheckedVersion, SubmissionProcessingHistory } from './store/SubmissionProcessingHistory';
-import { OK_OUTCOMES, OUTCOMES_WORST_FIRST, ProcessingOutcome, VersionOutcome } from '../matcher/SubmissionProcessingMatcher';
+import { OUTCOMES_WORST_FIRST, ProcessingOutcome, RESOLVED_OUTCOMES, VersionOutcome } from '../matcher/SubmissionProcessingMatcher';
 
 export interface CheckedDay {
   existingHistory?: SubmissionProcessingHistory;
@@ -43,7 +43,7 @@ export function historyAfterCheckingDay(checkedDay: CheckedDay): SubmissionProce
 
   const objectOutcome = findWorstOutcome(versions);
   const firstProblemAt = existingHistory?.firstProblemAt ?? (objectOutcome === 'PROBLEM' ? checkedDay.checkedAt : undefined);
-  const isResolved = firstProblemAt && OK_OUTCOMES.includes(objectOutcome);
+  const isResolved = firstProblemAt !== undefined && RESOLVED_OUTCOMES.includes(objectOutcome);
   const resolvedAt = isResolved ? existingHistory?.resolvedAt ?? checkedDay.checkedAt : undefined;
 
   return {
