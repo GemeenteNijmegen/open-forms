@@ -16,11 +16,12 @@ flowchart TD
 
 ## Elke ochtend
 
-Om 06:00 Amsterdamse tijd, ook in de zomertijd, start EventBridge Scheduler de Lambda voor gisteren. Of dat gebeurt en welke rapporten dan
-gemaild worden, staat per omgeving in src/Configuration.ts:
+Om 06:00 Amsterdamse tijd, ook in de zomertijd, start EventBridge Scheduler de Lambda voor gisteren. Of dat gebeurt, welke rapporten dan
+gemaild worden en welke naam van de omgeving in de rapporten staat, staat per omgeving in src/Configuration.ts:
 
 ```ts
 submissionProcessingMonitor: {
+  environmentName: 'Productie',
   diagnostics: true,
   dailyCheck: { emailSubmissionReport: true, emailEsfReport: false },
 },
