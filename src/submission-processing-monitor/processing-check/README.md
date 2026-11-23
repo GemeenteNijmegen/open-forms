@@ -25,7 +25,9 @@ Amsterdamse tijd:
 ```
 
 Een leeg event controleert gisteren. Met maar één dag, een datum die niet bestaat, een eerste dag na de laatste of een periode van meer dan 366
-dagen geeft de Lambda een fout en doet hij niets. Het antwoord is het rapport van de run; de details staan in DynamoDB.
+dagen geeft de Lambda een fout en doet hij niets. Het antwoord is het rapport van de run; de details staan in DynamoDB. Elke ochtend om 06:00
+start hij zichzelf voor gisteren als dat per omgeving aan staat. Na elke run komen er twee rapporten in de log, en met emailSubmissionReport en
+emailEsfReport in het event ook per mail; zie [rapporten](report-text/README.md).
 
 ## Wat een run doet
 
@@ -71,7 +73,7 @@ src/Configuration.ts.
 
 ## Code
 
-Begin bij ProcessingCheck.ts: de run en de controle per dag. In historyAfterCheckingDay.ts staat hoe de geschiedenis van een inzending verandert na de controle van een dag. De map report bouwt het rapport. De
+Begin bij ProcessingCheck.ts: de run en de controle per dag. In historyAfterCheckingDay.ts staat hoe de geschiedenis van een inzending verandert na de controle van een dag. De map report bouwt het rapport van de run, report-text de twee rapporten voor mensen. De
 repository in [store](store/README.md) leest en schrijft beide. De tests in test/samples zijn per scenario een hele run, met DynamoDB en de
 readers nagebootst.
 
@@ -79,5 +81,4 @@ readers nagebootst.
 
 Een lange periode past niet altijd in één aanroep: per object zijn het twee CloudWatch-queries en een drukke dag duurt al minuten. Kies dan een
 kortere periode. Een herstel met een nieuwe execution, vanuit de console of de resubmit-lambda, ziet de matcher niet; zo'n inzending blijft
-PROBLEM. Een redrive ziet hij wel. Of de ESB een afgeronde ESF-taak daarna verwerkt heeft, wordt nog niet gecontroleerd. De check start zichzelf
-nog niet elke nacht; dat komt later met een EventBridge-regel.
+PROBLEM. Een redrive ziet hij wel. Of de ESB een afgeronde ESF-taak daarna verwerkt heeft, wordt nog niet gecontroleerd.

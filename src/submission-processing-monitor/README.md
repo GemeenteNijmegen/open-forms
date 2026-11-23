@@ -28,7 +28,8 @@ De monitor verandert zelf niets aan Objects en start geen verwerkingen opnieuw. 
 Begin bij de [processing check](processing-check/README.md): dat is de Lambda die een periode controleert en de resultaten opslaat. De andere
 mappen zijn de onderdelen die hij gebruikt. De [object reader](object-reader/README.md) haalt de Object-versies van een dag op, de
 [submission log reader](submission-log-reader/README.md) per object de logs uit CloudWatch, en de [matcher](matcher/README.md) bepaalt daaruit
-per versie de uitkomst. In [time-range](time-range/README.md) staan de Amsterdamse dagen, en in infrastructure de CDK van de monitor.
+per versie de uitkomst. De [rapporten](processing-check/report-text/README.md) maken daar na elke run een tekst van voor de log en
+de mail. In [time-range](time-range/README.md) staan de Amsterdamse dagen, en in infrastructure de CDK van de monitor.
 
 ## Eerst zorgen dat de logging klopt
 
