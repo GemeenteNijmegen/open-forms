@@ -115,6 +115,8 @@ EXECUTION_FAILED: 1, OBJECT_FETCH_FAILED: 1
 NOG IN VERWERKING (1)
 --------------------------------------------------
 
+IN_PROGRESS: 1
+
 1. IN_PROGRESS
 
    Datum: 22 november 2026
@@ -129,7 +131,9 @@ NOG IN VERWERKING (1)
 ONZEKER (2)
 --------------------------------------------------
 
-1. LOGS_NOT_READ
+EXECUTION_EVENTS_NOT_FOUND: 1, TRACE_FITS_MULTIPLE_VERSIONS: 1
+
+1. EXECUTION_EVENTS_NOT_FOUND
 
    Datum: 22 november 2026
    Objecttype: Submission
@@ -152,6 +156,8 @@ ONZEKER (2)
 --------------------------------------------------
 SUCCESVOL NA REDRIVE (1)
 --------------------------------------------------
+
+PROCESSED_AFTER_REDRIVE: 1
 
 1. PROCESSED_AFTER_REDRIVE
 
@@ -180,7 +186,7 @@ Automatisch gegenereerd door Open Forms Monitoring.
 Dezelfde opzet, met de aantallen per status en de aflevering van de afgeronde versies aan de ESB-queue. Succesvol afgeleverd zijn de afgeronde
 versies waarvan de Step Function slaagde, ook na een redrive; die staan daarnaast apart onder SUCCESVOL NA REDRIVE. Bij een versie staat de
 ESF-status in plaats van het objecttype en het formulier, die zijn bij ESF altijd hetzelfde. Een status die de monitor niet kent, staat er met
-zijn eigen naam, niet bij een van de vier.
+zijn eigen naam, niet bij een van de vier; bij de aflevering telt zo'n versie als Onzeker (UNKNOWN_ESF_STATUS).
 
 ```text
 Onderwerp: ESF - Dagrapport 22-11-2026 - Productie
