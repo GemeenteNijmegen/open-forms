@@ -50,6 +50,12 @@ export interface Configuration {
    */
   urlSubscriptions?: { url: string; appId: string }[];
 
+  /**
+   * Submission processing monitor. diagnostics adds the CloudWatch query statistics and the cost to the report.
+   * @default - diagnostics off
+   */
+  submissionProcessingMonitor?: { diagnostics: boolean };
+
 }
 
 const EnvironmentConfigurations: { [key: string]: Configuration } = {
@@ -59,6 +65,7 @@ const EnvironmentConfigurations: { [key: string]: Configuration } = {
     deploymentEnvironment: Statics.gnOpenFormsAccp,
     criticality: new Criticality('medium'),
     logLevel: 'DEBUG',
+    submissionProcessingMonitor: { diagnostics: true },
     urlSubscriptions: [
       // https://docs.aws.amazon.com/prescriptive-guidance/latest/modernization-integrating-microservices/sns.html
       // Amazon SNS enables services to fan out widely, which means that a single message can be delivered to a potentially large number of subscribers
@@ -79,6 +86,7 @@ const EnvironmentConfigurations: { [key: string]: Configuration } = {
     deploymentEnvironment: Statics.gnOpenFormsProd,
     criticality: new Criticality('high'),
     logLevel: 'INFO',
+    submissionProcessingMonitor: { diagnostics: true },
     urlSubscriptions: [
       {
         appId: 'APV',

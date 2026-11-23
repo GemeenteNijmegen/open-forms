@@ -33,7 +33,8 @@ const outcomes = matcher.findOutcomes({
 De aanroeper haalt de logs per objectUuid op. Gooit de log reader voor een Object, dan zet de aanroeper die uuid in objectUuidsWithUnreadLogs;
 de versies van dat Object worden dan onzeker. Elke objectUuid uit versions moet in logs of in objectUuidsWithUnreadLogs staan, niet in allebei, en in
 logs maar één keer; anders gooit findOutcomes. Er komt één uitkomst per versie terug (versions) en een lijst traces die bij geen versie horen
-(tracesWithoutVersion). In een uitkomst staan de versie zelf, de uitkomst, de reden en de traces waarop hij gebaseerd is.
+(tracesWithoutVersion). In een uitkomst staan de versie zelf, de uitkomst, de reden en de traces waarop hij gebaseerd is. Het OF-nummer
+(reference) en de formuliernaam komen alleen uit traces met precies de index van deze versie, zodat ze zeker bij deze versie horen.
 
 ## Uitkomst per versie
 
