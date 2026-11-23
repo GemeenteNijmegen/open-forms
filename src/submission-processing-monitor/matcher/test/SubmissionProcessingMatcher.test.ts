@@ -1,5 +1,6 @@
 import { SubmissionProcessingMatcher } from '../SubmissionProcessingMatcher';
 import { scenario as echteInzendingGeslaagd } from './samples/echte-inzending-geslaagd';
+import { scenario as esfTaakLogsNietGelezen } from './samples/esf-taak-logs-niet-gelezen';
 import { scenario as esfTaakOnbekendeStatus } from './samples/esf-taak-onbekende-status';
 import { scenario as esfTaakOpenAfgerondVerwerkt } from './samples/esf-taak-open-afgerond-verwerkt';
 import { scenario as geenNotificatie } from './samples/geen-notificatie';
@@ -19,6 +20,7 @@ import { scenario as traceVanLatereVersie } from './samples/trace-van-latere-ver
 // One scenario per file in samples/. A new sample file needs an import and an entry here.
 const scenarios = [
   echteInzendingGeslaagd,
+  esfTaakLogsNietGelezen,
   esfTaakOnbekendeStatus,
   esfTaakOpenAfgerondVerwerkt,
   geenNotificatie,

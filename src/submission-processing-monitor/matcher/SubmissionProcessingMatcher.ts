@@ -1,4 +1,4 @@
-import { findVersionOutcome, registrationDayPlusOneHour } from './findVersionOutcome';
+import { findVersionOutcome, Judgement, judgeByEsfStatus, registrationDayPlusOneHour } from './findVersionOutcome';
 import { ObjectVersion } from '../object-reader/ObjectReader';
 import { SubmissionLogTrace, SubmissionLogUuidResult } from '../submission-log-reader/SubmissionLogReaderTypes';
 import { categorizeTracesByObjectIndex } from '../submission-log-reader/traces/SubmissionTraceBuilder';
@@ -103,8 +103,10 @@ export class SubmissionProcessingMatcher {
 
     for (const [objectUuid, versionsOfObject] of versionsByObjectUuid) {
       if (input.objectUuidsWithUnreadLogs.includes(objectUuid)) {
+        // An open, verwerkt or gesloten ESF task needs no logs to be IGNORED; only the versions that depend on the logs are uncertain.
         for (const version of versionsOfObject) {
-          outcomes.push({ version, outcome: 'UNCERTAIN', reason: 'LOGS_NOT_READ', traces: [] });
+          const judgement: Judgement = judgeByEsfStatus(version) ?? { outcome: 'UNCERTAIN', reason: 'LOGS_NOT_READ' };
+          outcomes.push({ version, ...judgement, traces: [] });
         }
         continue;
       }
