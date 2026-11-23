@@ -51,10 +51,16 @@ export interface Configuration {
   urlSubscriptions?: { url: string; appId: string }[];
 
   /**
-   * Submission processing monitor. diagnostics adds the CloudWatch query statistics and the cost to the report.
-   * @default - diagnostics off
+   * Submission processing monitor. environmentName is shown in the subject and the header of the reports, like Productie.
+   * diagnostics adds the CloudWatch query statistics and the cost to the report.
+   * dailyCheck starts the check every morning at 06:00 (Amsterdam) for yesterday, and says which of the two reports to mail.
+   * @default - diagnostics off, no daily check
    */
-  submissionProcessingMonitor?: { diagnostics: boolean };
+  submissionProcessingMonitor?: {
+    environmentName: string;
+    diagnostics: boolean;
+    dailyCheck?: { emailSubmissionReport: boolean; emailEsfReport: boolean };
+  };
 
 }
 
@@ -65,7 +71,11 @@ const EnvironmentConfigurations: { [key: string]: Configuration } = {
     deploymentEnvironment: Statics.gnOpenFormsAccp,
     criticality: new Criticality('medium'),
     logLevel: 'DEBUG',
-    submissionProcessingMonitor: { diagnostics: true },
+    submissionProcessingMonitor: {
+      environmentName: 'Acceptatie',
+      diagnostics: true,
+      dailyCheck: { emailSubmissionReport: true, emailEsfReport: true },
+    },
     urlSubscriptions: [
       // https://docs.aws.amazon.com/prescriptive-guidance/latest/modernization-integrating-microservices/sns.html
       // Amazon SNS enables services to fan out widely, which means that a single message can be delivered to a potentially large number of subscribers
@@ -86,7 +96,7 @@ const EnvironmentConfigurations: { [key: string]: Configuration } = {
     deploymentEnvironment: Statics.gnOpenFormsProd,
     criticality: new Criticality('high'),
     logLevel: 'INFO',
-    submissionProcessingMonitor: { diagnostics: true },
+    submissionProcessingMonitor: { environmentName: 'Productie', diagnostics: true },
     urlSubscriptions: [
       {
         appId: 'APV',
