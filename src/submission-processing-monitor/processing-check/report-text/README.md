@@ -27,9 +27,9 @@ submissionProcessingMonitor: {
 },
 ```
 
-Zonder dailyCheck draait er 's nachts niets. Mailen kan alleen bij de dagelijkse run, dus een tegenstrijdige instelling bestaat niet. Mislukt
-een run, dan probeert niemand hem opnieuw: een mailfout mag niet de hele controle nog een keer laten draaien. Het alarm op de Lambda laat zien
-dat het misging.
+Zonder dailyCheck draait er 's nachts niets. De mailopties in de config gelden alleen voor de dagelijkse run; een handmatige run zegt het zelf in
+het event (zie hieronder). Mislukt een run, dan probeert niemand hem opnieuw: een mailfout mag niet de hele controle nog een keer laten draaien. Het
+alarm op de Lambda laat zien dat het misging.
 
 ## Met de hand
 
