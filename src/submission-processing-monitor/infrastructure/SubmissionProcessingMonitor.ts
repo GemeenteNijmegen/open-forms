@@ -18,6 +18,8 @@ export class SubmissionProcessingMonitor extends Construct {
       key: props.key,
       resultsTable: results.resultsTable,
       diagnostics: props.configuration.submissionProcessingMonitor?.diagnostics ?? false,
+      dailyCheck: props.configuration.submissionProcessingMonitor?.dailyCheck,
+      environmentName: props.configuration.submissionProcessingMonitor?.environmentName ?? props.configuration.branch,
       logLevel: props.configuration.logLevel ?? 'INFO',
       criticality: props.configuration.criticality,
     });

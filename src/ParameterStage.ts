@@ -66,6 +66,18 @@ export class ParameterStack extends Stack {
       description: 'Objects API base URL for the submission processing monitor',
     });
 
+    new StringParameter(this, 'submission-processing-monitor-submission-report-recipients', {
+      parameterName: Statics.ssmSubmissionProcessingMonitorSubmissionReportRecipients,
+      stringValue: '-',
+      description: 'Comma-separated e-mail addresses for the daily report of the regular submissions',
+    });
+
+    new StringParameter(this, 'submission-processing-monitor-esf-report-recipients', {
+      parameterName: Statics.ssmSubmissionProcessingMonitorEsfReportRecipients,
+      stringValue: '-',
+      description: 'Comma-separated e-mail addresses for the daily ESF report',
+    });
+
     new Secret(this, 'submission-processing-monitor-objects-api-token-secret', {
       secretName: Statics.secretSubmissionProcessingMonitorObjectsApiToken,
       description: 'Objects API token for the submission processing monitor',

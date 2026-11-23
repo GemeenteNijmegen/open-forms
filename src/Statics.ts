@@ -55,5 +55,8 @@ export class Statics {
   // Submission processing monitor
   static readonly ssmSubmissionProcessingMonitorObjectsApiBaseUrl = '/open-forms/submission-processing-monitor/objects-api-base-url';
   static readonly secretSubmissionProcessingMonitorObjectsApiToken = '/open-forms/submission-processing-monitor/objects-api-token';
+  // Comma-separated e-mail addresses of the daily reports
+  static readonly ssmSubmissionProcessingMonitorSubmissionReportRecipients = '/open-forms/submission-processing-monitor/submission-report-recipients';
+  static readonly ssmSubmissionProcessingMonitorEsfReportRecipients = '/open-forms/submission-processing-monitor/esf-report-recipients';
 
 }

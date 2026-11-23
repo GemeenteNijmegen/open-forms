@@ -14,7 +14,7 @@ export interface VersionTraces {
   queryRange: AbsoluteTimeRange;
 }
 
-interface Judgement {
+export interface Judgement {
   outcome: ProcessingOutcome;
   reason?: ProcessingReason;
 }
@@ -40,17 +40,31 @@ export function findVersionOutcome(versionTraces: VersionTraces): VersionOutcome
   };
 }
 
+/**
+ * The outcome of an ESF task version that follows from its status alone, without logs.
+ *
+ * Same rule as ObjectParser.guardForwardableTask in the receiver: only afgerond is forwarded. Open, verwerkt and gesloten are IGNORED, an
+ * unknown status is UNCERTAIN. Gives undefined for afgerond and for other object types: then the logs decide.
+ */
+export function judgeByEsfStatus(version: ObjectVersion): Judgement | undefined {
+  if (version.objectTypeName !== 'esfTaak') {
+    return undefined;
+  }
+  if (version.esfStatus === 'open' || version.esfStatus === 'verwerkt' || version.esfStatus === 'gesloten') {
+    return { outcome: 'IGNORED' };
+  }
+  if (version.esfStatus !== 'afgerond') {
+    return { outcome: 'UNCERTAIN', reason: 'UNKNOWN_ESF_STATUS' };
+  }
+  return undefined;
+}
+
 function judgeVersion(versionTraces: VersionTraces): Judgement {
   const { version, traces, ambiguousTraces, queryRange } = versionTraces;
 
-  // Same rule as ObjectParser.guardForwardableTask in the receiver: only afgerond is forwarded.
-  if (version.objectTypeName === 'esfTaak') {
-    if (version.esfStatus === 'open' || version.esfStatus === 'verwerkt' || version.esfStatus === 'gesloten') {
-      return { outcome: 'IGNORED' };
-    }
-    if (version.esfStatus !== 'afgerond') {
-      return { outcome: 'UNCERTAIN', reason: 'UNKNOWN_ESF_STATUS' };
-    }
+  const esfJudgement = judgeByEsfStatus(version);
+  if (esfJudgement) {
+    return esfJudgement;
   }
 
   let judgement: Judgement | undefined;

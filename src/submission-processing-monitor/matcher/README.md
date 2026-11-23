@@ -130,8 +130,9 @@ Bij PROBLEM is de reden de eerste stap die aantoonbaar misging: NO_NOTIFICATION,
 OBJECT_TYPE_UNKNOWN_AT_RECEIVER (genegeerd terwijl verwerking verwacht werd), EXECUTION_START_FAILED, EXECUTION_NOT_STARTED, EXECUTION_FAILED,
 EXECUTION_TIMED_OUT of EXECUTION_ABORTED.
 
-Bij UNCERTAIN: LOGS_NOT_READ (de log reader gooide), LOGS_TIME_RANGE_TOO_SHORT (zie Tijd), TRACE_FITS_MULTIPLE_VERSIONS, UNKNOWN_ESF_STATUS of
-EXECUTION_EVENTS_NOT_FOUND (de receiver logde een gestarte Step Function, maar er zijn geen events van gevonden).
+Bij UNCERTAIN: LOGS_NOT_READ (de log reader gooide; een ESF-taak die open, verwerkt of gesloten is, blijft dan gewoon IGNORED),
+LOGS_TIME_RANGE_TOO_SHORT (zie Tijd), TRACE_FITS_MULTIPLE_VERSIONS, UNKNOWN_ESF_STATUS of EXECUTION_EVENTS_NOT_FOUND (de receiver logde een gestarte
+Step Function, maar er zijn geen events van gevonden).
 
 ## Tijd
 
