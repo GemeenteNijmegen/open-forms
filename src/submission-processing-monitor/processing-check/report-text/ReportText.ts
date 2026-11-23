@@ -3,7 +3,7 @@ import { SubmissionProcessingHistory } from '../store/SubmissionProcessingHistor
 
 export interface ReportTextInput {
   report: RunReport;
-  // From getSubmissionHistory for each of report.notOkObjectUuids. The report shows only their versions registered in the period.
+  // From getSubmissionHistories(report.notOkObjectUuids). The report shows only their versions registered in the period.
   notOkSubmissionHistories: SubmissionProcessingHistory[];
   // As it appears in the subject and the header, like Productie.
   environment: string;
