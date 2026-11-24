@@ -18,5 +18,10 @@ const esfProcessingHandler = new EsfProcessingHandler({
 
 export async function handler(event: any) {
   logger.debug('event', { event });
-  return esfProcessingHandler.handle(event);
+  try {
+    return await esfProcessingHandler.handle(event);
+  } catch (error) {
+    logger.error('Failed to do esf pre-processing, forwarding event un-processed', { error });
+    return event;
+  }
 }

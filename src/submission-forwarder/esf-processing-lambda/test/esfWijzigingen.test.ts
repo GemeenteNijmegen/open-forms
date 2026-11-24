@@ -1,5 +1,5 @@
 import { EsfTaak } from '../../shared/EsfTaak';
-import { esfWijzigingen } from '../esfWijzigingen';
+import { esfWijzigingen, heeftWijzigingen } from '../esfWijzigingen';
 
 function taak(overrides?: {
   data?: Partial<EsfTaak['formtaak']['data']>;
@@ -155,5 +155,47 @@ describe('esfWijzigingen', () => {
       verzonden_data: { toelichtingingevuld: 'Ik ben verhuisd' },
     }), 'ref');
     expect(text).toContain('Toelichting ingevuld: Ik ben verhuisd');
+  });
+});
+
+describe('heeftWijzigingen', () => {
+  test('is false when nothing changed', () => {
+    expect(heeftWijzigingen(taak())).toBe(false);
+  });
+
+  test('is true when the email changed', () => {
+    expect(heeftWijzigingen(taak({ verzonden_data: { email: 'nieuw@example.com' } }))).toBe(true);
+  });
+
+  test('is false when the email differs only by case and whitespace', () => {
+    expect(heeftWijzigingen(taak({ verzonden_data: { email: '  INFO@Example.com ' } }))).toBe(false);
+  });
+
+  test('is true when the telefoon changed', () => {
+    expect(heeftWijzigingen(taak({ verzonden_data: { telefoon: '0632132131' } }))).toBe(true);
+  });
+
+  test('is false when the telefoon differs only by spaces and dashes', () => {
+    expect(heeftWijzigingen(taak({ verzonden_data: { telefoon: '06 123-123123' } }))).toBe(false);
+  });
+
+  test('is true when a telefoon is added to a missing prefill', () => {
+    expect(heeftWijzigingen(taak({ data: { telefoon: undefined } }))).toBe(true);
+  });
+
+  test.each([
+    'inkomstengewijzigd',
+    'woonsituatiegewijzigd',
+    'vakantiegewijzigd',
+    'studiegewijzigd',
+    'vrijwilligerswerkgewijzigd',
+    'vermogengewijzigd',
+  ] as const)('is true when %s is not nee', (field) => {
+    expect(heeftWijzigingen(taak({ verzonden_data: { [field]: 'ja' } }))).toBe(true);
+    expect(heeftWijzigingen(taak({ verzonden_data: { [field]: 'jaGestartMetStudie' } }))).toBe(true);
+  });
+
+  test('is false when only the toelichting is filled in', () => {
+    expect(heeftWijzigingen(taak({ verzonden_data: { toelichtingingevuld: 'ja' } }))).toBe(false);
   });
 });
