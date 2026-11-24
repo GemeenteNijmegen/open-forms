@@ -9,6 +9,7 @@ import { ProcessingCheckResultsRepository } from './store/ProcessingCheckResults
 
 const resultsRepository = new ProcessingCheckResultsRepository({ tableName: process.env.TABLE_NAME! });
 const existingHistory = await resultsRepository.getSubmissionHistory(objectUuid);
+const notOkSubmissionHistories = await resultsRepository.getSubmissionHistories(report.notOkObjectUuids);
 await resultsRepository.putSubmissionHistory(history);
 await resultsRepository.putReport(report);
 ```

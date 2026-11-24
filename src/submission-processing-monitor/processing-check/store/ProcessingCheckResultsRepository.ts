@@ -38,6 +38,17 @@ export class ProcessingCheckResultsRepository {
     return item as SubmissionProcessingHistory;
   }
 
+  /**
+   * The histories of several submissions, like the notOkObjectUuids of a run report.
+   *
+   * In: ['3f6c2a9e-...', '8c42b9e0-...'].
+   * Out: the history of each, in the same order. An objectUuid without a history is left out.
+   */
+  async getSubmissionHistories(objectUuids: string[]): Promise<SubmissionProcessingHistory[]> {
+    const histories = await Promise.all(objectUuids.map((objectUuid) => this.getSubmissionHistory(objectUuid)));
+    return histories.filter((history) => history !== undefined);
+  }
+
   // Replaces the whole item, so a field that is missing in history is removed.
   async putSubmissionHistory(history: SubmissionProcessingHistory): Promise<void> {
     await this.putItem({ ...historyKey(history.objectUuid), ...history, ttl: ttlFrom(history.lastCheckedAt) });
