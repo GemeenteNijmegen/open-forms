@@ -15,17 +15,20 @@ const submissionTypeUrl = 'https://objecttypes.example.com/api/v2/objecttypes/d3
 const esfTaakTypeUrl = `https://objecttypes.example.com/api/v2/objecttypes/${esfTaakUuid}`;
 const otherTypeUrl = 'https://objecttypes.example.com/api/v2/objecttypes/11111111-1111-1111-1111-111111111111';
 
-// The list is sorted newest current record first. Page 2 ends with an Object from before the period, so page 3 must never be read.
+// The exact query: the API silently ignores an unknown ordering field, so a typo here would bring back the unstable order.
+const listUrl = `${baseUrl}/objects?ordering=-record__registrationAt%2Cuuid&fields=uuid%2Ctype%2Crecord__registrationAt&pageSize=100`;
+
+// The list is sorted newest current record first, then on uuid. Page 2 ends with an Object from before the period, so page 3 must never be read.
 const objectPages: Record<string, unknown> = {
-  [`${baseUrl}/objects?ordering=-record__registrationAt&pageSize=100`]: {
-    next: `${baseUrl}/objects?ordering=-record__registrationAt&pageSize=100&page=2`,
+  [listUrl]: {
+    next: `${listUrl}&page=2`,
     results: [
       { uuid: 'submission-changed-later', type: submissionTypeUrl, record: { registrationAt: '2026-11-20' } },
       { uuid: 'esf-taak', type: esfTaakTypeUrl, record: { registrationAt: '2026-11-17' } },
     ],
   },
-  [`${baseUrl}/objects?ordering=-record__registrationAt&pageSize=100&page=2`]: {
-    next: `${baseUrl}/objects?ordering=-record__registrationAt&pageSize=100&page=3`,
+  [`${listUrl}&page=2`]: {
+    next: `${listUrl}&page=3`,
     results: [
       { uuid: 'other-type', type: otherTypeUrl, record: { registrationAt: '2026-11-17' } },
       { uuid: 'before-period', type: submissionTypeUrl, record: { registrationAt: '2026-11-10' } },
@@ -47,6 +50,13 @@ const objectPages: Record<string, unknown> = {
     ],
   },
 };
+
+const expectedVersions = [
+  { objectUuid: 'submission-changed-later', objectType: submissionTypeUrl, objectTypeName: 'submission', index: 1, registrationAt: '2026-11-17' },
+  { objectUuid: 'esf-taak', objectType: esfTaakTypeUrl, objectTypeName: 'esfTaak', index: 1, registrationAt: '2026-11-17', esfStatus: 'open' },
+  { objectUuid: 'esf-taak', objectType: esfTaakTypeUrl, objectTypeName: 'esfTaak', index: 2, registrationAt: '2026-11-17', esfStatus: 'afgerond' },
+  { objectUuid: 'esf-taak', objectType: esfTaakTypeUrl, objectTypeName: 'esfTaak', index: 3, registrationAt: '2026-11-17', esfStatus: 'verwerkt' },
+];
 
 let requestedUrls: string[];
 
@@ -71,16 +81,11 @@ describe('ObjectReader.findVersions', () => {
   test('finds every version in the period, also of an Object changed later, and stops the list before the period', async () => {
     const versions = await new ObjectReader().findVersions({ firstDay: '2026-11-17', lastDay: '2026-11-17' });
 
-    expect(versions).toEqual([
-      { objectUuid: 'submission-changed-later', objectType: submissionTypeUrl, objectTypeName: 'submission', index: 1, registrationAt: '2026-11-17' },
-      { objectUuid: 'esf-taak', objectType: esfTaakTypeUrl, objectTypeName: 'esfTaak', index: 1, registrationAt: '2026-11-17', esfStatus: 'open' },
-      { objectUuid: 'esf-taak', objectType: esfTaakTypeUrl, objectTypeName: 'esfTaak', index: 2, registrationAt: '2026-11-17', esfStatus: 'afgerond' },
-      { objectUuid: 'esf-taak', objectType: esfTaakTypeUrl, objectTypeName: 'esfTaak', index: 3, registrationAt: '2026-11-17', esfStatus: 'verwerkt' },
-    ]);
+    expect(versions).toEqual(expectedVersions);
     // No history for the other object type, and no page 3 after the Object from before the period.
     expect(requestedUrls).toEqual([
-      `${baseUrl}/objects?ordering=-record__registrationAt&pageSize=100`,
-      `${baseUrl}/objects?ordering=-record__registrationAt&pageSize=100&page=2`,
+      listUrl,
+      `${listUrl}&page=2`,
       `${baseUrl}/objects/submission-changed-later/history?pageSize=100`,
       `${baseUrl}/objects/esf-taak/history?pageSize=100`,
     ]);
@@ -92,6 +97,45 @@ describe('ObjectReader.findVersions', () => {
         return new Response('{"detail":"Server error."}', { status: 500 });
       }
       return new Response(JSON.stringify(objectPages[String(url)]));
+    });
+
+    await expect(new ObjectReader().findVersions({ firstDay: '2026-11-17', lastDay: '2026-11-17' })).rejects.toThrow(ObjectsApiError);
+  });
+
+  test('reads the list again when a new Object shifted it while reading, and finds every version once', async () => {
+    // The first time, a new Object on page 1 pushed esf-taak to the start of page 2, so it comes twice.
+    const shiftedPage2 = {
+      next: `${listUrl}&page=3`,
+      results: [
+        { uuid: 'esf-taak', type: esfTaakTypeUrl, record: { registrationAt: '2026-11-17' } },
+        { uuid: 'other-type', type: otherTypeUrl, record: { registrationAt: '2026-11-17' } },
+      ],
+    };
+    let page2Reads = 0;
+    jest.spyOn(global, 'fetch').mockImplementation(async (url) => {
+      requestedUrls.push(String(url));
+      if (String(url) === `${listUrl}&page=2` && page2Reads++ === 0) {
+        return new Response(JSON.stringify(shiftedPage2));
+      }
+      return new Response(JSON.stringify(objectPages[String(url)]));
+    });
+
+    const versions = await new ObjectReader().findVersions({ firstDay: '2026-11-17', lastDay: '2026-11-17' });
+
+    expect(versions).toEqual(expectedVersions);
+    expect(requestedUrls.filter((url) => url === listUrl)).toHaveLength(2);
+  });
+
+  test('throws when the API does not sort the list as asked', async () => {
+    const unsortedPage = {
+      next: null,
+      results: [
+        { uuid: 'other-type', type: otherTypeUrl, record: { registrationAt: '2026-11-17' } },
+        { uuid: 'esf-taak', type: esfTaakTypeUrl, record: { registrationAt: '2026-11-17' } },
+      ],
+    };
+    jest.spyOn(global, 'fetch').mockImplementation(async (url) => {
+      return new Response(JSON.stringify(String(url) === listUrl ? unsortedPage : objectPages[String(url)]));
     });
 
     await expect(new ObjectReader().findVersions({ firstDay: '2026-11-17', lastDay: '2026-11-17' })).rejects.toThrow(ObjectsApiError);

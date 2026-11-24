@@ -37,10 +37,10 @@ bij. Aan het eind krijgt het rapport de totalen. Mislukt dag 3, dan blijven dag 
 nieuwe dag als er minder dan 3 minuten over zijn, zodat het opslaan nog past.
 
 Een dag is COMPLETE als de controle helemaal gedaan en opgeslagen is. Dat zegt niet dat alles goed verwerkt is. Een dag is INCOMPLETE als de
-Objects API faalde (OBJECTS_API_FAILED, dan geldt dat voor alle dagen en staat er niets), als de logs van een of meer objecten niet gelezen konden worden
-(LOGS_NOT_READ, die versies zijn UNCERTAIN) of als de Lambda-tijd op was (OUT_OF_TIME, alleen de objecten die al klaar waren staan er). Een run
-is COMPLETE als al zijn dagen dat zijn. Faalt het opslaan zelf, dan faalt de Lambda en blijft het rapport op RUNNING; na 15 minuten geldt het
-als INCOMPLETE.
+Objects API faalde of de objectlijst niet betrouwbaar te lezen was (OBJECTS_API_FAILED, dan geldt dat voor alle dagen en staat er niets), als de
+logs van een of meer objecten niet gelezen konden worden (LOGS_NOT_READ, die versies zijn UNCERTAIN) of als de Lambda-tijd op was (OUT_OF_TIME,
+alleen de objecten die al klaar waren staan er). Een run is COMPLETE als al zijn dagen dat zijn. Faalt het opslaan zelf, dan faalt de Lambda en
+blijft het rapport op RUNNING; na 15 minuten geldt het als INCOMPLETE.
 
 ## Resultaten
 

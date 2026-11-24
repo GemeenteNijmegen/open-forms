@@ -11,6 +11,12 @@ export interface ObjectsApiClientOptions {
 
 export class ObjectsApiError extends Error {}
 
+export interface ObjectsApiPage {
+  // The number of results over all pages, as the API reports it.
+  count?: number;
+  results: any[];
+}
+
 export class ObjectsApiClient {
   private readonly logger: Logger;
   private readonly baseUrl: string;
@@ -22,39 +28,40 @@ export class ObjectsApiClient {
   }
 
   /**
-   * Reads all Objects page by page, the Object with the newest current record first. Stop early with break.
-   * A failed page throws, so the caller never continues with a partial result.
+   * Reads all Objects page by page, the Object with the newest current record first and on uuid within a day. Stop early with break.
+   * Only uuid, type and record.registrationAt come back. A failed page throws, so the caller never continues with a partial result.
    *
-   * @returns The Objects of each page.
+   * @returns Each page with its Objects and the count of the API.
    * @throws ObjectsApiError when a request fails, times out, returns an error status or returns no results array.
    * @example
    * const client = new ObjectsApiClient({ baseUrl, token });
-   * for await (const objects of client.objectPagesNewestFirst()) {
-   *   console.log(objects.length);
+   * for await (const page of client.objectPagesNewestFirst()) {
+   *   console.log(page.count, page.results.length);
    * }
    */
-  objectPagesNewestFirst(): AsyncGenerator<any[]> {
+  objectPagesNewestFirst(): AsyncGenerator<ObjectsApiPage> {
     this.logger.trace('Reading all Objects page by page, newest current record first');
-    return this.readPages('objects', { ordering: '-record__registrationAt' });
+    // registrationAt is only a date and the API pages with an offset: without uuid the order within a day differs per page.
+    return this.readPages('objects', { ordering: '-record__registrationAt,uuid', fields: 'uuid,type,record__registrationAt' });
   }
 
   /**
    * Reads all records of one Object page by page. A failed page throws, so the caller never continues with a partial history.
    *
    * @param objectUuid The uuid of the Object.
-   * @returns The records of each page.
+   * @returns Each page with its records and the count of the API.
    * @throws ObjectsApiError when a request fails, times out, returns an error status or returns no results array.
    * @example
-   * for await (const records of client.historyPages(objectUuid)) {
-   *   console.log(records.length);
+   * for await (const page of client.historyPages(objectUuid)) {
+   *   console.log(page.results.length);
    * }
    */
-  historyPages(objectUuid: string): AsyncGenerator<any[]> {
+  historyPages(objectUuid: string): AsyncGenerator<ObjectsApiPage> {
     this.logger.trace('Reading all records of one Object page by page', { objectUuid });
     return this.readPages(`objects/${objectUuid}/history`, {});
   }
 
-  private async *readPages(path: string, query: Record<string, string>): AsyncGenerator<any[]> {
+  private async *readPages(path: string, query: Record<string, string>): AsyncGenerator<ObjectsApiPage> {
     const firstUrl = new URL(path, this.baseUrl);
     for (const [name, value] of Object.entries(query)) {
       firstUrl.searchParams.set(name, value);
@@ -64,12 +71,12 @@ export class ObjectsApiClient {
     let url: string | null = firstUrl.toString();
     while (url) {
       const page = await this.getPage(new URL(url));
-      yield page.results;
+      yield { count: page.count, results: page.results };
       url = page.next;
     }
   }
 
-  private async getPage(url: URL): Promise<{ next: string | null; results: any[] }> {
+  private async getPage(url: URL): Promise<{ next: string | null; count?: number; results: any[] }> {
     const path = url.pathname;
     const query = Object.fromEntries(url.searchParams);
     const startedAt = Date.now();
@@ -104,6 +111,6 @@ export class ObjectsApiClient {
     }
 
     this.logger.debug('Objects API page read', { path, query, status: response.status, durationMs, count: body.count, resultCount: body.results.length });
-    return { next: body.next ?? null, results: body.results };
+    return { next: body.next ?? null, count: body.count, results: body.results };
   }
 }
