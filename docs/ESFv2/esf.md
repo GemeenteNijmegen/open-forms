@@ -96,10 +96,12 @@ sequenceDiagram
     activate S3
     S3-->>AWS: Bevestiging
     deactivate S3
-    AWS->>S3: Save overzicht wijzigingen
-    activate S3
-    S3-->>AWS: Bevestiging
-    deactivate S3
+    opt Inwoner heeft iets gewijzigd
+        AWS->>S3: Save overzicht wijzigingen
+        activate S3
+        S3-->>AWS: Bevestiging
+        deactivate S3
+    end
     AWS->>AWS Queue: Taak on queue
     activate AWS Queue
     AWS Queue-->>AWS: Bevestiging
@@ -113,6 +115,9 @@ Hierin staat wat de inwoner heeft gewijzigd ten opzichte van de prefill (`formta
 antwoorden zijn gegeven. Het bestand staat als `attachment` in `filePaths` en `fileObjects`, zodat de ESB het samen met de andere documenten
 in Corsa opslaat voor de medewerkers.
 
+- Het bestand wordt alleen aangemaakt als er iets is gewijzigd: een ander emailadres of telefoonnummer, of een van de antwoorden over
+  inkomen, wonen, vakantie, studie, vrijwilligerswerk of vermogen is niet `nee`. Alleen een ingevulde toelichting telt niet als wijziging.
+  Is er niets gewijzigd, dan staat er geen overzicht in `filePaths` en `fileObjects`.
 - Email wordt vergeleken zonder hoofdletters en spaties rondom, telefoonnummer zonder spaties en streepjes.
 - Mislukt deze stap, dan gaat de taak zonder het overzicht alsnog op de queue.
 
