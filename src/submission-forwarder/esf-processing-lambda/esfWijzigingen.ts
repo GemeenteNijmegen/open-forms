@@ -21,6 +21,26 @@ const VALUE_LABELS: Record<string, string> = {
   jaGestoptMetVrijwilligerswerk: 'Ja, gestopt met vrijwilligerswerk',
 };
 
+const CHANGE_ANSWER_FIELDS: (keyof VerzondenData)[] = [
+  'inkomstengewijzigd',
+  'woonsituatiegewijzigd',
+  'vakantiegewijzigd',
+  'studiegewijzigd',
+  'vrijwilligerswerkgewijzigd',
+  'vermogengewijzigd',
+];
+
+/**
+ * Whether the citizen changed their contact details or reported a change
+ * in their situation. Only then is an overview of changes useful.
+ */
+export function heeftWijzigingen(taak: EsfTaak): boolean {
+  const { data, verzonden_data: verzonden } = taak.formtaak;
+  return isGewijzigd(data.email, verzonden.email, normalizeEmail)
+    || isGewijzigd(data.telefoon, verzonden.telefoon, normalizeTelefoon)
+    || CHANGE_ANSWER_FIELDS.some((field) => verzonden[field] !== 'nee');
+}
+
 /**
  * Plain-text overview for the administration of what the citizen changed
  * compared to the prefilled data, and the answers given in the form.
@@ -43,7 +63,7 @@ export function esfWijzigingen(taak: EsfTaak, reference: string): string {
 }
 
 function compare(label: string, oud: string | undefined, nieuw: string | undefined, normalize: (value: string) => string) {
-  if (normalize(oud ?? '') === normalize(nieuw ?? '')) {
+  if (!isGewijzigd(oud, nieuw, normalize)) {
     return [`${label}: niet gewijzigd`];
   }
   return [
@@ -51,6 +71,10 @@ function compare(label: string, oud: string | undefined, nieuw: string | undefin
     `    oud: ${oud || '(leeg)'}`,
     `    nieuw: ${nieuw || '(leeg)'}`,
   ];
+}
+
+function isGewijzigd(oud: string | undefined, nieuw: string | undefined, normalize: (value: string) => string) {
+  return normalize(oud ?? '') !== normalize(nieuw ?? '');
 }
 
 function normalizeEmail(value: string) {
