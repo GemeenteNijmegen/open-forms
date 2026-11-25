@@ -121,6 +121,18 @@ describe('EsfProcessingHandler', () => {
     expect(result.filePaths[1]).toBe(`s3://bucket/esf/${reference}/${reference}-wijzigingen.txt`);
   });
 
+  test('does not store an overview when nothing changed', async () => {
+    const event = input();
+    event.enrichedObject.taak.formtaak.verzonden_data.telefoon = '06123123123';
+    event.enrichedObject.taak.formtaak.verzonden_data.inkomstengewijzigd = 'nee';
+
+    const result = await handler.handle(event);
+
+    expect(store).not.toHaveBeenCalled();
+    expect(result.filePaths).toEqual(event.filePaths);
+    expect(result.fileObjects).toEqual(event.fileObjects);
+  });
+
   test('rejects input without an ESF taak', async () => {
     await expect(handler.handle(input({ taak: undefined }))).rejects.toThrow();
     expect(store).not.toHaveBeenCalled();

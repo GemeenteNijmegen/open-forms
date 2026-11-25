@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { esfWijzigingen } from './esfWijzigingen';
+import { esfWijzigingen, heeftWijzigingen } from './esfWijzigingen';
 import { FileData, s3ObjectReferenceSchema, s3PathsFromFileData, s3StructuredObjectsFromFileData } from '../documentsToS3Storage/s3PathsFromFileData';
 import { S3Uploader } from '../documentsToS3Storage/S3Uploader';
 import { EnrichedZgwObjectDataSchema } from '../shared/EnrichedZgwObjectData';
@@ -27,10 +27,15 @@ export class EsfProcessingHandler {
   /**
    * Store an overview of the changes made by the citizen next to the
    * submission files, so it is picked up together with the other documents.
+   * Without changes there is no overview and the input is passed on as is.
    */
   async handle(event: unknown) {
     const input = EsfProcessingInputSchema.parse(event);
     const { reference, s3SubFolder, taak } = input.enrichedObject;
+
+    if (!heeftWijzigingen(taak)) {
+      return input;
+    }
 
     const wijzigingen: FileData = {
       filename: `${reference}-wijzigingen.txt`,
