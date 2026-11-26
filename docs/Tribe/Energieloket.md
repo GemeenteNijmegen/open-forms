@@ -1,6 +1,6 @@
 # Tribe Energieloket
 
-Inwoners en VvE's melden zich met een formulier aan voor een adviesgesprek bij het Energieloket. Die aanmeldingen komen in de Tribe-omgeving van het Energieloket. De inzending volgt dezelfde weg als bij Autodelen, tot en met de Tribe-lambda ([Tribe-koppeling](../README.md)). De lambda maakt de records in Tribe zelf aan, stap voor stap.
+Inwoners en VvE's melden zich met een formulier aan voor een adviesgesprek bij het Energieloket. Die aanmeldingen komen in de Tribe-omgeving van het Energieloket. De inzending volgt dezelfde weg als bij Autodelen, tot en met de Tribe-lambda ([Tribe-koppeling](README.md)). De lambda maakt de records in Tribe zelf aan, stap voor stap.
 
 ```mermaid
 flowchart LR
@@ -28,7 +28,7 @@ De volledige mapping per formulierveld komt bij het objecttype.
 - Er komt een tweede secret voor de Tribe-omgeving van het Energieloket.
 - Elke aanroep naar Tribe wordt gelogd met OF-nummer, object-UUID, stap, Tribe-ID en duur. Formulierinhoud staat niet in de logs van productie.
 
-Autodelen blijft zoals het is.
+Autodelen blijft zoals het is. Wat er per PR wordt opgeleverd, staat in de [README bij de code](../../src/submission-forwarder/tribe/README.md).
 
 ## Keuzes
 

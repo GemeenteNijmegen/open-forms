@@ -2,7 +2,7 @@
 
 De TribeProcessor-lambda stuurt inzendingen uit Open Formulieren naar Tribe. Per Tribe-omgeving en type aanmelding kiest hij een processor, die met een eigen client en secret de Tribe-aanroepen doet. Hoe een inzending hier komt, hoe dry-run en foutafhandeling werken en hoe je een nieuw type toevoegt, staat in de [Tribe-docs](../../../docs/Tribe/README.md).
 
-Autodelen werkt nu: één aanroep naar een formulier in Tribe. Hier komt het Energieloket bij, met twee formulieren (inwoner en VvE) die in meerdere stappen records in Tribe aanmaken. Wat er in Tribe komt, staat in [Energieloket](../../../docs/Tribe/Energieloket/README.md).
+Autodelen werkt nu: één aanroep naar een formulier in Tribe. Hier komt het Energieloket bij, met twee formulieren (inwoner en VvE) die in meerdere stappen records in Tribe aanmaken. Wat er in Tribe komt, staat in [Energieloket](../../../docs/Tribe/Energieloket.md).
 
 ## Wat we opleveren
 

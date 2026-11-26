@@ -3,7 +3,7 @@
 Formulierinzendingen uit Open Formulieren kunnen naar het CRM-systeem Tribe worden
 gestuurd. De eerste koppeling is Autodelen; de opzet is gemaakt om later een volgende
 Tribe-omgeving (bijvoorbeeld Energieloket) toe te voegen zonder de bestaande keten
-opnieuw te ontwerpen. De koppeling voor het Energieloket staat in [Energieloket](./Energieloket/README.md).
+opnieuw te ontwerpen. De koppeling voor het Energieloket staat in [Energieloket](./Energieloket.md).
 
 ## Hoe een inzending bij Tribe terechtkomt
 
