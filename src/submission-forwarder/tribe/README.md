@@ -41,6 +41,7 @@ Deze PR. De lambda doet nog niets anders.
 - Het Zod-schema, met een voorbeeldobject per formulier.
 - De mapping per formulierveld in de docs, zodat Team Online de formulieren kan koppelen.
 - Bruno-requests met werkende payloads om records te koppelen, op te zoeken en een notitie toe te voegen.
+- Bruno-requests die laten zien hoe een record van dezelfde inzending in Tribe terug te vinden is.
 
 ## 3. Persoon in Tribe
 
@@ -49,7 +50,7 @@ De eerste echte aanroep naar Tribe.
 - De lambda leest het secret van het Energieloket en kent de verwerking van het inwonerformulier.
 - De verwerking maakt een Persoon aan met naam, e-mail en telefoon.
 - Elke aanroep naar Tribe staat in de logs met OF-nummer, objectUuid, stap, Tribe-ID en duur.
-- Dezelfde inzending opnieuw verwerken maakt geen tweede persoon.
+- Dezelfde inzending opnieuw verwerken maakt geen tweede persoon. Is de uitkomst van een aanroep onzeker, dan stopt de verwerking. Een nieuwe aanmelding van dezelfde persoon geeft wel een nieuwe persoon.
 - Acceptatie stuurt inzendingen echt naar Tribe, ook die van Autodelen.
 
 ## 4. Inwoner: hele keten
@@ -57,7 +58,6 @@ De eerste echte aanroep naar Tribe.
 - Particulier: de rol waarmee de persoon aan de woning hangt.
 - De Woning met de adresvelden.
 - Een notitie op de woning, op acceptatie met TEST ACCEPTATIE bovenaan.
-- Het OF-nummer als extern identifier.
 - Ook deze stappen maken bij opnieuw verwerken geen dubbele records.
 
 ## 5. Inwoner: alle velden
