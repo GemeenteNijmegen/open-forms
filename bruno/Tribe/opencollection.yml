@@ -30,7 +30,7 @@ docs:
 
     Daar staan onder andere de clientgegevens waarmee in Bruno een access token kan worden opgehaald. In Bruno is hiervoor OAuth 2.0 met client_credentials ingericht. Het access token wordt vervolgens gebruikt als Bearer token bij de API-calls.
 
-    Per Tribe omgeving moeten client credentials aangemaakt worden. Daarom staat de authenticatie ingesteld op folder niveau van de Tribe omgeving
+    Per Tribe omgeving moeten client credentials aangemaakt worden. Daarom staat de authenticatie ingesteld op folder niveau van de Tribe omgeving. Er is één Bruno-omgeving, Tribe, met per map een eigen clientId en clientSecret (bijvoorbeeld autodelenClientId). Wisselen van omgeving is dus niet nodig.
 
     ## Healthcheck / metadata
 

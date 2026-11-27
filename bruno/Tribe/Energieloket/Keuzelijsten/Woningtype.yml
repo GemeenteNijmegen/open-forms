@@ -1,0 +1,15 @@
+info:
+  name: Woningtype
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{baseUrl}}b861e8c2__c084__40b5__acfb__227968e7f7b8"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

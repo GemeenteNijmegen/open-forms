@@ -1,0 +1,15 @@
+info:
+  name: VvE woningtype
+  type: http
+  seq: 8
+
+http:
+  method: GET
+  url: "{{baseUrl}}ae96aece__294a__4e8f__9a3d__6e5810d27f32"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
