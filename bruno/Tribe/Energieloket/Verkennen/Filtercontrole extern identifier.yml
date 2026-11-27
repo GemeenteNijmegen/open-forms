@@ -1,0 +1,21 @@
+info:
+  name: Filtercontrole extern identifier
+  type: http
+  seq: 5
+
+http:
+  method: GET
+  url: "{{baseUrl}}ExternalId?$top=3&$select=ID,Service,Type,Id&$filter=Service eq 'DataPack'"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Controle of $filter op ExternalId werkt. Verwacht: alleen records met Service DataPack, met hun Id.
+    Dit zijn identifiers van Tribe zelf, geen persoonsgegevens. Een Id hieruit is een bestaande waarde om Extern identifier zoeken op Id mee te controleren.
+  type: text/markdown

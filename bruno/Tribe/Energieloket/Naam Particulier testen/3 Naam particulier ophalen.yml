@@ -1,0 +1,26 @@
+info:
+  name: 3 Naam particulier ophalen
+  type: http
+  seq: 3
+
+http:
+  method: GET
+  url: "{{baseUrl}}Relationship_Person_Private({{inwonerParticulierId}})?$select=ID,Name,SortName"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        console.log('[3 Naam particulier ophalen]', res.status, res.body && res.body.Name ? 'OK naam particulier gevuld: ' + res.body.Name : 'LET OP naam particulier leeg', '| SortName =', res.body && res.body.SortName);
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Is de naam van de Particulier inmiddels toch gevuld, zonder dat wij iets deden?
+  type: text/markdown

@@ -1,0 +1,33 @@
+info:
+  name: 10 Variant particulier verwijderen
+  type: http
+  seq: 10
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}Relationship_Person_Private({{variantParticulierId}})"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar('variantParticulierId')) {
+          console.log('[10 Variant particulier verwijderen] overgeslagen, geen variantParticulierId');
+          bru.runner.skipRequest();
+        }
+    - type: after-response
+      code: |-
+        console.log('[10 Variant particulier verwijderen]', res.status < 300 ? 'OK' : (res.status === 404 ? 'OK was al weg' : 'MISLUKT'), res.status);
+        if (res.status < 300 || res.status === 404) bru.setVar('variantParticulierId', '');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Ruimt de tweede testpersoon uit stap 8 op.
+  type: text/markdown

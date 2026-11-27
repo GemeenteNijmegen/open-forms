@@ -1,0 +1,36 @@
+info:
+  name: 9 Variant ophalen
+  type: http
+  seq: 9
+
+http:
+  method: GET
+  url: "{{baseUrl}}Relation_Person({{variantPersoonId}})?$select=ID,Name&$expand=Person"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar('variantPersoonId')) {
+          console.log('[9 Variant ophalen] overgeslagen, stap 8 heeft geen persoon gemaakt');
+          bru.runner.skipRequest();
+        }
+    - type: after-response
+      code: |-
+        const b = res.body || {};
+        const list = Array.isArray(b.Person) ? b.Person : (b.Person ? [b.Person] : []);
+        const p = list.find(r => (r['@odata.type'] || '').includes('Private')) || list[0];
+        if (p && p.ID) bru.setVar('variantParticulierId', p.ID);
+        console.log('[9 Variant ophalen]', res.status, 'persoon:', b.Name, '| rollen:', list.length, '| particulier:', p ? (p.Name ? 'OK naam gevuld: ' + p.Name : 'LET OP naam leeg') : 'LET OP geen particulier', '| type:', p && p['@odata.type']);
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Is er een Particulier ontstaan, en heeft die een naam?
+  type: text/markdown

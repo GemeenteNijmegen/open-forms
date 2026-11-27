@@ -1,0 +1,54 @@
+info:
+  name: 2 Bijlage aanmaken
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{baseUrl}}Attachment"
+  body:
+    type: json
+    data: |-
+      {
+        "Description": "TEST bijlage {{inwonerReferentie}}",
+        "Entity": {
+          "ID": "{{inwonerWoningId}}"
+        },
+        "File": {
+          "Name": "TEST-bijlage.pdf",
+          "MimeType": "application/pdf",
+          "Data": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFszIDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvTWVkaWFCb3ggWzAgMCA1OTUgODQyXSAvQ29udGVudHMgNCAwIFIgL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgNSAwIFIgPj4gPj4gPj4KZW5kb2JqCjQgMCBvYmoKPDwgL0xlbmd0aCA2NiA+PgpzdHJlYW0KQlQgL0YxIDE4IFRmIDcyIDc2MCBUZCAoVEVTVCBiaWpsYWdlIEVuZXJnaWVsb2tldC4gTWFnIHdlZy4pIFRqIEVUCmVuZHN0cmVhbQplbmRvYmoKNSAwIG9iago8PCAvVHlwZSAvRm9udCAvU3VidHlwZSAvVHlwZTEgL0Jhc2VGb250IC9IZWx2ZXRpY2EgPj4KZW5kb2JqCnhyZWYKMCA2CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAwOSAwMDAwMCBuIAowMDAwMDAwMDU4IDAwMDAwIG4gCjAwMDAwMDAxMTUgMDAwMDAgbiAKMDAwMDAwMDI0MSAwMDAwMCBuIAowMDAwMDAwMzU3IDAwMDAwIG4gCnRyYWlsZXIKPDwgL1NpemUgNiAvUm9vdCAxIDAgUiA+PgpzdGFydHhyZWYKNDI3CiUlRU9GCg=="
+        },
+        "ExternalIds": [
+          {
+            "Service": "OpenForms",
+            "Type": "Energieloket.Bijlage",
+            "Id": "{{inwonerReferentie}}"
+          }
+        ]
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const id = res.body && res.body.ID;
+        if (res.status >= 200 && res.status < 300 && id) {
+          bru.setVar('inwonerBijlageId', id);
+          console.log('[2 Bijlage aanmaken] OK', res.status, 'inwonerBijlageId =', id);
+        } else {
+          console.log('[2 Bijlage aanmaken] MISLUKT', res.status, JSON.stringify(res.body));
+          bru.runner.stopExecution();
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Hangt de pdf aan de Woning, met identifier (Type Energieloket.Bijlage). De pdf staat als base64 in Data en bevat alleen de testtekst.
+  type: text/markdown

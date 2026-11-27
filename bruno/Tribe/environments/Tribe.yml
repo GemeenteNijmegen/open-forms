@@ -1,0 +1,14 @@
+name: Tribe
+variables:
+  - name: tokenUrl
+    value: https://auth.tribecrm.nl/oauth2/token
+  - name: baseUrl
+    value: https://api.tribecrm.nl/v1/odata/
+  - secret: true
+    name: autodelenClientId
+  - secret: true
+    name: autodelenClientSecret
+  - secret: true
+    name: energieloketClientId
+  - secret: true
+    name: energieloketClientSecret

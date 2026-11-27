@@ -1,0 +1,44 @@
+info:
+  name: 6 Identifiers zoeken
+  type: http
+  seq: 6
+
+http:
+  method: GET
+  url: "{{baseUrl}}ExternalId?$select=ID,Type,Id&$filter=Id eq '{{inwonerReferentie}}'&$expand=Entity($select=ID)"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        if (res.status !== 200) {
+          console.log('[6 Identifiers zoeken] MISLUKT', res.status, JSON.stringify(res.body));
+          bru.runner.stopExecution();
+        } else {
+          const found = res.body.value || [];
+          const expected = {
+            'Energieloket.Persoon': ['inwonerPersoonId', 'inwonerExternIdPersoon'],
+            'Energieloket.Particulier': ['inwonerParticulierId', 'inwonerExternIdParticulier'],
+            'Energieloket.Woning': ['inwonerWoningId', 'inwonerExternIdWoning'],
+            'Energieloket.Notitie': ['inwonerNotitieId', 'inwonerExternIdNotitie']
+          };
+          console.log('[6 Identifiers zoeken]', found.length === 4 ? 'OK 4 identifiers gevonden' : 'LET OP ' + found.length + ' identifiers gevonden, verwacht 4');
+          for (const [type, [recordVar, idVar]] of Object.entries(expected)) {
+            const hit = found.filter(e => e.Type === type);
+            const ok = hit.length === 1 && hit[0].Entity && hit[0].Entity.ID === bru.getVar(recordVar);
+            if (hit.length) bru.setVar(idVar, hit[0].ID);
+            console.log('[6 Identifiers zoeken]', type, ok ? 'OK wijst naar het juiste record' : 'LET OP ' + hit.length + ' gevonden of verkeerd record');
+          }
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Zoekt alle identifiers met de testreferentie. Verwacht vier, elk naar het juiste record. Zet de ID's van de identifiers voor het opruimen.
+  type: text/markdown

@@ -1,0 +1,66 @@
+info:
+  name: 1 Persoon aanmaken
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}Relation_Person"
+  body:
+    type: json
+    data: |-
+      {
+        "FirstName": "TEST",
+        "LastName": "Energieloket {{vveReferentie}}",
+        "EmailAddress": "test@example.org",
+        "PhoneNumber": "0000000000",
+        "ExternalIds": [
+          {
+            "Service": "OpenForms",
+            "Type": "Energieloket.Persoon",
+            "Id": "{{vveReferentie}}"
+          }
+        ],
+        "Person": [
+          {
+            "@odata.type": "#OData.Relationship.Person.Private",
+            "ExternalIds": [
+              {
+                "Service": "OpenForms",
+                "Type": "Energieloket.Particulier",
+                "Id": "{{vveReferentie}}"
+              }
+            ]
+          }
+        ]
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        const stamp = new Date().toISOString().slice(0, 16).replace(/[-:T]/g, '');
+        bru.setVar('vveReferentie', 'OF-TEST-VVE-' + stamp);
+        console.log('[1 Persoon aanmaken] vveReferentie =', bru.getVar('vveReferentie'));
+    - type: after-response
+      code: |-
+        const id = res.body && res.body.ID;
+        if (res.status >= 200 && res.status < 300 && id) {
+          bru.setVar('vvePersoonId', id);
+          console.log('[1 Persoon aanmaken] OK', res.status, 'vvePersoonId =', id);
+        } else {
+          console.log('[1 Persoon aanmaken] MISLUKT', res.status, JSON.stringify(res.body));
+          bru.runner.stopExecution();
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Maakt de testpersoon met identifier en de Particulier (in Person, een lijst) in één POST. Zet vvePersoonId.
+  type: text/markdown

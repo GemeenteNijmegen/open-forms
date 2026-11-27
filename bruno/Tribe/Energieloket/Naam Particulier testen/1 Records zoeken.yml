@@ -1,0 +1,45 @@
+info:
+  name: 1 Records zoeken
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{baseUrl}}ExternalId?$select=Type,Id&$filter=Id eq '{{inwonerReferentie}}'&$expand=Entity($select=ID)"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        const url = decodeURIComponent(req.getUrl());
+        const match = url.match(/Id eq '([^']*)'/);
+        let ref = match ? match[1] : '';
+        if (ref.includes('{{')) ref = bru.getVar('inwonerReferentie') || '';
+        if (!ref) {
+          console.log('[1 Records zoeken] MISLUKT geen testreferentie: vervang in de URL {{inwonerReferentie}} door de testreferentie');
+          bru.runner.stopExecution();
+        } else {
+          bru.setVar('inwonerReferentie', ref);
+        }
+    - type: after-response
+      code: |-
+        const found = (res.body && res.body.value) || [];
+        for (const e of found) {
+          if (e.Type === 'Energieloket.Persoon') bru.setVar('inwonerPersoonId', e.Entity.ID);
+          if (e.Type === 'Energieloket.Particulier') bru.setVar('inwonerParticulierId', e.Entity.ID);
+        }
+        const ok = bru.getVar('inwonerPersoonId') && bru.getVar('inwonerParticulierId');
+        console.log('[1 Records zoeken]', ok ? 'OK persoon en particulier gevonden' : 'MISLUKT ' + JSON.stringify(found));
+        if (!ok) bru.runner.stopExecution();
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Zoekt de persoon en de Particulier van de testrun op hun identifier.
+  type: text/markdown

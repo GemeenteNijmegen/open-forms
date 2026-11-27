@@ -1,0 +1,58 @@
+info:
+  name: 0 Records zoeken
+  type: http
+  seq: 0
+
+http:
+  method: GET
+  url: "{{baseUrl}}ExternalId?$select=ID,Type,Id&$filter=Id eq '{{inwonerReferentie}}'&$expand=Entity($select=ID)"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        const url = decodeURIComponent(req.getUrl());
+        const match = url.match(/Id eq '([^']*)'/);
+        let ref = match ? match[1] : '';
+        if (ref.includes('{{')) ref = bru.getVar('inwonerReferentie') || '';
+        if (!ref) {
+          console.log('[0 Records zoeken] MISLUKT geen testreferentie: vervang in de URL {{inwonerReferentie}} door de testreferentie uit de console');
+          bru.runner.stopExecution();
+        } else {
+          bru.setVar('inwonerReferentie', ref);
+          console.log('[0 Records zoeken] testreferentie =', ref);
+        }
+    - type: after-response
+      code: |-
+        const found = (res.body && res.body.value) || [];
+        if (res.status !== 200) {
+          console.log('[0 Records zoeken] MISLUKT', res.status, JSON.stringify(res.body));
+          bru.runner.stopExecution();
+        } else {
+          const map = {
+            'Energieloket.Persoon': ['inwonerPersoonId', 'inwonerExternIdPersoon'],
+            'Energieloket.Particulier': ['inwonerParticulierId', 'inwonerExternIdParticulier'],
+            'Energieloket.Woning': ['inwonerWoningId', 'inwonerExternIdWoning'],
+            'Energieloket.Notitie': ['inwonerNotitieId', 'inwonerExternIdNotitie']
+          };
+          for (const e of found) {
+            const vars = map[e.Type];
+            if (!vars || !e.Entity) continue;
+            bru.setVar(vars[0], e.Entity.ID);
+            bru.setVar(vars[1], e.ID);
+          }
+          console.log('[0 Records zoeken]', found.length + ' records gevonden met de testreferentie', JSON.stringify(found.map(e => [e.Type, e.Entity && e.Entity.ID])));
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Zoekt de records van de testrun op hun extern identifier en zet de ID-variabelen voor de volgende stappen. Werkt dus ook na een herstart van Bruno.
+    Na een herstart is inwonerReferentie leeg: vervang dan in de URL {{inwonerReferentie}} tijdelijk door de testreferentie uit de console (bijvoorbeeld OF-TEST-202611271157) en zet hem daarna terug.
+  type: text/markdown

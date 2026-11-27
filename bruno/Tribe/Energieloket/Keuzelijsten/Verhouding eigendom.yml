@@ -1,0 +1,15 @@
+info:
+  name: Verhouding eigendom
+  type: http
+  seq: 7
+
+http:
+  method: GET
+  url: "{{baseUrl}}_050e378f__dc36__424a__b016__77c8c5d98d53"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

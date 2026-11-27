@@ -1,0 +1,60 @@
+info:
+  name: 3 Woning aanmaken
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{baseUrl}}_8e7ed9fb__a892__4cf1__9402__2428fcbc8022"
+  body:
+    type: json
+    data: |-
+      {
+        "_6d03d538__188f__4281__b857__00aa82ae173b": "Teststraat 1",
+        "a381bd06__691d__4a71__a232__72edc01ef2b6": "Teststraat",
+        "fa93aaea__45e7__4d78__aef3__969879d15a2a": "1",
+        "_6038fdfc__f70c__4ea0__8059__84b5ea804a9f": "0000AA",
+        "f44e4204__16dc__4e61__8d3b__aaadbe3a96af": {
+          "ID": "20266d61-8ff2-4a16-8e23-9f1d491a6410"
+        },
+        "ec0972f9__3a8d__439c__a6bf__9db14a37edbf": {
+          "ID": "e081d51c-bd6a-4880-9e0a-b9506f54d047"
+        },
+        "a555ba50__42f7__4bfe__9381__d6ca53326a03": [
+          {
+            "ID": "{{inwonerParticulierId}}"
+          }
+        ],
+        "ExternalIds": [
+          {
+            "Service": "OpenForms",
+            "Type": "Energieloket.Woning",
+            "Id": "{{inwonerReferentie}}"
+          }
+        ]
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const id = res.body && res.body.ID;
+        if (res.status >= 200 && res.status < 300 && id) {
+          bru.setVar('inwonerWoningId', id);
+          console.log('[3 Woning aanmaken] OK', res.status, 'inwonerWoningId =', id);
+        } else {
+          console.log('[3 Woning aanmaken] MISLUKT', res.status, JSON.stringify(res.body));
+          bru.runner.stopExecution();
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Maakt een Woning (Tussenwoning, Nijmegen) met de Particulier en identifier in één POST. Adres is Teststraat 1: dat wordt de titel in Tribe. Zet inwonerWoningId.
+  type: text/markdown

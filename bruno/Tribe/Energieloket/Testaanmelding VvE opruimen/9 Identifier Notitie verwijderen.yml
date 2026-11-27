@@ -1,0 +1,39 @@
+info:
+  name: 9 Identifier Notitie verwijderen
+  type: http
+  seq: 9
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}ExternalId({{vveExternIdNotitie}})"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar('vveExternIdNotitie')) {
+          console.log('[9 Identifier Notitie verwijderen] overgeslagen, geen vveExternIdNotitie');
+          bru.runner.skipRequest();
+        }
+    - type: after-response
+      code: |-
+        if (res.status === 404) {
+          console.log('[9 Identifier Notitie verwijderen] OK was al verwijderd met het record');
+        } else if (res.status >= 200 && res.status < 300) {
+          console.log('[9 Identifier Notitie verwijderen] OK verwijderd', res.status, '(bleef dus staan na het record)');
+        } else {
+          console.log('[9 Identifier Notitie verwijderen] MISLUKT', res.status, JSON.stringify(res.body));
+        }
+        if (res.status < 300 || res.status === 404) bru.setVar('vveExternIdNotitie', '');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Verwijdert het identifier uit vveExternIdNotitie als het nog bestaat.
+  type: text/markdown

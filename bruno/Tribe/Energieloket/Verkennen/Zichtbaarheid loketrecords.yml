@@ -1,0 +1,26 @@
+info:
+  name: Zichtbaarheid loketrecords
+  type: http
+  seq: 8
+
+http:
+  method: GET
+  url: "{{baseUrl}}_8e7ed9fb__a892__4cf1__9402__2428fcbc8022?$top=3&$select=ID,CreationDate&$expand=Creator($select=ID),Team($select=ID),DeprecatedOwner($select=ID)"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        console.log('[Zichtbaarheid loketrecords]', res.status, JSON.stringify((res.body && res.body.value) || res.body));
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Drie bestaande Woningen van het loket met Creator, Team en eigenaar. Alleen ID's, geen persoonsgegevens. Vergelijk met Zichtbaarheid testrecords.
+  type: text/markdown
