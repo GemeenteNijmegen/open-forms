@@ -1,0 +1,39 @@
+info:
+  name: Vorm veld Adres
+  type: http
+  seq: 9
+
+http:
+  method: GET
+  url: "{{baseUrl}}_8e7ed9fb__a892__4cf1__9402__2428fcbc8022?$top=100&$select=ID,_6d03d538__188f__4281__b857__00aa82ae173b,a381bd06__691d__4a71__a232__72edc01ef2b6,fa93aaea__45e7__4d78__aef3__969879d15a2a,_6038fdfc__f70c__4ea0__8059__84b5ea804a9f"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const mask = v => v == null || v === '' ? '(leeg)' : String(v).replace(/[A-Za-zÀ-ÿ]/g, 'a').replace(/[0-9]/g, '9');
+        const rows = (res.body && res.body.value) || [];
+        console.log('[Vorm veld Adres]', res.status, rows.length + ' woningen');
+        const counts = {};
+        for (const w of rows) {
+          const key = 'Adres: ' + mask(w['_6d03d538__188f__4281__b857__00aa82ae173b']) + ' | straat ' + (w['a381bd06__691d__4a71__a232__72edc01ef2b6'] ? 'gevuld' : 'leeg') + ', huisnummer ' + (w['fa93aaea__45e7__4d78__aef3__969879d15a2a'] ? 'gevuld' : 'leeg') + ', postcode ' + (w['_6038fdfc__f70c__4ea0__8059__84b5ea804a9f'] ? 'gevuld' : 'leeg');
+          counts[key] = (counts[key] || 0) + 1;
+        }
+        for (const [key, n] of Object.entries(counts)) console.log('[Vorm veld Adres]', n + 'x', key);
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Hoe vult het loket het veld Adres van een Woning?
+
+    Draai de request. Open de console met Cmd + Option + I en kopieer uit de console de regels die beginnen met [Vorm veld Adres].
+    Kopieer niet de response, daar staan echte adressen in.
+
+    In de console staan letters als a en cijfers als 9. Per vorm staat erbij hoe vaak hij voorkomt.
+  type: text/markdown

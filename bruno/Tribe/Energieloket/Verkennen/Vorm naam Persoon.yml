@@ -1,0 +1,42 @@
+info:
+  name: Vorm naam Persoon
+  type: http
+  seq: 11
+
+http:
+  method: GET
+  url: "{{baseUrl}}Relation_Person?$top=100&$select=ID,Name,SortName,FirstName,MiddleName,LastName"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const mask = v => v == null || v === '' ? '(leeg)' : String(v).replace(/[A-Za-zÀ-ÿ]+/g, 'a').replace(/[0-9]/g, '9');
+        const rows = (res.body && res.body.value) || [];
+        console.log('[Vorm naam Persoon]', res.status, rows.length + ' personen');
+        const counts = {};
+        for (const p of rows) {
+          const full = [p.FirstName, p.MiddleName, p.LastName].filter(Boolean).join(' ');
+          const sort = [[p.MiddleName, p.LastName].filter(Boolean).join(' '), p.FirstName].filter(Boolean).join(', ');
+          const key = 'Name: ' + mask(p.Name) + (p.Name ? (p.Name === full ? ' (= voornaam tussenvoegsel achternaam)' : ' (anders)') : '')
+            + ' | SortName: ' + mask(p.SortName) + (p.SortName ? (p.SortName === sort ? ' (= tussenvoegsel achternaam, voornaam)' : ' (anders)') : '');
+          counts[key] = (counts[key] || 0) + 1;
+        }
+        for (const [key, n] of Object.entries(counts)) console.log('[Vorm naam Persoon]', n + 'x', key);
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Hoe vult het loket de naam van een Persoon?
+
+    Draai de request. Open de console met Cmd + Option + I en kopieer uit de console de regels die beginnen met [Vorm naam Persoon].
+    Kopieer niet de response, daar staan echte gegevens in.
+
+    In de console staan woorden als a en cijfers als 9. Per vorm staat erbij hoe vaak hij voorkomt.
+  type: text/markdown

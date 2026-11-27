@@ -1,0 +1,14 @@
+info:
+  name: Verkennen
+  type: folder
+  seq: 3
+
+request:
+  auth: inherit
+
+docs:
+  content: |
+    Alleen-lezen requests om te zien hoe Tribe records en koppelingen teruggeeft. Ze veranderen niets in Tribe.
+    Elke request vraagt met $select alleen ID's en typen op, zodat er geen persoonsgegevens van bestaande records terugkomen.
+    Plak een response alleen in een issue of document als er geen namen, adressen of e-mailadressen in staan.
+  type: text/markdown

@@ -1,0 +1,28 @@
+info:
+  name: Zichtbaarheid testrecords
+  type: http
+  seq: 7
+
+http:
+  method: GET
+  url: "{{baseUrl}}ExternalId?$select=Type,Id&$filter=Id eq '{{inwonerReferentie}}'&$expand=Entity($select=ID,CreationDate;$expand=Creator($select=ID),Team($select=ID),DeprecatedOwner($select=ID))"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        console.log('[Zichtbaarheid testrecords]', res.status, JSON.stringify((res.body && res.body.value || []).map(e => [e.Type, e.Entity])));
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Haalt van de records van een testrun op wie ze aanmaakte (Creator), bij welk team ze horen (Team) en de eigenaar. Alleen ID's.
+    Vergelijk met Zichtbaarheid loketrecords: wijken Creator of Team af, dan ziet een gebruiker van het loket de records mogelijk niet.
+    Na een herstart: vervang {{inwonerReferentie}} tijdelijk door de testreferentie (bijvoorbeeld OF-TEST-202611271157).
+  type: text/markdown
