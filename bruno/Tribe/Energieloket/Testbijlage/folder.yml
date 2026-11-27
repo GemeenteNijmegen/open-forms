@@ -1,0 +1,16 @@
+info:
+  name: Testbijlage
+  type: folder
+  seq: 9
+
+request:
+  auth: inherit
+
+docs:
+  content: |
+    Hangt een kleine pdf met verzonnen tekst ("TEST bijlage Energieloket. Mag weg.") aan de Woning van een testrun, haalt hem terug en verwijdert hem weer. Alleen verkenning voor bijlagen (E6).
+
+    Draai eerst Testaanmelding inwoner, of vervang na een herstart in stap 1 {{inwonerReferentie}} door de testreferentie.
+    Draai de map met Run. Kopieer uit de console de regels die beginnen met [ en plak ze in user-input.
+    Kijk in Tribe bij de Woning onder Activiteiten of Bijlagen of de pdf er tussen stap 2 en 4 stond.
+  type: text/markdown

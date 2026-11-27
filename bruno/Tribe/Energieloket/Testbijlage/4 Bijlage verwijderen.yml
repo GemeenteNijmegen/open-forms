@@ -1,0 +1,33 @@
+info:
+  name: 4 Bijlage verwijderen
+  type: http
+  seq: 4
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}Attachment({{inwonerBijlageId}})"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar('inwonerBijlageId')) {
+          console.log('[4 Bijlage verwijderen] overgeslagen, geen inwonerBijlageId');
+          bru.runner.skipRequest();
+        }
+    - type: after-response
+      code: |-
+        console.log('[4 Bijlage verwijderen]', res.status >= 200 && res.status < 300 ? 'OK' : (res.status === 404 ? 'OK was al weg' : 'MISLUKT'), res.status);
+        if (res.status < 300 || res.status === 404) bru.setVar('inwonerBijlageId', '');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Verwijdert de testbijlage weer. Wil je hem eerst in Tribe zien, draai dan stap 1 tot en met 3, kijk, en draai daarna deze stap.
+  type: text/markdown
