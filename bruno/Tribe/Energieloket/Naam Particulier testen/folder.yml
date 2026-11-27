@@ -1,0 +1,16 @@
+info:
+  name: Naam Particulier testen
+  type: folder
+  seq: 8
+
+request:
+  auth: inherit
+
+docs:
+  content: |
+    Zoekt hoe een Particulier een naam krijgt. Name in de POST en in een PUT negeert Tribe (27-11-2026). Stap 6 en 7: werkt de persoon bij en kijkt opnieuw. Stap 8 tot 11: maakt een tweede testpersoon met de Particulier in één POST, kijkt of die een naam heeft en ruimt hem op. Werkt op een bestaande testrun.
+
+    Na een herstart van Bruno: vervang in stap 1 {{inwonerReferentie}} door de testreferentie, bijvoorbeeld OF-TEST-202611271232.
+    Draai de map met Run. Kopieer uit de console de regels die beginnen met [ en plak ze in user-input.
+    Ruim de testrun daarna op met Testaanmelding inwoner opruimen.
+  type: text/markdown

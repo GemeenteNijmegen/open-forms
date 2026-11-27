@@ -1,0 +1,33 @@
+info:
+  name: 11 Variant persoon verwijderen
+  type: http
+  seq: 11
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}Relation_Person({{variantPersoonId}})"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar('variantPersoonId')) {
+          console.log('[11 Variant persoon verwijderen] overgeslagen, geen variantPersoonId');
+          bru.runner.skipRequest();
+        }
+    - type: after-response
+      code: |-
+        console.log('[11 Variant persoon verwijderen]', res.status < 300 ? 'OK' : (res.status === 404 ? 'OK was al weg' : 'MISLUKT'), res.status);
+        if (res.status < 300 || res.status === 404) bru.setVar('variantPersoonId', '');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Ruimt de tweede testpersoon uit stap 8 op.
+  type: text/markdown

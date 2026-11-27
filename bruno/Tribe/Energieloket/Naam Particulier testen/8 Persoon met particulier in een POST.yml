@@ -1,0 +1,59 @@
+info:
+  name: 8 Persoon met particulier in een POST
+  type: http
+  seq: 8
+
+http:
+  method: POST
+  url: "{{baseUrl}}Relation_Person"
+  body:
+    type: json
+    data: |-
+      {
+        "FirstName": "TEST",
+        "LastName": "Energieloket {{inwonerReferentie}}-B",
+        "Person": [
+          {
+            "@odata.type": "#OData.Relationship.Person.Private",
+            "ExternalIds": [
+              {
+                "Service": "OpenForms",
+                "Type": "Energieloket.Particulier",
+                "Id": "{{inwonerReferentie}}-B"
+              }
+            ]
+          }
+        ],
+        "ExternalIds": [
+          {
+            "Service": "OpenForms",
+            "Type": "Energieloket.Persoon",
+            "Id": "{{inwonerReferentie}}-B"
+          }
+        ]
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const id = res.body && res.body.ID;
+        if (res.status >= 200 && res.status < 300 && id) {
+          bru.setVar('variantPersoonId', id);
+          console.log('[8 Persoon met particulier in een POST] OK', res.status, 'variantPersoonId =', id);
+        } else {
+          console.log('[8 Persoon met particulier in een POST] MISLUKT', res.status, JSON.stringify(res.body));
+          bru.runner.stopExecution();
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Maakt een tweede testpersoon met de Particulier erin, via de koppeling Person (een lijst), zoals de UI het misschien doet. Testreferentie met -B erachter.
+  type: text/markdown
