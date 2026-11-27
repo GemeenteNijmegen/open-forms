@@ -1,0 +1,39 @@
+info:
+  name: 6 Identifier Persoon verwijderen
+  type: http
+  seq: 6
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}ExternalId({{vveExternIdPersoon}})"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar('vveExternIdPersoon')) {
+          console.log('[6 Identifier Persoon verwijderen] overgeslagen, geen vveExternIdPersoon');
+          bru.runner.skipRequest();
+        }
+    - type: after-response
+      code: |-
+        if (res.status === 404) {
+          console.log('[6 Identifier Persoon verwijderen] OK was al verwijderd met het record');
+        } else if (res.status >= 200 && res.status < 300) {
+          console.log('[6 Identifier Persoon verwijderen] OK verwijderd', res.status, '(bleef dus staan na het record)');
+        } else {
+          console.log('[6 Identifier Persoon verwijderen] MISLUKT', res.status, JSON.stringify(res.body));
+        }
+        if (res.status < 300 || res.status === 404) bru.setVar('vveExternIdPersoon', '');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Verwijdert het identifier uit vveExternIdPersoon als het nog bestaat.
+  type: text/markdown

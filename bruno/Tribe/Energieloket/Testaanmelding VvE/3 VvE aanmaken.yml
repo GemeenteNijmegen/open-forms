@@ -1,0 +1,56 @@
+info:
+  name: 3 VvE aanmaken
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{baseUrl}}b648f649__2c42__45bf__8fac__86e5453d1d06"
+  body:
+    type: json
+    data: |-
+      {
+        "_00c80aa2__37df__4a25__8bb9__f76e0b43f8a9": "TEST VvE {{vveReferentie}}",
+        "_35bf3758__43b9__41e0__81f6__e0273a943fc4": 12,
+        "cfed9f58__f19b__44a7__a27e__cf1614e45789": "1965",
+        "b8d66639__a976__4faa__a921__477a52c34dee": {
+          "ID": "aa7817a2-dd89-427a-97ad-c0a67c80d154"
+        },
+        "f97137fe__b560__439d__bce4__04344f501573": [
+          {
+            "ID": "{{vveParticulierId}}"
+          }
+        ],
+        "ExternalIds": [
+          {
+            "Service": "OpenForms",
+            "Type": "Energieloket.VvE",
+            "Id": "{{vveReferentie}}"
+          }
+        ]
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const id = res.body && res.body.ID;
+        if (res.status >= 200 && res.status < 300 && id) {
+          bru.setVar('vveVveId', id);
+          console.log('[3 VvE aanmaken] OK', res.status, 'vveVveId =', id);
+        } else {
+          console.log('[3 VvE aanmaken] MISLUKT', res.status, JSON.stringify(res.body));
+          bru.runner.stopExecution();
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Maakt een VvE (12 adressen, bouwjaar 1965, alleen koop) met de Particulier en identifier in één POST. Zet vveVveId.
+  type: text/markdown

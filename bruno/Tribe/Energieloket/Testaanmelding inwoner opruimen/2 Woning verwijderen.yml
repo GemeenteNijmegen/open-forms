@@ -1,0 +1,39 @@
+info:
+  name: 2 Woning verwijderen
+  type: http
+  seq: 2
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}_8e7ed9fb__a892__4cf1__9402__2428fcbc8022({{inwonerWoningId}})"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar('inwonerWoningId')) {
+          console.log('[2 Woning verwijderen] overgeslagen, geen inwonerWoningId');
+          bru.runner.skipRequest();
+        }
+    - type: after-response
+      code: |-
+        if (res.status >= 200 && res.status < 300) {
+          console.log('[2 Woning verwijderen] OK', res.status, bru.getVar('inwonerWoningId'));
+        } else if (res.status === 404) {
+          console.log('[2 Woning verwijderen] OK was al verwijderd', bru.getVar('inwonerWoningId'));
+        } else {
+          console.log('[2 Woning verwijderen] MISLUKT', res.status, JSON.stringify(res.body));
+        }
+        if (res.status < 300 || res.status === 404) bru.setVar('inwonerWoningId', '');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Verwijdert het record uit inwonerWoningId.
+  type: text/markdown

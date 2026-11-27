@@ -1,0 +1,39 @@
+info:
+  name: 9 Identifier Woning verwijderen
+  type: http
+  seq: 9
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}ExternalId({{inwonerExternIdWoning}})"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar('inwonerExternIdWoning')) {
+          console.log('[9 Identifier Woning verwijderen] overgeslagen, geen inwonerExternIdWoning');
+          bru.runner.skipRequest();
+        }
+    - type: after-response
+      code: |-
+        if (res.status === 404) {
+          console.log('[9 Identifier Woning verwijderen] OK was al verwijderd met het record');
+        } else if (res.status >= 200 && res.status < 300) {
+          console.log('[9 Identifier Woning verwijderen] OK verwijderd', res.status, '(bleef dus staan na het record)');
+        } else {
+          console.log('[9 Identifier Woning verwijderen] MISLUKT', res.status, JSON.stringify(res.body));
+        }
+        if (res.status < 300 || res.status === 404) bru.setVar('inwonerExternIdWoning', '');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Verwijdert het identifier uit inwonerExternIdWoning als het nog bestaat.
+  type: text/markdown

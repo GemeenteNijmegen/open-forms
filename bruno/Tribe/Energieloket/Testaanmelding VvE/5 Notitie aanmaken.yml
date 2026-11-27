@@ -1,0 +1,49 @@
+info:
+  name: 5 Notitie aanmaken
+  type: http
+  seq: 5
+
+http:
+  method: POST
+  url: "{{baseUrl}}Note"
+  body:
+    type: json
+    data: |-
+      {
+        "Content": "TEST ACCEPTATIE {{vveReferentie}}. Testnotitie vanuit Bruno, mag weg.",
+        "Entity": {
+          "ID": "{{vveVveId}}"
+        },
+        "ExternalIds": [
+          {
+            "Service": "OpenForms",
+            "Type": "Energieloket.Notitie",
+            "Id": "{{vveReferentie}}"
+          }
+        ]
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const id = res.body && res.body.ID;
+        if (res.status >= 200 && res.status < 300 && id) {
+          bru.setVar('vveNotitieId', id);
+          console.log('[5 Notitie aanmaken] OK', res.status, 'vveNotitieId =', id);
+        } else {
+          console.log('[5 Notitie aanmaken] MISLUKT', res.status, JSON.stringify(res.body));
+          bru.runner.stopExecution();
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Hangt een notitie met identifier aan de VvE. Zet vveNotitieId.
+  type: text/markdown

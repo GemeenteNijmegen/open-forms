@@ -1,0 +1,39 @@
+info:
+  name: 7 Identifier Particulier verwijderen
+  type: http
+  seq: 7
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}ExternalId({{vveExternIdParticulier}})"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar('vveExternIdParticulier')) {
+          console.log('[7 Identifier Particulier verwijderen] overgeslagen, geen vveExternIdParticulier');
+          bru.runner.skipRequest();
+        }
+    - type: after-response
+      code: |-
+        if (res.status === 404) {
+          console.log('[7 Identifier Particulier verwijderen] OK was al verwijderd met het record');
+        } else if (res.status >= 200 && res.status < 300) {
+          console.log('[7 Identifier Particulier verwijderen] OK verwijderd', res.status, '(bleef dus staan na het record)');
+        } else {
+          console.log('[7 Identifier Particulier verwijderen] MISLUKT', res.status, JSON.stringify(res.body));
+        }
+        if (res.status < 300 || res.status === 404) bru.setVar('vveExternIdParticulier', '');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Verwijdert het identifier uit vveExternIdParticulier als het nog bestaat.
+  type: text/markdown

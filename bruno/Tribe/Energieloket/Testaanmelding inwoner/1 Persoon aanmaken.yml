@@ -1,0 +1,73 @@
+info:
+  name: 1 Persoon aanmaken
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}Relation_Person"
+  body:
+    type: json
+    data: |-
+      {
+        "FirstName": "TEST",
+        "LastName": "Energieloket {{inwonerReferentie}}",
+        "EmailAddress": "test@example.org",
+        "PhoneNumber": "0000000000",
+        "Address": {
+          "Street": "Teststraat",
+          "HouseNumber": 1,
+          "HouseNumberSuffix": "TEST",
+          "Postalcode": "0000AA",
+          "City": "Nijmegen"
+        },
+        "ExternalIds": [
+          {
+            "Service": "OpenForms",
+            "Type": "Energieloket.Persoon",
+            "Id": "{{inwonerReferentie}}"
+          }
+        ],
+        "Person": [
+          {
+            "@odata.type": "#OData.Relationship.Person.Private",
+            "ExternalIds": [
+              {
+                "Service": "OpenForms",
+                "Type": "Energieloket.Particulier",
+                "Id": "{{inwonerReferentie}}"
+              }
+            ]
+          }
+        ]
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        const stamp = new Date().toISOString().slice(0, 16).replace(/[-:T]/g, '');
+        bru.setVar('inwonerReferentie', 'OF-TEST-' + stamp);
+        console.log('[1 Persoon aanmaken] inwonerReferentie =', bru.getVar('inwonerReferentie'));
+    - type: after-response
+      code: |-
+        const id = res.body && res.body.ID;
+        if (res.status >= 200 && res.status < 300 && id) {
+          bru.setVar('inwonerPersoonId', id);
+          console.log('[1 Persoon aanmaken] OK', res.status, 'inwonerPersoonId =', id);
+        } else {
+          console.log('[1 Persoon aanmaken] MISLUKT', res.status, JSON.stringify(res.body));
+          bru.runner.stopExecution();
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Maakt de testpersoon met adres, identifier en de Particulier (in Person, een lijst) in één POST. Alleen zo geeft Tribe de Particulier een naam (27-11-2026). Zet inwonerPersoonId.
+  type: text/markdown

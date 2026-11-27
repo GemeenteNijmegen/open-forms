@@ -1,0 +1,39 @@
+info:
+  name: 4 Persoon verwijderen
+  type: http
+  seq: 4
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}Relation_Person({{inwonerPersoonId}})"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar('inwonerPersoonId')) {
+          console.log('[4 Persoon verwijderen] overgeslagen, geen inwonerPersoonId');
+          bru.runner.skipRequest();
+        }
+    - type: after-response
+      code: |-
+        if (res.status >= 200 && res.status < 300) {
+          console.log('[4 Persoon verwijderen] OK', res.status, bru.getVar('inwonerPersoonId'));
+        } else if (res.status === 404) {
+          console.log('[4 Persoon verwijderen] OK was al verwijderd', bru.getVar('inwonerPersoonId'));
+        } else {
+          console.log('[4 Persoon verwijderen] MISLUKT', res.status, JSON.stringify(res.body));
+        }
+        if (res.status < 300 || res.status === 404) bru.setVar('inwonerPersoonId', '');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Verwijdert het record uit inwonerPersoonId.
+  type: text/markdown

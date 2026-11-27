@@ -1,0 +1,39 @@
+info:
+  name: 5 Adres verwijderen
+  type: http
+  seq: 5
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}Address({{inwonerAdresId}})"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar('inwonerAdresId')) {
+          console.log('[5 Adres verwijderen] overgeslagen, geen inwonerAdresId');
+          bru.runner.skipRequest();
+        }
+    - type: after-response
+      code: |-
+        if (res.status >= 200 && res.status < 300) {
+          console.log('[5 Adres verwijderen] OK', res.status, bru.getVar('inwonerAdresId'));
+        } else if (res.status === 404) {
+          console.log('[5 Adres verwijderen] OK was al verwijderd', bru.getVar('inwonerAdresId'));
+        } else {
+          console.log('[5 Adres verwijderen] MISLUKT', res.status, JSON.stringify(res.body));
+        }
+        if (res.status < 300 || res.status === 404) bru.setVar('inwonerAdresId', '');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Verwijdert het record uit inwonerAdresId.
+  type: text/markdown

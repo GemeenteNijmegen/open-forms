@@ -1,0 +1,21 @@
+info:
+  name: Testaanmelding VvE opruimen
+  type: folder
+  seq: 7
+
+request:
+  auth: inherit
+
+docs:
+  content: |
+    ## Wat het doet
+
+    Verwijdert de records uit Testaanmelding VvE, in omgekeerde volgorde, en controleert daarna of er externe identifiers zijn blijven staan.
+    Stap 0 zoekt de records op de testreferentie, dus het werkt ook na een herstart van Bruno (zie de docs van stap 0). Een stap zonder ID wordt overgeslagen; 404 betekent dat het record al weg is, bijvoorbeeld met het record waar het aan hing.
+
+    ## Draaien
+
+    Na Testaanmelding VvE. In hetzelfde Bruno-venster gaat het vanzelf; na een herstart vul je in stap 0 de testreferentie uit de console in.
+    Klik met de rechtermuisknop op deze map, kies Run en dan Run Collection. Elke stap logt [stap] OK, LET OP of MISLUKT in de console.
+    Mislukt een DELETE, ruim dat record dan met de hand op in Tribe of vraag de beheerder; de ID staat in de console.
+  type: text/markdown

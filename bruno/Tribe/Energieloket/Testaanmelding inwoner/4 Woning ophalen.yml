@@ -1,0 +1,36 @@
+info:
+  name: 4 Woning ophalen
+  type: http
+  seq: 4
+
+http:
+  method: GET
+  url: "{{baseUrl}}_8e7ed9fb__a892__4cf1__9402__2428fcbc8022({{inwonerWoningId}})?$select=ID,_6d03d538__188f__4281__b857__00aa82ae173b&$expand=a555ba50__42f7__4bfe__9381__d6ca53326a03($select=ID,Name),ExternalIds($select=ID,Type,Id)"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        if (res.status !== 200) {
+          console.log('[4 Woning ophalen] MISLUKT', res.status, JSON.stringify(res.body));
+          bru.runner.stopExecution();
+        } else {
+          const body = res.body;
+          console.log('[4 Woning ophalen]', ((body['a555ba50__42f7__4bfe__9381__d6ca53326a03'] || []).some(p => p.ID === bru.getVar('inwonerParticulierId'))) ? 'OK particulier hangt aan woning' : 'LET OP particulier hangt er niet aan');
+          console.log('[4 Woning ophalen]', ((body.ExternalIds || []).some(e => e.Id === bru.getVar('inwonerReferentie'))) ? 'OK identifier aan woning' : 'LET OP geen identifier');
+          console.log('[4 Woning ophalen]', (body['_6d03d538__188f__4281__b857__00aa82ae173b']) ? 'OK titel woning (Adres) gevuld' : 'LET OP titel woning (Adres) leeg');
+          console.log('[4 Woning ophalen]', ((body['a555ba50__42f7__4bfe__9381__d6ca53326a03'] || []).every(p => p.Name)) ? 'OK naam particulier gevuld' : 'LET OP naam particulier leeg, titel in Tribe ontbreekt');
+          console.log('[4 Woning ophalen] response', JSON.stringify(body));
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Controleert dat de Particulier en het identifier aan de Woning hangen en dat Woning en Particulier een titel hebben (Adres en Name).
+  type: text/markdown

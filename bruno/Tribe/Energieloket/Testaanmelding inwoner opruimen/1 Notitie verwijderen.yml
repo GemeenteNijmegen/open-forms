@@ -1,0 +1,39 @@
+info:
+  name: 1 Notitie verwijderen
+  type: http
+  seq: 1
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}Note({{inwonerNotitieId}})"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar('inwonerNotitieId')) {
+          console.log('[1 Notitie verwijderen] overgeslagen, geen inwonerNotitieId');
+          bru.runner.skipRequest();
+        }
+    - type: after-response
+      code: |-
+        if (res.status >= 200 && res.status < 300) {
+          console.log('[1 Notitie verwijderen] OK', res.status, bru.getVar('inwonerNotitieId'));
+        } else if (res.status === 404) {
+          console.log('[1 Notitie verwijderen] OK was al verwijderd', bru.getVar('inwonerNotitieId'));
+        } else {
+          console.log('[1 Notitie verwijderen] MISLUKT', res.status, JSON.stringify(res.body));
+        }
+        if (res.status < 300 || res.status === 404) bru.setVar('inwonerNotitieId', '');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Verwijdert het record uit inwonerNotitieId.
+  type: text/markdown
