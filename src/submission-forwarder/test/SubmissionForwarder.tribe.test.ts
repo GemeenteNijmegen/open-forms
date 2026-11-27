@@ -49,6 +49,34 @@ describe('SubmissionForwarder — Tribe resources', () => {
     });
   });
 
+  test('creates the ENERGIELOKET secret, passes its ARN to the TribeProcessor Lambda and grants read access', () => {
+    const template = synth(true);
+    const secrets = template.findResources('AWS::SecretsManager::Secret', {
+      Properties: { Name: '/open-forms/submissionforwarder/tribe/energieloket/credentials' },
+    });
+    const secretLogicalId = Object.keys(secrets)[0];
+    expect(secretLogicalId).toBeDefined();
+    expect(secrets[secretLogicalId].Properties.SecretString).toMatch(/VUL_HANDMATIG_IN/);
+
+    template.hasResourceProperties('AWS::Lambda::Function', {
+      Description: 'Maps and sends Tribe submissions (Autodelen)',
+      Environment: {
+        Variables: Match.objectLike({ TRIBE_ENERGIELOKET_SECRET_ARN: { Ref: secretLogicalId } }),
+      },
+    });
+    template.hasResourceProperties('AWS::IAM::Policy', {
+      PolicyDocument: {
+        Statement: Match.arrayWith([
+          Match.objectLike({
+            Action: Match.arrayWith(['secretsmanager:GetSecretValue']),
+            Effect: 'Allow',
+            Resource: { Ref: secretLogicalId },
+          }),
+        ]),
+      },
+    });
+  });
+
   test('TribeProcessor Lambda has a 3 minute timeout', () => {
     const template = synth(true);
     template.hasResourceProperties('AWS::Lambda::Function', {
