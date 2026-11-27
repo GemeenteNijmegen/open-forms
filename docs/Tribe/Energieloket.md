@@ -9,7 +9,7 @@ flowchart LR
     W --> N[Notitie]
 ```
 
-Bij een inwoner krijgt de persoon ook een Adres. De Particulier is de rol waarmee een persoon aan een Woning of VvE hangt. Een inzending heeft daarvoor tussen de 6 en 12 aanroepen naar Tribe nodig. Elke stap staat met Tribe-ID in de logs.
+Bij een inwoner krijgt de persoon ook een Adres. De Particulier is de rol waarmee een persoon aan een Woning of VvE hangt. Elke stap staat met Tribe-ID in de logs.
 
 ## Wat er in Tribe komt
 
