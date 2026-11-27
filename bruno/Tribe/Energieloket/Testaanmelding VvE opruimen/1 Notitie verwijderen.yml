@@ -1,0 +1,39 @@
+info:
+  name: 1 Notitie verwijderen
+  type: http
+  seq: 1
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}Note({{vveNotitieId}})"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar('vveNotitieId')) {
+          console.log('[1 Notitie verwijderen] overgeslagen, geen vveNotitieId');
+          bru.runner.skipRequest();
+        }
+    - type: after-response
+      code: |-
+        if (res.status >= 200 && res.status < 300) {
+          console.log('[1 Notitie verwijderen] OK', res.status, bru.getVar('vveNotitieId'));
+        } else if (res.status === 404) {
+          console.log('[1 Notitie verwijderen] OK was al verwijderd', bru.getVar('vveNotitieId'));
+        } else {
+          console.log('[1 Notitie verwijderen] MISLUKT', res.status, JSON.stringify(res.body));
+        }
+        if (res.status < 300 || res.status === 404) bru.setVar('vveNotitieId', '');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Verwijdert het record uit vveNotitieId.
+  type: text/markdown

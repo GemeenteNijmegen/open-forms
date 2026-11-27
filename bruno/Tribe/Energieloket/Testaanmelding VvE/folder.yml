@@ -1,0 +1,36 @@
+info:
+  name: Testaanmelding VvE
+  type: folder
+  seq: 6
+
+request:
+  auth: inherit
+
+docs:
+  content: |
+    ## Wat het doet
+
+    Maakt in de echte Tribe-omgeving van het Energieloket een testaanmelding van een VvE aan, in dezelfde vorm als Testaanmelding inwoner. Het VvE-formulier vraagt geen adres van de invuller, dus de persoon krijgt geen adres.
+
+    1. Persoon aanmaken, met identifier en de Particulier in dezelfde POST. Maakt eerst een unieke testreferentie OF-TEST-VVE-jjjjmmdduumm.
+    2. Persoon ophalen: hangen identifiers en Particulier eraan, en hebben persoon en Particulier een naam?
+    3. VvE aanmaken, met naam, aantal adressen, bouwjaar, verhouding eigendom, de Particulier in Individual persons en identifier.
+    4. VvE ophalen: hangt de Particulier eraan, hebben VvE en Particulier een naam?
+    5. Notitie aan de VvE, met identifier.
+    6. Alle identifiers met de testreferentie zoeken: vier, elk naar het juiste record?
+    7. Herverwerking nabootsen: zoek het identifier van de VvE.
+
+    Alle gegevens zijn verzonnen (TEST, test@example.org, 0000000000). Op 27-11-2026 staan er geen automations aan.
+
+    ## Draaien
+
+    1. Kies rechtsboven de omgeving Tribe.
+    2. Open de console: Cmd + Option + I (of View > Toggle Developer Tools), tabblad Console. Typ [ in het filterveld om alleen de regels van deze map te zien.
+    3. Klik met de rechtermuisknop op deze map (of de drie puntjes) en kies Run. Klik in de Runner op Run Collection.
+    4. Elke stap logt [stap] OK, LET OP of MISLUKT. Bij MISLUKT stopt de run; de foutmelding staat in de console en in de response van die stap.
+    5. Ruim direct daarna op met de opruimmap eronder, in hetzelfde Bruno-venster. Ook als de run halverwege stopte.
+
+    Per stap kan ook: klik op de stap en druk Cmd + Enter, op volgorde.
+
+    Opruimen: map Testaanmelding VvE opruimen.
+  type: text/markdown

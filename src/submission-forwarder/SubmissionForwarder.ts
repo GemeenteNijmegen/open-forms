@@ -657,10 +657,12 @@ export class SubmissionForwarder extends Construct {
         TRIBE_BASE_URL: 'https://api.tribecrm.nl/v1/odata/',
         TRIBE_TOKEN_URL: 'https://auth.tribecrm.nl/oauth2/token',
         TRIBE_AUTODELEN_SECRET_ARN: tribeCredentials.AUTODELEN.secretArn,
+        TRIBE_ENERGIELOKET_SECRET_ARN: tribeCredentials.ENERGIELOKET.secretArn,
         TRIBE_SEND_MODE: this.options.tribeDryRun ? 'DRY_RUN' : 'LIVE',
       },
     });
     tribeCredentials.AUTODELEN.grantRead(tribeProcessor);
+    tribeCredentials.ENERGIELOKET.grantRead(tribeProcessor);
     this.options.key.grantEncryptDecrypt(tribeProcessor);
 
     new ErrorMonitoringAlarm(this, 'tribe-processor-alarm', {

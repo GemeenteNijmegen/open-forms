@@ -1,0 +1,28 @@
+info:
+  name: 7 Herverwerking nabootsen
+  type: http
+  seq: 7
+
+http:
+  method: GET
+  url: "{{baseUrl}}ExternalId?$select=ID,Type,Id&$filter=Id eq '{{vveReferentie}}' and Type eq 'Energieloket.VvE'&$expand=Entity($select=ID)"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const hit = (res.body && res.body.value) || [];
+        const ok = res.status === 200 && hit.length === 1 && hit[0].Entity && hit[0].Entity.ID === bru.getVar('vveVveId');
+        console.log('[7 Herverwerking nabootsen]', ok ? 'OK herverwerking vindt de bestaande vve en maakt geen nieuwe' : 'LET OP ' + res.status + ' ' + JSON.stringify(res.body));
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Zoekt zoals de koppeling bij opnieuw verwerken zou doen: bestaat er voor deze inzending al een VvE? Verwacht precies één, de VvE uit stap 3.
+  type: text/markdown

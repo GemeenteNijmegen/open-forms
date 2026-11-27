@@ -1,0 +1,39 @@
+info:
+  name: 3 Particulier verwijderen
+  type: http
+  seq: 3
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}Relationship_Person_Private({{inwonerParticulierId}})"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar('inwonerParticulierId')) {
+          console.log('[3 Particulier verwijderen] overgeslagen, geen inwonerParticulierId');
+          bru.runner.skipRequest();
+        }
+    - type: after-response
+      code: |-
+        if (res.status >= 200 && res.status < 300) {
+          console.log('[3 Particulier verwijderen] OK', res.status, bru.getVar('inwonerParticulierId'));
+        } else if (res.status === 404) {
+          console.log('[3 Particulier verwijderen] OK was al verwijderd', bru.getVar('inwonerParticulierId'));
+        } else {
+          console.log('[3 Particulier verwijderen] MISLUKT', res.status, JSON.stringify(res.body));
+        }
+        if (res.status < 300 || res.status === 404) bru.setVar('inwonerParticulierId', '');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Verwijdert het record uit inwonerParticulierId.
+  type: text/markdown

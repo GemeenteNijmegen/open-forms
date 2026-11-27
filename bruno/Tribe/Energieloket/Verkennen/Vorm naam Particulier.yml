@@ -1,0 +1,41 @@
+info:
+  name: Vorm naam Particulier
+  type: http
+  seq: 10
+
+http:
+  method: GET
+  url: "{{baseUrl}}Relationship_Person_Private?$top=100&$select=ID,Name,SortName&$expand=Relation($select=_Name)"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const mask = v => v == null || v === '' ? '(leeg)' : String(v).replace(/[A-Za-zÀ-ÿ]+/g, 'a').replace(/[0-9]/g, '9');
+        const rows = (res.body && res.body.value) || [];
+        console.log('[Vorm naam Particulier]', res.status, rows.length + ' particulieren');
+        const counts = {};
+        for (const r of rows) {
+          const person = (r.Relation || {})._Name;
+          const key = 'Name: ' + mask(r.Name) + (r.Name ? (r.Name === person ? ' (= naam persoon)' : ' (anders dan naam persoon)') : '')
+            + ' | SortName: ' + mask(r.SortName);
+          counts[key] = (counts[key] || 0) + 1;
+        }
+        for (const [key, n] of Object.entries(counts)) console.log('[Vorm naam Particulier]', n + 'x', key);
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Hoe vult het loket de naam van een Particulier?
+
+    Draai de request. Open de console met Cmd + Option + I en kopieer uit de console de regels die beginnen met [Vorm naam Particulier].
+    Kopieer niet de response, daar staan echte namen in.
+
+    In de console staan woorden als a en cijfers als 9. Per vorm staat erbij hoe vaak hij voorkomt.
+  type: text/markdown

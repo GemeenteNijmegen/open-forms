@@ -1,0 +1,15 @@
+info:
+  name: Woonplaats
+  type: http
+  seq: 5
+
+http:
+  method: GET
+  url: "{{baseUrl}}_4f5f48b1__c6c8__4b03__9f1a__0d0b331f28d4"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

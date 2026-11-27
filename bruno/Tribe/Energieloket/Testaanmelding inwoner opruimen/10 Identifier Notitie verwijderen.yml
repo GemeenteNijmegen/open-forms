@@ -1,0 +1,39 @@
+info:
+  name: 10 Identifier Notitie verwijderen
+  type: http
+  seq: 10
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}ExternalId({{inwonerExternIdNotitie}})"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar('inwonerExternIdNotitie')) {
+          console.log('[10 Identifier Notitie verwijderen] overgeslagen, geen inwonerExternIdNotitie');
+          bru.runner.skipRequest();
+        }
+    - type: after-response
+      code: |-
+        if (res.status === 404) {
+          console.log('[10 Identifier Notitie verwijderen] OK was al verwijderd met het record');
+        } else if (res.status >= 200 && res.status < 300) {
+          console.log('[10 Identifier Notitie verwijderen] OK verwijderd', res.status, '(bleef dus staan na het record)');
+        } else {
+          console.log('[10 Identifier Notitie verwijderen] MISLUKT', res.status, JSON.stringify(res.body));
+        }
+        if (res.status < 300 || res.status === 404) bru.setVar('inwonerExternIdNotitie', '');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Verwijdert het identifier uit inwonerExternIdNotitie als het nog bestaat.
+  type: text/markdown

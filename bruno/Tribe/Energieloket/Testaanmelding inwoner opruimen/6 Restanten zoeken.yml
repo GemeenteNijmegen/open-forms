@@ -1,0 +1,31 @@
+info:
+  name: 6 Restanten zoeken
+  type: http
+  seq: 6
+
+http:
+  method: GET
+  url: "{{baseUrl}}ExternalId?$select=ID,Type,Id&$filter=Id eq '{{inwonerReferentie}}'"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const left = (res.body && res.body.value) || [];
+        if (!bru.getVar('inwonerReferentie')) {
+          console.log('[6 Restanten zoeken] LET OP geen testreferentie, niets gecontroleerd');
+        } else {
+          console.log('[6 Restanten zoeken]', left.length === 0 ? 'OK geen identifiers meer met ' + bru.getVar('inwonerReferentie') + ': ze zijn met hun records verwijderd' : 'LET OP nog ' + left.length + ' identifiers, de volgende stappen ruimen ze op', JSON.stringify(left));
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Zoekt of er nog externe identifiers met de testreferentie zijn. Laat zien of Tribe identifiers met hun record verwijdert.
+  type: text/markdown

@@ -1,0 +1,21 @@
+info:
+  name: Woning zoeken op extern identifier
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: "{{baseUrl}}_8e7ed9fb__a892__4cf1__9402__2428fcbc8022?$select=ID&$filter=ExternalIds/any(e:e/Id eq 'OF-TEST-0000')"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Zoekt een Woning op een extern identifier dat niet bestaat. Met een spatie na e: gaf Tribe 400 "The URI is malformed"; deze variant is zonder spatie.
+    Een lege value-lijst betekent dat Tribe deze filter ondersteunt; een fout betekent dat het zo niet kan. Nodig voor de keuze hoe opnieuw verwerken veilig wordt.
+  type: text/markdown

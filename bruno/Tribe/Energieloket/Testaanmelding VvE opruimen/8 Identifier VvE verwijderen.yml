@@ -1,0 +1,39 @@
+info:
+  name: 8 Identifier VvE verwijderen
+  type: http
+  seq: 8
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}ExternalId({{vveExternIdVvE}})"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar('vveExternIdVvE')) {
+          console.log('[8 Identifier VvE verwijderen] overgeslagen, geen vveExternIdVvE');
+          bru.runner.skipRequest();
+        }
+    - type: after-response
+      code: |-
+        if (res.status === 404) {
+          console.log('[8 Identifier VvE verwijderen] OK was al verwijderd met het record');
+        } else if (res.status >= 200 && res.status < 300) {
+          console.log('[8 Identifier VvE verwijderen] OK verwijderd', res.status, '(bleef dus staan na het record)');
+        } else {
+          console.log('[8 Identifier VvE verwijderen] MISLUKT', res.status, JSON.stringify(res.body));
+        }
+        if (res.status < 300 || res.status === 404) bru.setVar('vveExternIdVvE', '');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Verwijdert het identifier uit vveExternIdVvE als het nog bestaat.
+  type: text/markdown

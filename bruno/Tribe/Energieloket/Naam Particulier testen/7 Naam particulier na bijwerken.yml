@@ -1,0 +1,26 @@
+info:
+  name: 7 Naam particulier na bijwerken
+  type: http
+  seq: 7
+
+http:
+  method: GET
+  url: "{{baseUrl}}Relationship_Person_Private({{inwonerParticulierId}})?$select=ID,Name,SortName"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        console.log('[7 Naam particulier na bijwerken]', res.status, res.body && res.body.Name ? 'OK naam particulier gevuld: ' + res.body.Name : 'LET OP naam particulier leeg');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Heeft de Particulier na stap 6 een naam?
+  type: text/markdown

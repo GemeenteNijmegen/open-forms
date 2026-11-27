@@ -1,0 +1,15 @@
+info:
+  name: Verbetering of wens
+  type: http
+  seq: 3
+
+http:
+  method: GET
+  url: "{{baseUrl}}_19d7330c__8641__434a__8ae2__7d8b93a671e1"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

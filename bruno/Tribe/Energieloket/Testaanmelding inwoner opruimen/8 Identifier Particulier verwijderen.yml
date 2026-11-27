@@ -1,0 +1,39 @@
+info:
+  name: 8 Identifier Particulier verwijderen
+  type: http
+  seq: 8
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}ExternalId({{inwonerExternIdParticulier}})"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar('inwonerExternIdParticulier')) {
+          console.log('[8 Identifier Particulier verwijderen] overgeslagen, geen inwonerExternIdParticulier');
+          bru.runner.skipRequest();
+        }
+    - type: after-response
+      code: |-
+        if (res.status === 404) {
+          console.log('[8 Identifier Particulier verwijderen] OK was al verwijderd met het record');
+        } else if (res.status >= 200 && res.status < 300) {
+          console.log('[8 Identifier Particulier verwijderen] OK verwijderd', res.status, '(bleef dus staan na het record)');
+        } else {
+          console.log('[8 Identifier Particulier verwijderen] MISLUKT', res.status, JSON.stringify(res.body));
+        }
+        if (res.status < 300 || res.status === 404) bru.setVar('inwonerExternIdParticulier', '');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Verwijdert het identifier uit inwonerExternIdParticulier als het nog bestaat.
+  type: text/markdown

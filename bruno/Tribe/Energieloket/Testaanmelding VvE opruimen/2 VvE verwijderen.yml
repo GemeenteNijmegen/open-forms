@@ -1,0 +1,39 @@
+info:
+  name: 2 VvE verwijderen
+  type: http
+  seq: 2
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}b648f649__2c42__45bf__8fac__86e5453d1d06({{vveVveId}})"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        if (!bru.getVar('vveVveId')) {
+          console.log('[2 VvE verwijderen] overgeslagen, geen vveVveId');
+          bru.runner.skipRequest();
+        }
+    - type: after-response
+      code: |-
+        if (res.status >= 200 && res.status < 300) {
+          console.log('[2 VvE verwijderen] OK', res.status, bru.getVar('vveVveId'));
+        } else if (res.status === 404) {
+          console.log('[2 VvE verwijderen] OK was al verwijderd', bru.getVar('vveVveId'));
+        } else {
+          console.log('[2 VvE verwijderen] MISLUKT', res.status, JSON.stringify(res.body));
+        }
+        if (res.status < 300 || res.status === 404) bru.setVar('vveVveId', '');
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Verwijdert het record uit vveVveId.
+  type: text/markdown

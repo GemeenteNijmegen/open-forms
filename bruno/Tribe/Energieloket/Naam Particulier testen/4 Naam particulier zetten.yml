@@ -1,0 +1,33 @@
+info:
+  name: 4 Naam particulier zetten
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{baseUrl}}Relationship_Person_Private({{inwonerParticulierId}})"
+  body:
+    type: json
+    data: |-
+      {
+        "Name": "{{inwonerPersoonNaam}}",
+        "SortName": "{{inwonerPersoonSortNaam}}"
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        console.log('[4 Naam particulier zetten]', res.status >= 200 && res.status < 300 ? 'OK' : 'MISLUKT', res.status, JSON.stringify(res.body));
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Zet de naam van de persoon op de Particulier met een PUT.
+  type: text/markdown

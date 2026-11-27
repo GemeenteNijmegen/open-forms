@@ -1,0 +1,32 @@
+info:
+  name: 6 Persoon bijwerken
+  type: http
+  seq: 6
+
+http:
+  method: PUT
+  url: "{{baseUrl}}Relation_Person({{inwonerPersoonId}})"
+  body:
+    type: json
+    data: |-
+      {
+        "FirstName": "TEST"
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        console.log('[6 Persoon bijwerken]', res.status >= 200 && res.status < 300 ? 'OK' : 'MISLUKT', res.status);
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Werkt de persoon bij zonder iets te veranderen (voornaam blijft TEST). Kijkt of Tribe daarna de naam van de Particulier invult.
+  type: text/markdown

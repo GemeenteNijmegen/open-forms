@@ -1,0 +1,26 @@
+info:
+  name: 5 Naam particulier opnieuw ophalen
+  type: http
+  seq: 5
+
+http:
+  method: GET
+  url: "{{baseUrl}}Relationship_Person_Private({{inwonerParticulierId}})?$select=ID,Name,SortName"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        console.log('[5 Naam particulier opnieuw ophalen]', res.status, res.body && res.body.Name ? 'OK naam particulier gevuld: ' + res.body.Name : 'LET OP naam particulier leeg', '| SortName =', res.body && res.body.SortName);
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Staat de naam er na de PUT? Kijk daarna ook in Tribe of de Particulier op de Woning nog Geen titel heet.
+  type: text/markdown

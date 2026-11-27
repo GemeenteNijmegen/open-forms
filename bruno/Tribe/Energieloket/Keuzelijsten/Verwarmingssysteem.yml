@@ -1,0 +1,15 @@
+info:
+  name: Verwarmingssysteem
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: "{{baseUrl}}c635f3ce__87fb__4568__b99b__6e16352c1038"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

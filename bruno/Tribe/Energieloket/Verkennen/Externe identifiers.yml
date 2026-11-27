@@ -1,0 +1,20 @@
+info:
+  name: Externe identifiers
+  type: http
+  seq: 3
+
+http:
+  method: GET
+  url: "{{baseUrl}}ExternalId?$top=10&$select=Service,Type"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Tien externe identifiers, alleen Service en Type. Laat zien of het loket of een andere koppeling ze al gebruikt.
+  type: text/markdown

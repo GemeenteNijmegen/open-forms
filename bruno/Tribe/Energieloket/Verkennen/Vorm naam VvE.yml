@@ -1,0 +1,39 @@
+info:
+  name: Vorm naam VvE
+  type: http
+  seq: 12
+
+http:
+  method: GET
+  url: "{{baseUrl}}b648f649__2c42__45bf__8fac__86e5453d1d06?$top=100&$select=ID,_00c80aa2__37df__4a25__8bb9__f76e0b43f8a9"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const mask = v => v == null || v === '' ? '(leeg)' : String(v).replace(/[A-Za-zÀ-ÿ]+/g, 'a').replace(/[0-9]/g, '9');
+        const rows = (res.body && res.body.value) || [];
+        console.log('[Vorm naam VvE]', res.status, rows.length + ' vve-s');
+        const counts = {};
+        for (const v of rows) {
+          const key = 'Naam VvE: ' + mask(v['_00c80aa2__37df__4a25__8bb9__f76e0b43f8a9']);
+          counts[key] = (counts[key] || 0) + 1;
+        }
+        for (const [key, n] of Object.entries(counts)) console.log('[Vorm naam VvE]', n + 'x', key);
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs:
+  content: |
+    Hoe vult het loket de naam van een VvE?
+
+    Draai de request. Open de console met Cmd + Option + I en kopieer uit de console de regels die beginnen met [Vorm naam VvE].
+    Kopieer niet de response, daar staan echte gegevens in.
+
+    In de console staan woorden als a en cijfers als 9. Per vorm staat erbij hoe vaak hij voorkomt.
+  type: text/markdown
