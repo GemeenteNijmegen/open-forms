@@ -71,6 +71,11 @@
       ],
       "description": "Optionele naam van het Open Formulieren-formulier waarmee de inzending is gedaan."
     },
+    "formEnvironment": {
+      "type": ["string", "null"],
+      "title": "Omgeving van het formulier",
+      "description": "Optionele omgeving van het formulier in Open Formulieren. Koppel de statische variabele environment (static variables). Mag ontbreken, leeg of null zijn, voor formulieren die hem niet koppelen."
+    },
     "reference": {
       "type": "string",
       "title": "Referentie",
@@ -285,8 +290,579 @@
       "examples": [
         {}
       ],
-      "description": "Optioneel object met de formulier-specifieke gegevens voor tribeEnvironment ENERGIELOKET. Dit object kan worden gebruikt voor tribeSubmissionType ENERGIELOKET_INWONER en ENERGIELOKET_VVE. Vul dit object alleen bij een Energieloketformulier. De onderliggende Energieloketvelden worden later in het deelschema van dit object vastgelegd.",
-      "additionalProperties": true
+      "description": "Gegevens van de Energieloketformulieren, voor tribeSubmissionType ENERGIELOKET_INWONER en ENERGIELOKET_VVE. Alle velden zijn optioneel; koppel wat het formulier vraagt. Uitleg per formulierveld: src/submission-forwarder/tribe/energieloket/docs/mapping.md in de repo open-forms.",
+      "additionalProperties": true,
+      "properties": {
+        "aanvrager": {
+          "type": ["object", "null"],
+          "title": "Aanvrager",
+          "description": "De invuller van het formulier. In Tribe een Persoon met de rol Particulier aan de Woning of VvE.",
+          "additionalProperties": true,
+          "properties": {
+            "naam": {
+              "type": ["string", "null"],
+              "title": "Naam",
+              "examples": ["TEST de Testpersoon"],
+              "description": "Volledige naam. Inwoner: naam. VvE: uwNaam. In Tribe: Persoon, in de achternaam als voornaam en achternaam leeg zijn."
+            },
+            "voornaam": {
+              "type": ["string", "null"],
+              "title": "Voornaam",
+              "examples": ["TEST"],
+              "description": "Voornaam. Nog in geen formulier; koppel alleen als het formulier dit vraagt. In Tribe: Persoon, voornaam."
+            },
+            "tussenvoegsel": {
+              "type": ["string", "null"],
+              "title": "Tussenvoegsel",
+              "examples": ["de"],
+              "description": "Tussenvoegsel. Nog in geen formulier; koppel alleen als het formulier dit vraagt. In Tribe: Persoon, tussenvoegsel."
+            },
+            "achternaam": {
+              "type": ["string", "null"],
+              "title": "Achternaam",
+              "examples": ["Testpersoon"],
+              "description": "Achternaam. Nog in geen formulier; koppel alleen als het formulier dit vraagt. In Tribe: Persoon, achternaam."
+            },
+            "emailadres": {
+              "type": ["string", "null"],
+              "title": "E-mailadres",
+              "examples": ["test@example.org"],
+              "description": "E-mailadres. Inwoner en VvE: eMailadres. In Tribe: Persoon, e-mailadres."
+            },
+            "telefoonnummer": {
+              "type": ["string", "null"],
+              "title": "Telefoonnummer",
+              "examples": ["0000000000"],
+              "description": "Telefoonnummer. Inwoner en VvE: telefoonnummer. In Tribe: Persoon, telefoonnummer."
+            },
+            "contactVoorkeur": {
+              "type": ["string", "null"],
+              "title": "Contactvoorkeur",
+              "examples": ["viaEMail"],
+              "description": "Hoe de gemeente contact opneemt. Inwoner en VvE: hoeWiltUDatDeGemeenteContactMetUOpneemtOverUwAanvraagAlsDatNodigIs. In Tribe: notitie. Opties: viaEMail, viaTelefoon."
+            },
+            "adres": {
+              "type": ["object", "null"],
+              "title": "Privé-adres",
+              "description": "Privé-adres als dat anders is dan het adres van de woning. Nog in geen formulier; koppel alleen als het formulier dit vraagt. In Tribe: Adres van de Persoon; leeg betekent het adres van de woning.",
+              "additionalProperties": true,
+              "properties": {
+                "postcode": {
+                  "type": ["string", "null"],
+                  "title": "Postcode",
+                  "examples": ["0000 AA"],
+                  "description": "Postcode van de aanvrager. In Tribe: Adres van de Persoon."
+                },
+                "huisnummer": {
+                  "type": ["string", "number", "null"],
+                  "title": "Huisnummer",
+                  "examples": ["12a"],
+                  "description": "Huisnummer van de aanvrager, mag een toevoeging bevatten (12a). In Tribe: Adres van de Persoon."
+                },
+                "huisnummertoevoeging": {
+                  "type": ["string", "null"],
+                  "title": "Huisnummertoevoeging",
+                  "examples": ["a"],
+                  "description": "Toevoeging als het formulier die apart vraagt. In Tribe: Adres van de Persoon."
+                },
+                "straatnaam": {
+                  "type": ["string", "null"],
+                  "title": "Straatnaam",
+                  "examples": ["Teststraat"],
+                  "description": "Straat van de aanvrager. In Tribe: Adres van de Persoon."
+                },
+                "woonplaats": {
+                  "type": ["string", "null"],
+                  "title": "Woonplaats",
+                  "examples": ["Nijmegen"],
+                  "description": "Woonplaats van de aanvrager. In Tribe: Adres van de Persoon."
+                }
+              }
+            }
+          }
+        },
+        "adres": {
+          "type": ["object", "null"],
+          "title": "Adres van de woning",
+          "description": "Adres van de woning waarvoor advies wordt gevraagd. Alleen formulier inwoner. In Tribe op de Woning en, zonder aanvrager.adres, als Adres van de Persoon.",
+          "additionalProperties": true,
+          "properties": {
+            "postcode": {
+              "type": ["string", "null"],
+              "title": "Postcode",
+              "examples": ["0000 AA"],
+              "description": "Postcode. Inwoner: postcode. In Tribe: Woning en Adres, postcode."
+            },
+            "huisnummer": {
+              "type": ["string", "number", "null"],
+              "title": "Huisnummer",
+              "examples": ["12a"],
+              "description": "Huisnummer, mag een toevoeging bevatten (12a). Inwoner: huisnummer. In Tribe: Woning en Adres, huisnummer en toevoeging."
+            },
+            "huisnummertoevoeging": {
+              "type": ["string", "null"],
+              "title": "Huisnummertoevoeging",
+              "examples": ["a"],
+              "description": "Toevoeging als het formulier die apart vraagt. Nog in geen formulier; koppel alleen als het formulier dit vraagt. In Tribe: Woning en Adres, toevoeging."
+            },
+            "straatnaam": {
+              "type": ["string", "null"],
+              "title": "Straatnaam",
+              "examples": ["Teststraat"],
+              "description": "Straat. Inwoner: straatnaam. In Tribe: Woning en Adres, straat."
+            },
+            "woonplaats": {
+              "type": ["string", "null"],
+              "title": "Woonplaats",
+              "examples": ["Nijmegen"],
+              "description": "Woonplaats. Inwoner: woonplaats. In Tribe: Woning, woonplaats (keuzelijst Nijmegen, Lent; anders in de notitie) en Adres, plaats."
+            }
+          }
+        },
+        "woning": {
+          "type": ["object", "null"],
+          "title": "Woning",
+          "description": "Inwoner: de woning waarvoor advies wordt gevraagd, in Tribe de Woning. VvE: de eigen woning van de invuller, in Tribe in de notitie op de VvE.",
+          "additionalProperties": true,
+          "properties": {
+            "soort": {
+              "type": ["string", "null"],
+              "title": "Soort woning",
+              "examples": ["tussenwoning"],
+              "description": "Soort woning. Inwoner: omWelkSoortHuisGaatHet. In Tribe: Woning, Woningtype. Opties: tussenwoning, hoekwoning, vrijstaandeWoning, tweeOnderEenKap, benedenwoning, bovenwoning, appartement."
+            },
+            "bouwjaar": {
+              "type": ["string", "number", "null"],
+              "title": "Bouwjaar",
+              "examples": ["1932"],
+              "description": "Bouwjaar. Inwoner: inWelkJaarIsHetHuisGebouwd. In Tribe: Woning, Bouwjaar."
+            },
+            "eigenaarBewoner": {
+              "type": ["boolean", "string", "null"],
+              "title": "Eigenaar-bewoner",
+              "examples": [true],
+              "description": "Woont de eigenaar er zelf? Nog in geen formulier; koppel alleen als het formulier dit vraagt. In Tribe: Woning en Particulier, Eigenaar/bewoner. Ja/nee of true/false."
+            },
+            "gasverbruikM3": {
+              "type": ["number", "null"],
+              "title": "Gasverbruik per jaar (m3)",
+              "examples": [1200],
+              "description": "Gasverbruik per jaar in m3. Inwoner: gasverbruikPerJaarM3. VvE: uwGasverbruikPerJaarM3. In Tribe: Woning, Gasverbruik; bij VvE in de notitie."
+            },
+            "elektriciteitsverbruikKWh": {
+              "type": ["number", "null"],
+              "title": "Elektriciteitsverbruik per jaar (kWh)",
+              "examples": [2500],
+              "description": "Stroomverbruik per jaar in kWh. Inwoner: elektriciteitsverbruikPerJaarKWh. VvE: uwElektriciteitsverbruikPerJaarKWh. In Tribe: Woning, Elektriciteitsverbruik; bij VvE in de notitie. Negatief bij teruglevering."
+            },
+            "verwarming": {
+              "type": ["string", "null"],
+              "title": "Verwarming",
+              "examples": ["hrCombiketel"],
+              "description": "Verwarming. Inwoner: hoeWordtHetHuisVerwarmd. VvE: hoeWordtUwHuisVerwarmd. In Tribe: Woning, Verwarmingssysteem; bij VvE in de notitie. Opties inwoner: gaskachelSGeiser, vrKetelGeiser, hrCombiketel, vrCombiketelZonneboiler, hrCombiketelZonneboiler, stadsverwarming, hybrideWarmtepomp, anders. Opties VvE: cvKetel, blokverwarming, stadsverwarming, hybrideWarmtepomp, warmtepomp, anders, onbekend."
+            },
+            "verwarmingAnders": {
+              "type": ["string", "null"],
+              "title": "Verwarming anders",
+              "examples": ["pelletkachel"],
+              "description": "Verwarming bij anders. Inwoner: hoeWordtHetHuisDanVerwarmd. VvE: hoeWordtUwHuisDanVerwarmd. In Tribe: Woning, Ander verwarmingssysteem; bij VvE in de notitie."
+            },
+            "verwarmingLeeftijd": {
+              "type": ["string", "number", "null"],
+              "title": "Leeftijd verwarming",
+              "examples": ["8"],
+              "description": "Leeftijd van de verwarming in jaren. Inwoner: hoeOudIsDitSysteem. In Tribe: Woning, Leeftijd verwarmingssysteem."
+            },
+            "verwarmingJaar": {
+              "type": ["string", "number", "null"],
+              "title": "Jaar verwarming",
+              "examples": [2016],
+              "description": "Jaar van de verwarming, geen leeftijd. VvE: uitWelkJaarIsDitSysteem. In Tribe: notitie."
+            },
+            "ventilatie": {
+              "type": ["string", "null"],
+              "title": "Ventilatie",
+              "examples": ["doorEenCentraalVentilatiesysteem"],
+              "description": "Ventilatie. VvE: hoeWordtUwHuisGeventileerd. In Tribe: notitie. Opties: doorHetOpenenVanRoostersOfRamen, doorHetOpenenVanRoostersOfRamenEnEenInstallatieMetEenVentilatorMechanisch, doorEenCentraalVentilatiesysteem, doorEenDecentraalNietCentraalVentilatiesysteem, anders, onbekend."
+            },
+            "ventilatieAnders": {
+              "type": ["string", "null"],
+              "title": "Ventilatie anders",
+              "examples": ["dakventilator"],
+              "description": "Ventilatie bij anders. VvE: hoeWordtUwHuisDanGeventileerd. In Tribe: notitie."
+            },
+            "verbeteringenGedaan": {
+              "type": ["object", "null"],
+              "title": "Verbeteringen gedaan",
+              "additionalProperties": {
+                "type": "boolean"
+              },
+              "examples": [
+                {
+                  "dakisolatie": true,
+                  "isolatieglas": false
+                }
+              ],
+              "description": "Gedane verbeteringen. Inwoner: welkeVerbeteringenZijnAlGedaan. In Tribe: Woning, Gedane verbetering(en). Opties: dakisolatie, isolatieglas, gevelSpouwmuurisolatie, bodemVloerisolatie, zonnepanelenOfPvt, zonneboiler, hybrideWarmtepomp, ventilatie, anders. Selectievakjes: koppel het hele veld, per optie true of false."
+            },
+            "verbeteringenGedaanAnders": {
+              "type": ["string", "null"],
+              "title": "Verbeteringen gedaan anders",
+              "examples": ["tochtstrips"],
+              "description": "Verbeteringen bij anders. Inwoner: welkeVerbeteringenZijnDanGedaan. In Tribe: Woning, Andere verbetering(en)."
+            },
+            "wensen": {
+              "type": ["object", "null"],
+              "title": "Wensen",
+              "additionalProperties": {
+                "type": "boolean"
+              },
+              "examples": [
+                {
+                  "zonnepanelenOfPvt": true,
+                  "ventilatie": false
+                }
+              ],
+              "description": "Wensen voor de woning. Inwoner: watZijnUwWensen. In Tribe: Woning, Wensen voor verbetering. Opties: dakisolatie, isolatieglas, gevelSpouwmuurisolatie, bodemVloerisolatie, zonnepanelenOfPvt, zonneboiler, hybrideWarmtepomp, ventilatie, anders. Selectievakjes: koppel het hele veld, per optie true of false."
+            },
+            "wensenAnders": {
+              "type": ["string", "null"],
+              "title": "Wensen anders",
+              "examples": ["thuisbatterij"],
+              "description": "Wensen bij anders. Inwoner: watZijnUwWensenDan. In Tribe: Woning, Andere wens(en)."
+            },
+            "energielabel": {
+              "type": ["string", "null"],
+              "title": "Energielabel",
+              "examples": ["C"],
+              "description": "Energielabel van de woning. Nog in geen formulier; koppel alleen als het formulier dit vraagt. In Tribe: Woning, Energielabel."
+            },
+            "monument": {
+              "type": ["boolean", "string", "null"],
+              "title": "Monument",
+              "examples": [false],
+              "description": "Is de woning een monument? Nog in geen formulier; koppel alleen als het formulier dit vraagt. In Tribe: Woning (Monument?). Ja/nee of true/false."
+            },
+            "buurt": {
+              "type": ["string", "null"],
+              "title": "Wijk",
+              "examples": ["Testwijk"],
+              "description": "Wijk of buurt als tekst. Nog in geen formulier; koppel alleen als het formulier dit vraagt. In Tribe: Woning, Buurt."
+            },
+            "slechtGeisoleerdeBouwdelen": {
+              "type": ["object", "null"],
+              "title": "Slecht geïsoleerde bouwdelen",
+              "additionalProperties": {
+                "type": "boolean"
+              },
+              "examples": [
+                {
+                  "dak": true
+                }
+              ],
+              "description": "Bouwdelen met slechte isolatie. Nog in geen formulier; koppel alleen als het formulier dit vraagt. In Tribe: Woning, Slecht geïsoleerde bouwdelen. Selectievakjes: koppel het hele veld, per optie true of false."
+            }
+          }
+        },
+        "vve": {
+          "type": ["object", "null"],
+          "title": "VvE",
+          "description": "De vereniging van eigenaars. Alleen formulier VvE. In Tribe de VvE; wat geen veld heeft, komt in de notitie.",
+          "additionalProperties": true,
+          "properties": {
+            "naam": {
+              "type": ["string", "null"],
+              "title": "Naam VvE",
+              "examples": ["TEST VvE Teststraat 1-11"],
+              "description": "Naam van de VvE. VvE: naamVanDeVvE. In Tribe: VvE, Naam VvE."
+            },
+            "adressen": {
+              "type": ["array", "null"],
+              "title": "Adressen",
+              "items": {
+                "type": "object",
+                "additionalProperties": true,
+                "properties": {
+                  "straatnaam": {
+                    "type": ["string", "null"],
+                    "title": "Straatnaam"
+                  },
+                  "huisnummers": {
+                    "type": ["string", "null"],
+                    "title": "Huisnummers",
+                    "description": "Laagste en hoogste huisnummer, vrije tekst."
+                  }
+                }
+              },
+              "examples": [
+                [
+                  {
+                    "straatnaam": "Teststraat",
+                    "huisnummers": "1 tot en met 11"
+                  }
+                ]
+              ],
+              "description": "Straten met huisnummers van de VvE. VvE: welkeAdressenHorenBijDeVvENoemElkeStraatEnDeHuisnummersPerStraatNoemtUHetLaagsteEnHetHoogsteHuisnummer. In Tribe: notitie. Koppel de hele lijst; elk item mag elke sleutel hebben."
+            },
+            "aantalWoningen": {
+              "type": ["number", "null"],
+              "title": "Aantal woningen",
+              "examples": [12],
+              "description": "Aantal huizen in de VvE. VvE: aantalHuizenBinnenDeVvE. In Tribe: VvE, Aantal adressen."
+            },
+            "soortWoningen": {
+              "type": ["string", "null"],
+              "title": "Soort woningen",
+              "examples": ["appartementencomplex"],
+              "description": "Soort huizen. VvE: omWelkSoortHuizenGaatHet. In Tribe: notitie. Opties: benedenBovenhuizen, appartementencomplex, anders."
+            },
+            "soortWoningenAnders": {
+              "type": ["string", "null"],
+              "title": "Soort woningen anders",
+              "examples": ["woonboten"],
+              "description": "Soort huizen bij anders. VvE: welkSoortHuizenDan. In Tribe: notitie."
+            },
+            "bouwjaar": {
+              "type": ["string", "number", "null"],
+              "title": "Bouwjaar woningen",
+              "examples": [1965],
+              "description": "Bouwjaar van de huizen. VvE: inWelkJaarZijnDeHuizenGebouwd. In Tribe: VvE, Bouwjaar woningen."
+            },
+            "huurwoningen": {
+              "type": ["string", "null"],
+              "title": "Huurwoningen",
+              "examples": ["ja"],
+              "description": "Zijn er ook huurhuizen? VvE: zijnErNaastKoophuizenOokHuurhuizenBinnenDeVvE. In Tribe: VvE, Verhouding eigendom (nee is alleen koop, ja is mix) en notitie. Opties: ja, nee."
+            },
+            "verhoudingEigendom": {
+              "type": ["string", "null"],
+              "title": "Verhouding eigendom",
+              "examples": ["alleen koop"],
+              "description": "Alleen koop, alleen huur of mix. Nog in geen formulier; koppel alleen als het formulier dit vraagt. In Tribe: VvE, Verhouding eigendom; gaat voor huurwoningen."
+            },
+            "percentageEigenaarBewoners": {
+              "type": ["number", "null"],
+              "title": "Percentage eigenaar-bewoners",
+              "examples": [75],
+              "description": "Percentage huizen waar de eigenaar woont. VvE: inHoeveelProcentVanDeHuizenOfAppartementenWoontDeEigenaarZelf1. In Tribe: VvE, Percentage EB."
+            },
+            "soortVerhuur": {
+              "type": ["object", "null"],
+              "title": "Soort verhuur",
+              "additionalProperties": {
+                "type": "boolean"
+              },
+              "examples": [
+                {
+                  "particuliereVerhuur": true
+                }
+              ],
+              "description": "Soort huurhuizen. VvE: omWelkSoortHuurhuizenGaatHet. In Tribe: notitie. Opties: particuliereVerhuur, verhuurDoorInvesteerderOfWoningcorporatie. Selectievakjes: koppel het hele veld, per optie true of false."
+            },
+            "hoofdEnOndersplitsing": {
+              "type": ["string", "null"],
+              "title": "Hoofd- en ondersplitsing",
+              "examples": ["nee"],
+              "description": "Hoofd- en ondersplitsing? VvE: isErEenHoofdEnOndersplitsingBinnenDeVvE. In Tribe: VvE, Hoofd- en ondersplitsing?; onbekend in de notitie. Opties: ja, nee, onbekend."
+            },
+            "andereFuncties": {
+              "type": ["string", "null"],
+              "title": "Andere functies dan wonen",
+              "examples": ["winkel"],
+              "description": "Andere functies dan wonen. VvE: welkeAndereFunctieSDanWonenZijnEr. In Tribe: notitie."
+            },
+            "jaarSplitsingsakte": {
+              "type": ["string", "number", "null"],
+              "title": "Jaar splitsingsakte",
+              "examples": [1987],
+              "description": "Jaar van de splitsingsakte. VvE: uitWelkJaarIsDeSplitsingsakte. In Tribe: VvE, Jaar splitsingsakte."
+            },
+            "mjop": {
+              "type": ["string", "null"],
+              "title": "MJOP",
+              "examples": ["ja"],
+              "description": "Is er een meerjarenonderhoudsplan? VvE: isErEenMeerjarenonderhoudsplanMjop1. In Tribe: VvE, Is er een MJOP?; onbekend in de notitie. Opties: ja, nee, onbekend."
+            },
+            "duurzaamheidscommissie": {
+              "type": ["string", "null"],
+              "title": "Duurzaamheidscommissie",
+              "examples": ["onbekend"],
+              "description": "Is er een duurzaamheidscommissie? VvE: heeftDeVvEEenDuurzaamheidscommissie. In Tribe: VvE, Is er een duurzaamheidcommissie?; onbekend in de notitie. Opties: ja, nee, onbekend."
+            },
+            "verbeteringenGedaan": {
+              "type": ["object", "null"],
+              "title": "Verbeteringen gedaan",
+              "additionalProperties": {
+                "type": "boolean"
+              },
+              "examples": [
+                {
+                  "dakisolatie": true
+                }
+              ],
+              "description": "Gedane verbeteringen. VvE: welkeVerbeteringenZijnAlDoorDeVvEGedaan. In Tribe: VvE, Andere verbetering gedaan, als tekst. Opties: dakisolatie, hrGlasInBestaandeKozijnen, hrGlasOfTripleGlasInNieuweKozijnen, gevelSpouwmuurisolatie, bodemVloerisolatie, zonnepanelenOfPvt, zonneboiler, hybrideWarmtepomp, energiezuinigeVentilatie, anders, onbekend. Selectievakjes: koppel het hele veld, per optie true of false."
+            },
+            "verbeteringenGedaanAnders": {
+              "type": ["string", "null"],
+              "title": "Verbeteringen gedaan anders",
+              "examples": ["nieuwe voordeuren"],
+              "description": "Verbeteringen bij anders. VvE: welkeVerbeteringenZijnDanGedaan. In Tribe: VvE, Andere verbetering gedaan."
+            },
+            "verbeteringenGewenst": {
+              "type": ["string", "null"],
+              "title": "Gewenste verbeteringen",
+              "examples": ["zonnepanelen"],
+              "description": "Gewenste verbeteringen, vrije tekst. VvE: welkeVerbeteringenWiltUOfUwVvEDoen. In Tribe: VvE, Andere wens."
+            },
+            "wensen": {
+              "type": ["object", "null"],
+              "title": "Wensen",
+              "additionalProperties": {
+                "type": "boolean"
+              },
+              "examples": [
+                {
+                  "dakisolatie": true
+                }
+              ],
+              "description": "Wensen als selectievakjes. Nog in geen formulier; koppel alleen als het formulier dit vraagt. In Tribe: VvE, Andere wens, als tekst. Selectievakjes: koppel het hele veld, per optie true of false."
+            },
+            "splitsingsakteToegevoegd": {
+              "type": ["boolean", "null"],
+              "title": "Splitsingsakte toegevoegd",
+              "examples": [true],
+              "description": "Splitsingsakte aangevinkt bij de bijlagen. VvE: splitsingsakte. In Tribe: notitie. Het bestand staat in attachments."
+            },
+            "mjopToegevoegd": {
+              "type": ["boolean", "null"],
+              "title": "MJOP toegevoegd",
+              "examples": [false],
+              "description": "MJOP aangevinkt bij de bijlagen. VvE: meerjarenonderhoudsplanMjop. In Tribe: notitie. Het bestand staat in attachments."
+            },
+            "contactpersonen": {
+              "type": ["array", "null"],
+              "title": "Contactpersonen",
+              "items": {
+                "type": "object",
+                "additionalProperties": true,
+                "properties": {
+                  "naam": {
+                    "type": ["string", "null"],
+                    "title": "Naam"
+                  },
+                  "voornaam": {
+                    "type": ["string", "null"],
+                    "title": "Voornaam"
+                  },
+                  "tussenvoegsel": {
+                    "type": ["string", "null"],
+                    "title": "Tussenvoegsel"
+                  },
+                  "achternaam": {
+                    "type": ["string", "null"],
+                    "title": "Achternaam"
+                  },
+                  "emailadres": {
+                    "type": ["string", "null"],
+                    "title": "E-mailadres"
+                  },
+                  "telefoonnummer": {
+                    "type": ["string", "null"],
+                    "title": "Telefoonnummer"
+                  }
+                }
+              },
+              "examples": [
+                [
+                  {
+                    "naam": "TEST Testpersoon",
+                    "emailadres": "test@example.org",
+                    "telefoonnummer": "0000000000"
+                  }
+                ]
+              ],
+              "description": "Extra contactpersonen naast de aanvrager. Nog in geen formulier; koppel alleen als het formulier dit vraagt. Nog niet gebruikt door de koppeling; bedoeld voor een Persoon met Particulier per contactpersoon."
+            }
+          }
+        },
+        "bekendheid": {
+          "type": ["object", "null"],
+          "title": "Bekendheid Energieloket",
+          "description": "Hoe de invuller van het Energieloket hoorde. Beide formulieren. In Tribe: Woning, Andere bekendheid Energieloket, als tekst; bij VvE in de notitie.",
+          "additionalProperties": true,
+          "properties": {
+            "kanalen": {
+              "type": ["object", "null"],
+              "title": "Kanalen",
+              "additionalProperties": {
+                "type": "boolean"
+              },
+              "examples": [
+                {
+                  "viaSocialeMedia": true
+                }
+              ],
+              "description": "Kanalen. Inwoner: hoeHeeftUVanHetEnergieloket. VvE: hoeHeeftUVanHetEnergieloketGehoord. In Tribe: Woning, Andere bekendheid Energieloket; bij VvE in de notitie. Opties: viaEenLokaleKrantWijkblad, viaDeWebsiteVanEenLokaleKrantWijkblad, viaSocialeMedia, viaDeWebsiteVanMijnGemeente, viaAndereActiesVanEenGemeente, viaEenNieuwsbrief, viaBurenKennissenOfFamilie, doorTeZoekenOpHetInternet, ikWasAlBekendMetDeWebsiteVanHetEnergieloket, anders. Selectievakjes: koppel het hele veld, per optie true of false."
+            },
+            "anders": {
+              "type": ["string", "null"],
+              "title": "Anders",
+              "examples": ["via de bibliotheek"],
+              "description": "Kanaal bij anders. Inwoner en VvE: hoeHeeftUDanVanHetEnergieloketGehoord."
+            },
+            "krantOfWijkblad": {
+              "type": ["string", "null"],
+              "title": "Krant of wijkblad",
+              "examples": ["testwijkblad"],
+              "description": "Welke krant of wijkblad. Inwoner en VvE: welkeKrantOfWijkblad."
+            },
+            "website": {
+              "type": ["string", "null"],
+              "title": "Website",
+              "examples": ["testwebsite"],
+              "description": "Welke website. Inwoner en VvE: welkeWebsite."
+            },
+            "socialeMedia": {
+              "type": ["string", "null"],
+              "title": "Sociale media",
+              "examples": ["testmedium"],
+              "description": "Welke sociale media. Inwoner en VvE: welkeSocialeMedia."
+            },
+            "actie": {
+              "type": ["string", "null"],
+              "title": "Actie",
+              "examples": ["testactie"],
+              "description": "Welke actie van de gemeente. Inwoner en VvE: welkeActie."
+            },
+            "nieuwsbrief": {
+              "type": ["string", "null"],
+              "title": "Nieuwsbrief",
+              "examples": ["testnieuwsbrief"],
+              "description": "Welke nieuwsbrief. Inwoner en VvE: welkeNieuwsbrief."
+            }
+          }
+        },
+        "afspraak": {
+          "type": ["object", "null"],
+          "title": "Afspraak",
+          "description": "Wensen voor het adviesgesprek.",
+          "additionalProperties": true,
+          "properties": {
+            "huisbezoekGewenst": {
+              "type": ["string", "boolean", "null"],
+              "title": "Huisbezoek gewenst",
+              "examples": ["ja"],
+              "description": "Gesprek bij de invuller thuis? VvE: hetIsSomsMogelijkDatHetAdviesgesprekBijUThuisIsDeAdviseurNeemtDanVanTevorenContactMetUOpWiltUHetGesprekBijUThuis. In Tribe: notitie; bij inwoner Woning, Huisbezoek? (nog niet in het inwonerformulier). Opties: ja, nee."
+            },
+            "opmerkingen": {
+              "type": ["string", "null"],
+              "title": "Opmerkingen",
+              "examples": ["TEST opmerking"],
+              "description": "Vrije opmerking. Nog in geen formulier; koppel alleen als het formulier dit vraagt. In Tribe: notitie."
+            }
+          }
+        }
+      }
     }
   },
   "description": "Generiek object voor Open Formulieren-inzendingen die naar Tribe moeten worden verstuurd. tribeEnvironment bepaalt de Tribe-omgeving en tribeSubmissionType bepaalt het type aanmelding binnen die omgeving. De formulier-specifieke gegevens worden opgenomen in het optionele autodelen- of energieloketobject.",

@@ -1,0 +1,67 @@
+{
+  "tribeEnvironment": "ENERGIELOKET",
+  "tribeSubmissionType": "ENERGIELOKET_VVE",
+  "pdf": "https://example.com/documenten/api/v1/enkelvoudiginformatieobjecten/6e1f0d3c-2b4a-4f8e-8c1d-3a9b7e5d2f10",
+  "reference": "OF-ELVVE001",
+  "attachments": [
+    "https://example.com/documenten/api/v1/enkelvoudiginformatieobjecten/9d2e4b6a-7c1f-4e3a-b5d8-1f0a2c3e4b5d"
+  ],
+  "formName": "Vragen adviesgesprek duurzaam wonen Energieloket VvE",
+  "energieloket": {
+    "aanvrager": {
+      "naam": "TEST Testpersoon",
+      "emailadres": "",
+      "telefoonnummer": "0000000000",
+      "contactVoorkeur": "viaTelefoon"
+    },
+    "woning": {
+      "gasverbruikM3": 900,
+      "elektriciteitsverbruikKWh": 1800,
+      "verwarming": "cvKetel",
+      "verwarmingJaar": 2016,
+      "ventilatie": "doorHetOpenenVanRoostersOfRamen"
+    },
+    "vve": {
+      "naam": "VvE Voorbeeldstraat 1-11",
+      "adressen": [
+        {
+          "straatnaam": "Voorbeeldstraat",
+          "huisnummers": "1 tot en met 11"
+        },
+        {
+          "straatnaam": "Proefplein",
+          "huisnummers": "2 tot en met 6"
+        }
+      ],
+      "aantalWoningen": 14,
+      "soortWoningen": "appartementencomplex",
+      "bouwjaar": 1965,
+      "huurwoningen": "ja",
+      "percentageEigenaarBewoners": 75,
+      "soortVerhuur": {
+        "particuliereVerhuur": true,
+        "verhuurDoorInvesteerderOfWoningcorporatie": false
+      },
+      "hoofdEnOndersplitsing": "nee",
+      "mjop": "ja",
+      "duurzaamheidscommissie": "onbekend",
+      "verbeteringenGedaan": {
+        "dakisolatie": true,
+        "hrGlasInBestaandeKozijnen": false,
+        "anders": false
+      },
+      "verbeteringenGewenst": "zonnepanelen op het dak",
+      "splitsingsakteToegevoegd": false,
+      "mjopToegevoegd": true
+    },
+    "bekendheid": {
+      "kanalen": {
+        "viaEenNieuwsbrief": true
+      },
+      "nieuwsbrief": "nieuwsbrief duurzaamheid"
+    },
+    "afspraak": {
+      "huisbezoekGewenst": "ja"
+    }
+  }
+}

@@ -19,7 +19,7 @@ Bij een inwoner krijgt de persoon ook een Adres. De Particulier is de rol waarme
 | Woning of VvE | Woning: adres, woningtype, bouwjaar, gas- en elektriciteitsverbruik, verwarming, gedane verbeteringen en wensen | VvE: naam, aantal adressen, bouwjaar, percentage eigenaar-bewoners, splitsing, MJOP, duurzaamheidscommissie, verbeteringen |
 | Notitie | contactvoorkeur | de rest: adressenlijst, soort huizen, huurhuizen, andere functies, de eigen woning van de invuller, bekendheid, huisbezoek, contactvoorkeur |
 
-De volledige mapping per formulierveld komt bij het objecttype.
+Welk formulierveld waar terechtkomt, staat in de [mapping](../../src/submission-forwarder/tribe/energieloket/docs/mapping.md); hoe de records samenhangen in het [datamodel](../../src/submission-forwarder/tribe/energieloket/docs/datamodel.md).
 
 ## Wat er in de code verandert
 
