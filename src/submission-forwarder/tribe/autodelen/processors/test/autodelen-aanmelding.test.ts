@@ -1,12 +1,12 @@
-import * as tribeVerzoekFixture from '../../../receiver-lambda/test/samples/tribeVerzoek.json';
-import { TribeVerzoek } from '../../../shared/TribeVerzoek';
-import { MappingError, TribeAuthenticationError, TribeRequestError } from '../../errors/ErrorTypes';
-import { TribeProcessingContext } from '../../support/TribeSubmissionProcessor.type';
+import * as tribeVerzoekFixture from '../../../../receiver-lambda/test/samples/tribeVerzoek.json';
+import { TribeVerzoek } from '../../../../shared/TribeVerzoek';
+import { MappingError, TribeAuthenticationError, TribeRequestError } from '../../../errors/ErrorTypes';
+import { TribeProcessingContext } from '../../../support/TribeSubmissionProcessor.type';
 import { createAutodelenAanmeldingProcessor } from '../autodelen-aanmelding';
 
-jest.mock('../../../shared/trace', () => ({ trace: jest.fn().mockResolvedValue(undefined) }));
+jest.mock('../../../../shared/trace', () => ({ trace: jest.fn().mockResolvedValue(undefined) }));
 // eslint-disable-next-line import/order
-import { trace } from '../../../shared/trace';
+import { trace } from '../../../../shared/trace';
 
 function fakeClient() {
   return {

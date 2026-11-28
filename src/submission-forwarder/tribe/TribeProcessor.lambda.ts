@@ -1,7 +1,7 @@
 import { environmentVariables } from '@gemeentenijmegen/utils';
+import { autodelenAanmeldingProcessor } from './autodelen/processors/autodelen-aanmelding';
 import { TribeClientFactory } from './client/TribeClientFactory';
 import { TribeProcessorHandler } from './Handler';
-import { autodelenAanmeldingProcessor } from './processors/autodelen-aanmelding';
 import { ProcessorRegistry } from './processors/ProcessorRegistry';
 
 const env = environmentVariables([

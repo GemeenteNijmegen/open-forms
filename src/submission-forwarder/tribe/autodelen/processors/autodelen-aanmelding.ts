@@ -1,10 +1,10 @@
 import { Logger } from '@aws-lambda-powertools/logger';
-import { trace } from '../../shared/trace';
-import { TribeVerzoek } from '../../shared/TribeVerzoek';
-import { TribeClient } from '../client/TribeClient';
-import { AUTODELEN_ENTITY } from '../constants/autodelen';
+import { trace } from '../../../shared/trace';
+import { TribeVerzoek } from '../../../shared/TribeVerzoek';
+import { TribeClient } from '../../client/TribeClient';
+import { TribeProcessingContext, TribeProcessResult, TribeSubmissionProcessor } from '../../support/TribeSubmissionProcessor.type';
+import { AUTODELEN_ENTITY } from '../constants';
 import { mapAutodelenAanmelding } from '../mappers/autodelen-aanmelding';
-import { TribeProcessingContext, TribeProcessResult, TribeSubmissionProcessor } from '../support/TribeSubmissionProcessor.type';
 
 const TRACE_HANDLER_ID = 'tribe_processor';
 

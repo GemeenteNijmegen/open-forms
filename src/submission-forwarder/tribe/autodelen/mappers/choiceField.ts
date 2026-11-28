@@ -1,4 +1,4 @@
-import { MappingError } from '../errors/ErrorTypes';
+import { MappingError } from '../../errors/ErrorTypes';
 
 export interface ChoiceFieldContext {
   reference: string;

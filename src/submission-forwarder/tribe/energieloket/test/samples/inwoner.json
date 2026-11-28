@@ -1,0 +1,64 @@
+{
+  "tribeEnvironment": "ENERGIELOKET",
+  "tribeSubmissionType": "ENERGIELOKET_INWONER",
+  "pdf": "https://example.com/documenten/api/v1/enkelvoudiginformatieobjecten/0b5c6e2a-1d3f-4c55-9a77-5f2a0c1d9e01",
+  "reference": "OF-ELINW001",
+  "attachments": [],
+  "formName": "Vragen adviesgesprek duurzaam wonen Energieloket",
+  "energieloket": {
+    "aanvrager": {
+      "naam": "TEST de Testpersoon",
+      "emailadres": "test@example.org",
+      "telefoonnummer": "0000000000",
+      "contactVoorkeur": "viaEMail"
+    },
+    "adres": {
+      "postcode": "0000 AA",
+      "huisnummer": "12a",
+      "straatnaam": "Voorbeeldstraat",
+      "woonplaats": "Nijmegen"
+    },
+    "woning": {
+      "soort": "tweeOnderEenKap",
+      "bouwjaar": "1932",
+      "gasverbruikM3": 1200,
+      "elektriciteitsverbruikKWh": 2500,
+      "verwarming": "anders",
+      "verwarmingAnders": "pelletkachel",
+      "verwarmingLeeftijd": "8",
+      "verbeteringenGedaan": {
+        "dakisolatie": true,
+        "isolatieglas": true,
+        "gevelSpouwmuurisolatie": false,
+        "bodemVloerisolatie": false,
+        "zonnepanelenOfPvt": false,
+        "zonneboiler": false,
+        "hybrideWarmtepomp": false,
+        "ventilatie": false,
+        "anders": true
+      },
+      "verbeteringenGedaanAnders": "tochtstrips",
+      "wensen": {
+        "dakisolatie": false,
+        "isolatieglas": false,
+        "gevelSpouwmuurisolatie": false,
+        "bodemVloerisolatie": true,
+        "zonnepanelenOfPvt": true,
+        "zonneboiler": false,
+        "hybrideWarmtepomp": false,
+        "ventilatie": false,
+        "anders": false
+      },
+      "wensenAnders": ""
+    },
+    "bekendheid": {
+      "kanalen": {
+        "viaEenLokaleKrantWijkblad": true,
+        "viaSocialeMedia": true,
+        "anders": false
+      },
+      "krantOfWijkblad": "wijkblad Oost",
+      "socialeMedia": "Facebook"
+    }
+  }
+}
