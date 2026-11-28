@@ -5,7 +5,7 @@ import {
   AUTODELEN_HOE_GEVONDEN_IDS,
   AUTODELEN_SITUATIE_IDS,
   AUTODELEN_TRIBE_FIELDS,
-} from '../autodelen';
+} from '../constants';
 
 function values(map: Record<string, string>) {
   return Object.values(map);

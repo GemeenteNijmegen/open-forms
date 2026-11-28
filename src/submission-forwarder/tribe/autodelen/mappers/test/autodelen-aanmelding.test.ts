@@ -1,7 +1,7 @@
-import * as tribeVerzoekFixture from '../../../receiver-lambda/test/samples/tribeVerzoek.json';
-import { TribeVerzoek } from '../../../shared/TribeVerzoek';
-import { AUTODELEN_CONTACT_MET_ANDEREN_IDS, AUTODELEN_HOE_GEVONDEN_IDS, AUTODELEN_SITUATIE_IDS, AUTODELEN_TRIBE_FIELDS } from '../../constants/autodelen';
-import { MappingError } from '../../errors/ErrorTypes';
+import * as tribeVerzoekFixture from '../../../../receiver-lambda/test/samples/tribeVerzoek.json';
+import { TribeVerzoek } from '../../../../shared/TribeVerzoek';
+import { MappingError } from '../../../errors/ErrorTypes';
+import { AUTODELEN_CONTACT_MET_ANDEREN_IDS, AUTODELEN_HOE_GEVONDEN_IDS, AUTODELEN_SITUATIE_IDS, AUTODELEN_TRIBE_FIELDS } from '../../constants';
 import { mapAutodelenAanmelding } from '../autodelen-aanmelding';
 
 const reference = 'OF-TEST123';

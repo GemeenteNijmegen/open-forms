@@ -30,13 +30,15 @@ flowchart TD
 
 ## 1. Secret en Bruno
 
-Deze PR. De lambda doet nog niets anders.
+Opgeleverd in PR #828.
 
 - Docs: wat het Energieloket in Tribe doet, en dit overzicht.
 - Bruno: de Tribe-omgeving van het Energieloket met auth, een healthcheck en de keuzelijsten, verkenning van bestaande records, en testaanmeldingen voor inwoner en VvE die alle stappen in Tribe doen en weer opruimen.
 - Een tweede secret voor de Tribe-omgeving van het Energieloket, dat de lambda mag lezen.
 
 ## 2. Autodelen in eigen map
+
+Deze PR.
 
 - De code van Autodelen (processor, mapper, constants en tests) in een eigen map, autodelen. Alleen verplaatst en importregels aangepast; gedrag en logs blijven gelijk.
 - Daarna komt het Energieloket in de map energieloket ernaast.

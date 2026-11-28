@@ -55,11 +55,14 @@ Zie ook de [README in de map](../../src/submission-forwarder/tribe/README.md).
 
 ```
 src/submission-forwarder/tribe/
+├── autodelen/       Constants, mapper, processor en tests van Autodelen
+│   ├── constants.ts Tribe-property- en record-ID's achter functionele namen
+│   ├── mappers/     Zuivere mapping van objecttypevelden naar de Tribe-payload
+│   ├── processors/  De processor van het submissiontype
+│   └── test/        Flow- en mappingtests met de samples
 ├── client/          TribeClient-interface, HTTP-implementatie, clientfactory
-├── constants/       Tribe-property- en record-ID's achter functionele namen
 ├── errors/          MappingError, ConfigurationError, TribeAuthenticationError, TribeRequestError
-├── mappers/         Zuivere mapping van objecttypevelden naar de Tribe-payload
-├── processors/      Eén processor per submissiontype + de registry die ze selecteert
+├── processors/      De registry die per omgeving en submissiontype een processor kiest
 ├── support/         Gedeelde types (processorcontract, context, resultaat)
 ├── Handler.ts        Selecteert omgeving/processor, bouwt de client, logt context
 └── TribeProcessor.lambda.ts   Lambda-entrypoint
@@ -106,9 +109,9 @@ het secret of het token ooit in een logregel staan.
 ## Een nieuw submissiontype toevoegen
 
 1. Nieuw deelobject in `TribeVerzoek.json` (naast `autodelen`).
-2. Nieuw bestand in `constants/` met de Tribe-ID's van het nieuwe formulier.
-3. Nieuwe mapperfunctie in `mappers/`, herbruik `mapChoiceField()` voor keuzevelden.
-4. Nieuwe processor in `processors/`, zelfde vorm als `autodelen-aanmelding.ts`.
+2. Nieuwe map per Tribe-omgeving naast `autodelen/`, met `constants.ts` voor de Tribe-ID's van het nieuwe formulier.
+3. Nieuwe mapperfunctie in `mappers/` van die map.
+4. Nieuwe processor in `processors/` van die map, zelfde vorm als `autodelen/processors/autodelen-aanmelding.ts`.
 5. Registreren in `TribeProcessor.lambda.ts`.
 6. Nieuwe Tribe-omgeving? Voeg een secret toe in `tribe/TribeCredentials.ts`, een
    `TRIBE_<OMGEVING>_SECRET_ARN`-omgevingsvariabele in `SubmissionForwarder.ts` en
