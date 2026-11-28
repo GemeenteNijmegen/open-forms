@@ -13,6 +13,7 @@ De algemene velden staan bovenin het object, naast `energieloket`, en zijn gelij
 | `tribeEnvironment` | Vast: `ENERGIELOKET`. |
 | `tribeSubmissionType` | Vast: `ENERGIELOKET_INWONER` of `ENERGIELOKET_VVE`. |
 | `formName` | Vast: de naam van het formulier. De interne melding noemt hem in onderwerp en tekst. |
+| `formEnvironment` | Optioneel: de statische variabele environment van het formulier (static variables). |
 | `reference` | De publieke referentie van de inzending. |
 | `pdf` | De URL van de pdf die Open Formulieren altijd van de aanvraag maakt, zoals bij de andere objecttypes. |
 | `attachments` | De URL's van alle bijlagen, een lege lijst als er geen zijn, zoals bij de andere objecttypes. Bij het VvE-formulier de bestanden uit `toevoegen`. Er zijn geen aparte bestandsvelden in `energieloket`. |
