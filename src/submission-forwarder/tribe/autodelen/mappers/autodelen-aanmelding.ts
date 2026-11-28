@@ -1,6 +1,6 @@
 import { mapChoiceField } from './choiceField';
-import { Autodelen, TribeVerzoek } from '../../shared/TribeVerzoek';
-import { AUTODELEN_CONTACT_MET_ANDEREN_IDS, AUTODELEN_HOE_GEVONDEN_IDS, AUTODELEN_SITUATIE_IDS, AUTODELEN_TRIBE_FIELDS } from '../constants/autodelen';
+import { Autodelen, TribeVerzoek } from '../../../shared/TribeVerzoek';
+import { AUTODELEN_CONTACT_MET_ANDEREN_IDS, AUTODELEN_HOE_GEVONDEN_IDS, AUTODELEN_SITUATIE_IDS, AUTODELEN_TRIBE_FIELDS } from '../constants';
 
 /** Objecttype value -> Tribe record ID. */
 const SITUATIE_VALUE_TO_ID: Record<string, string> = {

@@ -1,4 +1,4 @@
-import { MappingError } from '../../errors/ErrorTypes';
+import { MappingError } from '../../../errors/ErrorTypes';
 import { mapChoiceField } from '../choiceField';
 
 const idsByValue = {
