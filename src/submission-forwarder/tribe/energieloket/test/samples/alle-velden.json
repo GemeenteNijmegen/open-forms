@@ -1,0 +1,128 @@
+{
+  "tribeEnvironment": "ENERGIELOKET",
+  "tribeSubmissionType": "ENERGIELOKET_INWONER",
+  "pdf": "https://example.com/documenten/api/v1/enkelvoudiginformatieobjecten/00000000-0000-4000-8000-000000000001",
+  "reference": "OF-TEST-ALLE",
+  "attachments": [],
+  "formName": "TEST alle velden",
+  "formEnvironment": "TEST",
+  "energieloket": {
+    "aanvrager": {
+      "naam": "TEST Zoë d'Tèstpersoon-Ünal",
+      "voornaam": "TEST Zoë",
+      "tussenvoegsel": "d'",
+      "achternaam": "Tèstpersoon-Ünal",
+      "emailadres": "test@example.org",
+      "telefoonnummer": "0000000000",
+      "contactVoorkeur": "viaEMail",
+      "adres": {
+        "postcode": "0000 AB",
+        "huisnummer": 2,
+        "huisnummertoevoeging": "bis",
+        "straatnaam": "Proefstraat",
+        "woonplaats": "Lent"
+      }
+    },
+    "adres": {
+      "postcode": "0000 AA",
+      "huisnummer": "12",
+      "huisnummertoevoeging": "a",
+      "straatnaam": "Tést 's-Straat",
+      "woonplaats": "Nijmegen"
+    },
+    "woning": {
+      "soort": "tussenwoning",
+      "bouwjaar": 1932,
+      "eigenaarBewoner": true,
+      "gasverbruikM3": 1200,
+      "elektriciteitsverbruikKWh": -800,
+      "verwarming": "anders",
+      "verwarmingAnders": "pelletkachel",
+      "verwarmingLeeftijd": 8,
+      "verwarmingJaar": "2016",
+      "ventilatie": "anders",
+      "ventilatieAnders": "dakventilator",
+      "verbeteringenGedaan": {
+        "dakisolatie": true,
+        "anders": true
+      },
+      "verbeteringenGedaanAnders": "tochtstrips",
+      "wensen": {
+        "zonnepanelenOfPvt": true,
+        "anders": true
+      },
+      "wensenAnders": "thuisbatterij",
+      "energielabel": "C",
+      "monument": "nee",
+      "buurt": "Testwijk",
+      "slechtGeisoleerdeBouwdelen": {
+        "dak": true,
+        "vloer": false
+      }
+    },
+    "vve": {
+      "naam": "TEST VvE Teststraat 1-11",
+      "adressen": [
+        {
+          "straatnaam": "Teststraat",
+          "huisnummers": "1 tot en met 11"
+        },
+        {
+          "straatnaam": "Proefplein",
+          "postcode": "0000 AA",
+          "huisnummers": "2-6 even"
+        }
+      ],
+      "aantalWoningen": 14,
+      "soortWoningen": "anders",
+      "soortWoningenAnders": "woonboten",
+      "bouwjaar": "1965",
+      "huurwoningen": "ja",
+      "verhoudingEigendom": "mix",
+      "percentageEigenaarBewoners": 75,
+      "soortVerhuur": {
+        "particuliereVerhuur": true,
+        "verhuurDoorInvesteerderOfWoningcorporatie": false
+      },
+      "hoofdEnOndersplitsing": "onbekend",
+      "andereFuncties": "TEST winkel",
+      "jaarSplitsingsakte": 1987,
+      "mjop": "ja",
+      "duurzaamheidscommissie": "nee",
+      "verbeteringenGedaan": {
+        "dakisolatie": true,
+        "onbekend": false
+      },
+      "verbeteringenGedaanAnders": "nieuwe voordeuren",
+      "verbeteringenGewenst": "zonnepanelen",
+      "wensen": {
+        "dakisolatie": true
+      },
+      "splitsingsakteToegevoegd": true,
+      "mjopToegevoegd": false,
+      "contactpersonen": [
+        {
+          "naam": "TEST Tweede Testpersoon",
+          "emailadres": "test@example.org",
+          "telefoonnummer": "0000000000"
+        }
+      ]
+    },
+    "bekendheid": {
+      "kanalen": {
+        "viaEenLokaleKrantWijkblad": true,
+        "anders": true
+      },
+      "anders": "TEST bibliotheek",
+      "krantOfWijkblad": "testwijkblad",
+      "website": "testwebsite",
+      "socialeMedia": "testmedium",
+      "actie": "testactie",
+      "nieuwsbrief": "testnieuwsbrief"
+    },
+    "afspraak": {
+      "huisbezoekGewenst": true,
+      "opmerkingen": "TEST \"aanhalingstekens\" & <tekens>, een tab\ten\neen nieuwe regel"
+    }
+  }
+}
